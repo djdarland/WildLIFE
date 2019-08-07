@@ -1,0 +1,44 @@
+
+*** Yes
+> > 
+*** Yes
+> 
+% 'a' is a user-defined global variable worth @.
+
+% 'b' is a user-defined global variable worth @.
+
+% 'c' is a user-defined global variable worth @.
+
+*** Yes
+--1> 
+*** No
+> 
+*** Yes
+--1> 
+*** No
+> 343434
+*** Yes
+--1> > 
+*** Yes
+A = s.
+--1> 34
+*** Yes
+A = s.
+----2> 34
+*** Yes
+A = s.
+------3> 34
+*** Yes
+A = s.
+--------4> 
+*** No
+A = s.
+------3> 
+*** No
+A = s.
+----2> 
+*** No
+A = s.
+--1> 
+*** No
+> 

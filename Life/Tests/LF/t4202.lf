@@ -1,0 +1,4 @@
+reverse(L) -> rev(L,[]).
+rev([],L) -> L.
+rev([H|T],L) -> rev(T,[H|L]).
+

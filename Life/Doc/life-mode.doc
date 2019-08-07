@@ -1,0 +1,130 @@
+                
+                      Life Mode for Emacs
+
+
+
+There are two different parts in the life mode:
+  - One is a major emacs mode for editing life code (It deals essentially with
+    indentation). It should work with Prolog programs too !
+    It is contained in the 'life-mode.el' file.	
+  - The other allows people using emacs19 to see their code highlighted, thanks
+    to a Life tokenizer written in emacs lisp.
+    It is contained in the 'life-emphasize.el' file.
+
+A third file ('.emacs-life') is necessary and should be loaded by your .emacs,
+or added to it. Change the path of the files loaded (using absolute paths), 
+and edit it to customize the mode.
+
+
+
+Commands of the major mode:
+
+
+   TAB    : indent current line (see customization below)
+   M-C-\  : indent a region
+   C-x %  : comment a region
+   C-x $  : uncomment a region
+
+   (M = meta key, C = control key)
+
+Customization of the major mode: (see the '.emacs_life' file)
+
+   There are three kinds of comments:
+    - large comments start with %%%. They are always indented at column 0.
+    - mid-comments start with %%. They are indented as life code, unless there
+      is a comment on the line before. In the latter case, the comments are 
+      aligned.
+    - small comments start with %.
+      If small-comments is non-nil, they are idented to comment-column 
+      (default value is 48), unless there is a comment on the line before.
+      Otherwise, they are idented like mid-comments.
+      Default of small-comments is nil.
+
+   TAB may be used as a real tab in some places. If the variable
+   life-tab-always-indent is not nil, TAB in Life mode should always reindent
+   the current line, regardless of where in the line point is when the TAB
+   command is used. Otherwise, TAB inserts a tab when it is not in the
+   indenting region (before the first non void character on a line).   
+   The default value of this variable is t.
+
+
+   life-brace-offset is the amount of extra indentation for a line if the line
+   before starts with an open brace. Its default value is 4. Bodies of clauses
+   are indented at twice the value of life-brace-offset.
+
+   life-multiline-offset is the amount of extra indentation for more than one
+   line long sentences (sequence of terms ending with , ; or |). Its default
+   value is 2. 
+
+
+Limitations 
+
+   The indenter first looks for the beginning of the clause the pointer is in.
+   To recognise it, it looks for a dot or a question mark followed by a newline
+   (comments are skipped), and appearing inside a comment. There may be
+   problems if the dot or question mark appear inside a string or a quoted
+   atom.
+
+   The 'life-multiline-offset' doesn't always work at the beginning of clauses.
+
+
+Commands of the highlighting mode:
+
+   C-c C-b : highlight region or buffer
+   C-S-l   : (Control-Shift-l) re-highlight according to hilit-auto-rehighlight
+
+Customization of the highlighting mode:
+
+   If you use emacs19, and don't want highlighting, set the variable 
+   life-emphasize-flag to nil.
+
+   A "face" is the structure used by emacs to describe the way terms are
+   written. Faces are created by the life-emphasize mode, that correspond to
+   various life tokens:
+      life-comment
+      life-atom
+      life-operator
+      life-value
+      life-syntax
+      life-variable
+
+   You can use the following functions to customize the faces used.
+	
+    set-face-background
+      Change the background color of face FACE to COLOR (a string).
+    set-face-font
+      Change the font of face FACE to FONT (a string).
+    set-face-foreground
+      Change the foreground color of face FACE to COLOR (a string).
+    set-face-underline-p
+      Specify whether face FACE is underlined.  (Yes if UNDERLINE-P 
+    is non-nil.)
+
+   example: (see the '.emacs-life' file)	
+
+    (if life-emphasize-flag 	
+      (progn
+        (set-face-font 'life-comment 
+		"-adobe-courier-bold-o-normal--14-100-100-100-m-90-iso8859-1")
+        (set-face-background 'life-value "darkslategrey")
+        (set-face-foreground 'life-syntax "red")
+        (set-face-underline-p 'life-variable t)
+    ))
+
+
+    Some user options used by hilit19 are supported by life-emphasize:
+
+    - hilit-auto-highlight: T if we should highlight all buffers as we find
+                            'em, nil to disable 
+    - hilit-auto-highlight-maxout: auto-highlight is disabled in buffers larger
+                                   than this 
+    - hilit-auto-rehilight: If this is non-nil, then redraw and recenter will also 
+        rehighlight part or all of the current buffer.  T will rehighlight the
+  	whole buffer, a NUMBER will rehighlight that many lines before and after
+        the cursor, and the symbol 'visible' will rehighlight only the visible
+        portion of the current buffer.  This variable is buffer-local.
+    - hilit-auto-rehighlight-fallback
+    - hilit-inhibit-rebinding: don't redefine locally C-l and C-y (thus
+                               preventing rehighlighting of yanked regions)	
+    - hilit-quietly: no message when rehighlighting	
+

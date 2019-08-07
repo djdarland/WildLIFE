@@ -1,0 +1,30 @@
+X=nvar,Z=nvar,Y=nvar?
+% Problem with expand:
+% fast_starter([4*(~12)+0*3*X+54+Y+4*Z-Y,X+Y-Z+4,Y+2,Y+2],Q)?
+fast_starter([4*(~12)+54+Y+4*Z-Y,X+Y-Z+4,Y+2,Y+2],Q),gc?
+W=nvar?
+feeder((X+6*Y-2*W+Z),Q),gc?
+
+
+
+
+create_vars([U,W,X,Y,Z])?
+fast_starter([X+Y-Z,4*Y+Z,U-W-Z+8],Q),gc?
+feeder(Z-W,Q),gc?
+feeder(X+2,Q),gc?
+
+
+
+
+create_vars([U,W,X,Y,Z])?
+fast_starter([X+Y-Z,4*Y+Z,U-W-Z+8],Q),gc?
+feeder(Z+W,Q),gc?
+
+
+
+create_vars([U,W,X,Y,Z])?
+fast_starter([X+Y-Z,4*Y+Z,U-W-Z+8],Q),gc?
+feeder(X+2,Q),gc?
+
+
+

@@ -1,0 +1,8 @@
+*** Error: numbers or strings may not be operators in c_op(500,xfy,"aaa").
+*** Error: numbers or strings may not be operators in c_op(500,xfy,123).
+*** Error: numbers or strings may not be operators in c_op(500,xfy,123.3).
+*** Error: bad operator kind 'xff'.
+*** Error: precedence must range from 1 to 1200 in c_op(5000,xfy,asd).
+*** Error: precedence must range from 1 to 1200 in c_op(0,xfy,asd).
+*** Error: precedence must range from 1 to 1200 in c_op(-234,xfy,asd).
+*** Error: precedence must be a positive integer in c_op(abc,xfy,asd).

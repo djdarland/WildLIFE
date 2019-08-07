@@ -1,0 +1,35 @@
+
+:: A:activity( duration =>D:real,
+               lateStart  => {1e50;real}, 
+               earlyStart => latest(R),
+               requests => R:{[];list} ) | lateStartCond(A,R).
+           
+            
+latest([]) -> 0.
+latest([B|ListOfActs])-> max(B.earlyStart+B.duration,latest(ListOfActs)).
+
+lateStartCond(A,[])-> succeed.
+lateStartCond(A,[B:activity|ListOfActs]) ->
+                           lateStartCond(A,ListOfActs)|
+                                   LSB:(B.lateStart) <-
+	                           min(LSB, A.earlyStart-B.duration).
+             
+
+visAllActs([]).
+visAllActs([A|B],N:{1;real}) :- visualize(A,N), visAllActs(B,N+1).
+
+visualize(A:activity,N:int) :- write("Activity ",N,": "),
+                               visStart(A.earlyStart),
+                               visDuration(A.duration,"*"),nl,
+                               write("            "),
+                               cond( A.lateStart =<  50,
+                                     (visStart(A.lateStart),
+                                      visDuration(A.duration,"-"),nl,nl),
+                                     nl
+                                   ).
+
+visStart(N:int) :- visNcar(N," ").
+visDuration(N,S):- visNcar(N,S).
+
+visNcar(0,@).
+visNcar(N,S) :- write(S), visNcar(N-1,S).

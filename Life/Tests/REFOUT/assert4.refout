@@ -1,0 +1,79 @@
+
+*** Yes
+> > 
+*** Yes
+X = 3.
+--1> 
+*** No
+> 
+*** Yes
+X = 1 + 2.
+--1> 
+*** No
+> 
+f1 -> 3.
+
+f2 -> 1 + 2.
+
+*** Yes
+> 
+*** Yes
+X = 14.
+--1> 
+*** No
+> 
+*** Yes
+X = 5 + 9.
+--1> 
+*** No
+> 
+f1 -> 14.
+f1 -> 3.
+
+f2 -> 5 + 9.
+f2 -> 1 + 2.
+
+*** Yes
+> 
+*** Yes
+X = (f1 -> 14).
+--1> 
+*** Yes
+X = (f1 -> 3).
+--1> 
+*** No
+> 
+*** Yes
+X = (f2 -> 5 + 9).
+--1> 
+*** Yes
+X = (f2 -> 1 + 2).
+--1> 
+*** No
+> 
+*** Yes
+Y = 5 + 9, Z = Y.
+--1> 
+*** Yes
+Y = 1 + 2, Z = Y.
+--1> 
+*** No
+> 
+*** Yes
+--1> 
+*** Yes
+> 
+*** Yes
+X = (f2 -> 5 + 9).
+--1> 
+*** Yes
+X = (f2 -> 1 + 2).
+--1> 
+*** No
+> 
+% 'f1' is a user-defined function with an empty definition.
+
+% 'f2' is a user-defined function with an empty definition.
+
+*** Yes
+> 

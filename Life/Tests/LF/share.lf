@@ -1,0 +1,35 @@
+% Test: share.lf
+
+% Time differences: (unoptimized wild_life on 3Max)
+% p2(15)        0.35 s
+% ns_p2(15)     0.32 s
+% p3(15)      101.25 s
+% ns_p3(15)   101.40 s
+% Lots of time, but very little stack or heap space used!
+% And listing(triple,pair,striple,spair) is immediate, there's no difference
+% in time between the four that is not prop. to their respective sizes.
+% In other words, (1) copy can be improved by a lot, and
+% (2) the implementation of non_strict does not seem to be the problem.
+
+share2(0) -> bot.
+share2(N) -> spair(X,X) | X=share2(N-1).
+
+share3(0) -> bot.
+share3(N) -> striple(X,X,X) | X=share3(N-1).
+
+
+non_strict(pair)?
+non_strict(triple)?
+
+ns_share2(0) -> bot.
+ns_share2(N) -> pair(X,X) | X=ns_share2(N-1).
+
+ns_share3(0) -> bot.
+ns_share3(N) -> triple(X,X,X) | X=ns_share3(N-1).
+
+
+p2(N) :- A=share2(N), assert(A).
+p3(N) :- A=share3(N), assert(A).
+
+ns_p2(N) :- A=ns_share2(N), assert(A).
+ns_p3(N) :- A=ns_share3(N), assert(A).

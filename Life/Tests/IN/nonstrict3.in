@@ -1,0 +1,4 @@
+A=cond(false,X:(1+2),4),my_write1(X)?
+.
+A=cond(false,X:(1+2),4),my_write2(X)?
+.

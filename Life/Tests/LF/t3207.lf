@@ -1,0 +1,57 @@
+%
+%
+% Backtrack test program
+%
+%
+
+
+% choicept(N) creates a choice-point, and deletes it on backtracking.
+
+choicept(N) :- write("create CP number",N),nl.
+choicept(N) :- write("delete CP number",N),nl, fail.
+
+
+%
+%  The 3 programs below create choice points, starting at number 1, 2 or 3, and
+%  up to number 9.
+
+
+main :- ( ( nl, nl, write("MANUAL BACKTRACKING"), nl, nl, main1,fail) ; 
+          ( nl, nl, write("AUTOMATIC  BACKTRACKING"), nl, nl, main2 ); 
+          ( nl, nl, write("COND PREDICATE"), nl, nl, main3,fail);
+            succeed ).
+
+
+%
+%  Manual backtracking
+%
+
+main1  :- write(X:{1;2;3}),nl, create_CP1(X,1).
+
+create_CP1(X,N) :-  choicept(N), cond(X=:=9, nl, create_CP1(X+1,N+1)).
+
+
+%
+%   Automatic backtracking: backtracking is enforced by the fail in the second
+%   argument of cond.
+%
+
+main2  :- write(X:{1;2;3}),nl, create_CP2(X,1).
+
+create_CP2(X,N) :-  choicept(N),
+                    cond(X=:=9, (nl,fail),create_CP2(X+1,N+1)). 
+ 
+
+%
+%  using a predicate for cond instead of a function
+%
+
+cond_pred(true,X,Y) :- !, X.
+cond_pred(false,X,Y) :- Y.
+
+
+main3  :- write(X:{1;2;3}),nl, create_CP3(X,1).
+
+create_CP3(X,N) :-  choicept(N), cond_pred(X=:=9, nl, create_CP3(X+1,N+1)).
+
+main?

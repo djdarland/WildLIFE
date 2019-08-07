@@ -1,0 +1,650 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                             %
+%                                                                             %
+%                 Drawing Flowers with Rewrite Systems                        %
+%                                                                             %
+%                                                                             %
+%                                                                             %
+%                                                                             %
+% This program is  based on the following book:                               %
+%                                                                             %
+%               THE ALGORITHMIC BEAUTY OF PLANTS                              %
+%                                                                             %
+%     by Przemyslaw Prusinkiewicz and Aristid Lindenmayer                     %
+%                (Springer Verlag,1990)                                       %
+%                                                                             %
+% This book shows how the growth and shape of plants may be modeled using     %
+% rewrite systems called Lindenmayer Systems (L-systems for short), and       %
+% how these systems can be used to generate images.                           %
+%                                                                             %
+% In this implementation, a flower may be specified thanks to an L-system,    %
+% using a syntax which is very easy to derive from that described in the      %
+% book. This L-system is then translated into a Life program thanks to a      %
+% transaltor (in flo_gram.lf). Running the obtained program draws the flower. %
+%                                                                             %
+%                                                                             %
+%                                                                             %
+% This file contains the definition of the user interface and the definition  %
+% of the L-System used to draw the flowers.                                   %
+%                                                                             %
+% The other files are:                                                        %
+% - flo_utils.lf : contains a number of utilities.                            %
+% - flo_gram.lf  : contains the L-Systems translator and the predefined       %
+%                  symbols definitions                                        %
+% - flo_xtools.lf: contains all the xToolkit: definition of button types,...  %
+% - flo_custom.lf: contains all the customizable stuff: look of the interface,%
+%                  default values for the flowers.                            %
+%                                                                             %
+%                                                                             %
+% This is the main file of the demo. All the other files are automatically    %
+% loaded if they are in the same directory.                                   %
+%                                                                             %
+% Notice: This is quite an 'old' Life program. It means that features have    %
+%         been added to the language since it was written, especially global  %
+%         and persistent variables: most constant functions (reset using setq)%
+%         could be changed to persistent terms, saving memory and time.       %
+%                                                                             %
+%         The toolkit is an old version of that given under the name "xtools".%
+%         We recommend using the new one to build new applications.           %
+%                                                                             
+% Author: Bruno Dumant                                                        %
+%                                                                             %
+% Copyright 1992 Digital Equipment Corporation                                %
+% All Rights Reserved                                                         %
+%                                                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+module("flowers") ?
+public(flowers) ?
+
+import("x") ?
+
+%%% loading utilities and customization files
+
+load("flo_utils"), open("utils") ?
+load("flo_gram"), open("rewrite_trans") ?
+load("flo_flowerdef"),open("flower_def") ?
+load("flo_xtools"), open("xtools_flo") ?
+load("flo_custom") ?
+
+%%%
+%%% MAIN PROCEDURE
+%%%
+
+
+flowers :-
+	(
+	    catch(enter_flowers),
+	    init_default_values,
+	    create_main_panel,
+	    create_draw_init_panel,
+	    create_palette,
+	    create_postscript_panel,
+	    create_drawing_pad,
+	    open_panel(main_panel)
+	;
+	    succeed
+	).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% MAIN PANEL
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% panel creation
+
+create_main_panel :-
+	create_new_panel( 100,100, 220, 210, 
+	                  choice => choose_button,
+			  title  => "Flowers",
+			  name   => MainPanel:main_panel),
+	(
+	    B1 = oo_led_txt( 10, 10, 200, 30, 
+	                     text => "Drawing init...",
+			     action => turtle_settings(B1)),
+	    add_button( B1, panel => MainPanel),
+	    B2 = oo_led_txt( 10, 45, 200, 30, 
+	                     text => "Palette...",
+			     action => select_color(B2)),
+	    add_button( B2, panel => MainPanel),
+	    B3 = oo_led_txt( 10, 80, 200, 30, 
+	                      text => "PostScript Output...",
+			      action => post_out(B3) ),
+	    add_button( B3, panel => MainPanel),
+
+	    B4 = tog_led_txt( 10, 135, 200, 30, 
+	                     text => "Draw",
+	                     action => draw_flower(B4) ),
+            add_button( B4, panel => MainPanel),
+
+	    B5 = tog_led_txt( 10, 170, 200, 30, 
+	                      text => "Quit",
+			      action => quit_flowers),
+            add_button( B5, panel => MainPanel),
+
+	    draw_buttons([B1,B2,B3,B4,B5]),
+	    fail
+	;
+	    write("main panel created ..."),nl
+	).
+
+%%% button types
+
+tog_led_txt <| ledandtext.
+tog_led_txt <| toggle_button.
+
+oo_led_txt <| ledandtext.
+oo_led_txt <| on_off_button.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% ACTIONS ASSOCIATED WITH COMMANDS IN THE MAIN PANEL
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% postscript output
+
+post_out(B):-
+	cond( B.on,
+	      open_panel(postscript_panel),
+	      close_panel(postscript_panel)).
+
+%%% drawing initialization
+
+turtle_settings(B) :- 
+	cond( B.on,
+	      open_panel(draw_init_panel),
+	      close_panel(draw_init_panel)).
+
+
+%%% Colors
+
+select_color(B) :-
+	cond( B.on,
+	      open_panel(palette),
+	      close_panel(palette)).
+
+%%% Drawing
+
+draw_flower(B) :-
+	xShowWindow(draw_window),
+	draw_a_flower.
+
+draw_a_flower :- 
+	initSingle, 
+	(
+	    catch(draw_start),          % label setting
+	    axiomflower(deriv_num),
+	    fail 
+	; 
+	    setq(drawing,false)         % drawing is a boolean function used to
+					% stop the drawing of a flower.
+	).
+
+initSingle :-
+	    DP:draw_init_panel&@(selected_text => B), %% if a button is still
+	    cond(   B :== true,                       %% selected in
+	            (                                 %% draw_init_panel, its
+			But:(B.1).action,           %% value is used.
+			But.on <- false,
+			B <- false,
+			refresh_button(But),
+			update_panel(DP)
+		    )),
+
+	    Ratio = pi/180,
+            initAngle(pi/10),
+            initThick(2*zoom_fact),
+	    initDirection(aystart*Ratio,
+	                  axstart*Ratio,
+			  azstart*Ratio),
+	    initPosition(xstart,ystart,0),
+	    setq(realDistance,20*zoom_fact),
+	    setq(drColor,defaultColor),
+	    setq(drawing,true),
+	    setq(stop_drawing,false).
+	
+%%% Quit
+
+quit_flowers :-
+	throw(enter_flowers).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% POSTSCRIPT OUTPUT
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+create_postscript_panel :-
+	create_new_panel( 620,100, 440, 50, 
+	                  choice => choose_button,
+			  title  => "PostScript Output",
+			  name   => PostPanel:postscript_panel),
+	postscript_panel&@(window => PW),
+	setq( postscript_window, PW),
+	(
+	    xDrawString( PW, 10, 29, "File Name:", font => button_font,
+	                 color => text_color(on_off_color)),
+
+	    B1 = textfield_look( 100, 10, 150, 30, action => set_file(B1),
+	                         text => postout_filename ),
+	    add_button( B1, panel => PostPanel),
+
+	    B2 = tog_led_txt( 260, 10, 170, 30, 
+	                      text => "Save PostScript",
+			      action => save_postscript),
+	    add_button( B2, panel => PostPanel),
+
+	    draw_buttons([B1,B2]),
+	    fail
+	;   
+	    write("PostScript panel created ... "),nl
+	).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% ACTIONS ASSOCIATED WITH COMMANDS IN THE POSTSCRIPT OUTPUT PANEL
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% file name setting
+
+set_file(B1:@( text => T )) :-
+	setq(postout_filename, T).
+
+
+%%% Save postscript in a file
+
+save_postscript(panel => P:@(selected_text => B)) :-
+	cond(   B :== true,
+	        (
+		    But:(B.1).action,
+		    B <- false,
+		    But.on <- false,
+		    refresh_button(But)
+		)),
+	(
+	    xPostScriptWindow( draw_window, postout_filename),!
+	;
+	    write( " Error: Bad File Name "),nl
+	).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% DRAWING INIT
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+create_draw_init_panel :-
+	create_new_panel( 330, 100, 280, 150, 
+	                  choice => choose_button,
+			  title  => "Drawing Init",
+			  name   => DrawInitPanel:draw_init_panel),
+	draw_init_panel&@(window => PW),
+	setq( draw_init_window, PW),
+	(
+	    xDrawString( PW, 45, 29, "X:", font => button_font,
+	                 color => text_color(on_off_color)),
+	    xDrawString( PW, 155, 29, "Y:", font => button_font,
+	                 color => text_color(on_off_color)),
+	    xDrawString( PW, 20, 79, "ax:", font => button_font,
+	                 color => text_color(on_off_color)),
+	    xDrawString( PW, 105, 79, "ay:", font => button_font,
+	                 color => text_color(on_off_color)),
+	    xDrawString( PW, 190, 79, "az:", font => button_font,
+	                 color => text_color(on_off_color)),
+	    xDrawString( PW, 20, 129, "Complexity:", font => button_font,
+	                 color => text_color(on_off_color)),
+	    xDrawString( PW, 170, 129, "Zoom:", font => button_font,
+	                 color => text_color(on_off_color)),
+
+	    B1 = textfield_look( 75, 10, 50, 30, 
+	                         action => set_value_init(xstart,B1,"X"),
+	                         text => int2str(xstart) ),
+	    add_button( B1, panel => DrawInitPanel),
+	    B2 = textfield_look( 185, 10, 50, 30,
+	                         action => set_value_init(ystart,B2,"Y")  ,
+	                         text => int2str(ystart)),
+	    add_button( B2, panel => DrawInitPanel),
+	    B3 = textfield_look( 50, 60, 40, 30,  
+	                         action => set_value_init(axstart,B3,"ax"),
+	                         text => int2str(axstart)),
+	    add_button( B3, panel => DrawInitPanel),	    
+	    B4 = textfield_look( 135, 60, 40, 30, 
+	                         action => set_value_init(aystart,B4,"ay"),
+	                         text => int2str(aystart)),
+	    add_button( B4, panel => DrawInitPanel),
+	    B5 = textfield_look( 220, 60, 40, 30, 
+	                         action => set_value_init(azstart,B5,"az"),
+	                         text => int2str(azstart)),
+	    add_button( B5, panel => DrawInitPanel),
+	    B6 = textfield_look( 120, 110, 25, 30, 
+	                         action => set_deriv_num(B6),
+	                         text => int2str(deriv_num,2)),
+	    add_button( B6, panel => DrawInitPanel),
+	    B7 = textfield_look( 220, 110, 40, 30, 
+	                         action => set_zoom_fact(B7),
+	                         text => real2str(zoom_fact,2)),
+	    add_button( B7, panel => DrawInitPanel),
+	    draw_buttons([B1,B2,B3,B4,B5,B6,B7]),
+	    fail
+	;
+	    write("draw_init panel created ..."),nl
+	).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% ACTIONS ASSOCIATED WITH COMMANDS IN THE DRAWING INIT PANEL
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% give a function the value (if real) of a text field.
+
+non_strict(set_value_init) ?
+set_value_init( Func, B:@(text => Text), FieldName) :-
+	Y = parse(Text),
+	T = eval(Y),
+	cond(   T :< real,
+	        setq(Func,T),
+		(
+		    write( "*** Error: Bad value in field ",FieldName," ***"),
+		    nl
+	        )
+	    ),
+	cond( Y :\< real,
+	      (   
+		  Text <- real2str(eval(Func),2),
+		  refresh_button(B)
+	      )).
+
+set_deriv_num( B:@(text => Text)) :-
+	Y = parse(Text),
+	T = eval(Y),
+	cond(   T :< real,
+	        (
+		    cond( T =< 2,
+		          Val = 2,
+			  cond( T >= 8,
+			        Val = 8,
+				Val = floor(T))),
+		    setq(`deriv_num, Val)
+		),
+		(
+		    write( "*** Error: Bad value in field Complexity ***"),
+		    nl
+	        )),
+	cond( Y :\== D:deriv_num ,
+	      (   
+		  Text <- int2str(D),
+		  refresh_button(B)
+	      )).
+
+set_zoom_fact( B:@(text => Text)) :-
+	Y = parse(Text),
+	T = eval(Y),
+	cond(   T :< real, 
+                cond(   T > 0,
+		        setq(`zoom_fact,T),
+			(
+			    write( "*** Error: Bad value in field Zoom ***"),
+			    nl
+			)
+		    ),
+	        (
+		    write( "*** Error: Bad value in field Zoom ***"),
+		    nl
+		)
+	    ),
+	cond( Y :\== Z:eval(zoom_fact),
+	      (   
+		  Text <- real2str(Z,2),
+		  refresh_button(B)
+	      )).
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% PALETTE
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+create_palette :-
+        create_new_panel(200,160, 600, 500,
+		         choice => palette_choice,
+		         name   => Palette:palette,
+		         title  => "Palette"),
+	root_sort(Palette)&@(window => PW),
+        setq(palette_window,PW),
+	(
+	    fill_colors(all_colors,50,50,0,PW),
+	    B1 = color_button( 2, 0, 196, 100,
+	                       text => "Leaves",
+			       action => element_choice(B1),
+			       color_block => ns(leaf_color)),
+	    add_button( B1, panel => Palette),
+	    B2 = color_button( 2, 100, 196, 100,
+	                   text => "Petals",
+			   action => element_choice(B2), 
+			   color_block => ns(petal_color)), 
+            add_button( B2, panel => Palette),
+	    B3 = color_button( 2, 200, 196, 100,
+	                   text => "Stamens",
+			   action => element_choice(B3), 
+		           color_block => ns(stamen_color)),
+	    add_button( B3, panel => Palette),
+	    B4 = color_button( 2, 300, 196, 100,
+	                   text => "Stems",
+			   action => element_choice(B4), 
+			   color_block => ns(defaultColor)),
+	    add_button( B4, panel => Palette),
+	    B5 = color_button( 2, 400, 196, 100,
+	                   text => "Background",
+			   action => element_choice(B5), 
+			   color_block => ns(background_color)),
+	    add_button( B5, panel => Palette),
+	    draw_buttons([B1,B2,B3,B4,B5]),
+	    fail
+	;
+	    write("palette created ..."),nl
+	).
+
+% definition of color button
+
+color_button <| oo_led_txt.
+
+draw_static( color_button(X0,Y0,DX,DY,color_block => @(C),window=>W)) :-
+	draw_basic_button( X0+DX/2+25, Y0+20, DX/2-38, DY-40,
+	                   depth => 2,
+			   color => eval(C),
+			   shade => highlight_color(on_off_color), 
+			   highlight => shade_color(on_off_color),
+			   window => W),
+	fail.
+
+
+%%% choice predicate attached to the palette
+
+palette_choice(X,Y,Palette) :-
+	(
+	    selected_color(X,Y,Palette),!
+	;
+	    find_chosen_button(Palette.buttons,X,Y,Palette)
+	).
+
+
+%%% finding a color square in the palette
+
+selected_color(X,Y,
+	       @(selected => S, window => Win)) :-
+	show_color(X,Y,Win,C),
+	( 
+	    S :== true,!,
+	    @(Color) = (Button:(S.1)).color_block,
+	    setq(Color,C),
+	    cond( Color :== `background_color,
+	          xSetWindowColor( draw_window, C)),
+	    change_color(Button)
+	;
+	    succeed
+	).
+
+%%% show the name of the color clicked on.
+
+show_color(X,Y,Win,C) :- 
+        find_in_inthash2("colors",
+	                 floor((X - 200)/U:50),
+			 floor(Y/U),
+		         C:@(name => CN)),
+	xFillRectangle(Win,200,400,400,100,
+	               color => color_name_textfield_color),
+	xDrawString(Win,300,456,CN,font => color_name_font).
+
+
+%%% change the color of a button
+
+change_color( @(X0,Y0,DX,DY,color_block => @(C),window=>W)) :-
+	xFillRectangle( W, X0+DX/2+27, Y0+22, DX/2-42, DY-44,
+	                color => eval(C)).
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% ACTIONS ASSOCIATED WITH COMMANDS IN THE PALETTE
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+element_choice(B:@(on => Bool, color_block => @(C)), 
+	       panel => @(selected => S, window => Win)) :-
+	(
+	    Bool :== true,!,
+	    cond( S :== true,
+	          switch_off(S.1) ),
+	    S <- true(B),
+	    (
+		xFillRectangle(Win,200,400,400,100,
+		               color => color_name_textfield_color),
+		xDrawString(Win,300,456,
+		            eval(C).name,font => color_name_font),
+		fail
+		    
+	    ;
+	        succeed
+	    )
+	;
+	    S <- false
+	).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% palette drawing
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% initialization of the palette colors
+
+Colors = bagof(X,color(X)),
+setq(all_colors,Colors),
+fail ;
+succeed ?
+
+%%% fill all the colored squares
+
+fill_colors([C|Cs],W,H,N,Win) :- 
+	!,
+	xFillRectangle(Win,
+	               X:(200 + Col:floor(N/8)*W),
+		       Y:(Row:(N mod 8)*H),
+		       W,H,
+		       color => C:@(name=>CN)),
+	add_in_inthash2("colors",Col,Row,C),
+	xDrawRectangle(Win,X,Y,W,H,color=> white),
+	fill_colors(Cs,W,H,N+1,Win).
+fill_colors([]).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% DRAWING PAD
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% 32772 = xExposureMask \/ xButtonPressMask
+
+create_drawing_pad :-
+	xCreateWindow( default_display,150,130,700,700,DrWin, 
+	               color => background_color, 
+		       windowtitle => "Drawing Pad",
+		       eventmask => 32772,
+		       show => false),
+	xSetWindowBorderWidth(DrWin,2),
+	setq(draw_window,DrWin),
+	catch_draw_event(DrWin).
+
+%%% events handler
+
+handle_draw_event ( button_event (x => X, y => Y), DrWin) ->      
+	true 
+    |
+        handle_draw_mouse(X,Y),
+        handle_draw_event (xGetEvent (DrWin,
+		                      eventmask => 32772), DrWin).
+
+handle_draw_event (expose_event, DrWin) ->      
+	true 
+    |
+        xRefreshWindow(DrWin),
+        handle_draw_event (xGetEvent (DrWin,
+	                              eventmask => 32772 ), DrWin).
+catch_draw_event(DrWin) :-
+	handle_draw_event (xGetEvent (DrWin,
+				      eventmask => 32772), DrWin).
+
+
+%%% mouse-events: the action depends on whether a flower is being drawn.
+
+handle_draw_mouse(X,Y) :-
+	drawing,!,
+	setq(stop_drawing,true)
+    ;
+	setq(xstart,X),
+	setq(ystart,Y),
+	DrInitPanel:draw_init_panel&@(buttons => [_,_,_,_,_,YB,XB]),
+	XB.text <- int2str(X),
+	YB.text <- int2str(Y),
+	refresh_button(XB),
+	refresh_button(YB),
+	update_panel(DrInitPanel).
+	
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+module("user") ?
+open("flowers") ?
+
+
+
+
+
+
+

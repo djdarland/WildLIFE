@@ -1,0 +1,16 @@
+p(X) :- X={one;two}.
+p(three).
+p(X) :- Y/3=X,Y=2*Z,Z=6.
+p(X) :- X=five
+	;
+	X=six.
+p(Y) :- p(X),!,Y={'VIII';'IX'}.
+p('0x1010').
+
+app([H|T],L,[H|R]) :- !,app(T,L,R).
+app([],L,L).
+
+
+f(X,a) -> a(X).
+f(X,b) -> b(X).
+

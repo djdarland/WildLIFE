@@ -1,0 +1,201 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%	$Id: loader.lf,v 1.2 1994/12/08 23:58:54 duchier Exp $	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                          
+%                   LOADING FILES USING THE LIFE PARSER IN LIFE   
+%          
+% This File contains an implementation of simple_load that uses the parser
+% written in Life. It also contains some extensions that allow a usage similar
+% to that of load (except that only one file may be specified).
+%
+% The term_expansion predicate is supported.
+%
+% Use of this file:
+%      load_l(Filename) ? 
+% looks for the file Filename.lf or Filename in specified directories, and
+% loads the first it finds. Reloading the same file is not possible.
+%
+%      load_gr(Filename) ? 
+% looks for the file Filename.gr in specified directories, and
+% loads the first it finds. Reloading the same file is not possible.
+%
+%      load_in(Filename) ?
+% looks for the file Filename.in in specified directories, and
+% loads the first it finds. Reloading the same file is possible.
+%    
+% All the necessary files are automatically loaded if they are in the same
+% directory.  
+%
+% Author: Bruno Dumant
+%
+% Copyright 1992 Digital Equipment Corporation
+% All Rights Reserved
+% 
+%                                                          
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+module("parser") ?
+
+public( load_life,load_l,load_gr,load_in) ?
+
+%%% load the parser
+
+load("parser")?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+load_life(File:string) :-
+	X = current_module,
+	exists_file(File),
+	open_in(File,S1),
+	load_first(S1),
+	close(S1),
+	set_module(X).
+
+load_first(S1) :-
+	FT = first_token,
+	(
+	    FT = [],
+	    !,
+	    nl,nl,
+	    write("Empty File"),
+	    nl
+	;
+            read_new_expr( FT, Bool, Expr, T, LeftToken),
+	    cond( Bool,
+		  cond(  T :== assertion,
+		         assert_declaration(Expr,S1),
+			 prove_query(Expr,S1)),
+		  (!,write_syntax_error(S1))),
+	    (
+		LeftToken = [],!,
+		nl,
+		write("*** File '",S1.input_file_name,"' loaded"),
+		nl
+	    ;
+		fail
+	    )
+	;
+	    load_next(S1)
+	).
+
+load_next(S1) :-
+	(
+            read_new_expr( [copy_term(rest_token)|`next_token], Bool, Expr, 
+	                      T, LeftToken),
+	    cond( Bool,
+		  cond( T :== assertion,
+		        assert_declaration(Expr,S1),
+			prove_query(Expr,S1)),
+		  (!,write_syntax_error(S1))),
+	     (
+		 LeftToken = [],!,
+	         nl,
+	         write("*** File '",S1.input_file_name,"' loaded"),
+	         nl 
+	     ;
+		 fail
+	     )
+	 ;
+	     load_next(S1)
+	 ).
+
+non_strict(prove_query) ?
+prove_query(Query,Stream) :-
+	( 
+	    RC = copy_term(rest_chars),
+	    RT = copy_term(rest_token),
+	    open_in("stdin",_),
+	    retract(( load_query :- @ )),
+	    assert(( load_query :- Query )),
+	    @ = call_once(load_query), 
+	    set_input(Stream),
+	    check_changes(RC,RT),
+	    fail
+	;
+	    succeed
+	).
+
+dynamic(load_query) ?
+load_query.
+
+check_changes(RC,RT) :-
+	rest_chars <<- RC,
+	rest_token <<- RT.
+
+assert_declaration(Declaration,Stream) :-
+	(
+	    'built_ins#term_xpand'(Declaration,NewDefs),!,
+	    cond( NewDefs :=< list,
+	          maprel(assert, NewDefs),
+		  assert(NewDefs))
+	;
+	    nl_err,
+	    write_err("*** Error in term expansion in file '",
+	                  Stream.input_file_name,"'"),
+	    nl_err
+	).
+
+write_syntax_error(Stream) :-
+	close(Stream),
+	nl_err,
+	write_err("*** Syntax error near line ",Stream.line_count,
+		      " in file '",Stream.input_file_name,"'"),
+	nl_err,
+	fail.	
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                             %
+% extensions for an easier use                                                %
+%                                                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% load selectif
+%
+
+load_l(X)  :- 
+	loadpath2(X,{".lf";""},true).
+
+load_gr(X) :- 
+	loadpath2(X,".gr",true).
+
+load_in(X) :-
+	loadpath2(X,".in",false).
+
+non_strict(loadpath2) ?
+loadpath2(X,Suffix,Bool) :- 
+	cond( X :=< string,
+	      S = X,
+	      S = psi2str(X)),
+	F = strcon(S, eval(Suffix)),
+	(
+	    exists_file(F),!,load_custom2(F,Bool)
+	;
+	    exists_file(CF:strcon(load_path,F)), !,load_custom2(CF,Bool)
+	).
+
+loadpath2(X) :-  write_err("*** No file '",X,"' found"),nl_err.
+
+
+load_custom2(F,true) :-
+	!,
+	(
+	    loaded_file(F), !,
+	    write("*** File '",F,"' was already loaded"),nl
+	;
+	    load_life(F),
+	    assert(loaded_file(F))
+	).
+load_custom2(F,false) :- 
+	exists_file(F),
+	!,
+	load_life(F).
+
+assert(loaded_file),retract(loaded_file) ?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

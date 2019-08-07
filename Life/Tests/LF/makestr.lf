@@ -1,0 +1,9 @@
+makestr(X) -> Y  | open_out("lifebuff",S1),
+                   write('"'),
+                   write(X),
+                   write('"'),
+                   close(S1),
+                   open_in("lifebuff",S2),
+                   read_token(Y),
+                   close(S2),
+                   @=system("rm lifebuff").

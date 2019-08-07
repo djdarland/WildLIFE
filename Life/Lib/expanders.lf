@@ -1,0 +1,120 @@
+%	$Id: expanders.lf,v 1.2 1994/12/08 23:57:43 duchier Exp $	
+module("expanders") ?
+
+import("accumulators") ?
+
+
+add_man(expanders,
+     "module(""expanders"")
+
+      This module contains some useful clause expanders.") ?
+
+%%% map a pred on a list
+
+add_man(:-&,
+     "Head :-& Tail.
+
+      This expander lets the user write a list traversal in one clause.
+
+      ex:
+      foo(X) :-& process(X).
+
+         is translated into:
+
+      foo([]) :- !.
+      foo([X|Tail]) :-
+          process(X),
+          foo(Tail).
+
+      The ""list"" argument is always the first one. The expanded predicate may
+      have other arguments: they are passed to the recursive call.
+
+      ex:
+      add_feats(X,Term) :-& Term.X = @.
+
+         is translated into:
+
+      add_feats([]) :- !.
+      add_feats([X|Tail],Term) :- Term.X = @, add_feats(Tail,Term).
+
+
+      Rules may end with ""."" only if at least one option of expand load is 
+      true. Otherwise, they must end with ""?"".") ?
+
+public(:-&) ?
+op(1200,xfx,:-&) ?
+non_strict(:-&) ?
+
+(X :-& Y) :-
+	pred_list_expander(@(X,Y),in_clauses => Clauses,out_clauses => []),
+	maprel(assert,Clauses).
+
+public(pred_list_expander) ?
+associate_expanders(:-&,pred_list_expander,:-) ?
+pred_list_expander(X :- Y,in_clauses => In,out_clauses => Out) :-
+	Head1 = root_sort(X) & @([]),
+	Args = get_args(X),
+	X <- root_sort(X) & @([X.1|Tail]) & copy_pointer(Args),
+	RecCall = root_sort(X) & @(Tail) & copy_pointer(Args),
+	In = [(Head1 :- !),(X :- Y,RecCall)|Out].
+	
+get_args(X) ->
+	get_args_2(features(X),X).
+
+get_args_2([1|B],X) -> get_other_args(B,X).
+get_args_2([A|B],X) -> T | T.A = X.A, T = get_args_2(B,X).
+get_args_2([]) -> @.
+
+get_other_args([A|B],X) -> T | T.A = X.A, T = get_other_args(B,X).
+get_other_args([]) -> @.
+
+
+
+add_man(->&,
+     "Head ->& Tail.
+
+      This expander maps 'Tail' on a list.
+
+      ex:
+      foo(X) ->& process(X).
+
+         is translated into:
+
+      foo([X|Tail]) -> [process(X)|foo(Tail)].
+      foo([]) -> [].
+
+      The ""list"" argument is always the first one. The expanded predicate may
+      have other arguments: they are passed to the recursive call.
+
+      ex:
+      map_plus(X,Val) ->&  X + Val.
+
+         is translated into:
+
+      map_plus([X|Tail],Val) ->  [X+Val|map_plus(Tail,Val)].
+      map_plus([]) -> [].
+
+      Rules may end with ""."" only if at least one option of expand load is 
+      true. Otherwise, they must end with ""?"".") ?
+
+
+public(->&) ?
+op(1200,xfx,->&) ?
+non_strict(->&) ?
+
+(X ->& Y) :-
+	func_list_expander(X -> Y,in_clauses => List,out_clauses => []),
+	Cl1 = List.1,Cl2 = List.2 .1,
+	assert(Cl1),
+	assert(Cl2).
+
+associate_expanders(->&,func_list_expander,->) ?
+func_list_expander(X -> Y,in_clauses => In, out_clauses => Out) :-
+	Head1 = root_sort(X) & @([]),
+	Args = get_args(X),
+	X <- root_sort(X) & @([X.1|Tail]) & copy_pointer(Args),
+	RecCall = root_sort(X) & @(Tail) & copy_pointer(Args),
+	In = [(X -> [Y|RecCall]),
+	      (Head1 -> [])|Out].
+
+

@@ -1,0 +1,27 @@
+% Programming using streams in Life
+% The algorithm is from Shapiro's survey article on Concurrent Logic
+% Programming languages.
+% Simple query: A=primes(100)?
+% Query showing streams: A=nsift([2,3,4,5|L])?  (This will residuate on L)
+
+% Create a stream of integers.
+integers(From,To) -> cond(From>To, [], [From|integers(From+1,To)]).
+
+% Remove multiples of P.
+filter([]) -> [].
+filter([X|In],P) -> cond((X mod P =\= 0), [X|filter(In,P)], filter(In,P)).
+
+% Filter out multiples of each element.
+sift([]) -> [].
+sift([P|Ns],Max) -> [P|sift(cond(P=<Max,filter(Ns,P),Ns),Max)].
+
+% Create a list of primes.
+primes(N) -> sift(integers(2,N),sqrt(N)).
+
+% Naive version (from the article):
+% No maximum sift value; 7x slower for primes(1000)
+nsift([]) -> [].
+nsift([P|Ns]) -> [P|nsift(filter(Ns,P))].
+
+nprimes(N) -> nsift(integers(2,N)).
+

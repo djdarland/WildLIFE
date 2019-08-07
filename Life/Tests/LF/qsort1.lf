@@ -1,0 +1,26 @@
+% FILE. . . . . /_/udir4/_/hassan/life/quick_sort
+% EDIT BY . . . Hassan Ait-Kaci
+% ON MACHINE. . Prlp22
+% STARTED ON. . Wed Jun 27 15:02:17 1990
+
+op(500,xfy,\\)?
+
+q_sort(L,order => O) -> undlist(dqsort(L,order => O)).
+
+undlist(X\\Y) -> X | Y=[].
+
+
+dqsort([H|T],order => O) ->
+       (L1\\L2) & where((Less , More)  & split(H,T,([] , []),order => O),
+                       (L1 \\ [H|L3]) & dqsort(Less,order => O),
+                       (L3 \\ L2)    & dqsort(More,order => O)).
+dqsort([]) -> L\\L.
+
+where -> @.
+
+split(X,[H|T],(Less , More),order => O) ->
+        cond(O(H,X),
+             split(X,T,([H|Less] , More),order => O),
+             split(X,T,(Less , [H|More]),order => O)).
+split(@,[],P) -> P.
+

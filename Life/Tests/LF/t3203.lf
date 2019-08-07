@@ -1,0 +1,6 @@
+%
+%		WILD_LIFE TESTING
+%
+%	How predicate is input: using load
+%
+load("FILES/t3203.1")?

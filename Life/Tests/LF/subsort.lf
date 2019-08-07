@@ -1,0 +1,63 @@
+% test out the subsort(A,B) predicate which returns true if A :=< B and
+% residuates on B, else it returns false.
+
+wln(A) :- write(A), nl.
+wless(A,B) :- write(A, " :<= ", B), nl.
+
+testnum(A) :- subsort(A, B), wless(A,B),
+	 B = real, wless(A,B), gc,
+	 B = int, wless(A,B),
+	 B = 1, wless(A,B).
+
+testreal(A) :- subsort(A, B), wless(A,B),
+	 B = real, wless(A,B), gc,
+	 B = 3.2, wless(A,B),
+	 B = int, wless(A,B),
+	 B = 1, wless(A,B).
+
+allChildren(X) -> A | genChildren(children(X), A).
+
+genChildren([H|T], H).
+genChildren([X|T], Y) :- genChildren(T, Y).
+		     
+seqFile <| file.
+randFile <| file.
+readFile <| file.
+writeFile <| file.
+
+seqWriteFile <| seqFile.
+seqWriteFile <| writeFile.
+
+seqReadFile <| seqFile.
+seqReadFile <| readFile.
+
+randReadFile <| readFile.
+randReadFile <| randFile.
+
+terminal <| seqWriteFile.
+terminal <| readFile.
+
+testFile(A,B) :- subsort(A, B),
+		 wless(A,B),
+		 wln("stage one"), gc,
+		 B = allChildren(B), wless(A,B),
+		 wln("stage two"),
+		 B = allChildren(B), wless(A,B),
+		 wln("stage three"), gc,
+		 B = allChildren(B), wless(A,B),
+		 wln("***********"),
+		 fail.
+
+%testnum(2)?
+%testnum(int)?
+%testnum(3.2)?
+%
+%testreal(string)?
+%testreal(1)?
+%testreal(4.0)?
+%
+%testFile(terminal, file)?
+%testFile(seqFile, file)?
+%
+%testFile(mouse_event, event)?
+

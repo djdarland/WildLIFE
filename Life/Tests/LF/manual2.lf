@@ -1,0 +1,9 @@
+bike <| two_wheels.
+bike <| vehicle.
+truck <| four_wheels.
+truck <| vehicle.
+car <| four_wheels.
+car <| vehicle.
+toy_car <| four_wheels.
+rolls_royce <| car.
+

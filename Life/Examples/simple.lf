@@ -1,0 +1,107 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%    
+%  Simple examples
+% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+module("simple") ?
+public(stu,emp,fact,secretary,faculty,person,student,employee) ?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%
+%%% Prolog: member, xxxooo
+%%%
+
+%%%
+%%%  Psi-terms, type constraints, unification. 
+%%%  see also prime.lf, dictionary.lf, soap.lf
+%%%
+
+%
+%
+% 
+%                           person
+%                      _________________
+%                     /                 \
+%              student                   employee
+%             /       \                 /        \
+%       ------         \           staff          faculty
+%      /   |  \         \         /  |  \        /   |   \
+%   bob  piotr pablo     workstudy  art judy   don  john  sheila
+%                       /         \                  
+%                     simon      elena
+%                                 
+                                  
+student <| person.
+employee <| person.
+
+staff <| employee.
+faculty <| employee.
+
+workstudy <| student.
+workstudy <| staff.
+
+bob    <| student.
+piotr  <| student.
+pablo  <| student.
+elena  <| workstudy.
+simon  <| workstudy.
+art    <| staff.
+judy   <| staff.
+don    <| faculty.
+john   <| faculty.
+sheila <| faculty.
+
+:: faculty(secretary => staff,
+	   assistant => person).
+
+:: student(advisor  => faculty,
+           roommate => person).
+
+
+stu -> student( roommate => employee(representative => S),
+	        advisor  => don(secretary => S)).
+
+emp -> employee( advisor  => don(assistant => A),
+                 roommate => S:student(representative => S),
+		 helper   => simon(spouse => A)).
+		 
+	        
+%%%
+%%% functions and residuation
+%%% see also solve.lf, schedule.lf
+%%%
+
+
+fact(0) -> 1.
+fact(X:real) -> X*fact(X-1).
+
+secretary(X:faculty) -> X.secretary.
+
+% events' handling
+% 
+%                    ,-configure_event
+%                    |
+%      ,-window_event|-expose_event
+%      |             |
+%      |             `-destroy_event
+%      |
+%      |                         ,-motion_event
+%      |            ,-mouse_event|
+%      |            |            `-button_event
+% event|-input_event|
+%      |            |
+%      |            `-keyboard_event
+%      |
+%      |-null_event
+%      |
+%      `-other_event
+%
+
+handle_event(M:button_event) -> true |
+	handle_button_event(M),
+	handle_event(xGetEvent(my_window, mask => my_mask)).
+	
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

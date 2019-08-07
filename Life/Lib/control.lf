@@ -1,0 +1,19 @@
+%	$Id: control.lf,v 1.2 1994/12/08 23:56:49 duchier Exp $	
+module("control") ?
+
+public(catch,throw)?
+
+add_man([catch,throw],
+	" catch(X), throw(X): control utilities.
+
+  throw(X) causes backtracking to the choice point created before the 
+  call to catch(X).
+
+  X is bound to a choice point. It may be convenient to use a global (non
+  persistent) variable to store it.
+  ") ?
+
+	  
+catch(X) :- X <- get_choice.
+throw(X) :- set_choice(X),fail.
+ 

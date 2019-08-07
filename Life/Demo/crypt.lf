@@ -1,0 +1,348 @@
+% FILE. . . . . /amd/brie/home/brie/hak/life/crypt.lf
+% EDIT BY . . . Hassan Ait-Kaci
+% ON MACHINE. . Chaumes.Cs.Sfu.Ca
+% STARTED ON. . Fri Nov 18 10:01:47 1994
+
+% Last modified on Mon Dec 05 14:32:35 1994 by Hak
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% The SEND+MORE=MONEY puzzle.
+% Author: Hassan Ait-Kaci
+
+module("crypt") ?
+public(crypt) ?
+
+%%%%%%%%%%%%%%%%%%%
+% THE PUZZLE SOLVER
+%%%%%%%%%%%%%%%%%%%
+
+clues([B0,B1,B2,B3,B4])
+	:-
+	B0 = @                    (bot => M),
+	B1 = @(fst => S, snd => M, thd => O),
+	B2 = @(fst => E, snd => O, thd => N),
+	B3 = @(fst => N, snd => R, thd => E),
+	B4 = @(fst => D, snd => E, thd => Y),
+
+	% The all-distinct constraints:
+	diff_list([S,E,N,D,M,O,R,Y]),
+
+	% Solutions where M=0 are uninteresting:
+	M=1,
+	
+	% The arithmetic constraints:
+	C3 + S + M = O + 10*M,
+      	C2 + E + O = N + 10*C3,
+      	C1 + N + R = E + 10*C2,
+             D + E = Y + 10*C1,
+
+	% Generating binary digits:
+	C3=carry,
+	C2=carry,
+	C1=carry,
+
+	% Generating decimal digits:
+      	S=decimal,
+      	E=decimal,
+      	N=decimal,
+      	D=decimal,
+	O=decimal,
+      	R=decimal,
+      	Y=decimal.
+
+decimal -> {0;1;2;3;4;5;6;7;8;9}.
+
+carry -> {0;1}.
+
+diff_list([]).
+diff_list([H|T]) :-
+	generate_diffs(H,T),
+	diff_list(T),
+	H>=0, H=<9.
+
+generate_diffs(H,[]).
+generate_diffs(H,[A|T]) :-
+	generate_diffs(H,T),
+	A=\=H.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+% THE GRAPHICAL INTERFACE
+%%%%%%%%%%%%%%%%%%%%%%%%%
+
+import("xtools") ?
+import("xtools_utils")?
+
+% The necessary widgets:
+
+s_box <| frame.
+s_box <| field.
+s_box <| text_box.
+
+:: s_box(frame_state => true,
+	 text => " ").
+
+slot_box := s_box(text_color_id => z_color,
+		  font_id => title_font).
+
+time_box := s_box(font_id => z_font,
+		  text_color_id => z_color).
+
+l_box := text_box(offset => -d_border,
+		  font_id => title_font).
+
+p_button := push_button(font_id => z_font).
+
+col_box(S1:string,S2:string,S3:string) -> B
+    |
+	Fst = num_box(S1),
+	Snd = num_box(S2),
+	Thd = num_box(S3),
+
+	same_size([Fst,Snd,Thd]),
+
+	B = vc_list [Top:vc_list[Fst,Snd],v_box(20),Thd],
+
+	B = @(fst => Fst.slot, snd => Snd.slot, thd => Thd.slot, top => Top).
+
+num_box(S:string) -> B
+    |
+	B = hc_list [l_box(text => S),Slot:slot_box],
+	B = @(slot => Slot).
+
+fst_box(S:string) -> B
+    |
+	B = vc_list [Top:box,v_box(20), Bot:num_box(S)],
+	B = @(bot => Bot.slot, top => Top).
+	
+% The control and display panel:
+
+crypt :-
+	(
+	    C = get_choice,
+	    Q = p_button(text => "QUIT",
+			 action => (set_choice(C),fail)),
+
+	    G = p_button(text => "SOLVE",
+			 action => (solve(Ls),
+				    reset_state(M,false))),
+
+	    M = p_button(text => "MORE",
+			 action => (reset_text(TB,"Retrying..."),
+				    reset_boxes(Ls),
+				    try_more,
+				    beep,
+				    reset_text(TB,"No more!"))),
+
+	    A = p_button(text => "ANIMATE",
+			 action => (animate(Ls),
+				    reset_state(R,false),
+				    reset_state(M,false))),
+
+	    R = p_button(text => "RESET",
+			 action => (stop(Stop),
+				    reset_all(Ls))),
+
+	    same_size([Q,G,M,A,R]),
+
+            B0 = fst_box		("M"),
+	    B1 = col_box	("S","M","O"),
+	    B2 = col_box	("E","O","N"),
+	    B3 = col_box	("N","R","E"),
+	    B4 = col_box	("D","E","Y"),
+
+	    same_size(Bs:[B0,B1,B2,B3,B4]),
+
+	    same_size([B0.top,B1.top]),
+
+	    Columns = frame_box(ht_list Bs, padding => 10),
+
+	    TitleBox = fancy_text_box(text => "Send+More=Money",
+				      font => title_font,
+				      colors => [r,i,g,b,y]),
+	    
+	    TimeBox = padded_box
+	      (padding => 10,
+	       vc_list [frame_box(TB:time_box(width => 120,
+					      height => 50,
+					      text => " "),
+				  padding => 3),
+			text_box(text => "Total Time",
+				 font_id => z_font)
+		       ]
+		 ),
+
+	    Panel = panel(title => "Cryptarithmetic")
+	      containing
+	      padded_box(padding => 20,
+			 ht_list [vl_list [Q, v_box(10),
+					   G, v_box(10),
+					   M, v_box(10),
+					   A, v_box(10),
+					   R
+					  ],
+				  vr_list [TitleBox,
+					   v_box(30),
+					   hb_list
+					     [h_box(10),TimeBox,
+					      h_box(10),Columns]
+					  ]
+				 ]),
+
+	    create_box(Panel),
+
+	    Ls = map(boxify,Bs)
+	       & @(timebox => TB,morebox=>M,stopbox=>R,stop=>Stop)
+	;
+	    succeed
+	).
+	
+boxify(B) -> @(box=>B).
+
+% Displaying the solutions:
+
+display_digits([F|R]) :- display_fst(F), display_cols(R).
+
+display_fst(@(box=>@(bot=>Bot_box),
+	      bot=>Bot))
+	:- set_slot(Bot_box,Bot).
+
+display_cols([H|Ls]) :- !, display_col(H), display_cols(Ls).
+display_cols([]).
+
+display_col(@(box=>@(fst=>Fst_box,
+		     snd=>Snd_box,
+		     thd=>Thd_box),
+	      fst => Fst,
+	      snd => Snd,
+	      thd => Thd))
+	:-
+	set_slot(Fst_box,Fst),
+	set_slot(Snd_box,Snd),
+	set_slot(Thd_box,Thd).
+
+set_slot(B,Value:int)
+	-> true
+    |
+	(0 =< Value, Value =< 9, !,
+	 (   reset_text(B,psi2str(Value))
+	 ;   % Erase this slot upon backtracking
+	     reset_text(B," "),
+	     fail
+	 )
+	)
+    ;
+	succeed.
+	
+% Actions for the control panel buttons:
+
+persistent(is_reset)?
+is_reset <<- true?
+
+solve(Ls) :-
+	cond(is_reset,
+	     succeed,
+	     reset(Ls)),
+	is_reset <<- false,
+	reset_text(Ls.timebox,"Solving..."),
+	solution(Ls),
+	display_digits(Ls).
+
+animate(Ls:@(timebox=>TB,
+	     morebox=>M,
+	     stop=>Stop))
+	:-
+	cond(is_reset, succeed, reset(Ls)),
+	reset_text(TB,"Animating..."),
+	(
+	    Stop = get_choice,
+	    display_digits(Ls),
+	    solution(Ls)
+	;
+	    reset(Ls) % reached by STOP only
+	).
+
+stop(Stop) :-
+	cond(is_value(Stop),
+	     (set_choice(Stop),fail),
+	     succeed).
+
+reset_all(Ls) :- cond(is_reset,succeed,reset(Ls)).
+
+reset(Ls:[@(box=>B1),
+	  @(box=>B2),
+	  @(box=>B3),
+	  @(box=>B4),
+	  @(box=>B5)]
+	(timebox => TB,morebox=>M,stopbox=>S,stop=>Stop))
+	:-
+	reset_text(TB," "),
+	reset_boxes(Ls),
+	Ls <- [@(box=>B1),@(box=>B2),@(box=>B3),@(box=>B4),@(box=>B5)],
+	Ls = @(timebox => TB,morebox=>M,stopbox=>S,stop=>Stop),
+	is_reset <<- true.
+
+reset_boxes([F|R]) :- reset_fst(F), reset_cols(R).
+
+reset_fst(@(box=>@(bot=>Bot_box))) :- reset_text(Bot_box," ").
+
+reset_cols([H|Ls]) :- !, reset_col(H), reset_cols(Ls).
+reset_cols([]).
+
+reset_col(@(box=>@(fst=>Fst_box,
+		   snd=>Snd_box,
+		   thd=>Thd_box)))
+	:-
+	reset_text(Fst_box," "),
+	reset_text(Snd_box," "),
+	reset_text(Thd_box," ").
+
+% Colors and fonts
+
+color('Blue') -> blue.
+color('Green') -> green.
+color('Ivory') -> wheat.
+color('Red') -> red.
+color('Yellow') -> yellow.
+
+def_color(main_colors,r,red)?
+def_color(main_colors,i,wheat)?
+def_color(main_colors,g,green)?
+def_color(main_colors,b,blue)?
+def_color(main_colors,y,yellow)?
+
+def_color(main_colors,z_color,'blue violet')?
+
+def_font(z_font,
+	 new_font(cond(life_demo#using_demo_fonts,
+		       "terminal_bold_narrow18",
+		       "-adobe-helvetica-bold-r-narrow--17-120-100-100-p-72-*")))?
+
+def_font(title_font,
+	 new_font(cond(life_demo#using_demo_fonts,
+		       "terminal_bold_narrow28",
+		       "-adobe-helvetica-bold-r-narrow--25-180-100-100-p-116-*")))?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% PUTTING TOGETHER THE SOLVER AND THE GRAPHICAL INTERFACE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+persistent(try_more)?
+try_more <<- succeed?
+
+solution(Ls:@(timebox => B))
+
+	:-
+	try_more <<- fail,
+	A=cpu_time,
+	clues(Ls),
+	Time = cpu_time-A,
+	reset_text(B,strcon(psi2str(Time)," s")).
+
+solution(list(timebox => B))
+	:-
+	reset_text(B,"No more!"),
+	is_reset <<- false,
+	beep,
+	try_more <<- succeed.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

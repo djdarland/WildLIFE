@@ -1,0 +1,6 @@
+X:add,strip(X)&alldiff,write(X),nl,fail?
+X:add, \+strip(X)&alldiff, write(X),nl,fail?
+write(bagof(X,(X:add,X=@(A,B,C,D),A<B,B<C,C<D)))?
+
+write(bagof(X,(X:add,X=@(A,B,C,D),A>B,B>C,C>D)))?
+

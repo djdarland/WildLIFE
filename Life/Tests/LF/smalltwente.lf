@@ -1,0 +1,302 @@
+% Abridged version of program from Twente (Maurice Keulen) that gives a GC
+% related bug (which is most probably due to running out of memory, since
+% the bug doesn't occur or occurs much later if memory size is increased,
+% and doesn't occur in a small version of the program like this one).
+
+% If the ...1 part is commented out, then p? works fine.  Otherwise, p? chokes
+% in an infinite deref_ptr due to the fact that a large chunk of memory contains
+% the same value.  Bizarre fact: doing a single RETURN between the load(...)
+% and the query p? results in everything running normally!
+% BTW, the above behavior does not seem to be reproducible.
+
+% The first part is buggy, since makeunique's retract fails (the structure 1+1
+% does not unify with real), and makeunique's assert does not evaluate N+1.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% This query needs two garbage collections in 4096K of Life data space.
+
+% Top level query
+p :-
+    initunique,
+    tmspec(CL,DB),
+    nl,pretty_writeq(buildhugetree([DB|CL])),nl.
+
+buildhugetree(X:list) -> map(buildhugetree,X).
+buildhugetree(X) ->
+    cond(count(features(X))>0,
+        map(buildpair,map(feature_subterm(2=>X),features(X))),
+        X).
+
+buildpair((L,S)) -> (L,buildhugetree(S),uniquename(dummy)).
+
+count([]) -> 0.
+count([X|T]) -> 1+count(T).
+
+% uniquename(Pre) : returns a name consisting of Pre and a unique number.
+uniquename(Pre) ->
+    str2psi(strcon(psi2str(Pre),num2str(N)))|makeunique(Pre,N).
+firstuniquename(Pre) ->
+    str2psi(strcon(psi2str(Pre),num2str(N)))
+        |(initunique(Pre),makeunique(Pre,N)).
+makeunique(Pre,N+1) :-
+    retract(instanceunique(Pre,N)), !,
+    assert(instanceunique(Pre,N+1)).
+makeunique(Pre,1) :-
+    assert(instanceunique(Pre,1)).
+
+% initunique : Remove all instanceunique, perhaps of one kind U.
+initunique(U) :- retract(instanceunique(U,@)), !, initunique(U).
+initunique.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% This query needs four garbage collections in 4096K of Life data space.
+
+% Top level query, with corrected makeunique definition
+p1 :-
+    initunique1,
+    tmspec(CL,DB),
+    nl,pretty_writeq(buildhugetree1([DB|CL])),nl.
+
+buildhugetree1(X:list) -> map(buildhugetree1,X).
+buildhugetree1(X) ->
+    cond(count1(features(X))>0,
+        map(buildpair1,map(feature_subterm(2=>X),features(X))),
+        X).
+
+buildpair1((L,S)) -> (L,buildhugetree1(S),uniquename1(dummy)).
+
+count1([]) -> 0.
+count1([X|T]) -> 1+count1(T).
+
+% uniquename1(Pre) : returns a name consisting of Pre and a unique number.
+uniquename1(Pre) ->
+    str2psi(strcon(psi2str(Pre),num2str(N)))|makeunique1(Pre,N).
+firstuniquename1(Pre) ->
+    str2psi(strcon(psi2str(Pre),num2str(N)))
+        |(initunique1(Pre),makeunique1(Pre,N)).
+% makeunique1(Pre,X:(N+1)) :-
+%     retract(instanceunique1(Pre,N)), !,
+%     assert(instanceunique1(Pre,X)).
+makeunique1(Pre,X) :-
+    retract(instanceunique1(Pre,N)), !,
+    X=N+1,
+    assert(instanceunique1(Pre,X)).
+makeunique1(Pre,1) :-
+    assert(instanceunique1(Pre,1)).
+
+% initunique1 : Remove all instanceunique, perhaps of one kind U.
+initunique1(U) :- retract(instanceunique1(U,@)), !, initunique1(U).
+initunique1.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Utilities needed to run this from a single file:
+
+num2str(0) -> "0".
+num2str(1) -> "1".
+num2str(2) -> "2".
+num2str(3) -> "3".
+num2str(4) -> "4".
+num2str(5) -> "5".
+num2str(6) -> "6".
+num2str(7) -> "7".
+num2str(8) -> "8".
+num2str(9) -> "9".
+num2str(_A:int) -> cond(_A < 0,
+                        strcon("-",num2str(- _A)),
+                        strcon(num2str(_B:floor(_A / 10)),
+                               num2str(_A - _B * 10))).
+
+feature_subterm(_A,_B) -> _A, _B._A.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%
+% Generated parsetree as LIFE-psi-term for /home/misc_cis/keulen/tm/brock.tm
+%
+tmspec([
+auxclass("Tijd",[],rectype([attr('uren',basictype("int")),attr('minuten',basictype("int")),attr('seconden',basictype("int"))]),
+[constraint('uren',tmand(tmgeql(tmvar('uren',basictype("int")),constant("int",0)),tmleql(tmvar('uren',basictype("int")),constant("int",24)))),
+constraint('minuutjes',tmand(tmleql(tmvar('minuten',basictype("int")),constant("int",0)),tmleql(tmvar('minuten',basictype("int")),constant("int",60)))),
+constraint('sec',tmand(tmleql(tmvar('seconden',basictype("int")),constant("int",0)),tmleql(tmvar('seconden',basictype("int")),constant("int",60))))],
+[],
+[],
+[retmethod('Later',[colon('T',auxclasstype("Tijd"))],basictype("bool"),predcons(true))],
+[],
+[]),
+
+auxclass("Nat",["int"],notype,
+[],
+[],
+[],
+[],
+[],
+[]),
+
+auxclass("Pos_real",["real"],notype,
+[],
+[],
+[],
+[],
+[],
+[]),
+
+class("Instituut",[],'INSTITUTEN',[attr('adres',auxclasstype("Adres")),attr('naam',auxclasstype("String")),attr('telefoonnr',auxclasstype("Telefoonnummer"))],
+[],
+[['adres','naam']],
+[],
+[],
+[],
+[],
+[]),
+
+auxclass("Ziekenhuis_datum",["Datum"],notype,
+[],
+[],
+[],
+[],
+[],
+[]),
+
+class("Huisarts",["Instituut"],'HUISARTSEN',[attr('registratienr',auxclasstype("String"))],
+[],
+[['registratienr']],
+[],
+[],
+[],
+[],
+[]),
+
+class("Tandarts",["Instituut"],'TANDARTSEN',notype,
+[],
+[],
+[],
+[],
+[],
+[],
+[]),
+
+class("Apotheek",["Instituut"],'APOTHEKEN',notype,
+[],
+[],
+[],
+[],
+[],
+[],
+[]),
+
+class("Specialist",["Medewerker"],'SPECIALISTEN',[attr('specialismen',settype(auxclasstype("String")))],
+[constraint('identiteitsnr',tmeql(methcall('Len',tmvar('identiteitsnr',auxclasstype("String")),[]),constant("int",3)))],
+[],
+[],
+[],
+[],
+[],
+[]),
+
+class("Vroegere_specialist",["Specialist"],'VROEGERE_SPECIALISTEN',[attr('uitdiensttreding',auxclasstype("Ziekenhuis_datum"))],
+[constraint('uitdiensttreding',methcall('Later',tmvar('uitdiensttreding',auxclasstype("Ziekenhuis_datum")),[tmvar('indiensttreding',auxclasstype("Ziekenhuis_datum"))]))],
+[],
+[],
+[],
+[],
+[],
+[]),
+
+class("Medisch_personeel",["Werknemer"],'MEDISCH_PERSONEEL',[attr('vooropleiding',auxclasstype("String"))],
+[],
+[],
+[],
+[],
+[],
+[],
+[]),
+
+class("Niet_medisch_personeel",["Werknemer"],'NIET_MEDISCH_PERSONEEL',[attr('functiecode',auxclasstype("String")),attr('maandvergoeding',auxclasstype("Pos_real")),attr('vrijedagen',auxclasstype("Nat"))],
+[constraint('R31',tmleql(tmvar('maandvergoeding',auxclasstype("Pos_real")),tmvar('maandsalaris',auxclasstype("Pos_real"))))],
+[],
+[],
+[],
+[],
+[],
+[]),
+
+class("Verplicht_verzekerde",["Werknemer"],'VERPLICHT_VERZEKERDEN',[attr('apotheek',classtype("Apotheek")),attr('huisarts',classtype("Regio_arts")),attr('tandarts',classtype("Tandarts")),attr('ziekenfondsnr',auxclasstype("String"))],
+[constraint('ziekenfondsnummer',tmleql(methcall('Len',tmvar('ziekenfondsnr',auxclasstype("String")),[]),constant("int",8)))],
+[['ziekenfondsnr']],
+[],
+[],
+[],
+[],
+[]),
+
+class("Particulier_verzekerde",["Werknemer"],'PARTICULIER_VERZEKERDEN',[attr('polisnr',auxclasstype("String")),attr('verzekeraar',classtype("Verzekeraar"))],
+[],
+[['polisnr']],
+[],
+[],
+[],
+[],
+[]),
+
+class("Verzekeraar",["Instituut"],'VERZEKERAARS',notype,
+[],
+[],
+[],
+[],
+[],
+[],
+[]),
+
+class("Plaats",[],'PLAATSEN',[attr('plaatsnaam',auxclasstype("String")),attr('contactpersoon',classtype("Niet_medisch_personeel")),attr('dienstdoende_arts',classtype("Regio_arts")),attr('dienstdoende_apotheek',classtype("Apotheek")),attr('inwonertal',auxclasstype("Nat"))],
+[],
+[['plaatsnaam']],
+[],
+[],
+[],
+[],
+[]),
+
+class("Lopende_opnamen",["Opname"],'LOPENDE_OPNAMEN',[attr('vertrekdatum',auxclasstype("Ziekenhuis_datum"))],
+[constraint('R59',methcall('Later',tmvar('vertrekdatum',auxclasstype("Ziekenhuis_datum")),[tmvar('opnamedatum',auxclasstype("Ziekenhuis_datum"))]))],
+[['patient']],
+[],
+[],
+[],
+[],
+[]),
+
+class("Overdracht",[],'OVERDRACHTEN',[attr('patient',classtype("Patient")),attr('datum',auxclasstype("Ziekenhuis_datum")),attr('specialist',classtype("Specialist")),attr('opnamereden',auxclasstype("String"))],
+[],
+[['datum','patient']],
+[],
+[],
+[],
+[],
+[]),
+
+class("Overplaatsing",[],'OVERPLAATSINGEN',[attr('patient',classtype("Patient")),attr('datum',auxclasstype("Ziekenhuis_datum")),attr('ruimte',classtype("Verpleegruimte")),attr('bevindingen',auxclasstype("String"))],
+[],
+[['datum','patient']],
+[],
+[],
+[],
+[],
+[]),
+
+class("Behandeling",[],'BEHANDELING',[attr('code',auxclasstype("String")),attr('naam',auxclasstype("String")),attr('soort',auxclasstype("String")),attr('tarief',auxclasstype("Pos_real")),attr('minimum_duur',auxclasstype("Tijd")),attr('maximum_duur',auxclasstype("Tijd")),attr('prognose_frequentie',auxclasstype("Nat"))],
+[constraint('duur',tmnot(methcall('Later',tmvar('minimum_duur',auxclasstype("Tijd")),[tmvar('maximum_duur',auxclasstype("Tijd"))])))],
+[['code'],['naam']],
+[],
+[],
+[],
+[],
+[])],
+
+database([],
+[constraint('R08',tmforall(domin('x',tmvar('PATIENTEN',settype(classtype("Patient")))),tmexists(domin('p',tmvar('PLAATSEN',settype(classtype("Plaats")))),tmeql(recsel(recsel(tmvar('x',classtype("Patient")),'adres'),'woonplaats'),recsel(tmvar('p',classtype("Plaats")),'plaatsnaam'))))),
+constraint('R73',tmforall(domin('x',tmvar('OVERPLAATSINGEN',settype(classtype("Overplaatsing")))),tmor(tmexists(domin('y',tmvar('LOPENDE_OPNAMEN',settype(classtype("Lopende_opnamen")))),tmand(tmeql(recsel(tmvar('x',classtype("Overplaatsing")),'patient'),recsel(tmvar('y',classtype("Lopende_opnamen")),'patient')),methcall('Eerder',recsel(tmvar('y',classtype("Lopende_opnamen")),'opnamedatum'),[recsel(tmvar('x',classtype("Overplaatsing")),'datum')]))),tmexists(domin('y',tmvar('BEEINDIGDE_OPNAMEN',settype(classtype("Beeindigde_opname")))),tmand(tmand(tmeql(recsel(tmvar('x',classtype("Overplaatsing")),'patient'),recsel(tmvar('y',classtype("Beeindigde_opname")),'patient')),methcall('Eerder',recsel(tmvar('y',classtype("Beeindigde_opname")),'opnamedatum'),[recsel(tmvar('x',classtype("Overplaatsing")),'datum')])),methcall('Eerder',recsel(tmvar('x',classtype("Overplaatsing")),'datum'),[recsel(tmvar('y',classtype("Beeindigde_opname")),'ontslagdatum')]))))))],[],[])).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

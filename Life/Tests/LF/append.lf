@@ -1,0 +1,44 @@
+
+% Design decision in Wild_LIFE:
+% Functions are called with matching and predicates are called with
+% unification.  To have a routine that has some arguments called
+% with matching and some with unification, you can use the "such-that"
+% built-in function (E|G) which returns E and executes the goal G.
+
+% Last call optimization is orthogonal to the calling method
+% (by matching or by unification).  Unification uses a logical variable
+% as a placeholder for the result.  Since it does not need to keep
+% environments, it can take advantage of LCO.
+
+% Call-by-matching should be used for an _input_.  It guarantees that
+% the input will not be corrupted.
+% Call-by-unification should be used for an _output_.
+
+% 1. Standard functional definition of append:
+% Append with matching for first argument and unification for result.
+% No tail recursion optimization, result returned as function result.
+app2([],L) -> L.
+app2([X|L1],L2) -> [X|app2(L1,L2)].
+
+% 2. Standard predicate definition of append:
+% Append with unification for all arguments.
+% Keeps tail recursion optimization.
+app3([],L,L).
+app3([X|L1],L2,[X|L3]) :- app3(L1,L2,L3).
+
+% 3. Similar to (1), but keeps LCO:
+% Append with matching for first argument and unification for result.
+% Keeps tail recursion optimization, result returned in third argument.
+app1([],L,R) -> true | R=L.
+app1([X|L1],L2,R) -> true | R=[X|L3], app1(L1,L2,L3).
+
+% 4. Purely "checking" version of append:
+% Append with matching for all arguments.
+% Keeps tail recursion optimization.
+app4([],L,L) -> succeed.
+app4([X|L1],L2,[X|L3]) -> succeed | app4(L1,L2,L3).
+
+% 5. Another functional version:
+% Doesn't keep LCO because call to '=' follows call to app5?
+app5([],A)->A.
+app5([X|L1],L2:list) -> [X|L3] | L3=app5(L1,L2).

@@ -1,0 +1,5 @@
+print_list([]).
+print_list([H|T])
+   :- write(H),      % print the first element
+      nl,            % start a new line
+      print_list(T). %

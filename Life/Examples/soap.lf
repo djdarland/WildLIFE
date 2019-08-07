@@ -1,0 +1,29 @@
+% Copyright 1992 Digital Equipment Corporation
+% All Rights Reserved
+% Sample query: soap ?
+
+
+module("soap") ?
+public(soap) ?
+
+soap_opera := tv_show(characters => [H,W,M],
+                      husband => H:dick,
+                      wife => W:alcoholic & long_lost_sister(H),
+                      mailman => M)
+            | lovers(M,H),blackmail(W,M).
+
+person := {gay;alcoholic;drug_addict}.
+dick   <| gay.
+jane   <| alcoholic.
+harry  <| drug_addict.
+
+long_lost_sister(gay) -> {cleopatra;jane}.
+
+lovers(harry,gay).
+
+blackmail(jane,X:drug_addict) :- lovers(X,dick).
+
+terrible(soap_opera).
+
+soap :- terrible(T:tv_show(characters => list)),
+	pretty_write(T).

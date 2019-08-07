@@ -1,0 +1,82 @@
+% Copyright 1992 Digital Equipment Corporation
+% All Rights Reserved
+% Author: Hassan Ait-Kaci
+
+% This is a magic square solver. It generates a size x size square of
+% numbers forming a permutation of [1,size*size] such that all rows, all
+% columns, and both diagonals, sum up to the same total.
+% Execute the query 'magic ?' or 'magic(S) ?' where S is an optional size
+% parameter.
+
+module("magic") ?
+public(magic) ?
+
+
+n_th(1,[H|T]) -> H.
+n_th(N:int,[_|T]) -> n_th(N-1,T).
+
+car([H|T]) -> H.
+cdr([H|T]) -> T.
+
+dynamic(size)?	% size may be specified dynamically.
+size -> 3.	% default size is 3.
+
+grid -> square(size).
+
+vector(0) -> [].
+vector(N:int) -> [int|vector(N-1)].
+
+square(0) -> [].
+square(N:int) -> [vector(size)|square(N-1)].
+
+transpose([[]|list]) -> [].
+transpose(S) -> [map(car,S)|transpose(map(cdr,S))].
+
+entries(S) -> reduce(append,[],S).
+
+diag([]) -> [].
+diag([Row|Rows],N:int,Next) -> [n_th(N,Row)|diag(Rows,Next(N),Next)].
+
+incr(N:int) -> N+1.
+decr(N:int) -> N-1.
+
+diag_dn(S) -> diag(S,1,incr).
+diag_up(S) -> diag(S,size,decr).
+
+all_different([]) :- !.
+all_different([H|T]) :-
+	0<H, H=<size*size,
+	out_of(H,T),
+	all_different(T).
+
+out_of(H,[]) :- !.
+out_of(H,[A|T]) :- A =\= H, out_of(H,T).
+
+all_equal([]) :- !.
+all_equal([H|T],H) :- all_equal(T,H).
+
+sum_up(L) -> reduce((+),0,L).
+
+number -> number_to(size*size).
+number_to(N:int) -> cond(N < 1, {}, {1;1+number_to(N-1)}).
+
+assign_numbers([]) :- !.
+assign_numbers([number|L]) :- assign_numbers(L).
+
+display_square([]) :- !.
+display_square([Row|Rows]) :- nl, display_row(Row), display_square(Rows).
+
+display_row([]) :- nl,!.
+display_row([N|T]) :- write("	",N),display_row(T).
+
+magic(S:{size;int}) :-
+	!,
+	setq(size,S),
+	all_different(Entries:entries(Square:grid)),
+	Total = S*(S*S+1)/2,
+	Total:sum_up(diag_dn(Square)) = sum_up(diag_up(Square)),
+	all_equal(map(sum_up,Square),Total),
+	all_equal(map(sum_up,transpose(Square)),Total),
+	assign_numbers(Entries),
+	display_square(Square),
+	nl, write("Magic Total = ",Total), nl.

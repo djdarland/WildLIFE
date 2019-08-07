@@ -1,0 +1,8 @@
+alias(a,b)?
+alias(b,c)?
+write(a,b,c)?
+.
+alias(y,z)?
+alias(x,y)?
+write(x,y,z)?
+.

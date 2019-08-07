@@ -1,0 +1,28 @@
+
+decimal -> {0;1;2;3;4;5;6;7;8;9}.
+
+to(A,N) :- between(1,A,N).
+
+between(I,I,_).
+between(L,I,H) :- L<H, between(L+1,I,H).
+
+gcd(I,0) -> I.
+gcd(I,J) -> cond(I>J,gcd(J,I mod J),gcd(I,J mod I)).
+
+pyth(A,B,C) :-
+        A<B,
+        1=gcd(A,B),
+        C=sqrt(A*A+B*B),
+        C=int,
+        1=gcd(A,C),
+        1=gcd(B,C).
+
+p(Low,High) :-
+        pyth(A,B,C),
+        between(Low,A,High), between(Low,B,High),
+        write("A=",A," B=",B," C=",C), nl,
+        fail.
+p.
+
+p100 :- p(1,100).
+

@@ -1,0 +1,51 @@
+
+*** Yes
+> > 
+*** Yes
+> 
+*** Yes
+A = a, X = p(A).
+--1> > 
+*** Yes
+A = a, X = p(A).
+--1> > 
+*** Yes
+> boo44
+*** Yes
+> 
+*** Yes
+X = @~.
+--1> boo44
+*** Yes
+X = 44.
+----2> > 
+*** Yes
+X = @~, Y = @~.
+--1> boo44
+*** Yes
+X = 44, Y = write(boo,X).
+----2> > boo44
+*** Yes
+X = 44, Y = write(boo,X).
+--1> > boo44
+*** Yes
+X = 44, Y = write(boo,X).
+--1> > boo44
+*** Yes
+X = 44, Y = write(boo,X).
+--1> > boo44
+*** Yes
+X = 44, Y = write(boo,X).
+--1> > boo44
+*** Yes
+X = 44, Y = write(boo,X).
+--1> > boo44
+*** Yes
+X = 44, Y = write(boo,X).
+--1> > boo44
+*** Yes
+X = 44.
+--1> > boo44
+*** Yes
+X = 44.
+--1> > 

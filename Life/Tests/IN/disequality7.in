@@ -1,0 +1,7 @@
+Y=f(a(a(X1:int)), a(a(X2)))?
+X2=string?
+X2=int?
+X1=X2?
+
+
+

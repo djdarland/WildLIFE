@@ -1,0 +1,32 @@
+%	$Id: times.lf,v 1.2 1994/12/09 00:26:05 duchier Exp $	
+module("times")?
+
+
+public(start_timer,reset_timer,print_timer)?
+
+
+
+add_man([start_timer,reset_timer,print_timer],
+	"start_timer(?Timer,+String),print_timer(Timer),reset_timer(Timer)
+
+         Simple timing utilities.
+
+         Example use:
+
+             start_timer(X,""CPU time is now:""),
+             ...,
+             print_timer(X),
+             reset_timer(X),
+             ...,
+             print_timer(X).")?
+
+
+
+start_timer(X,S:{"CPU-time: ";string}) :- !,X<<-(cpu_time,S).
+
+reset_timer(X) :- X=(@,S),X<<-(cpu_time,S).
+
+print_timer(X) :-
+	write_err(X.2,M:floor(T:(cpu_time-X.1)/60),"min ",
+		  floor((T-M*60)*100)/100,"sec"),nl_err.
+
