@@ -7,30 +7,9 @@
 static char vcid[] = "$Id: memory.c,v 1.10 1995/07/27 19:03:24 duchier Exp $";
 #endif /* lint */
 
-/* need stdlib.h to declare atof */
-#include <stdlib.h>
-#include "extern.h"
-#include "print.h"
-#include "login.h"
-#include "lefun.h"
-#include "token.h"
-#include "error.h"
-#include "xpred.h"
-#include "modules.h" /*  RM: Jan 13 1993  */
-/* #include <malloc.h> 11.9 */
-
-/* external variables */
-
-GENERIC mem_base;
-GENERIC mem_limit;
-GENERIC stack_pointer;
-GENERIC heap_pointer;
-GENERIC other_base;
-
-GENERIC other_limit;
-GENERIC other_pointer;
-
-static long delta;
+#ifdef REV401PLUS
+#include "defs.h"
+#endif
 
 #ifdef prlDEBUG
 static long amount_used;
@@ -47,13 +26,24 @@ static long pass;
 static struct tms last_garbage_time;
 static float gc_time, life_time;
 
-
-int mem_size;
-int alloc_words;
-
 #define ALIGNUP(X) { (X) = (GENERIC)( ((long) (X) + (ALIGN-1)) & ~(ALIGN-1) ); }
 
+static long delta;
+#define LONELY 1
+#ifdef prlDEBUG
+static long amount_used;
+#endif
 
+#ifdef CLIFE
+long pass;
+#else 
+static long pass;
+#endif /* CLIFE */
+
+#define LONELY 1
+
+static struct tms last_garbage_time;
+static float gc_time, life_time;
 
 /************* STUFF FOR PARSING COMMAND LINE ARGS ************************/
 
@@ -108,9 +98,9 @@ int def;
 void pchoices() /*  RM: Oct 28 1993  For debugging. */
 {
   ptr_choice_point c;
-  printf("stack pointer is: %x\n",stack_pointer);
+  printf("stack pointer is: %lx\n",(unsigned long)stack_pointer); // REV401PLUS  "%x" -> "%lx" and cast
   for(c=choice_stack;c;c=c->next)
-    printf("\tc=%x\ts=%x\tg=%x\tu=%x\n",c,c->stack_top,c->goal_stack,c->undo_point);
+    printf("\tc=%lx\ts=%lx\tg=%lx\tu=%lx\n",(unsigned long)c,(unsigned long)c->stack_top,(unsigned long)c->goal_stack,(unsigned long)c->undo_point);
 }
 
 
@@ -136,9 +126,9 @@ void print_undo_stack()
   ptr_stack u=undo_stack;
 
   while (u) {
-    if (u->a<mem_base || u->a>mem_limit ||
-        (GENERIC)u->next<mem_base || (GENERIC)u->next>mem_limit) {
-      printf("UNDO: type:%ld a:%lx b:%lx next:%lx\n",u->type,u->a,u->b,u->next);
+    if ((GENERIC)u->aaaa_3<(GENERIC)mem_base || (GENERIC)u->aaaa_3>(GENERIC)mem_limit ||
+        (GENERIC)u->next<(GENERIC)mem_base || (GENERIC)u->next>(GENERIC)mem_limit) {
+      printf("UNDO: type:%ld a:%lx b:%lx next:%lx\n",u->type,(unsigned long)u->aaaa_3,(unsigned long)u->bbbb_3,(unsigned long)u->next);
       fflush(stdout);
     }
     u=u->next;
@@ -154,14 +144,14 @@ long bounds_undo_stack()
   while (u) {
     if (  (GENERIC)u<mem_base
        || (GENERIC)u>mem_limit
-       || (!VALID_ADDRESS(u->a) && !(u->type & undo_action))
+       || (!VALID_ADDRESS(u->aaaa_3) && !(u->type & undo_action))
        ) {
       if ((GENERIC)u<mem_base || (GENERIC)u>mem_limit) {
         printf("\nUNDO: u=%lx\n",(long)u);
       }
       else {
         printf("\nUNDO: u:%lx type:%ld a:%lx b:%lx next:%lx\n",
-               (long)u,u->type,u->a,u->b,u->next);
+               (unsigned long)u,(unsigned long)u->type,(unsigned long)u->aaaa_3,(unsigned long)u->bbbb_3,(unsigned long)u->next);
       }
       fflush(stdout);
       return FALSE;
@@ -494,8 +484,8 @@ static void check_pair_list(p)
 ptr_pair_list *p;
 {  
   while (unchecked(p,sizeof(pair_list))) {
-    check_psi_term(&((*p)->a));
-    check_psi_term(&((*p)->b));
+    check_psi_term(&((*p)->aaaa_2));
+    check_psi_term(&((*p)->bbbb_2));
     p= &((*p)->next);
   }
 }
@@ -510,9 +500,9 @@ static void check_triple_list(p)
 ptr_triple_list *p;
 {  
   while (unchecked(p,sizeof(triple_list))) {
-    check_psi_term(&((*p)->a));
-    check_psi_term(&((*p)->b));
-    check_definition(&((*p)->c));
+    check_psi_term(&((*p)->aaaa_4));
+    check_psi_term(&((*p)->bbbb_4));
+    check_definition(&((*p)->cccc_4));
     p= &((*p)->next);
   }
 }
@@ -526,7 +516,7 @@ static void check_kids(c)
 ptr_int_list *c;
 {
   while (unchecked(c,sizeof(int_list))) {
-    check_definition(&((*c)->value));
+    check_definition((struct wl_definition **)&((*c)->value_1)); // REV401PLUS cast
     c= &((*c)->next);
   }
 }
@@ -560,7 +550,7 @@ static void check_module_list(c)    /*  RM: Jan 12 1993  */
      ptr_int_list *c;
 {
   while (unchecked(c,sizeof(int_list))) {
-    check_module(&((*c)->value));
+    check_module(&((*c)->value_1));
     c= &((*c)->next);
   }
 }
@@ -657,7 +647,7 @@ ptr_definition *d;
     check_pair_list(&((*d)->rule));
     check_triple_list(&((*d)->properties));
     
-    if ((*d)->type==type) {
+    if ((*d)->type_def==(def_type)type_it) {
       check_kids(&((*d)->parents));
       check_kids(&((*d)->children));
     }
@@ -720,7 +710,7 @@ ptr_definition *d;
     check_pair_list(&((*d)->rule));
     check_triple_list(&((*d)->properties));
     
-    if ((*d)->type==type) {
+    if ((*d)->type_def==(def_type)type_it) {
       check_kids(&((*d)->parents));
       check_kids(&((*d)->children));
     }
@@ -757,7 +747,7 @@ static void check_type_disj(p)
 ptr_int_list *p;
 {  
   while (unchecked(p,sizeof(int_list))) {
-    check_definition(&((*p)->value));
+    check_definition((struct wl_definition **)&((*p)->value_1)); // REV401PLUS cast
     p= &((*p)->next);
   }
 }
@@ -781,91 +771,91 @@ ptr_goal *g;
       
     case unify:
     case unify_noeval: /* PVR 5.6 */
-      check_psi_term(&((*g)->a));
-      check_psi_term(&((*g)->b));
+      check_psi_term(&((*g)->aaaa_1));
+      check_psi_term(&((*g)->bbbb_1));
       break;
       
     case prove:
-      check_psi_term(&((*g)->a));
-      if ((unsigned long)(*g)->b!=DEFRULES) check_pair_list(&((*g)->b));
-      check_pair_list(&((*g)->c));
+      check_psi_term(&((*g)->aaaa_1));
+      if ((unsigned long)(*g)->bbbb_1!=DEFRULES) check_pair_list(&((*g)->bbbb_1));
+      check_pair_list(&((*g)->cccc_1));
       break;
       
     case disj: 
-      check_psi_term(&((*g)->a));
-      check_psi_term(&((*g)->b));
+      check_psi_term(&((*g)->aaaa_1));
+      check_psi_term(&((*g)->bbbb_1));
       break;
       
     case what_next:
-      /* check_choice(&((*g)->b)); */
+      /* check_choice(&((*g)->bbbb_1)); */
       break;
       
     case eval: 
-      check_psi_term(&((*g)->a));
-      check_psi_term(&((*g)->b));
-      check_pair_list(&((*g)->c));
+      check_psi_term(&((*g)->aaaa_1));
+      check_psi_term(&((*g)->bbbb_1));
+      check_pair_list(&((*g)->cccc_1));
       break;
 
     case load:
-      check_psi_term(&((*g)->a));
-      check_string(&((*g)->c));
+      check_psi_term(&((*g)->aaaa_1));
+      check_string(&((*g)->cccc_1));
       break;
       
     case match:
-      check_psi_term(&((*g)->a));
-      check_psi_term(&((*g)->b));
-      check_resid_block(&((*g)->c));
+      check_psi_term(&((*g)->aaaa_1));
+      check_psi_term(&((*g)->bbbb_1));
+      check_resid_block((struct wl_resid_block **)&((*g)->cccc_1)); // REV401PLUS cast
       break;
 
     case general_cut:
-      /* assert((GENERIC)(*g)->a <= (GENERIC)choice_stack); 12.7 17.7 */
-      if (pass==1 && (ptr_choice_point)(*g)->a>choice_stack)
-        (*g)->a=(ptr_psi_term)choice_stack;
-      unchecked(&((*g)->a),LONELY);
+      /* assert((GENERIC)(*g)->aaaa_1 <= (GENERIC)choice_stack); 12.7 17.7 */
+      if (pass==1 && (ptr_choice_point)(*g)->aaaa_1>choice_stack)
+        (*g)->aaaa_1=(ptr_psi_term)choice_stack;
+      unchecked(&((*g)->aaaa_1),LONELY);
       break;
       
     case eval_cut:
-      check_psi_term(&((*g)->a));
-      /* assert((GENERIC)(*g)->b <= (GENERIC)choice_stack); 12.7 17.7 */
-      if (pass==1 && (ptr_choice_point)(*g)->b>choice_stack)
-        (*g)->b=(ptr_psi_term)choice_stack;
-      unchecked(&((*g)->b),LONELY);
-      check_resid_block(&((*g)->c));
+      check_psi_term(&((*g)->aaaa_1));
+      /* assert((GENERIC)(*g)->bbbb_1 <= (GENERIC)choice_stack); 12.7 17.7 */
+      if (pass==1 && (ptr_choice_point)(*g)->bbbb_1>choice_stack)
+        (*g)->bbbb_1=(ptr_psi_term)choice_stack;
+      unchecked(&((*g)->bbbb_1),LONELY);
+      check_resid_block((struct wl_resid_block **)&((*g)->cccc_1)); // REV401PLUS cast
       break;
 
     case freeze_cut:
     case implies_cut:
-      check_psi_term(&((*g)->a));
-      /* assert((GENERIC)(*g)->b <= (GENERIC)choice_stack); 12.7 17.7 */
-      if (pass==1 && (ptr_choice_point)(*g)->b>choice_stack)
-        (*g)->b=(ptr_psi_term)choice_stack;
-      unchecked(&((*g)->b),LONELY);
-      check_resid_block(&((*g)->c));
+      check_psi_term(&((*g)->aaaa_1));
+      /* assert((GENERIC)(*g)->bbbb_1 <= (GENERIC)choice_stack); 12.7 17.7 */
+      if (pass==1 && (ptr_choice_point)(*g)->bbbb_1>choice_stack)
+        (*g)->bbbb_1=(ptr_psi_term)choice_stack;
+      unchecked(&((*g)->bbbb_1),LONELY);
+      check_resid_block((struct wl_resid_block **)&((*g)->cccc_1)); // REV401PLUS cast
       break;
       
     case type_disj:
-      check_psi_term(&((*g)->a));
-      check_type_disj(&((*g)->b));
+      check_psi_term(&((*g)->aaaa_1));
+      check_type_disj(&((*g)->bbbb_1));
       break;
       
     case clause:
-      check_psi_term(&((*g)->a));
-      check_psi_term(&((*g)->b));
-      unchecked(&((*g)->c),LONELY);
-      /* check_pair_list((*g)->c); */ /* 6.8 */
+      check_psi_term(&((*g)->aaaa_1));
+      check_psi_term(&((*g)->bbbb_1));
+      unchecked(&((*g)->cccc_1),LONELY);
+      /* check_pair_list((*g)->cccc_1); */ /* 6.8 */
       break;
 
     case del_clause:
-      check_psi_term(&((*g)->a));
-      check_psi_term(&((*g)->b));
-      unchecked(&((*g)->c),LONELY);
-      /* check_pair_list((*g)->c); */ /* 6.8 */
+      check_psi_term(&((*g)->aaaa_1));
+      check_psi_term(&((*g)->bbbb_1));
+      unchecked(&((*g)->cccc_1),LONELY);
+      /* check_pair_list((*g)->cccc_1); */ /* 6.8 */
       break;
 
     case retract:
-      unchecked(&((*g)->a),LONELY);
-      /* check_pair_list((*g)->a); */ /* 6.8 */
-      /*PVR*/ /* check_choice(&((*g)->b)); 9.6 */
+      unchecked(&((*g)->aaaa_1),LONELY);
+      /* check_pair_list((*g)->aaaa_1); */ /* 6.8 */
+      /*PVR*/ /* check_choice(&((*g)->bbbb_1)); 9.6 */
       break;
 
     default:
@@ -890,7 +880,7 @@ ptr_residuation *r;
   while (unchecked(r,sizeof(residuation))) {
 
     if ((*r)->sortflag) /* 22.9 */
-      check_definition(&((*r)->bestsort));
+      check_definition((struct wl_definition **)&((*r)->bestsort)); // REV401PLUS cast
     else
       check_code(&((*r)->bestsort)); /* 21.9 */
 
@@ -898,26 +888,26 @@ ptr_residuation *r;
     code = (*r)->sortflag ? ((ptr_definition)((*r)->bestsort))->code
 			  : (ptr_int_list)(*r)->bestsort;
     /* Copied (almost) verbatim from check_psi_term: */
-    if ((*r)->value) {
+    if ((*r)->value_2) {
       if (code==alist->code) { /*  RM: Dec 15 1992  Will be removed */
-  	l=(ptr_list *) &((*r)->value);
+  	l=(ptr_list *) &((*r)->value_2);
   	if (l)
 	  printf("Found an old list!!\n");
       }
       else if (sub_CodeType(code,real->code))
-        unchecked(&((*r)->value),sizeof(REAL));
+        unchecked(&((*r)->value_2),sizeof(REAL));
       else if (sub_CodeType(code,quoted_string->code))
-        check_string(&((*r)->value));
+        check_string(&((*r)->value_2));
       /* DENYS: BYTEDATA */
       else if (sub_CodeType(code,sys_bytedata->code))
-	check_bytedata(&((*r)->value));
+	check_bytedata(&((*r)->value_2));
       else if (sub_CodeType(code,cut->code)) {
-        if (pass==1 && (*r)->value>(GENERIC)choice_stack)
-          (*r)->value=(GENERIC)choice_stack;
-        unchecked(&((*r)->value),LONELY);
+        if (pass==1 && (*r)->value_2>(GENERIC)choice_stack)
+          (*r)->value_2=(GENERIC)choice_stack;
+        unchecked(&((*r)->value_2),LONELY);
       }
       else if (sub_CodeType(code,variable->code)) /* 8.8 */
-	check_string(&((*r)->value));
+	check_string(&((*r)->value_2));
     }
 
     check_goal_stack(&((*r)->goal));
@@ -964,39 +954,39 @@ ptr_psi_term *t;
     check_definition(&((*t)->type));
     check_attr(&((*t)->attr_list));
     
-    if ((*t)->value) {
+    if ((*t)->value_3) {
 
       if ((*t)->type==alist) { /*  RM: Dec 15 1992  Should be removed  */
-  	l=(ptr_list *) &((*t)->value);
+  	l=(ptr_list *) &((*t)->value_3);
   	if (l)
 	  printf("Found an old list!\n");
       }
       else
 
 	if (sub_type((*t)->type,real))
-	  unchecked(&((*t)->value),sizeof(REAL));
+	  unchecked(&((*t)->value_3),sizeof(REAL));
 	else if (sub_type((*t)->type,quoted_string))
-	  check_string(&((*t)->value));
+	  check_string(&((*t)->value_3));
       /* DENYS: BYTEDATA */
 	else if (sub_type((*t)->type,sys_bytedata))
-	  check_bytedata(&((*t)->value));
+	  check_bytedata(&((*t)->value_3));
 #ifdef CLIFE
 	else if ((*t)->type->type==block) {  /*  RM: Jan 27 1993  */
-	  check_block_value(&((*t)->value));
+	  check_block_value(&((*t)->value_3));
 	}
 #endif /* CLIFE */
 	else if ((*t)->type==cut) { /*  RM: Oct 28 1993  */
-	  /* assert((*t)->value <= (GENERIC)choice_stack); 12.7 17.7 */
-	  if (pass==1 && (*t)->value>(GENERIC)choice_stack)
-	    (*t)->value=(GENERIC)choice_stack;
-	  unchecked(&((*t)->value),LONELY);
+	  /* assert((*t)->value_3 <= (GENERIC)choice_stack); 12.7 17.7 */
+	  if (pass==1 && (*t)->value_3>(GENERIC)choice_stack)
+	    (*t)->value_3=(GENERIC)choice_stack;
+	  unchecked(&((*t)->value_3),LONELY);
 	}
 	else if (sub_type((*t)->type,variable)) /* 8.8 */
-	  check_string(&((*t)->value));
+	  check_string(&((*t)->value_3));
 	else if ((*t)->type!=stream)
-	  Errorline("non-NULL value field in garbage collector, type='%s', value=%d.\n",
+	  Errorline("non-NULL value_3 field in garbage collector, type='%s', value=%d.\n",
 		    (*t)->type->keyword->combined_name,
-		    (*t)->value);
+		    (*t)->value_3);
     }
     
     /* check_psi_term(&((*t)->coref)); 9.6 */
@@ -1021,7 +1011,7 @@ ptr_node *n;
   while (unchecked(n,sizeof(node))) {
     check_attr(&((*n)->left));
     check_string(&((*n)->key));
-    check_psi_term(&((*n)->data));
+    check_psi_term((ptr_psi_term *)&((*n)->data)); // REV401PLUS cast
 
     n = &((*n)->right);
     /* check_attr(&((*n)->right)); 9.6 */
@@ -1076,11 +1066,11 @@ ptr_stack *s;
     switch((*s)->type) {
       
     case psi_term_ptr:
-      check_psi_term(&((*s)->b));
+      check_psi_term((ptr_psi_term *)&((*s)->bbbb_3));  // REV401PLUS cast
       break;
       
     case resid_ptr:
-      check_resid(&((*s)->b));
+      check_resid(&((*s)->bbbb_3));
       break;
       
     case int_ptr:
@@ -1088,22 +1078,22 @@ ptr_stack *s;
       break;
       
     case def_ptr:
-      check_definition(&((*s)->b));
+      check_definition((struct wl_definition **)&((*s)->bbbb_3));
       break;
       
     case code_ptr:
-      check_code(&((*s)->b));
+      check_code(&((*s)->bbbb_3));
       break;
 
     case goal_ptr:
-      check_goal_stack(&((*s)->b));
+      check_goal_stack(&((*s)->bbbb_3));
       break;
 
     case cut_ptr: /* 22.9 */
       break;
 #ifdef CLIFE
     case block_ptr: /*  CB: Jan 28 1993  */
-      check_block_value(&((*s)->b));
+      check_block_value(&((*s)->bbbb_3));
       break;
 
 #endif /* CLIFE */
@@ -1166,8 +1156,8 @@ static void check_special_addresses()
   while (p) {
     if (!(p->type & undo_action)) {
       /* Only update an address if it's within the Life data space! */
-      if (VALID_RANGE(p->a)) unchecked(&(p->a),LONELY);
-      if (p->type==cut_ptr) unchecked(&(p->b),LONELY); /* 22.9 */
+      if (VALID_RANGE(p->aaaa_3)) unchecked(&(p->aaaa_3),LONELY);
+      if (p->type==cut_ptr) unchecked(&(p->bbbb_3),LONELY); /* 22.9 */
     }
     p=p->next;
   }
@@ -1183,7 +1173,7 @@ static void check_psi_list(l)
 ptr_int_list *l;
 {
   while(unchecked(l,sizeof(int_list))) {
-    check_psi_term(&((*l)->value));
+    check_psi_term((ptr_psi_term *)&((*l)->value_1));
     l= &((*l)->next);
   }
 }
@@ -1216,7 +1206,7 @@ ptr_node *n;
   if (unchecked(n,sizeof(node))) {
     check_var(&((*n)->left));
     check_string(&((*n)->key));
-    check_psi_term(&((*n)->data));
+    check_psi_term((ptr_psi_term *)&((*n)->data));
     check_var(&((*n)->right));
   }
 }
@@ -1286,7 +1276,7 @@ static void check()
   check_definition(&disj_nil);  /*  RM: Feb 16 1993  */
   check_definition(&eof);
   check_definition(&eqsym);
-  check_definition(&false);
+  check_definition(&lf_false);
   check_definition(&funcsym);
   check_definition(&functor);
   check_definition(&iff);
@@ -1304,7 +1294,7 @@ static void check()
   check_definition(&succeed);
   check_definition(&such_that);
   check_definition(&top);
-  check_definition(&true);
+  check_definition(&lf_true);
   check_definition(&timesym);
   check_definition(&tracesym); /* 26.1 */
   check_definition(&typesym);

@@ -7,12 +7,9 @@
 static char vcid[] = "$Id: trees.c,v 1.3 1995/07/27 21:22:21 duchier Exp $";
 #endif /* lint */
 
-#include "extern.h"
-#include "print.h"
-#include "memory.h"
-#include "login.h"
-
-  
+#ifdef REV401PLUS
+#include "defs.h"
+#endif
 
 /******** INTCMP(a,b)
   Compares two integers, for use in FIND or INSERT.
@@ -172,7 +169,7 @@ char *s;
   COMP(a,b) should return n where: n=0 if a=b; n>0 if a>b; n<0 if a<b.
 */
 ptr_node general_insert(comp,keystr,tree,info,heapflag,copystr,bkflag)
-long (*comp)();
+long comp;
 char *keystr;
 ptr_node *tree;
 GENERIC info;
@@ -185,8 +182,8 @@ long heapflag, copystr, bkflag;
   
   do {
     if (*tree==NULL) {
-      if (bkflag==1) push_ptr_value(int_ptr,tree);
-      else if (bkflag==2) push_ptr_value_global(int_ptr,tree);
+      if (bkflag==1) push_ptr_value(int_ptr,(GENERIC *)tree); // REV401PLUS cast
+      else if (bkflag==2) push_ptr_value_global(int_ptr,(GENERIC *)tree); // REV401PLUS cast
       *tree = (heapflag==HEAP) ? HEAP_ALLOC(node): STACK_ALLOC(node);
       result= *tree;
       (*tree)->key = copystr ? heap_copy_string(keystr) : keystr;
@@ -196,7 +193,11 @@ long heapflag, copystr, bkflag;
       to_do=FALSE;
     }
     else {
-      cmp=(*comp)(keystr,(*tree)->key);
+      // revised logic not using function pointer
+      if (comp == INTCMP) cmp=intcmp((long)keystr,(long)(*tree)->key); // REV401PLUS cast
+      else if (comp == STRCMP) cmp=strcmp(keystr,(*tree)->key);
+      else if (comp == FEATCMP) cmp=featcmp(keystr,(*tree)->key);
+
       if (cmp<0)
 	tree=(&((*tree)->left));
       else
@@ -228,7 +229,7 @@ char *keystr;
 ptr_node *tree;
 GENERIC info;
 {
-  general_insert(featcmp,keystr,tree,info,HEAP,TRUE,0);
+  general_insert(FEATCMP,keystr,tree,info,HEAP,TRUE,0);
 }
 
 
@@ -243,7 +244,7 @@ char *keystr;
 ptr_node *tree;
 GENERIC info;
 {
-  general_insert(featcmp,keystr,tree,info,STACK,TRUE,0);
+  general_insert(FEATCMP,keystr,tree,info,STACK,TRUE,0);
 }
 
 
@@ -254,7 +255,7 @@ GENERIC info;
   Return the pointer to the node of KEYSTR.
 */
 ptr_node heap_insert(comp,keystr,tree,info)
-long (*comp)();
+long comp;
 char *keystr;
 ptr_node *tree;
 GENERIC info;
@@ -268,7 +269,7 @@ GENERIC info;
   Exactly the same as heap_insert, only the new node is in the stack.
 */
 ptr_node stack_insert(comp,keystr,tree,info)
-long (*comp)();
+long comp;
 char *keystr;
 ptr_node *tree;
 GENERIC info;
@@ -285,7 +286,7 @@ GENERIC info;
   Trail the change with a trail check.
 */
 ptr_node bk_stack_insert(comp,keystr,tree,info)
-long (*comp)();
+long comp;
 char *keystr;
 ptr_node *tree;
 GENERIC info;
@@ -302,7 +303,7 @@ GENERIC info;
   Always trail the change.
 */
 ptr_node bk2_stack_insert(comp,keystr,tree,info)
-long (*comp)();
+long comp;
 char *keystr;
 ptr_node *tree;
 GENERIC info;
@@ -317,7 +318,7 @@ GENERIC info;
   COMP to compare keys.
 */
 ptr_node find(comp,keystr,tree)
-long (*comp)();
+long comp;
 char *keystr;
 ptr_node tree;
 {
@@ -336,7 +337,11 @@ ptr_node tree;
       to_do=FALSE;
     }
     else {
-      cmp=(*comp)(keystr,tree->key);
+      // revised logic not using function pointer
+      if (comp == INTCMP) cmp=intcmp((long)keystr,(long)((struct wl_node *)tree)->key);
+      else if (comp == STRCMP) cmp=strcmp((char *)keystr,(char *)((struct wl_node *)tree)->key);
+      else if (comp == FEATCMP) cmp=featcmp(keystr,((struct wl_node *)tree)->key);
+
       if (cmp<0)
 	tree=tree->left;
       else
@@ -448,7 +453,7 @@ ptr_node *n;
     else if ((*n)->left) {
       if ((*n)->right) {
         r=(*n)->right;
-        new=heap_insert(featcmp,r->key,&((*n)->left),r->data);
+        new=heap_insert(FEATCMP,r->key,&((*n)->left),r->data);
         new->left=r->left;
         new->right=r->right;
         *n = (*n) -> left;

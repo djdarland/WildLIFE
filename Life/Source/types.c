@@ -14,30 +14,9 @@ static char vcid[] = "$Id: types.c,v 1.7 1994/12/15 22:28:56 duchier Exp $";
 
  ****************************************************************************/
 
-#include "extern.h"
-#include "login.h"
-#include "trees.h"
-#include "print.h"
-#include "memory.h"
-#include "error.h"
-#include "token.h"
-
-long types_modified;
-long type_count;
-
-ptr_definition *gamma_table;
-
-ptr_int_list adults,children;
-
-typedef struct wl_pair_def{
-  ptr_definition car;
-  ptr_definition cdr;
-} pair_def;
-
-
-void make_type_link(); /* Forward declaration */
-
-
+#ifdef REV401PLUS
+#include "defs.h"
+#endif
 
 /******** PRINT_DEF_TYPE(t)
   This prints type T to stderr, where T=predicate, function or type.
@@ -45,17 +24,17 @@ void make_type_link(); /* Forward declaration */
 void print_def_type(t)
 def_type t;
 {
-  switch (t) {
-  case predicate:
+  switch ((long)t) {
+  case predicate_it:
     perr("predicate");
     break;
-  case function:
+  case function_it:
     perr("function");
     break;
-  case type:
+  case type_it:
     perr("sort");
     break;
-  case global: /*  RM: Feb  8 1993  */
+  case global_it: /*  RM: Feb  8 1993  */
     perr("global variable");
     break;
   default:
@@ -94,12 +73,12 @@ long yes_or_no()
 
 
 /* Remove references to d in d's children or parents */
-remove_cycles(d, dl)
+void remove_cycles(d, dl) // REV401PLUS void
 ptr_definition d;
 ptr_int_list *dl;
 {
   while (*dl) {
-    if (((ptr_definition)(*dl)->value)==d)
+    if (((ptr_definition)(*dl)->value_1)==d)
       *dl = (*dl)->next;
     else
       dl= &((*dl)->next);
@@ -122,7 +101,7 @@ ptr_psi_term t;
   deref_ptr(t);
   d=t->type;
   if (d->date<file_date) {
-    if (d->type==type) {
+    if (d->type_def==(def_type)type_it) {
       /* Except for top, sorts are always unprotected, with a warning. */
       if (FALSE /*d==top*/) {
         Errorline("the top sort '@' may not be extended.\n");
@@ -133,31 +112,31 @@ ptr_psi_term t;
         Warningline("extending definition of sort '%s'.\n",d->keyword->symbol);
 	*/
     }
-    else if (d->protected && d->type!=undef) {
+    else if (d->protected && d->type_def!=(def_type)undef_it) {
       if (d->date>0) {
         /* The term was entered in a previous file, and therefore */
         /* cannot be altered. */
         Errorline("the %T '%s' may not be changed.\n", /*  RM: Jan 27 1993  */
-                  d->type, d->keyword->combined_name);
+                  d->type_def, d->keyword->combined_name);
         success=FALSE;
       }
       else {
         if (d->rule && (unsigned long)d->rule<=MAX_BUILT_INS /*&& input_stream==stdin*/) {
           /* d is a built-in, and therefore cannot be altered. */
           Errorline("the built-in %T '%s' may not be extended.\n",
-                    d->type, d->keyword->symbol);
+                    d->type_def, d->keyword->symbol);
           success=FALSE;
         }
         else {
           /* d is not a built-in, and therefore can be altered. */
-          Warningline("extending the %T '%s'.\n",d->type,d->keyword->symbol);
+          Warningline("extending the %T '%s'.\n",d->type_def,d->keyword->symbol);
           if (warningflag) if (!yes_or_no()) success=FALSE;
         }
       }
     }
     
     if (success) {
-      if (d->type==type) { /* d is an already existing type */
+      if (d->type_def==(def_type)type_it) { /* d is an already existing type */
         /* Remove cycles in the type hierarchy of d */
         /* This is done by Richard's version, and I don't know why. */
         /* It seems to be a no-op. */
@@ -191,7 +170,7 @@ ptr_int_list l;
   ptr_int_list n;
 
   n=HEAP_ALLOC(int_list);
-  n->value=v;
+  n->value_1=v;
   n->next=l;
   
   return n;
@@ -215,7 +194,7 @@ ptr_psi_term t1,t2;
     Errorline("the top sort '@' may not be a subsort.\n");
     return FALSE;
   }
-  if (t1->value || t2->value) {
+  if (t1->value_3 || t2->value_3) {
     Errorline("the declaration '%P <| %P' is illegal.\n",t1,t2);
     return FALSE;
   }
@@ -229,17 +208,17 @@ ptr_psi_term t1,t2;
   if (!redefine(t2)) return FALSE;
   d1=t1->type;
   d2=t2->type;
-  if (d1->type==predicate || d1->type==function) {
+  if (d1->type_def==(def_type)predicate_it || d1->type_def==(def_type)function_it) {
     Errorline("the %T '%s' may not be redefined as a sort.\n",  
-              d1->type, d1->keyword->symbol);
+              d1->type_def, d1->keyword->symbol);
   }
-  else if (d2->type==predicate || d2->type==function) {
+  else if (d2->type_def==(def_type)predicate_it || d2->type_def==(def_type)function_it) {
     Errorline("the %T '%s' may not be redefined as a sort.\n",  
-              d2->type, d2->keyword->symbol);
+              d2->type_def, d2->keyword->symbol);
   }
   else {
-    d1->type=type;
-    d2->type=type;
+    d1->type_def=(def_type)type_it;
+    d2->type_def=(def_type)type_it;
     types_modified=TRUE;
     make_type_link(d1, d2); /* 1.7 */
     /* d1->parents=cons(d2,d1->parents); */
@@ -267,7 +246,7 @@ long prot;
     t=(ptr_psi_term)n->data;
     deref_ptr(t);
     if (t->type) {
-      if (t->type->type==type) {
+      if (t->type->type_def==(def_type)type_it) {
         Warningline("'%s' is a sort. It can be extended without a declaration.\n",
                     t->type->keyword->symbol);
       }
@@ -304,7 +283,7 @@ ptr_node n;
     t=(ptr_psi_term)n->data;
     deref_ptr(t);
     if (t->type) {
-      if (t->type->type==type) {
+      if (t->type->type_def==(def_type)type_it) {
         Warningline("'%s' is a sort--only functions and predicates\
  can have unevaluated arguments.\n",t->type->keyword->symbol);
       }
@@ -433,7 +412,7 @@ ptr_psi_term t;
               ok=assert_less(arg2,typ1);
               if (ok) any_ok=TRUE;
               if (ok && (arg2->attr_list || pred!=NULL)) {
-                add_rule(arg2,pred,type);
+                add_rule(arg2,pred,(def_type)type_it);
               }
             }
             else {
@@ -455,7 +434,7 @@ ptr_psi_term t;
         if (ok) any_ok=TRUE;
         typ2->type=typ1->type;
         if (ok && (typ2->attr_list || pred!=NULL))
-          add_rule(typ2,pred,type);
+          add_rule(typ2,pred,(def_type)type_it);
         else
           assert_ok=TRUE;
       }
@@ -466,7 +445,7 @@ ptr_psi_term t;
         ok=assert_less(typ1,typ2);
         if (ok) any_ok=TRUE;
         if (ok && (typ1->attr_list || pred!=NULL))
-          add_rule(typ1,pred,type);
+          add_rule(typ1,pred,(def_type)type_it);
         else
           assert_ok=TRUE;
       }
@@ -507,17 +486,17 @@ ptr_psi_term t;
       }
     }
     
-    if (arg1 && wl_const(*arg1)) {
+    if (arg1 && wl_const_3(*arg1)) {  // REV401PLUS need correct macro for value_3
       /* if (!redefine(arg1)) return;   RM: Feb 19 1993  */
       d=arg1->type;
-      if (d->type==predicate || d->type==function) {
+      if (d->type_def==(def_type)predicate_it || d->type_def==(def_type)function_it) {
         Errorline("the %T '%s' may not be redefined as a sort.\n",
-                  d->type, d->keyword->symbol);
+                  d->type_def, d->keyword->symbol);
       }
       else {
-        d->type=type;
+        d->type_def=(def_type)type_it;
         types_modified=TRUE;
-        add_rule(typ,pred,type);
+        add_rule(typ,pred,(def_type)type_it);
       }
     }
     else {
@@ -543,9 +522,9 @@ void find_adults()       /*  RM: Feb  3 1993  */
   ptr_int_list l;
 
   for(d=first_definition;d;d=d->next)
-    if(d->type==type && d->parents==NULL) {
+    if(d->type_def==(def_type)type_it && d->parents==NULL) {
       l=HEAP_ALLOC(int_list);
-      l->value=(GENERIC)d;
+      l->value_1=(GENERIC)d;
       l->next=adults;
       adults=l;
     }
@@ -568,7 +547,7 @@ ptr_definition d;
   long flag;
 
   l=HEAP_ALLOC(int_list);
-  l->value=(GENERIC)d;
+  l->value_1=(GENERIC)d;
   l->next=children;
   children=l;
 
@@ -579,15 +558,15 @@ ptr_definition d;
     
     while (flag) {
       if (*t)
-        if ((*t)->a==rule->a && (*t)->b==rule->b && (*t)->c==d)
+        if ((*t)->aaaa_4==rule->aaaa_2 && (*t)->bbbb_4==rule->bbbb_2 && (*t)->cccc_4==d)
           flag=FALSE;
         else
           t= &((*t)->next);
       else {
         *t = HEAP_ALLOC(triple_list);
-        (*t)->a=rule->a;
-        (*t)->b=rule->b;
-        (*t)->c=d;
+        (*t)->aaaa_4=rule->aaaa_2;
+        (*t)->bbbb_4=rule->bbbb_2;
+        (*t)->cccc_4=d;
         (*t)->next=NULL;
         flag=FALSE;
       }
@@ -609,7 +588,7 @@ ptr_triple_list prop;
   long flag;
 
   l=HEAP_ALLOC(int_list);
-  l->value=(GENERIC)d;
+  l->value_1=(GENERIC)d;
   l->next=children;
   children=l;
 
@@ -619,15 +598,15 @@ ptr_triple_list prop;
     
     while (flag) {
       if (*t)
-        if ((*t)->a==prop->a && (*t)->b==prop->b && (*t)->c==prop->c)
+        if ((*t)->aaaa_4==prop->aaaa_4 && (*t)->bbbb_4==prop->bbbb_4 && (*t)->cccc_4==prop->cccc_4)
           flag=FALSE;
         else
           t= &((*t)->next);
       else {
         *t = HEAP_ALLOC(triple_list);
-        (*t)->a=prop->a;
-        (*t)->b=prop->b;
-        (*t)->c=prop->c;
+        (*t)->aaaa_4=prop->aaaa_4;
+        (*t)->bbbb_4=prop->bbbb_4;
+        (*t)->cccc_4=prop->cccc_4;
         (*t)->next=NULL;
         flag=FALSE;
       }
@@ -655,7 +634,7 @@ void propagate_definitions()
     children=NULL;
     
     while (adults) {
-      d=(ptr_definition)adults->value;
+      d=(ptr_definition)adults->value_1;
       
       insert_own_prop(d);
       children=children->next;
@@ -663,9 +642,9 @@ void propagate_definitions()
       kids=d->children;
       
       while(kids) {
-        insert_prop(kids->value,d->properties);
-        /* if (d->always_check && kids->value)
-          ((ptr_definition)kids->value)->always_check=TRUE; */
+        insert_prop((ptr_definition)kids->value_1,d->properties); // REV401PLUS cast
+        /* if (d->always_check && kids->value_1)
+          ((ptr_definition)kids->value_1)->always_check=TRUE; */
         kids=kids->next;
       }
       adults=adults->next;
@@ -695,7 +674,7 @@ long count_sorts(c0)  /*  RM: Feb  3 1993  */
   ptr_definition d;
 
   for(d=first_definition;d;d=d->next)
-    if (d->type==type) c0++;
+    if (d->type_def==(def_type)type_it) c0++;
   
   return c0;
 }
@@ -711,7 +690,7 @@ void clear_coding()   /*  RM: Feb  3 1993  */
   ptr_definition d;
 
   for(d=first_definition;d;d=d->next)
-    if (d->type==type) d->code=NOT_CODED;
+    if (d->type_def==(def_type)type_it) d->code=NOT_CODED;
 }
 
 
@@ -726,8 +705,8 @@ void least_sorts()  /*  RM: Feb  3 1993  */
   ptr_definition d;
 
   for(d=first_definition;d;d=d->next)
-    if (d->type==type && d->children==NULL && d!=nothing)
-      nothing->parents=cons(d,nothing->parents);
+    if (d->type_def==(def_type)type_it && d->children==NULL && d!=nothing)
+      nothing->parents=cons((GENERIC)d,nothing->parents);  // REV401PLUS cast
 }
 
 
@@ -742,8 +721,8 @@ void all_sorts()   /*  RM: Feb  3 1993  */
   ptr_definition d;
   
   for(d=first_definition;d;d=d->next)
-    if (d->type==type && d!=nothing)
-      nothing->parents=cons(d,nothing->parents);
+    if (d->type_def==(def_type)type_it && d!=nothing)
+      nothing->parents=cons((GENERIC)d,nothing->parents);  // REV401PLUS cast
 }
   
 
@@ -758,20 +737,20 @@ long p;
   long v=1;
 
   code=HEAP_ALLOC(int_list);
-  code->value=0;
+  code->value_1=0;
   code->next=NULL;
   result=code;
   
   while (p>=INT_SIZE) {
     code->next=HEAP_ALLOC(int_list);
     code=code->next;
-    code->value=0;
+    code->value_1=0;
     code->next=NULL;
     p=p-INT_SIZE;
   }
 
   v= v<<p ;
-  code->value=(GENERIC)v;
+  code->value_1=(GENERIC)v;
 
   return result;
 }
@@ -786,7 +765,7 @@ ptr_int_list u;
   ptr_int_list code;
 
   code = HEAP_ALLOC(int_list);
-  code->value=0;
+  code->value_1=0;
   code->next=NULL;
 
   or_codes(code, u);
@@ -804,12 +783,12 @@ void or_codes(u,v)
 ptr_int_list u,v;
 {
   while (v) {
-    u->value= (GENERIC)(((unsigned long)(u->value)) | ((unsigned long)(v->value)));
+    u->value_1= (GENERIC)(((unsigned long)(u->value_1)) | ((unsigned long)(v->value_1)));
     v=v->next;
     if (u->next==NULL && v) {
       u->next=HEAP_ALLOC(int_list);
       u=u->next;
-      u->value=0;
+      u->value_1=0;
       u->next=NULL;
     }
     else
@@ -826,7 +805,7 @@ ptr_int_list u,v;
   This operation should be done after encoding.
   For correct operation, w>=maximum number of words used for a code.
 */
-equalize_codes(len) /*  RM: Feb  3 1993  */
+void equalize_codes(len) /*  RM: Feb  3 1993  */ // REV401PLUS void
      int len;
 {
   ptr_definition d;
@@ -835,7 +814,7 @@ equalize_codes(len) /*  RM: Feb  3 1993  */
   int w;
   
   for(d=first_definition;d;d=d->next)
-    if (d->type==type) {
+    if (d->type_def==(def_type)type_it) {
       c = d->code;
       ci = &(d->code);  /*  RM: Feb 15 1993  */
       w=len;
@@ -850,7 +829,7 @@ equalize_codes(len) /*  RM: Feb  3 1993  */
       /* Add the words */
       for (i=0; i<w; i++) {
         *ci = HEAP_ALLOC(int_list);
-        (*ci)->value=0;
+        (*ci)->value_1=0;
         ci= &((*ci)->next);
       }
       (*ci)=NULL;
@@ -872,9 +851,9 @@ void make_type_link(t1,t2)
 ptr_definition t1, t2;
 {
   if (t2!=top && !type_member(t2,t1->parents))
-    t1->parents=cons(t2,t1->parents);
+    t1->parents=cons((GENERIC)t2,t1->parents);  // REV401PLUS cast
   if (t2!=top && !type_member(t1,t2->children))
-    t2->children=cons(t1,t2->children);
+    t2->children=cons((GENERIC)t1,t2->children);  // REV401PLUS cast
 }
 
 
@@ -889,7 +868,7 @@ ptr_definition t;
 ptr_int_list tlst;
 {
   while (tlst) {
-   if (t==(ptr_definition)tlst->value) return TRUE;
+   if (t==(ptr_definition)tlst->value_1) return TRUE;
    tlst=tlst->next;
   }
   return FALSE;
@@ -908,14 +887,14 @@ ptr_int_list anc;
   if (anc) {
     perr_sort_list(anc->next);
     if (anc->next) perr(" <| ");
-    perr_sort((ptr_definition)anc->value);
+    perr_sort((ptr_definition)anc->value_1);
   }
 }
 
 void perr_sort_cycle(anc)
 ptr_int_list anc;
 {
-  perr_sort((ptr_definition)anc->value);
+  perr_sort((ptr_definition)anc->value_1);
   perr(" <| ");
   perr_sort_list(anc);
 }
@@ -937,11 +916,11 @@ ptr_int_list anc;
   int_list anc2;
 
   while (p) {
-    pd=(ptr_definition)p->value;
+    pd=(ptr_definition)p->value_1;
     /* If unmarked, mark and recurse */
     if (pd->code==NOT_CODED) {
       pd->code = (ptr_int_list)TRUE;
-      anc2.value=(GENERIC)pd;
+      anc2.value_1=(GENERIC)pd;
       anc2.next=anc;
       errflag=type_cyclicity(pd,&anc2);
       if (errflag) return TRUE;
@@ -979,7 +958,7 @@ long *ch;
 
   child_list = d->children;
   while (child_list) {
-    child = (ptr_definition)child_list->value;
+    child = (ptr_definition)child_list->value_1;
     if (child->always_check) {
       child->always_check = FALSE;
       *ch = TRUE;
@@ -1003,7 +982,7 @@ void one_pass_always_check(ch)
   
   
   for(d=first_definition;d;d=d->next)
-    if (d->type==type && !d->always_check)
+    if (d->type_def==(def_type)type_it && !d->always_check)
       propagate_always_check(d,ch);
 }
 
@@ -1040,126 +1019,198 @@ void encode_types()
   long p=0,i,possible,ok=TRUE;
   ptr_int_list layer,l,kids,dads,code;
   ptr_definition xdef,kdef,ddef,err;
-  
+dennis_debug("0001");  
   if (types_modified) {
+dennis_debug("0001");  
     
     nothing->parents=NULL;
+dennis_debug("0001");  
     nothing->children=NULL;
+dennis_debug("0001");  
     
     top->parents=NULL;
+dennis_debug("0001");  
     top->children=NULL;
+dennis_debug("0001");  
 
     /* The following definitions are vital to avoid crashes */
     make_type_link(integer,real);
-    make_type_link(true,boolean);
-    make_type_link(false,boolean);
+dennis_debug("0001");  
+    make_type_link(lf_true,boolean);
+dennis_debug("0001");  
+    make_type_link(lf_false,boolean);
+dennis_debug("0001");  
 
     /* These just might be useful */
     make_type_link(quoted_string,built_in);
+dennis_debug("0001");  
     make_type_link(boolean,built_in);
+dennis_debug("0001");  
     make_type_link(real,built_in);
+dennis_debug("0001");  
 
     make_sys_type_links();
+dennis_debug("0001");  
     
     type_count=count_sorts(-1); /* bottom does not count */
+dennis_debug("0001");  
     clear_coding();
+dennis_debug("0001");  
     nothing->parents=NULL; /* Must be cleared before all_sorts */
+dennis_debug("0001");  
     all_sorts();
+dennis_debug("0001");  
     if (type_cyclicity(nothing,NULL)) {
+dennis_debug("0001");  
       clear_coding();
+dennis_debug("0001");  
       return;
     }
+dennis_debug("0001");  
     clear_coding();
+dennis_debug("0001");  
     nothing->parents=NULL; /* Must be cleared before least_sorts */
+dennis_debug("0001");  
     least_sorts();
+dennis_debug("0001");  
     
     nothing->code=NULL;
+dennis_debug("0001");  
 
     /*  RM: Feb 17 1993  */
     Traceline("*** Codes:\n%C= %s\n", NULL, nothing->keyword->symbol);
+dennis_debug("0001");  
     
     gamma_table=(ptr_definition *) heap_alloc(type_count*sizeof(definition));
+dennis_debug("0001");  
     
     layer=nothing->parents;
+dennis_debug("0001");  
     
     while (layer) {
+dennis_debug("0001");  
       l=layer;
+dennis_debug("0001");  
       do {
-        xdef=(ptr_definition)l->value;
+dennis_debug("0001");  
+        xdef=(ptr_definition)l->value_1;
+dennis_debug("0001");  
         if (xdef->code==NOT_CODED && xdef!=top) {
+dennis_debug("0001");  
           
           kids=xdef->children;
+dennis_debug("0001");  
           code=two_to_the(p);
+dennis_debug("0001");  
           
           while (kids) {
-            kdef=(ptr_definition)kids->value;
+dennis_debug("0001");  
+            kdef=(ptr_definition)kids->value_1;
+dennis_debug("0001");  
             or_codes(code,kdef->code);
+dennis_debug("0001");  
             kids=kids->next;
+dennis_debug("0001");  
           }
           
+dennis_debug("0001");  
           xdef->code=code;
+dennis_debug("0001");  
           gamma_table[p]=xdef;
+dennis_debug("0001");  
 
 	  /*  RM: Feb 17 1993  */
           Traceline("%C = %s\n", code, xdef->keyword->symbol);
+dennis_debug("0001");  
           p=p+1;
         }
+dennis_debug("0001");  
         
         l=l->next;
         
+dennis_debug("0001");  
       } while (l);
       
+dennis_debug("0001");  
       l=layer;
+dennis_debug("0001");  
       layer=NULL;
+dennis_debug("0001");  
       
       do {
-        xdef=(ptr_definition)l->value;
+dennis_debug("0001");  
+        xdef=(ptr_definition)l->value_1;
+dennis_debug("0001");  
         dads=xdef->parents;
+dennis_debug("0001");  
         
         while (dads) {
-          ddef=(ptr_definition)dads->value;
+dennis_debug("0001");  
+          ddef=(ptr_definition)dads->value_1;
+dennis_debug("0001");  
           if(ddef->code==NOT_CODED) {
+dennis_debug("0001");  
             
             possible=TRUE;
+dennis_debug("0001");  
             kids=ddef->children;
+dennis_debug("0001");  
             
             while(kids && possible) {
-              kdef=(ptr_definition)kids->value;
+dennis_debug("0001");  
+              kdef=(ptr_definition)kids->value_1;
+dennis_debug("0001");  
               if(kdef->code==NOT_CODED)
                 possible=FALSE;
               kids=kids->next;
             }
             if(possible)
-              layer=cons(ddef,layer);
+              layer=cons((GENERIC)ddef,layer); // REV401PLUS cast
           }
+dennis_debug("0001");  
           dads=dads->next;
         }
+dennis_debug("0001");  
         l=l->next;
+dennis_debug("0001");  
       } while(l);
+dennis_debug("0001");  
     }
     
+dennis_debug("0001");  
     top->code=two_to_the(p);
+dennis_debug("0001");  
     for (i=0;i<p;i++)
       or_codes(top->code,two_to_the(i));
+dennis_debug("0001");  
 
-    gamma_table[p]=top;
+ gamma_table[p]=top; // err in debugging?? DJD
+dennis_debug("0001");  
 
     /*  RM: Jan 13 1993  */
     /* Added the following line because type_count is now over generous
        because the same definition can be referenced several times in
        the symbol table because of modules
        */
+dennis_debug("0001");  
     type_count=p+1;
+dennis_debug("0001");  
     for(i=type_count;i<type_count;i++)
       gamma_table[i]=NULL;
     
+dennis_debug("0001");  
     Traceline("%C = @\n\n", top->code);
+dennis_debug("0001");  
     equalize_codes(p/32+1);
+dennis_debug("0001");  
 
+dennis_debug("0001");  
     propagate_definitions();
 
     /* Inherit 'FALSE' always_check flags to all types' children */
+dennis_debug("0001");  
     inherit_always_check();
+dennis_debug("0001");  
     
     Traceline("*** Encoding done, %d sorts\n",type_count);
     
@@ -1167,6 +1218,7 @@ void encode_types()
       Errorline("the sorts 'real' and 'string' are not disjoint.\n");
       ok=FALSE;
     }
+dennis_debug("0001");  
 
     /*  RM: Dec 15 1992  I don't think this really matters any more
 	if (overlap_type(real,alist)) {
@@ -1182,15 +1234,21 @@ void encode_types()
 	}
 	*/
     
+dennis_debug("0001");  
     if (!ok) {
       perr("*** Internal problem:\n");
       perr("*** Wild_Life may behave abnormally because some basic types\n");
       perr("*** have been defined incorrectly.\n\n");
+dennis_debug("0001");  
     }
+dennis_debug("0001");  
 
     types_modified=FALSE;
+dennis_debug("0001");  
     types_done=TRUE;
+dennis_debug("0001");  
   }
+dennis_debug("0001");  
 }
 
 
@@ -1357,10 +1415,10 @@ GENERIC c1,c2,*c3;
     *cd3 = STACK_ALLOC(int_list);
     (*cd3)->next=NULL;
     
-    v1=(unsigned long)(cd1->value);
-    v2=(unsigned long)(cd2->value);
+    v1=(unsigned long)(cd1->value_1);
+    v2=(unsigned long)(cd2->value_1);
     v3=v1 & v2;
-    (*cd3)->value=(GENERIC)v3;
+    (*cd3)->value_1=(GENERIC)v3;
     
     if (v3) {
       if (v3<v1 && v3<v2)
@@ -1455,13 +1513,13 @@ ptr_int_list *c3;
         *c3 = STACK_ALLOC(int_list);
         (*c3)->next=NULL;
 
-        v1=(unsigned long)(c1->value);
-        v2=(unsigned long)(c2->value);
+        v1=(unsigned long)(c1->value_1);
+        v2=(unsigned long)(c2->value_1);
         v3=v1 & v2;
 
 	/* printf("v1=%d, v2=%d, v3=%d\n",v1,v2,v3); */
 	
-        (*c3)->value=(GENERIC)v3;
+        (*c3)->value_1=(GENERIC)v3;
 
 	if(v3!=v1) /*  RM: May  7 1993  */
 	  e1=FALSE;
@@ -1521,7 +1579,7 @@ ptr_definition t2;
 
     if (c1!=NOT_CODED && c2!=NOT_CODED) {     
       while (!result && c1 && c2) {          
-        result=(((unsigned long)(c1->value)) & ((unsigned long)(c2->value)));
+        result=(((unsigned long)(c1->value_1)) & ((unsigned long)(c2->value_1)));
         c1=c1->next;
         c2=c2->next;
       }
@@ -1548,7 +1606,7 @@ ptr_int_list c2;
 {
   if (c1!=NOT_CODED && c2!=NOT_CODED) {
     while (c1 && c2) {
-      if ((unsigned long)c1->value & ~(unsigned long)c2->value) return FALSE;
+      if ((unsigned long)c1->value_1 & ~(unsigned long)c2->value_1) return FALSE;
       c1=c1->next;
       c2=c2->next;
     }
@@ -1606,8 +1664,8 @@ long *smaller;
         
         if (c1!=NOT_CODED && c2!=NOT_CODED) {          
           while (c1 && c2) {          
-            if ((unsigned long)c1->value &  (unsigned long)c2->value) result=TRUE;
-            if ((unsigned long)c1->value & ~(unsigned long)c2->value) *smaller=FALSE;
+            if ((unsigned long)c1->value_1 &  (unsigned long)c2->value_1) result=TRUE;
+            if ((unsigned long)c1->value_1 & ~(unsigned long)c2->value_1) *smaller=FALSE;
             c1=c1->next;
             c2=c2->next;
           }
@@ -1641,7 +1699,7 @@ long *smaller;
     /* At this point, t1->type <| t2->type */
     if (t1->type==t2->type) {
       /* Same types: strict only if first has a value & second does not */
-      if (t1->value!=NULL && t2->value==NULL)
+      if (t1->value_3!=NULL && t2->value_3==NULL)
         sm=TRUE;
       else
         sm=FALSE;
@@ -1674,7 +1732,7 @@ ptr_int_list c;
   unsigned long p=0,dp=0,v=0,dv=0;
   
   while (c) {
-    v=(unsigned long)c->value;
+    v=(unsigned long)c->value_1;
     if(v) {
       dp=p;
       dv=v;
@@ -1709,7 +1767,7 @@ ptr_int_list c;
   while (p) {
     p--;
     c2=gamma_table[p]->code;
-    result=cons(gamma_table[p],result);
+    result=cons((GENERIC)gamma_table[p],result);  // REV401PLUS cast
     prev= &c4;
     *prev=NULL;
     
@@ -1719,7 +1777,7 @@ ptr_int_list c;
       prev= &(c3->next);
       *prev=NULL;
       
-      c3->value=(GENERIC)(((unsigned long)(c->value)) & ~((unsigned long)(c2->value)));
+      c3->value_1=(GENERIC)(((unsigned long)(c->value_1)) & ~((unsigned long)(c2->value_1)));
       
       c=c->next;
       c2=c2->next;

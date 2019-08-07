@@ -14,14 +14,13 @@
 static char vcid[] = "$Id: error.c,v 1.3 1995/07/11 01:53:03 duchier Exp $";
 #endif /* lint */
 
-#include "extern.h"
-#include "print.h"
-#include "types.h"
-#include "login.h"
-#include "lefun.h"
-#include "parser.h" /*  RM: Feb  1 1993  */
-#include "built_ins.h"
-#include "error.h"
+#ifdef REV401PLUS
+#include "defs.h"
+#endif
+
+//
+// There were many changes using stdarg.h instead of varargs.h
+// 
 
 long warningflag=TRUE;
 long quietflag=FALSE; /* 21.1 */
@@ -31,8 +30,12 @@ long stepflag;
 long steptrace;
 long stepcount;
 
+/*! \fn static long depth_gs()
+  \brief depth_gs
 
-/* Depth of goal stack */
+  Depth of goal stack 
+*/
+
 static long depth_gs()
 {
   long i=0;
@@ -42,8 +45,11 @@ static long depth_gs()
   return i;
 }
 
+/*! \fn static long depth_cs()
+  \brief depth_cs
 
-/* Depth of choice point stack */
+  Depth of choice point stack 
+*/
 static long depth_cs()
 {
   long i=0;
@@ -53,8 +59,12 @@ static long depth_cs()
   return i;
 }
 
+/*! \fn static long depth_ts()
+  \brief depth_ts
 
-/* Depth of trail (undo) stack */
+  Depth of trail (undo) stack 
+*/
+
 static long depth_ts()
 {
   ptr_stack t=undo_stack;
@@ -64,9 +74,13 @@ static long depth_ts()
   return i;
 }
 
+/*! \fn void stack_info(FILE *outfile)
+  \brief stack_info
+  \param outfile - FILE *outfile
 
-void stack_info(outfile)
-FILE *outfile;
+*/
+
+void stack_info(FILE *outfile)
 {
   /* Information about size of embedded stacks */
   if (verbose) {
@@ -83,165 +97,563 @@ FILE *outfile;
   }
 }
 
+/*! \brief void outputline(char *format,...)
+  \brief outputline
+  \param format - char *format
+  \param ...
 
+*/
 
-/* void vinfoline ARGS((char *format, VarArgBaseDecl)); */
-
-void vinfoline(); /*  RM: Feb 15 1993  */
-     
-void outputline(format, VarArgBase)
-char *format;
-VarArgBaseDecl
+void outputline(char *format,...)
 {
-  VarArgDecl;
+  va_list VarArg;
+  // int l;	    
+  char buffer_loc[5];   
+  char *p; 
+  unsigned long lng2; 
+  char *cptr; 
+  ptr_int_list pil;  
+  ptr_psi_term psi;  
+  operator kind; 
+  def_type t ; 
+  va_start(VarArg,format);
+  //  vinfoline(format,output_stream, VarArg);
+  //  #define vinfoline(format, outfile, xxxx)  {	
+  for (p=format;p &&  *p; p++) 
+    { 
+      if (*p == '%') 
+	{ 
+	  p++; 
+	  switch (*p) 
+	    { 
+	    case 'd': 
+	    case 'x': 
+	      buffer_loc[0] = '%'; 
+	      buffer_loc[1] = 'l'; 
+	      buffer_loc[2] = *p; 
+	      buffer_loc[3] = 0; 
+	      lng2 = va_arg(VarArg, long); 
+	      fprintf(output_stream, buffer_loc, lng2); 
+	      break; 
+	    case 's': 
+	      buffer_loc[0] = '%'; 
+	      buffer_loc[1] = *p; 
+	      buffer_loc[2] = 0; 
+	      cptr = va_arg(VarArg,char *); 
+	      fprintf(output_stream, buffer_loc, cptr); 
+	      break; 
+	    case 'C': 
+	      /* type coding as bin string */ 
+	      pil = va_arg(VarArg,ptr_int_list); 
+	      print_code(output_stream,pil); 
+	      break; 
+	    case 'P': 
+	      psi = va_arg(VarArg,ptr_psi_term); 
+	      display_psi(output_stream,psi); 
+	      break; 
+	    case 'O': 
+	      kind = va_arg(VarArg,operator); 
+	      print_operator_kind(output_stream,kind); 
+	      break; 
+	    case 'T': 
+	      assert(output_stream==stderr); 
+	      t = va_arg(VarArg,def_type); 
+	      print_def_type(t); 
+	      break; 
+	    case 'E': 
+	      assert(output_stream==stderr); 
+	      perr_i("near line %ld",psi_term_line_number);	
+	      if (strcmp(input_file_name,"stdin")) {	   
+		perr_s(" in file \042%s\042",input_file_name); 
+	      }						   
+	      parse_ok=FALSE;					   
+	      break;						   
+	    case '%':						   
+	      (void)putc(*p,output_stream);				   
+	      break;						   
+	    default: 
+	      fprintf(output_stream,"<%c follows %% : report bug >", *p); 
+	      break; 
+	    } 
+	} 
+      else 
+	(void)putc(*p,output_stream); 
+    } 
+  va_end(VarArg); 
+} 
 
-  VarArgInit(format);
-  vinfoline(format,output_stream, VarArg);
-}
+/*! \fn void traceline(char *format,...)
+  \brief traceline
+  \param format - char *format
+  \param ...
 
-void traceline(format, VarArgBase)
-char *format;
-VarArgBaseDecl
+*/
+
+void traceline(char *format,...)
 {
-  VarArgDecl;
+  va_list VarArg;
+  //  int l;	    
+  char buffer_loc[5];   
+  char *p; 
+  unsigned long lng2; 
+  char *cptr; 
+  ptr_int_list pil;  
+  ptr_psi_term psi;  
+  operator kind; 
+  def_type t ; 
 
+  va_start(VarArg,format);
   
-  VarArgInit(format);  /* RM: Nov 10 1993  */
+  if (trace) // DJD
+    {
+      /* RM: Nov 10 1993  */
+      
+      if ((trace == 2) && (format[0] != 'p')) return;
+      tracing();
+      
+      //      vinfoline(format, stdout, VarArg);
+      // #define vinfoline(format, outfile, xxxx)  { 
+      for (p=format;p &&  *p; p++) 
+	{ 
+	  if (*p == '%') 
+	    { 
+	      p++; 
+	      switch (*p) 
+		{ 
+		case 'd': 
+		case 'x': 
+		  buffer_loc[0] = '%'; 
+		  buffer_loc[1] = 'l'; 
+		  buffer_loc[2] = *p; 
+		  buffer_loc[3] = 0; 
+		  lng2 = va_arg(VarArg, long); 
+		  fprintf(stdout, buffer_loc, lng2); 
+		  break; 
+		case 's': 
+		  buffer_loc[0] = '%'; 
+		  buffer_loc[1] = *p; 
+		  buffer_loc[2] = 0; 
+		  cptr = va_arg(VarArg,char *); 
+		  fprintf(stdout, buffer_loc, cptr); 
+		  break; 
+		case 'C': 
+		  /* type coding as bin string */ 
+		  pil = va_arg(VarArg,ptr_int_list); 
+		  print_code(stdout,pil); 
+		  break; 
+		case 'P': 
+		  psi = va_arg(VarArg,ptr_psi_term); 
+		  display_psi(stdout,psi); 
+		  break; 
+		case 'O': 
+		  kind = va_arg(VarArg,operator); 
+		  print_operator_kind(stdout,kind); 
+		  break; 
+		case 'T': 
+		  assert(stdout==stderr); 
+		  t = va_arg(VarArg,def_type); 
+		  print_def_type(t); 
+		  break; 
+		case 'E': 
+		  assert(stdout==stderr); 
+		  perr_i("near line %ld",psi_term_line_number);	
+		  if (strcmp(input_file_name,"stdin")) {	   
+		    perr_s(" in file \042%s\042",input_file_name); 
+		  }						   
+		  parse_ok=FALSE;					   
+		  break;						   
+		case '%':						   
+		  (void)putc(*p,stdout);				   
+		  break;						   
+		default: 
+		  fprintf(stdout,"<%c follows %% : report bug >", *p); 
+		  break; 
+		} 
+	    } 
+	  else 
+	    (void)putc(*p,stdout); 
+	}
+    } 
+  va_end(VarArg); 
+} 
+
+/*! \fn void infoline(char *format,...)
+  \brief infoline
+  \param format - char *format
+  \param ...
+
+*/
+
+void infoline(char *format,...)
+{
+  va_list VarArg;
+  //  int l;	    
+  char buffer_loc[5];   
+  char *p; 
+  unsigned long lng2; 
+  char *cptr; 
+  ptr_int_list pil;  
+  ptr_psi_term psi;  
+  operator kind; 
+  def_type t ; 
   
-  if ((trace == 2) && (format[0] != 'p')) return;
-  tracing();
+  va_start(VarArg,format);
+  if (NOTQUIET)
+    {
+      
+      //      vinfoline(format, stdout, VarArg);
+      //#define vinfoline(format, outfile, xxxx)  {	
+      for (p=format;p &&  *p; p++) 
+	{ 
+	  if (*p == '%') 
+	    { 
+	      p++; 
+	      switch (*p) 
+		{ 
+		case 'd': 
+		case 'x': 
+		  buffer_loc[0] = '%'; 
+		  buffer_loc[1] = 'l'; 
+		  buffer_loc[2] = *p; 
+		  buffer_loc[3] = 0; 
+		  lng2 = va_arg(VarArg,long); 
+		  fprintf(stdout, buffer_loc, lng2); 
+		  break; 
+		case 's': 
+		  buffer_loc[0] = '%'; 
+		  buffer_loc[1] = *p; 
+		  buffer_loc[2] = 0; 
+		  cptr = va_arg(VarArg,char *); 
+		  fprintf(stdout, buffer_loc, cptr); 
+		  break; 
+		case 'C': 
+		  /* type coding as bin string */ 
+		  pil = va_arg(VarArg,ptr_int_list); 
+		  print_code(stdout,pil); 
+		  break; 
+		case 'P': 
+		  psi = va_arg(VarArg,ptr_psi_term); 
+		  display_psi(stdout,psi); 
+		  break; 
+		case 'O': 
+		  kind = va_arg(VarArg,operator); 
+		  print_operator_kind(stdout,kind); 
+		  break; 
+		case 'T': 
+		  assert(stdout==stderr); 
+		  t = va_arg(VarArg,def_type); 
+		  print_def_type(t); 
+		  break; 
+		case 'E': 
+		  assert(stdout==stderr); 
+		  perr_i("near line %ld",psi_term_line_number);	
+		  if (strcmp(input_file_name,"stdin")) {	   
+		    perr_s(" in file 042%s042",input_file_name); 
+		  }						   
+		  parse_ok=FALSE;					   
+		  break;						   
+		case '%':						   
+		  (void)putc(*p,stdout);				   
+		  break;						   
+		default: 
+		  fprintf(stdout,"<%c follows %% : report bug >", *p); 
+		  break; 
+		} 
+	    } 
+	  else 
+	    (void)putc(*p,stdout); 
+	}
+    } 
+  va_end(VarArg); 
+} 
 
-  vinfoline(format, stdout, VarArg);
-}
+/*! \fn void warningline(char *format,...)
+  \brief warningline
+  \param format - char *format
+  \param ...
 
-void infoline(format, VarArgBase)
-char *format;
-VarArgBaseDecl
+*/
+
+void warningline(char *format,...)
 {
-  VarArgDecl;
-
-  VarArgInit(format);
-  vinfoline(format, stdout, VarArg);
-}
-
-void warningline(format, VarArgBase)
-char *format;
-VarArgBaseDecl
-{
-  VarArgDecl;
-
+  va_list VarArg;
+  //  int l;		      
+  char buffer_loc[5];	      
+  char *p;	      
+  unsigned long lng2;   
+  char *cptr;	      
+  ptr_int_list pil;     
+  ptr_psi_term psi;     
+  operator kind;	      
+  def_type t ;	      
   
-  VarArgInit(format);
-  if(quietflag) return; /*  RM: Sep 24 1993  */
-  fprintf(stderr,"*** Warning: ");
-  vinfoline(format, stderr, VarArg);
+  va_start(VarArg,format);
+  
+  if (warningflag) { // macro would not work
+    
+    
+    if(quietflag) return; /*  RM: Sep 24 1993  */
+    fprintf(stderr,"*** Warning: ");
+    //    vinfoline(format, stderr, VarArg);
+    // #define vinfoline(format, stderr, xxxx)  {	
+    for (p=format;p &&  *p; p++) 
+      { 
+	if (*p == '%') 
+	  { 
+	    p++; 
+	    switch (*p) 
+	      { 
+	      case 'd': 
+	      case 'x': 
+		buffer_loc[0] = '%'; 
+		buffer_loc[1] = 'l'; 
+		buffer_loc[2] = *p; 
+		buffer_loc[3] = 0; 
+		lng2 = va_arg(VarArg,long); 
+		fprintf(stderr, buffer_loc, lng2); 
+		break; 
+	      case 's': 
+		buffer_loc[0] = '%'; 
+		buffer_loc[1] = *p; 
+		buffer_loc[2] = 0; 
+		cptr = va_arg(VarArg,char *); 
+		fprintf(stderr, buffer_loc, cptr); 
+		break; 
+	      case 'C': 
+		/* type coding as bin string */ 
+		pil = va_arg(VarArg,ptr_int_list); 
+		print_code(stderr,pil); 
+		break; 
+	      case 'P': 
+		psi = va_arg(VarArg,ptr_psi_term); 
+		display_psi(stderr,psi); 
+		break; 
+	      case 'O': 
+		kind = va_arg(VarArg,operator); 
+		print_operator_kind(stderr,kind); 
+		break; 
+	      case 'T': 
+		assert(stderr==stderr); 
+		t = va_arg(VarArg,def_type); 
+		print_def_type(t); 
+		break; 
+	      case 'E': 
+		assert(stderr==stderr); 
+		perr_i("near line %ld",psi_term_line_number);	
+		if (strcmp(input_file_name,"stdin")) {	   
+		  perr_s(" in file 042%s042",input_file_name); 
+		}						   
+		parse_ok=FALSE;					   
+		break;						   
+	      case '%':						   
+		(void)putc(*p,stderr);				   
+		break;						   
+	      default: 
+		fprintf(stderr,"<%c follows %% : report bug >", *p); 
+		break; 
+	      } 
+	  } 
+	else 
+	  (void)putc(*p,stderr); 
+      } 
+  } 
+  va_end(VarArg); 
 }
 
-/* New error printing routine */
-void Errorline(format, VarArgBase)
-char *format;
-VarArgBaseDecl
-{
-  VarArgDecl;
+/*! \fn void Errorline(char *format,...)
+  \brief Errorline
+  \param format - char *format
+  \param ...
+  
+  New error printing routine 
+*/
 
-  VarArgInit(format);
+void Errorline(char *format,...)
+{
+  va_list VarArg;
+  //  int l;	    
+  char buffer_loc[5];   
+  char *p; 
+  unsigned long lng2; 
+  char *cptr; 
+  ptr_int_list pil;  
+  ptr_psi_term psi;  
+  operator kind; 
+  def_type t ; 
+  
+  va_start(VarArg,format);
+  //  fprintf(stderr,"format = %lx %s\n",(long)format,format);fflush(stdout);
   fprintf(stderr,"*** Error: ");
-  vinfoline(format, stderr, VarArg);
-
+  //  fprintf(stderr,"format2 = %lx %s\n",(long)format,format);
+  // vinfoline(format, stderr, VarArg);
+  //#define vinfoline(format, stderr, xxxx)  { 
+  for (p=format;p &&  *p; p++) 
+    { 
+      if (*p == '%') 
+	{ 
+	  p++; 
+	  switch (*p) 
+	    { 
+	    case 'd': 
+	    case 'x': 
+	      buffer_loc[0] = '%'; 
+	      buffer_loc[1] = 'l'; 
+	      buffer_loc[2] = *p; 
+	      buffer_loc[3] = 0; 
+	      lng2 = va_arg(VarArg,long); 
+	      fprintf(stderr, buffer_loc, lng2); 
+	      break; 
+	    case 's': 
+	      buffer_loc[0] = '%'; 
+	      buffer_loc[1] = *p; 
+	      buffer_loc[2] = 0; 
+	      cptr = va_arg(VarArg,char *); 
+	      fprintf(stderr, buffer_loc, cptr); 
+	      break; 
+	    case 'C': 
+	      /* type coding as bin string */ 
+	      pil = va_arg(VarArg,ptr_int_list); 
+	      print_code(stderr,pil); 
+	      break; 
+	    case 'P': 
+	      psi = va_arg(VarArg,ptr_psi_term); 
+	      display_psi(stderr,psi); 
+	      break; 
+	    case 'O': 
+	      kind = va_arg(VarArg,operator); 
+	      print_operator_kind(stderr,kind); 
+	      break; 
+	    case 'T': 
+	      assert(stderr==stderr); 
+	      t = va_arg(VarArg,def_type); 
+	      print_def_type(t); 
+	      break; 
+	    case 'E': 
+	      assert(stderr==stderr); 
+	      perr_i("near line %ld",psi_term_line_number);	
+	      if (strcmp(input_file_name,"stdin")) {	   
+		perr_s(" in file \042%s\042",input_file_name); 
+	      }						   
+	      parse_ok=FALSE;					   
+	      break;						   
+	    case '%':						   
+	      (void)putc(*p,stderr);				   
+	      break;						   
+	    default: 
+	      fprintf(stderr,"<%c follows %% : report bug >", *p); 
+	      break; 
+	    } 
+	} 
+      else 
+	(void)putc(*p,stderr); 
+    } 
+  va_end(VarArg); 
 #ifdef CLIFE
   exit(0);
 #endif
 }
 
-void Syntaxerrorline(format, VarArgBase)
-char *format;
-VarArgBaseDecl
-{
-  VarArgDecl;
+/*! \fn void Syntaxerrorline(char *format,...)
+  \brief Syntaxerrorline
+  \param format - char *format
+  \param ...
+  
+*/
 
-  VarArgInit(format);
+void Syntaxerrorline(char *format,...)
+{
+  va_list VarArg;
+  //  int l;	    
+  char buffer_loc[5];   
+  char *p; 
+  unsigned long lng2; 
+  char *cptr; 
+  ptr_int_list pil;  
+  ptr_psi_term psi;  
+  operator kind; 
+  def_type t ; 
+  va_start(VarArg,format);
+  //  fprintf(stderr,"format = %lx %s\n",(long)format,format);fflush(stdout);
   if(parse_ok) { /*  RM: Feb  1 1993  */
     parse_ok=FALSE; /*  RM: Feb  1 1993  */
     fprintf(stderr,"*** Syntax error: ");
-    vinfoline(format, stderr, VarArg);
-  }
-}
-
-void vinfoline(format, outfile, VarArg)
-char *format;
-FILE *outfile;
-VarArgDecl;
-{
-  char *p;
-  ptr_psi_term psi;
-  char buffer[5];
-  ptr_int_list pil;
-  operator kind;
-  def_type t;
-  
-  for (p=format; *p; p++)
-  {
-    if (*p == '%')
-    {
-      switch (*++p)
-      {
-      case 'd':
-      case 'x':
-      case 's':
-        buffer[0] = '%';
-        buffer[1] = *p;
-        buffer[2] = 0;
-        vfprintf(outfile, buffer, VarArg);
-        VarArgNext(unsigned long);
-        break;
-            
-      case 'C':
-        /* type coding as bin string */
-        pil = VarArgNext(ptr_int_list);
-        print_code(outfile,pil);
-        break;
-        
-      case 'P':
-        psi = VarArgNext(ptr_psi_term);
-        display_psi(outfile,psi);
-        break;
-
-      case 'O':
-        kind = VarArgNext(operator);
-        print_operator_kind(outfile,kind);
-        break;
-
-      case 'T':
-        assert(outfile==stderr);
-        t = VarArgNext(def_type);
-        print_def_type(t);
-        break;
-
-      case 'E':
-        assert(outfile==stderr);
-        psi_term_error();
-        break;
-        
-      case '%':
-        putc(*p,outfile);
-        break;
-        
-      default:
-        fprintf(outfile,"<%c follows %% : report bug >", *p);
-        break;
-      }
-    }
-    else
-      putc(*p,outfile);
-  }
-  VarArgEnd();
+    //    fprintf(stderr,"format2 = %lx %s\n",(long)format,format);
+    // vinfoline(format, stderr, VarArg);
+    //#define vinfoline(format, outfile, xxxx)  {	
+    for (p=format;p &&  *p; p++) 
+      { 
+	if (*p == '%') 
+	  { 
+	    p++; 
+	    switch (*p) 
+	      { 
+	      case 'd': 
+	      case 'x': 
+		buffer_loc[0] = '%'; 
+		buffer_loc[1] = 'l'; 
+		buffer_loc[2] = *p; 
+		buffer_loc[3] = 0; 
+		lng2 = va_arg(VarArg,long); 
+		fprintf(stderr, buffer_loc, lng2); 
+		break; 
+	      case 's': 
+		buffer_loc[0] = '%'; 
+		buffer_loc[1] = *p; 
+		buffer_loc[2] = 0; 
+		cptr = va_arg(VarArg,char *); 
+		fprintf(stderr, buffer_loc, cptr); 
+		break; 
+	      case 'C': 
+		/* type coding as bin string */ 
+		pil = va_arg(VarArg,ptr_int_list); 
+		print_code(stderr,pil); 
+		break; 
+	      case 'P': 
+		psi = va_arg(VarArg,ptr_psi_term); 
+		display_psi(stderr,psi); 
+		break; 
+	      case 'O': 
+		kind = va_arg(VarArg,operator); 
+		print_operator_kind(stderr,kind); 
+		break; 
+	      case 'T': 
+		assert(stderr==stderr); 
+		t = va_arg(VarArg,def_type); 
+		print_def_type(t); 
+		break; 
+	      case 'E': 
+		assert(stderr==stderr); 
+		perr_i("near line %ld",psi_term_line_number);	
+		if (strcmp(input_file_name,"stdin")) {	   
+		  perr_s(" in file \042%s\042",input_file_name); 
+		}						   
+		parse_ok=FALSE;					   
+		break;						   
+	      case '%':						   
+		(void)putc(*p,stderr);				   
+		break;						   
+	      default: 
+		fprintf(stderr,"<%c follows %% : report bug >", *p); 
+		break; 
+	      } 
+	  } 
+	else 
+	  (void)putc(*p,stderr); 
+      } 
+  } 
+  va_end(VarArg); 
 }
 
 /********************************************************************/
 
 /* Utilities for tracing and single stepping */
 
-/* Initialize all tracing variables */
+/*! \fn void init_trace()
+  \brief init_trace
+
+  Initialize all tracing variables 
+*/
+
 void init_trace()
 {
   trace=FALSE;
@@ -249,8 +661,13 @@ void init_trace()
   stepcount=0;
 }
 
-/* Reset stepcount to zero */
-/* Should be called when prompt is printed */
+/*! \fn void reset_step()
+  \brief reset_step
+
+  Reset stepcount to zero 
+  Should be called when prompt is printed 
+*/
+
 void reset_step()
 {
   if (stepcount>0) {
@@ -259,23 +676,32 @@ void reset_step()
   }
 }
 
+/*! \fn void tracing()
+  \brief tracing
+
+*/
+
 void tracing()
 {
   long i;
-  long indent;
+  long indent_loc;
 
   printf("T%04ld",goal_count);
   printf(" C%02ld",depth_cs());
-  indent=depth_gs();
-  if (indent>=MAX_TRACE_INDENT) printf(" G%02ld",indent);
-  indent = indent % MAX_TRACE_INDENT;
-  for (i=indent; i>=0; i--) printf(" ");
+  indent_loc=depth_gs();
+  if (indent_loc>=MAX_TRACE_INDENT) printf(" G%02ld",indent_loc);
+  indent_loc = indent_loc % MAX_TRACE_INDENT;
+  for (i=indent_loc; i>=0; i--) printf(" ");
   steptrace=TRUE;
 }
 
+/*! \fn void new_trace(long newtrace)
+  \brief new_trace
+  \param newtrace - long newtrace
 
-void new_trace(newtrace)
-long newtrace;
+*/
+
+void new_trace(long newtrace)
 {
   trace = newtrace;
   printf("*** Tracing is turned ");
@@ -284,8 +710,13 @@ long newtrace;
   printf("\n");
 }
 
-void new_step(newstep)
-long newstep;
+/*! \fn void new_step(long newstep)
+  \brief new_step
+  \brief long newstep
+
+*/
+
+void new_step(long newstep)
 {
   stepflag = newstep;
   printf("*** Single stepping is turned ");
@@ -294,16 +725,30 @@ long newstep;
   steptrace=FALSE;
 }
 
+/*! void set_trace_to_prove()
+  \brief set_trace_to_prove
+
+*/
+
 void set_trace_to_prove()
 {
   new_trace(2);
 }
+
+/*! \fn void toggle_trace()
+  \brief toggle_trace
+
+*/
 
 void toggle_trace()
 {
   new_trace(trace?0:1);
 }
 
+/*! \fn void toggle_step()
+  \brief toggle_step
+
+*/
 
 void toggle_step()
 {
@@ -313,32 +758,60 @@ void toggle_step()
 /********************************************************************/
 
 /* Old error printing routines -- these should be superceded by Errorline */
+// They are still used in places - 12/11/2016 DJD
 
-void perr(str)
-char *str;
+/*! \fn void perr(char *str)
+  \brief perr
+  \param str - char *str
+
+*/
+
+void perr(char *str)
 {
-  fprintf(stderr,str);
+  (void)fputs(str, stderr);
 }
 
-void perr_s(s1,s2)
-char *s1,*s2;
+/*! \fn void perr_s(char *s1,char *s2)
+  \brief perr_s
+  \param s1 - char *s1
+  \param s2 - char *s2
+
+*/
+
+void perr_s(char *s1,char *s2)
 {
   fprintf(stderr,s1,s2);
 }
 
-void perr_s2(s1,s2,s3)
-char *s1,*s2,*s3;
+/*! \fn void perr_s2(char *s1,char *s2,char *s3)
+  \brief perr_s2
+  \param s1 - char *s1
+  \param s2 - char *s2
+  \param s3 - char *s3
+
+*/
+
+void perr_s2(char *s1,char *s2,char *s3)
 {
   fprintf(stderr,s1,s2,s3);
 }
 
-void perr_i(str,i)
-char *str;
-long i;
+/*! \fn void perr_i(char *str,long i)
+  \brief perr_i
+  \param str - char *str
+  \param i - long i
+
+*/
+
+void perr_i(char *str,long i)
 {
   fprintf(stderr,str,i);
 }
 
+/*! \fn long warning()
+  \brief warning
+
+*/
 
 long warning()
 {
@@ -346,6 +819,10 @@ long warning()
   return warningflag;
 }
 
+/*! \fn long warningx()
+  \brief warningx
+
+*/
 
 long warningx()
 {
@@ -353,106 +830,133 @@ long warningx()
   return warningflag;
 }
 
+/*! \fn void report_error_main(ptr_psi_term g,char *s,char *s2)
+  \brief report_error_main
+  \param g - ptr_psi_term g
+  \param s - char *s
+  \param s2 - char *s2
+  
+  Main routine for report_error and report_warning 
+*/
 
-/* Main routine for report_error and report_warning */
-void report_error_main(g,s,s2)
-ptr_psi_term g;
-char *s, *s2;
+void report_error_main(ptr_psi_term g,char *s,char *s2)
 {
-  FILE *f;
+  //  FILE *f;
 
   perr_s2("*** %s: %s in '",s2,s);
   display_psi_stderr(g);
   perr("'.\n");
 }
 
+/*! \fn void report_error(ptr_psi_term g,char *s)
+  \brief report_error
+  \param g - ptr_psi_term g
+  \param s - char *s
 
-
-/******** REPORT_ERROR(g,s)
+  REPORT_ERROR(g,s)
   Print an appropriate error message. G is the
   psi-term which caused the error, S a message to print.
   Format: '*** Error: %s in 'g'.'
 */
-void report_error(g,s)
-ptr_psi_term g;
-char *s;
+
+void report_error(ptr_psi_term g,char *s)
 {
   report_error_main(g,s,"Error");
 }
 
+/*! \fn long reportAndAbort(ptr_psi_term g,char *s)
+  \brief reportAndAbort
+  \param g - ptr_psi_term g
+  \param s - char *s
 
-
-/******** REPORTANDABORT(g,s)
+  REPORTANDABORT(g,s)
   Print an appropriate error message. G is the
   psi-term which caused the error, S a message to print.
   Format: '*** Error: %s in 'g'.'
 */
-long reportAndAbort(g,s)
-ptr_psi_term g;
-char *s;
+
+long reportAndAbort(ptr_psi_term g,char *s)
 {
   report_error_main(g,s,"Error");
-  return abort_life();
+  return abort_life(TRUE); // djd added TRUE
 }
 
 
-/******** REPORT_WARNING(g,s)
+/*! \fn void report_warning(ptr_psi_term g,char *s)
+  \brief report_warning
+  \param g - ptr_psi_term g
+  \param s - char *s
+
+  REPORT_WARNING(g,s)
   Print an appropriate error message. G is the
   psi-term which caused the error, S a message to print.
   Format: '*** Warning: %s in 'g'.'
 */
-void report_warning(g,s)
-ptr_psi_term g;
-char *s;
+
+void report_warning(ptr_psi_term g,char *s)
 {
   if (warningflag) report_error_main(g,s,"Warning");
 }
 
+/*! \fn void report_error2_main(ptr_psi_term g,char *s,char *s2)
+  \brief report_error2_main
+  \param g - ptr_psi_term g
+  \param s - char *s
+  \param s2 - char *s2
 
-/* Main routine for report_error2 and report_warning2 */
-void report_error2_main(g,s,s2)
-ptr_psi_term g;
-char *s, *s2;
+  Main routine for report_error2 and report_warning2 
+*/
+
+void report_error2_main(ptr_psi_term g,char *s,char *s2)
 {
-  FILE *f;
+  //  FILE *f;
 
   perr_s("*** %s: argument '",s2);
   display_psi_stderr(g);
   perr_s("' %s.\n",s);
 }
 
+/*! \fn void report_error2(ptr_psi_term g,char *s)
+  \brief report_error2
+  \param g - ptr_psi_term g
+  \param s - char *s
 
-
-/********* REPORT_ERROR2(g,s)
+  REPORT_ERROR2(g,s)
   Like report_error, with a slightly different format.
   Format: '*** Error: argument 'g' %s.'
 */
-void report_error2(g,s)
-ptr_psi_term g;
-char *s;
+
+void report_error2(ptr_psi_term g,char *s)
 {
   report_error2_main(g,s,"Error");
 }
 
+/*! \fn void report_warning2(ptr_psi_term g,char *s)
+  \brief report_warning2
+  \param g - ptr_psi_term g
+  \param s - char *s
 
-
-/********* REPORT_WARNING2(g,s)
+  REPORT_WARNING2(g,s)
   Like report_warning, with a slightly different format.
   Format: '*** Warning: argument 'g' %s.'
 */
-void report_warning2(g,s)
-ptr_psi_term g;
-char *s;
+
+void report_warning2(ptr_psi_term g,char *s)
 {
   if (warningflag) report_error2_main(g,s,"Warning");
 }
 
+/*! \fn void nonnum_warning(ptr_psi_term t,ptr_psi_term arg1,ptr_psi_term arg2)
+  \brief nonnum_warning
+  \param t - ptr_psi_term t
+  \param arg1 - ptr_psi_term arg1
+  \param arg2 - ptr_psi_term arg2
 
+  Give error message if there is an argument which cannot unify with/
+  a real number. 
+*/
 
-/* Give error message if there is an argument which cannot unify with */
-/* a real number. */
-void nonnum_warning(t,arg1,arg2)
-ptr_psi_term t,arg1,arg2;
+void nonnum_warning(ptr_psi_term t,ptr_psi_term arg1,ptr_psi_term arg2)
 {
   if (!curried && /* PVR 15.9.93 */
       ((arg1 && !overlap_type(arg1->type,real)) ||
@@ -465,10 +969,15 @@ ptr_psi_term t,arg1,arg2;
 
 /* Error checking routines for bit_and, bit_or, shift, and modulo */
 
-long nonint_warning(arg, val, msg)
-ptr_psi_term arg;
-REAL val;
-char *msg;
+/*! \fn long nonint_warning(ptr_psi_term arg, REAL val, char *msg)
+  \brief nonint_warning
+  \param arg - ptr_psi_term arg
+  \param val - REAL val
+  \param msg - char *msg
+
+*/
+
+long nonint_warning(ptr_psi_term arg, REAL val, char *msg)
 {
   long err=FALSE;
 
@@ -479,38 +988,63 @@ char *msg;
   return err;
 }
 
-long bit_and_warning(arg, val)
-ptr_psi_term arg;
-REAL val;
+/*! \fn long bit_and_warning(ptr_psi_term arg, REAL val)
+  \brief bit_and_warning
+  \param arg - ptr_psi_term arg
+  \param val - REAL val
+
+*/
+
+long bit_and_warning(ptr_psi_term arg, REAL val)
 {
   return nonint_warning(arg,val,"of bitwise 'and' operation is not an integer");
 }
 
-long bit_or_warning(arg, val)
-ptr_psi_term arg;
-REAL val;
+/*! \fn long bit_or_warning(ptr_psi_term arg, REAL val)
+  \brief bit_or_warning
+  \param arg - ptr_psi_term arg
+  \param val - REAL val
+
+*/
+
+long bit_or_warning(ptr_psi_term arg, REAL val)
 {
   return nonint_warning(arg,val,"of bitwise 'or' operation is not an integer");
 }
 
-long bit_not_warning(arg, val)
-ptr_psi_term arg;
-REAL val;
+/*! \fn long bit_not_warning(ptr_psi_term arg, REAL val)
+  \brief bit_not_warning
+  \param arg - ptr_psi_term arg
+  \param val - REAL val
+
+*/
+
+long bit_not_warning(ptr_psi_term arg, REAL val)
 {
   return nonint_warning(arg,val,"of bitwise 'not' operation is not an integer");
 }
 
-long int_div_warning(arg, val)
-ptr_psi_term arg;
-REAL val;
+/*! \fn long int_div_warning(ptr_psi_term arg, REAL val)
+  \brief int_div_warning
+  \param arg - ptr_psi_term arg
+  \param val - REAL val
+
+*/
+
+long int_div_warning(ptr_psi_term arg, REAL val)
 {
   return nonint_warning(arg,val,"of integer division is not an integer");
 }
 
-long mod_warning(arg, val,zero)
-ptr_psi_term arg;
-REAL val;
-int zero;
+/*! \fn long mod_warning(ptr_psi_term arg, REAL val,int zero)
+  \brief  mod_warning
+  \param arg - ptr_psi_term arg
+  \param val - REAL val
+  \param zero - int zero
+
+*/
+
+long mod_warning(ptr_psi_term arg, REAL val,int zero)
 {
   int err;
 
@@ -522,10 +1056,15 @@ int zero;
   return err;
 }
 
-long shift_warning(dir, arg, val)
-long dir;
-ptr_psi_term arg;
-REAL val;
+/*! \fn long shift_warning(long dir, ptr_psi_term arg, REAL val)
+  \brief shift_warning
+  \param dir - long dir
+  \param arg - ptr_psi_term arg
+  \param val - REAL val
+
+*/
+
+long shift_warning(long dir, ptr_psi_term arg, REAL val)
 {
   if (dir)
     return nonint_warning(arg,val,"of right shift operation is not an integer");

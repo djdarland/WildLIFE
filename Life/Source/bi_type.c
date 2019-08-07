@@ -22,18 +22,9 @@
 static char vcid[] = "$Id: bi_type.c,v 1.2 1994/12/08 23:08:52 duchier Exp $";
 #endif /* lint */
 
-#include "extern.h"
-#include "trees.h"
-#include "login.h"
-#include "parser.h"
-#include "copy.h"
-#include "token.h"
-#include "print.h"
-#include "lefun.h"
-#include "memory.h"
-#include "modules.h"
-#include "built_ins.h"
-#include "error.h"
+#ifdef REV401PLUS
+#include "defs.h"
+#endif
 
 #ifdef X11
 #include "xpred.h"
@@ -48,9 +39,9 @@ static long c_children()   /*  RM: Dec 14 1992  Re-wrote most of the routine */
   ptr_psi_term funct,result,arg1,arg2,t,p1;
   ptr_int_list p;
   
-  funct=aim->a;
+  funct=aim->aaaa_1;
   deref_ptr(funct);
-  result=aim->b;
+  result=aim->bbbb_1;
   get_two_args(funct->attr_list,&arg1,&arg2);
   
   if (!arg1) {
@@ -83,11 +74,11 @@ static long c_children()   /*  RM: Dec 14 1992  Re-wrote most of the routine */
       */
     
     t=stack_nil();
-    if (!(arg1->type==real && arg1->value)) /* PVR 15.2.94 */
+    if (!(arg1->type==real && arg1->value_3)) /* PVR 15.2.94 */
       while (p) {
         ptr_definition ptype;
 
-        ptype = (ptr_definition) p->value;
+        ptype = (ptr_definition) p->value_1;
         if (hidden_type(ptype)) { p=p->next; continue; }
         p1 = stack_psi_term(0);
         p1->type = ptype;
@@ -111,9 +102,9 @@ static long c_parents()
   ptr_psi_term funct,result,arg1,arg2,t,p1;
   ptr_int_list p;
 
-  funct=aim->a;
+  funct=aim->aaaa_1;
   deref_ptr(funct);
-  result=aim->b;
+  result=aim->bbbb_1;
   get_two_args(funct->attr_list,&arg1,&arg2);
   if (arg1) {
     deref(arg1);
@@ -129,7 +120,7 @@ static long c_parents()
     }
     else {
       if ((arg1->type==quoted_string || arg1->type==integer ||
-          arg1->type==real) && arg1->value!=NULL) {
+          arg1->type==real) && arg1->value_3!=NULL) {
         /* arg1 is a string, long or real: return a list with arg1 as
            argument, where arg1->value = NULL, MH */
         p1 = stack_psi_term(4);
@@ -141,7 +132,7 @@ static long c_parents()
         while (p) {
           ptr_definition ptype;
 
-          ptype = (ptr_definition) p->value;
+          ptype = (ptr_definition) p->value_1;
           if (hidden_type(ptype)) { p=p->next; continue; }
           p1 = stack_psi_term(4);
           p1->type = ptype;
@@ -170,16 +161,16 @@ static long c_smallest()
   long success=TRUE;
   ptr_psi_term result, g, t;
 
-  g=aim->a;
+  g=aim->aaaa_1;
   deref_args(g,set_empty);
-  result=aim->b;
+  result=aim->bbbb_1;
   t=collect_symbols(least_sel); /*  RM: Feb  3 1993  */
   push_goal(unify,result,t,NULL);
   
   return success;
 }
 
-isSubTypeValue(arg1, arg2)
+long isSubTypeValue(arg1, arg2)  // REV401PLUS changed to long
 ptr_psi_term arg1, arg2;
 {
   long ans=TRUE;
@@ -188,22 +179,22 @@ ptr_psi_term arg1, arg2;
    * of the two are either long or real
    */
   
-  if (arg2->value) {
-    if (arg1->value) {
+  if (arg2->value_3) {
+    if (arg1->value_3) {
       if (arg1->type==real || arg1->type==integer) {
-        ans=( *(REAL *)arg1->value == *(REAL *)arg2->value);
+        ans=( *(REAL *)arg1->value_3 == *(REAL *)arg2->value_3);
       }
       else if (arg1->type==quoted_string) {
-        ans=strcmp((char *)arg1->value,(char *)arg2->value)==0;
+        ans=strcmp((char *)arg1->value_3,(char *)arg2->value_3)==0;
       }
     }
     else
       ans=FALSE;
   }
   else {
-    if (arg1->value && (arg1->type==real || arg1->type==integer)) {
+    if (arg1->value_3 && (arg1->type==real || arg1->type==integer)) {
       if (arg2->type==integer)
-        ans=(*(REAL *)arg1->value == floor(*(REAL *)arg1->value));
+        ans=(*(REAL *)arg1->value_3 == floor(*(REAL *)arg1->value_3));
       else
         ans=TRUE;
     }
@@ -220,7 +211,7 @@ ptr_psi_term arg1, arg2;
   if (  arg1->type==arg2->type
      || (  (arg1->type==real || arg1->type==integer)
         && (arg2->type==real || arg2->type==integer)
-        && (arg1->value || arg2->value)
+        && (arg1->value_3 || arg2->value_3)
         )
      ) {
 
@@ -299,9 +290,9 @@ long sel;
   long success=TRUE,ans;
   ptr_psi_term arg1,arg2,funct,result;
 
-  funct=aim->a;
+  funct=aim->aaaa_1;
   deref_ptr(funct);
-  result=aim->b;
+  result=aim->bbbb_1;
   get_two_args(funct->attr_list,&arg1,&arg2);
   if (arg1 && arg2) {
     deref(arg1);
@@ -388,19 +379,19 @@ static long c_isa_ncmp()
 /******** C_IS_FUNCTION
   Succeed iff argument is a function (built-in or user-defined).
 */
-static int c_is_function() /*  RM: Jan 29 1993  */
+static long c_is_function() /*  RM: Jan 29 1993  */ // REV401PLUS long
 {
   int success=TRUE,ans;
   ptr_psi_term arg1,funct,result;
 
-  funct=aim->a;
+  funct=aim->aaaa_1;
   deref_ptr(funct);
-  result=aim->b;
+  result=aim->bbbb_1;
   get_one_arg(funct->attr_list,&arg1);
   if (arg1) {
     deref(arg1);
     deref_args(funct,set_1);
-    ans=(arg1->type->type==function);
+    ans=(arg1->type->type_def==(def_type) function_it);
     unify_bool_result(result,ans);
   }
   else curry();
@@ -413,20 +404,20 @@ static int c_is_function() /*  RM: Jan 29 1993  */
 /******** C_IS_PERSISTENT
   Succeed iff argument is a quoted persistent or on the heap.
 */
-static int c_is_persistent() /*  RM: Feb  9 1993  */
+static long c_is_persistent() /*  RM: Feb  9 1993  */ // REV401PLUS long
 {
   int success=TRUE,ans;
   ptr_psi_term arg1,glob,result;
 
-  glob=aim->a;
+  glob=aim->aaaa_1;
   deref_ptr(glob);
-  result=aim->b;
+  result=aim->bbbb_1;
   get_one_arg(glob->attr_list,&arg1);
   if (arg1) {
     deref(arg1);
     deref_args(glob,set_1);
     ans=(
-	 arg1->type->type==global &&
+	 arg1->type->type_def==(def_type)global_it &&
 	 (GENERIC)arg1->type->global_value>=heap_pointer
 	 ) ||
 	   (GENERIC)arg1>=heap_pointer;
@@ -442,19 +433,19 @@ static int c_is_persistent() /*  RM: Feb  9 1993  */
 /******** C_IS_PREDICATE
   Succeed iff argument is a predicate (built-in or user-defined).
 */
-static int c_is_predicate() /*  RM: Jan 29 1993  */
+static long c_is_predicate() /*  RM: Jan 29 1993  */ // REV401PLUS long
 {
   int success=TRUE,ans;
   ptr_psi_term arg1,funct,result;
 
-  funct=aim->a;
+  funct=aim->aaaa_1;
   deref_ptr(funct);
-  result=aim->b;
+  result=aim->bbbb_1;
   get_one_arg(funct->attr_list,&arg1);
   if (arg1) {
     deref(arg1);
     deref_args(funct,set_1);
-    ans=(arg1->type->type==predicate);
+    ans=(arg1->type->type_def==(def_type)predicate_it);
     unify_bool_result(result,ans);
   }
   else curry();
@@ -467,19 +458,19 @@ static int c_is_predicate() /*  RM: Jan 29 1993  */
 /******** C_IS_SORT
   Succeed iff argument is a sort (built-in or user-defined).
 */
-static int c_is_sort() /*  RM: Jan 29 1993  */
+static long c_is_sort() /*  RM: Jan 29 1993  */ // REV401PLUS long
 {
   int success=TRUE,ans;
   ptr_psi_term arg1,funct,result;
 
-  funct=aim->a;
+  funct=aim->aaaa_1;
   deref_ptr(funct);
-  result=aim->b;
+  result=aim->bbbb_1;
   get_one_arg(funct->attr_list,&arg1);
   if (arg1) {
     deref(arg1);
     deref_args(funct,set_1);
-    ans=(arg1->type->type==type);
+    ans=(arg1->type->type_def==(def_type)type_it);
     unify_bool_result(result,ans);
   }
   else curry();
@@ -499,14 +490,14 @@ static long c_is_value()
   long success=TRUE,ans;
   ptr_psi_term arg1,arg2,funct,result;
 
-  funct=aim->a;
+  funct=aim->aaaa_1;
   deref_ptr(funct);
-  result=aim->b;
+  result=aim->bbbb_1;
   get_two_args(funct->attr_list,&arg1,&arg2);
   if (arg1) {
     deref(arg1);
     deref_args(funct,set_1);
-    ans=(arg1->value!=NULL);
+    ans=(arg1->value_3!=NULL);
     unify_bool_result(result,ans);
   }
   else curry();
@@ -524,14 +515,14 @@ static long c_is_number()
   long success=TRUE,ans;
   ptr_psi_term arg1,arg2,funct,result;
 
-  funct=aim->a;
+  funct=aim->aaaa_1;
   deref_ptr(funct);
-  result=aim->b;
+  result=aim->bbbb_1;
   get_two_args(funct->attr_list,&arg1,&arg2);
   if (arg1) {
     deref(arg1);
     deref_args(funct,set_1);
-    ans=sub_type(arg1->type,real) && (arg1->value!=NULL);
+    ans=sub_type(arg1->type,real) && (arg1->value_3!=NULL);
     unify_bool_result(result,ans);
   }
   else curry();
@@ -544,11 +535,11 @@ static long c_is_number()
   if A is a subsort of B => succeed and residuate on B
   else			 => fail
 */
-c_isa_subsort()
+long c_isa_subsort() // changed to long REV401PLUS
 {
   ptr_psi_term pred,arg1,arg2;
 
-  pred=aim->a;
+  pred=aim->aaaa_1;
   deref_ptr(pred);
   get_two_args(pred->attr_list,&arg1,&arg2);
 
@@ -570,10 +561,10 @@ c_isa_subsort()
 
 
 
-isValue(p)
+long isValue(p)  // REV401PLUS to long
 ptr_psi_term p;
 {
-	return (p->value != NULL);
+	return (p->value_3 != NULL);
 }
 
 
@@ -582,7 +573,7 @@ ptr_psi_term p;
   Return glb(A,B).  Continued calls will return each following type in
   the disjunction of the glb of A,B.
 */
-c_glb()
+long c_glb()  // REV401PLUS long
 {
   ptr_psi_term func,arg1,arg2, result, other;
   ptr_definition ans;
@@ -590,7 +581,7 @@ c_glb()
   ptr_int_list decodedType = NULL;
   long ret;
   
-  func=aim->a;
+  func=aim->aaaa_1;
   deref_ptr(func);
   get_two_args(func->attr_list,&arg1,&arg2);
 
@@ -598,7 +589,7 @@ c_glb()
     curry();
     return TRUE;
   }
-  result = aim->b;
+  result = aim->bbbb_1;
   deref(result);
   deref(arg1);
   deref(arg2);
@@ -614,13 +605,13 @@ c_glb()
   }
   if (!ans) {
     decodedType = decode(complexType);
-    ans = (ptr_definition)decodedType->value;
+    ans = (ptr_definition)decodedType->value_1;
     decodedType = decodedType->next;
   }
   other=makePsiTerm(ans);
 
-  if (isValue(arg1)) other->value=arg1->value;
-  if (isValue(arg2)) other->value=arg2->value;
+  if (isValue(arg1)) other->value_3=arg1->value_3;
+  if (isValue(arg2)) other->value_3=arg2->value_3;
     
   if (isValue(arg1) || isValue(arg2)) {
     if (decodedType) {
@@ -630,7 +621,7 @@ c_glb()
   }
     
   if (decodedType)
-    push_choice_point(type_disj, result, decodedType, NULL);
+    push_choice_point(type_disj, result, (ptr_psi_term)decodedType, NULL);
 
   resid_aim = NULL;
   push_goal(unify,result,other,NULL);
@@ -643,13 +634,13 @@ c_glb()
   Return lub(A,B).  Continued calls will return each following type in
   the disjunction of the lub of A,B.
 */
-c_lub()
+long c_lub()  // REV401PLUS long
 {
   ptr_psi_term func,arg1,arg2, result, other;
   ptr_definition ans=NULL;
   ptr_int_list decodedType = NULL;
   
-  func=aim->a;
+  func=aim->aaaa_1;
   deref_ptr(func);
   get_two_args(func->attr_list,&arg1,&arg2);
 
@@ -658,7 +649,7 @@ c_lub()
     curry();
     return TRUE;
   }
-  result = aim->b;
+  result = aim->bbbb_1;
   deref(result);
   deref(arg1);
   deref(arg2);
@@ -669,13 +660,13 @@ c_lub()
   decodedType = lub(arg1, arg2, &other);
 
   if (decodedType) {
-    ans = (ptr_definition)decodedType->value;
+    ans = (ptr_definition)decodedType->value_1;
     decodedType = decodedType->next;
     other = makePsiTerm(ans);
   }
 
   if (decodedType)
-    push_choice_point(type_disj, result, decodedType, NULL);
+    push_choice_point(type_disj, result, (ptr_psi_term) decodedType, NULL); // cast added REV401PLUS
     
   resid_aim = NULL;
   push_goal(unify,result,other,NULL);
@@ -687,33 +678,33 @@ c_lub()
 void insert_type_builtins() /*  RM: Jan 29 1993  */
 {
   /* Sort comparisons */
-  new_built_in(syntax_module,":=<",function,c_isa_le);
-  new_built_in(syntax_module,":<",function,c_isa_lt);
-  new_built_in(syntax_module,":>=",function,c_isa_ge);
-  new_built_in(syntax_module,":>",function,c_isa_gt);
-  new_built_in(syntax_module,":==",function,c_isa_eq);
-  new_built_in(syntax_module,":><",function,c_isa_cmp);
-  new_built_in(syntax_module,":\\=<",function,c_isa_nle);
-  new_built_in(syntax_module,":\\<",function,c_isa_nlt);
-  new_built_in(syntax_module,":\\>=",function,c_isa_nge);
-  new_built_in(syntax_module,":\\>",function,c_isa_ngt);
-  new_built_in(syntax_module,":\\==",function,c_isa_neq);
-  new_built_in(syntax_module,":\\><",function,c_isa_ncmp);
+  new_built_in(syntax_module,":=<",(def_type)function_it,c_isa_le);
+  new_built_in(syntax_module,":<",(def_type)function_it,c_isa_lt);
+  new_built_in(syntax_module,":>=",(def_type)function_it,c_isa_ge);
+  new_built_in(syntax_module,":>",(def_type)function_it,c_isa_gt);
+  new_built_in(syntax_module,":==",(def_type)function_it,c_isa_eq);
+  new_built_in(syntax_module,":><",(def_type)function_it,c_isa_cmp);
+  new_built_in(syntax_module,":\\=<",(def_type)function_it,c_isa_nle);
+  new_built_in(syntax_module,":\\<",(def_type)function_it,c_isa_nlt);
+  new_built_in(syntax_module,":\\>=",(def_type)function_it,c_isa_nge);
+  new_built_in(syntax_module,":\\>",(def_type)function_it,c_isa_ngt);
+  new_built_in(syntax_module,":\\==",(def_type)function_it,c_isa_neq);
+  new_built_in(syntax_module,":\\><",(def_type)function_it,c_isa_ncmp);
 
 
   /* Type checks */
-  new_built_in(bi_module,"is_value",function,c_is_value);
-  new_built_in(bi_module,"is_number",function,c_is_number);
-  new_built_in(bi_module,"is_function",function,c_is_function);
-  new_built_in(bi_module,"is_predicate",function,c_is_predicate);
-  new_built_in(bi_module,"is_sort",function,c_is_sort);
-  new_built_in(bi_module,"is_persistent",function,c_is_persistent);
+  new_built_in(bi_module,"is_value",(def_type)function_it,c_is_value);
+  new_built_in(bi_module,"is_number",(def_type)function_it,c_is_number);
+  new_built_in(bi_module,"is_function",(def_type)function_it,c_is_function);
+  new_built_in(bi_module,"is_predicate",(def_type)function_it,c_is_predicate);
+  new_built_in(bi_module,"is_sort",(def_type)function_it,c_is_sort);
+  new_built_in(bi_module,"is_persistent",(def_type)function_it,c_is_persistent);
   
   /* Sort hierarchy maneuvering */
-  new_built_in(bi_module,"children",function,c_children);
-  new_built_in(bi_module,"parents",function,c_parents);
-  new_built_in(bi_module,"least_sorts",function,c_smallest);
-  new_built_in(bi_module,"subsort",predicate,c_isa_subsort);
-  new_built_in(bi_module,"glb",function,c_glb);
-  new_built_in(bi_module,"lub",function,c_lub);
+  new_built_in(bi_module,"children",(def_type)function_it,c_children);
+  new_built_in(bi_module,"parents",(def_type)function_it,c_parents);
+  new_built_in(bi_module,"least_sorts",(def_type)function_it,c_smallest);
+  new_built_in(bi_module,"subsort",(def_type)predicate_it,c_isa_subsort);
+  new_built_in(bi_module,"glb",(def_type)function_it,c_glb);
+  new_built_in(bi_module,"lub",(def_type)function_it,c_lub);
 }

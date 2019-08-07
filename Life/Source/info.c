@@ -7,9 +7,9 @@
 static char vcid[] = "$Id: info.c,v 1.4 1995/01/30 21:03:55 duchier Exp $";
 #endif /* lint */
 
-#include "extern.h"
-#include "info.h"
-
+#ifdef REV401PLUS
+#include "defs.h"
+#endif
 
 /******** PNF(s,n)
   This prints one line of info cleanly. The string S is the name of the
@@ -24,7 +24,7 @@ long n;
   printf("        %s ",s);
   i=strlen(s);
   while(++i<40) printf(".");
-  printf(" %3d bytes.\n",n);
+  printf(" %3ld bytes.\n",n);  // REV401 -> %3ld
 }
 
 

@@ -9,19 +9,11 @@ static char vcid[] = "$Id: print.c,v 1.4 1995/01/14 00:27:20 duchier Exp $";
 
 #define DOTDOT ": "   /*  RM: Dec 14 1992, should be " : "  */
 
+#ifdef REV401PLUS
+#include "defs.h"
+#endif
 
-#include "extern.h"
-#include "trees.h"
-#include "types.h"
-#include "memory.h"
-#include "print.h"  
-#include "modules.h"  /*  RM: Jan 13 1993  */
-#include "login.h"
-
-
-
-ptr_node printed_pointers, pointer_names;
-
+// REV401PLUS moved initializations down
 long print_depth=PRINT_DEPTH;
 long indent=FALSE;
 long const_quote=TRUE;
@@ -40,27 +32,15 @@ char *name="symbol";
 char *buffer;
 char seg_format[PRINT_POWER+4];
 
-item pretty_things[PRETTY_SIZE];
-ptr_item indx;
-
 /* Used to distinguish listings from other writes */
 static long listing_flag;
+/* Precedence of the comma and colon operators (or 0 if none exists) */
+#define COMMA_PREC ((commasym->op_data)?(commasym->op_data->precedence):0)
+#define COLON_PREC ((colonsym->op_data)?(colonsym->op_data->precedence):0)
 
 /* Used to list function bodies in a nice way */
 /* Only valid if listing_flag==TRUE */
 static long func_flag;
-
-/* The output stream for a given print command is put in here */
-/* This will be set to stdout, to stderr, or to output_stream */
-FILE *outfile;
-
-void pretty_psi_term();
-void pretty_attr();
-void pretty_tag_or_psi_term();
-
-/* Precedence of the comma and colon operators (or 0 if none exists) */
-#define COMMA_PREC ((commasym->op_data)?(commasym->op_data->precedence):0)
-#define COLON_PREC ((colonsym->op_data)?(colonsym->op_data->precedence):0)
 
 
 /* Initialize size of single segment of split printing.  Wild_Life         */
@@ -84,7 +64,7 @@ char *heap_nice_name()
   do {
     g--;
     /* Prefix one character to tmp2: */
-    sprintf(tmp1,"%c",g%26+'A');
+    sprintf(tmp1,"%c",(int)g%26+'A');  // REV401PLUS cast
     strcat(tmp1,tmp2);
     strcpy(tmp2,tmp1);
     g=g/26;
@@ -109,7 +89,7 @@ GENERIC unique_name()
 {
   char *name;
 
-  do name=heap_nice_name(); while (find(strcmp,name,var_tree));
+  do name=heap_nice_name(); while (find(STRCMP,name,var_tree));
 
   return (GENERIC) name;
 }
@@ -175,7 +155,7 @@ ptr_int_list c;
   else {
     fprintf(outfile,"  [");
     while (c) {
-      print_bin(c->value);
+      print_bin((long)c->value_1);  // REV401PLUS cast
       c=c->next;
     }
     fprintf(outfile,"]");
@@ -237,9 +217,9 @@ ptr_psi_term p;
   
   if (p) {
     deref_ptr(p);
-    n=find(intcmp,p,pointer_names);
+    n=find(INTCMP,(char *)p,pointer_names); // REV401PLUS cast
     if (n==NULL) {
-      heap_insert(intcmp,p,&pointer_names,NULL);
+      heap_insert(INTCMP,(char *)p,&pointer_names,NULL); // REV401PLUS cast
       go_through(p);
     }
     else
@@ -306,7 +286,7 @@ long force;
     insert_variables(vars->right,force);
     p=(ptr_psi_term )vars->data;
     deref_ptr(p);
-    n=find(intcmp,p,pointer_names);
+    n=find(INTCMP,(char *)p,pointer_names); // REV401PLUS cast
     if (n)
       if (n->data || force)
 	n->data=(GENERIC)vars->key;
@@ -331,7 +311,7 @@ ptr_node n;
     forbid_variables(n->right);
     v=(ptr_psi_term )n->data;
     deref_ptr(v);
-    heap_insert(intcmp,v,&printed_pointers,n->key);
+    heap_insert(INTCMP,(char *)v,&printed_pointers,(GENERIC)n->key); // REV401PLUS casts
     forbid_variables(n->left);
   }
 }
@@ -662,8 +642,8 @@ long check_legal_cons(t,t_type)
 {
   return (t->type==t_type &&
 	  count_features(t->attr_list)==2 &&
-	  find(featcmp,one,t->attr_list) &&
-	  find(featcmp,two,t->attr_list));
+	  find(FEATCMP,one,t->attr_list) &&
+	  find(FEATCMP,two,t->attr_list));
 }
 
 /*** RM: Dec 11 1992  (END) ***/
@@ -737,7 +717,7 @@ long depth;
       pretty_tag_or_psi_term(car,COMMA_PREC,depth);
     
     /* Determine how to print the CDR */
-    n=find(intcmp,cdr,pointer_names);
+    n=find(INTCMP,(char *)cdr,pointer_names); // REV401PLUS
     
     if(n && n->data) {
       prettyf("|");
@@ -792,7 +772,7 @@ long depth;
   }
   deref_ptr(p);
   
-  n=find(intcmp,p,pointer_names);
+  n=find(INTCMP,(char *)p,pointer_names); // REV401PLUS cast
   
   if (n && n->data) {
     if (n->data==(GENERIC)no_name) {
@@ -800,17 +780,18 @@ long depth;
       /* sprintf(name,"_%ld%c",++gen_sym_counter,0); */
       /* n->data=(GENERIC)heap_copy_string(name); */
     }
-    n2=find(intcmp,p,printed_pointers);
+    n2=find(INTCMP,(char *)p,printed_pointers);  // REV401PLUS cast
+
     if(n2==NULL) {
-      prettyf(n->data);
-      heap_insert(intcmp,p,&printed_pointers,n->data);
+      prettyf((char *)n->data);   // REV401PLUS cast
+      heap_insert(INTCMP,(char *)p,&printed_pointers,n->data);  // REV401PLUS cast
       if (!is_top(p)) {
         prettyf(DOTDOT);
         pretty_psi_term(p,COLON_PREC,depth);
       }
     }
     else
-      prettyf(n2->data);
+      prettyf((char *)n2->data);  // REV401PLUS cast
   }
   else
     pretty_psi_term(p,sprec,depth);
@@ -1021,7 +1002,7 @@ void pretty_psi_term(t,sprec,depth)
 	  prettyf("{}");
 	else {
 	argswritten=FALSE;
-	if (t->value) {
+	if (t->value_3) {
 #ifdef CLIFE
 	  if(t->type->type==block) {  /* RM 20 Jan 1993 */
             pretty_block(t);          /* AA 21 Jan 1993 */
@@ -1034,7 +1015,7 @@ void pretty_psi_term(t,sprec,depth)
 	    REAL val;
 	    char segbuf[100][PRINT_POWER+3];
 	    
-	    val = *(REAL *)t->value;
+	    val = *(REAL *)t->value_3;
 	    neg = (val<0.0);
 	    if (neg) val = -val;
 	    if (val>WL_MAXINT) goto PrintReal;
@@ -1055,7 +1036,7 @@ void pretty_psi_term(t,sprec,depth)
 	  }
 	  else if (sub_type(t->type,real)) {
 	  PrintReal:
-	    sprintf(buf,"%lg",*(REAL *)t->value);
+	    sprintf(buf,"%lg",*(REAL *)t->value_3);
 	    prettyf(buf);
 	    if (!equal_types(t->type,real) &&
 		!equal_types(t->type,integer)) {
@@ -1064,7 +1045,7 @@ void pretty_psi_term(t,sprec,depth)
 	    }
 	  }
 	  else if (sub_type(t->type,quoted_string)) {
-	    prettyf_quoted_string(t->value);
+	    prettyf_quoted_string((char *)t->value_3);  // REV401PLUS cast
 	    if(!equal_types(t->type,quoted_string)) {
 	      prettyf(DOTDOT);
 	      pretty_quote_symbol(t->type->keyword); /*  RM: Jan 13 1993  */
@@ -1075,7 +1056,7 @@ void pretty_psi_term(t,sprec,depth)
 	    pretty_quote_symbol(t->type->keyword);
 	  }
 	  else if (equal_types(t->type,stream)) {
-	    sprintf(buf,"stream(%ld)",t->value);
+	    sprintf(buf,"stream(%ld)",(long)t->value_3);  // REV401PLUS cast
 	    prettyf(buf);
 	  }
 	  else if (equal_types(t->type,eof))
@@ -1108,7 +1089,7 @@ void pretty_psi_term(t,sprec,depth)
 	if (r->goal->pending) {
           if (FALSE /* write_resids 11.8 */) {
 	    prettyf("\\");
-	    pretty_psi_term(r->goal->a,0,depth);
+	    pretty_psi_term(r->goal->aaaa_1,0,depth);
           }
           else
 	    prettyf("~");
@@ -1117,8 +1098,6 @@ void pretty_psi_term(t,sprec,depth)
       }
   }
 }
-
-
 
 /******** DO_PRETTY_ATTR(t,tab,cnt,depth)
   Pretty print the attribute tree T at position TAB.
@@ -1173,7 +1152,7 @@ long depth;
     }
     
     /* pretty_tag_or_psi_term(t->data,(two?COMMA_PREC:MAX_PRECEDENCE+1)); */
-    pretty_tag_or_psi_term(t->data,COMMA_PREC,depth);
+    pretty_tag_or_psi_term((ptr_psi_term)t->data,COMMA_PREC,depth); // REV401PLUS cast
     
     if (t->right) {
       prettyf(",");
@@ -1235,9 +1214,6 @@ void pretty_output()
   }
 }
 
-
-
-
 /******** PRETTY_VARIABLES(n,tab)
   Pretty print the variables at position TAB.
 */
@@ -1259,10 +1235,10 @@ ptr_tab_brk tab;
 
   tok=(ptr_psi_term )n->data;
   deref_ptr(tok);
-  n2=find(intcmp,tok,printed_pointers);
+  n2=find(INTCMP,(char *)tok,printed_pointers); // REV401PLUS cast
   if(strcmp((char *)n2->data,n->key)<0)
     /* Reference to previously printed variable */
-    prettyf(n2->data);
+    prettyf((char *)n2->data); // EV401PLUS cast
   else {
     if (eqsym->op_data) {
       long tkind, tprec, ttype, eqprec;
@@ -1281,6 +1257,7 @@ ptr_tab_brk tab;
     pretty_variables(n->right,tab);
   }
 }
+
 
 
 
@@ -1348,7 +1325,7 @@ ptr_tab_brk tab;
   if(n) {
     write_attributes(n->left,tab);
     mark_tab(tab);
-    pretty_tag_or_psi_term(n->data,MAX_PRECEDENCE+1,0);
+    pretty_tag_or_psi_term((ptr_psi_term)n->data,MAX_PRECEDENCE+1,0); // REV401PLUS cast
     write_attributes(n->right,tab);
   }
 }
@@ -1424,7 +1401,7 @@ ptr_node n;
     }
     else {
       mark_tab(new);
-      pretty_tag_or_psi_term(n->data,MAX_PRECEDENCE+1,0);
+      pretty_tag_or_psi_term((ptr_psi_term)n->data,MAX_PRECEDENCE+1,0); // REV401PLUS cast
     }
 
     end_tab();

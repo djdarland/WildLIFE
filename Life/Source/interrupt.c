@@ -7,16 +7,11 @@
 static char vcid[] = "$Id: interrupt.c,v 1.2 1994/12/08 23:25:19 duchier Exp $";
 #endif /* lint */
 
-#include "extern.h"
-#include <signal.h>
-#include "token.h"
-#include "login.h"
-#include "built_ins.h"
-#include "error.h"
+#ifdef REV401PLUS
+#include "defs.h"
+#endif
 
-long interrupted=FALSE;
-
-
+long interrupted=FALSE;  // REV401PLUS moved down
 
 /******** INTERRUPT()
   This routine is called whenever the user types CONTROL C which generates an

@@ -7,31 +7,12 @@
 static char vcid[] = "$Id: lefun.c,v 1.4 1995/01/14 00:24:55 duchier Exp $";
 #endif /* lint */
 
-#include "extern.h"
-#include "login.h"
-#include "copy.h"
-#include "trees.h"
-#include "parser.h"
-#include "print.h"
-#include "lefun.h"
-#include "token.h"
-
-
-ptr_goal resid_aim;
-ptr_resid_list resid_vars; /* 21.9 */
-/* ptr_goal resid_limit; 12.6 */
-
-long curried;
-long can_curry;
-
-/* ptr_psi_term match_date; 13.6 */
-/* ptr_choice_point cut_point; 13.6 */
+#ifdef REV401PLUS
+#include "defs.h"
+#endif
 
 static long attr_missing;
 static long check_func_flag;
-
-void eval_global_var(); /*  RM: Feb 10 1993  */
-
 
 /* Create a new psi_term on the stack with value '@' (top) and no attributes. */
 ptr_psi_term stack_psi_term(stat)
@@ -49,7 +30,7 @@ long stat;
   result->time_stamp=global_time_stamp; /* 9.6 */
 #endif
   result->resid=NULL;
-  result->value=NULL;
+  result->value_3=NULL;
 
   return result;
 }
@@ -73,8 +54,8 @@ REAL thereal;
   result->time_stamp=global_time_stamp; /* 9.6 */
 #endif
   result->resid=NULL;
-  result->value=(GENERIC)heap_alloc(sizeof(REAL));
-  (* (REAL *)(result->value)) = thereal;
+  result->value_3=(GENERIC)heap_alloc(sizeof(REAL));
+  (* (REAL *)(result->value_3)) = thereal;
 
   return result;
 }
@@ -97,7 +78,7 @@ long stat;
   result->time_stamp=global_time_stamp; /* 9.6 */
 #endif
   result->resid=NULL;
-  result->value=NULL;
+  result->value_3=NULL;
 
   return result;
 }
@@ -220,15 +201,15 @@ ptr_psi_term var,othervar;
       /* Keep track of best sort so far */
       /* Glb_code(..) tries to keep 'sortflag' TRUE if possible. */
       result=glb_code((*r)->sortflag,(*r)->bestsort,
-		      TRUE,var->type,&resflag,&rescode);
-      result=glb_value(result,resflag,rescode,(*r)->value,var->value,
+		      TRUE,(GENERIC)var->type,&resflag,&rescode); //REV401PLUS cast
+      result=glb_value(result,resflag,rescode,(*r)->value_2,var->value_3,
 		       &resvalue); /* 6.10 */
       if (!result)
         return FALSE; /* 21.9 */
       else if (othervar) {
-	result=glb_code(resflag,rescode,TRUE,othervar->type,
+	result=glb_code(resflag,rescode,TRUE,(GENERIC)othervar->type, //REV401PLUS cast
 			&resflag2,&rescode2);
-        result=glb_value(result,resflag2,rescode2,resvalue,othervar->value,
+        result=glb_value(result,resflag2,rescode2,resvalue,othervar->value_3,
 			 &resvalue2); /* 6.10 */
         if (!result) {
           return FALSE;
@@ -236,8 +217,8 @@ ptr_psi_term var,othervar;
         else {
 	  /* The value field only has to be trailed once, since its value */
 	  /* does not change, once given. */
-	  if ((*r)->value==NULL && resvalue2!=NULL) { /* 6.10 */
-	    push_ptr_value(int_ptr,&((*r)->value));
+	  if ((*r)->value_2==NULL && resvalue2!=NULL) { /* 6.10 */
+	    push_ptr_value(int_ptr,&((*r)->value_2));
 	  }
 	  if ((*r)->bestsort!=rescode2) {
             push_ptr_value(((*r)->sortflag?def_ptr:code_ptr),
@@ -245,14 +226,14 @@ ptr_psi_term var,othervar;
             (*r)->bestsort=rescode2; /* 21.9 */
 	  }
 	  if ((*r)->sortflag!=resflag2) {
-            push_ptr_value(int_ptr,&((*r)->sortflag));
+            push_ptr_value(int_ptr,(GENERIC *)&((*r)->sortflag)); //REV401PLUS cast
             (*r)->sortflag=resflag2; /* 21.9 */
 	  }
 	}
       }
       else {
-	if ((*r)->value==NULL && resvalue!=NULL) { /* 6.10 */
-	  push_ptr_value(int_ptr,&((*r)->value));
+	if ((*r)->value_2==NULL && resvalue!=NULL) { /* 6.10 */
+	  push_ptr_value(int_ptr,&((*r)->value_2));
 	}
 	if ((*r)->bestsort!=rescode) {
           push_ptr_value(((*r)->sortflag?def_ptr:code_ptr),
@@ -260,7 +241,7 @@ ptr_psi_term var,othervar;
           (*r)->bestsort=rescode; /* 21.9 */
 	}
 	if ((*r)->sortflag!=resflag) {
-          push_ptr_value(int_ptr,&((*r)->sortflag));
+          push_ptr_value(int_ptr,(GENERIC *)&((*r)->sortflag)); //REV401PLUS cast
           (*r)->sortflag=resflag; /* 21.9 */
 	}
       }
@@ -273,25 +254,25 @@ ptr_psi_term var,othervar;
   if (not_found) {
     /* We must attach this goal & the variable's sort onto this variable */
     
-    push_ptr_value(resid_ptr,r);
+    push_ptr_value(resid_ptr,(GENERIC *)r); // REV401PLUS cast
     *r=STACK_ALLOC(residuation);
     if (othervar) {
-      result=glb_code(TRUE,var->type,TRUE,othervar->type,&resflag,&rescode);
-      result=glb_value(result,resflag,rescode,var->value,othervar->value,
-		       &resvalue); /* 6.10 */
+      result=glb_code(TRUE,(GENERIC)var->type,TRUE,(GENERIC)othervar->type,&resflag,&rescode); // REV401PLUS cast
+      result=glb_value(result,resflag,rescode,var->value_3,othervar->value_3,
+		       &resvalue); /* 6.10 */ // REV401PLUS casts
       if (!result) {
         return FALSE;
       }
       else {
 	(*r)->sortflag=resflag;
         (*r)->bestsort=rescode; /* 21.9 */
-	(*r)->value=resvalue; /* 6.10 */
+	(*r)->value_2=resvalue; /* 6.10 */  
       }
     }
     else {
       (*r)->sortflag=TRUE;
       (*r)->bestsort=(GENERIC)var->type; /* 21.9 */
-      (*r)->value=(GENERIC)var->value; /* 6.10 */
+      (*r)->value_2=(GENERIC)var->value_3; /* 6.10 */
     }
     (*r)->goal=g;
     (*r)->next=NULL;
@@ -301,8 +282,8 @@ ptr_psi_term var,othervar;
     /* this goal is not pending, so make sure it will be put on the goal
      * stack later
      */
-    push_ptr_value(int_ptr,&(g->pending));
-    g->pending=TRUE;
+    push_ptr_value(int_ptr,(GENERIC *)&(g->pending)); // REV401PLUS cast
+    g->pending=(ptr_definition)TRUE; // REV401PLUS cast
   }
   
   return TRUE; /* 21.9 */
@@ -347,7 +328,7 @@ long do_residuation()
 
   if (trace) {
     tracing();
-    print_resid_message(resid_aim->a,resid_vars);
+    print_resid_message(resid_aim->aaaa_1,resid_vars);
   }
 
   while (resid_vars) {
@@ -383,8 +364,8 @@ void do_currying()
   /* PVR 5.11 undo(resid_limit); */
   /* PVR 5.11 choice_stack=cut_point; */
   goal_stack=resid_aim->next;
-  funct=(ptr_psi_term )resid_aim->a;
-  result=(ptr_psi_term )resid_aim->b;
+  funct=(ptr_psi_term )resid_aim->aaaa_1;
+  result=(ptr_psi_term )resid_aim->bbbb_1;
     
   Traceline("currying %P\n",funct);
    
@@ -409,22 +390,22 @@ long trailflag;
   ptr_residuation r;
   
   if (r=t->resid) {
-    if (trailflag) push_ptr_value(resid_ptr,&(t->resid));
+    if (trailflag) push_ptr_value(resid_ptr,(GENERIC *)&(t->resid)); // REV401PLUS cast
     t->resid=NULL;
     
     while (r) {
       g=r->goal;
       if (g->pending) {
 	
-	push_ptr_value(int_ptr,&(g->pending));
+	push_ptr_value(int_ptr,(GENERIC *)&(g->pending)); // REV401PLUS cast
 	g->pending=FALSE;
 	
-	push_ptr_value(goal_ptr,&(g->next));
+	push_ptr_value(goal_ptr,(GENERIC *)&(g->next)); // REV401PLUS cast
 	
 	g->next=goal_stack;
 	goal_stack=g;
 	
-        Traceline("releasing %P\n",g->a);
+        Traceline("releasing %P\n",g->aaaa_1);
       }
       r=r->next;
     }
@@ -460,7 +441,7 @@ ptr_psi_term u,v;
   while (*g)
     g = &((*g)->next);
   
-  push_ptr_value(resid_ptr,g);
+  push_ptr_value(resid_ptr,(GENERIC *)g); // REV401PLUS cast
   *g=v->resid;
 }
 
@@ -482,17 +463,17 @@ long eval_aim()
   ptr_choice_point cutpt;
   ptr_psi_term match_date; /* 13.6 */
   
-  funct=(ptr_psi_term )aim->a;
+  funct=(ptr_psi_term )aim->aaaa_1;
   deref_ptr(funct);
 
   /*  RM: Jun 18 1993  */
-  push2_ptr_value(int_ptr,&(funct->status),(funct->status & SMASK));
+  push2_ptr_value(int_ptr,(GENERIC *)&(funct->status),(GENERIC)(funct->status & SMASK)); // REV401PLUS cast
   funct->status=4;
 
   
   /* if (!funct->type->evaluate_args) mark_quote(funct); 25.8 */ /* 18.2 PVR */
-  result=(ptr_psi_term )aim->b;
-  rule=(ptr_pair_list )aim->c;
+  result=(ptr_psi_term )aim->bbbb_1;
+  rule=(ptr_pair_list )aim->cccc_1;
 
   match_date=(ptr_psi_term )stack_pointer;
   cutpt=choice_stack; /* 13.6 */
@@ -521,7 +502,7 @@ long eval_aim()
         }
     }
     else {
-      while (rule && (rule->a==NULL || rule->b==NULL)) {
+      while (rule && (rule->aaaa_2==NULL || rule->bbbb_2==NULL)) {
         rule=rule->next;
         Traceline("alternative rule has been retracted\n");
       }
@@ -540,16 +521,16 @@ long eval_aim()
 	    head=eval_copy(rule->a,STACK);
 	    else */
 	
-	head=quote_copy(rule->a,STACK);
-        body=eval_copy(rule->b,STACK);
+	head=quote_copy(rule->aaaa_2,STACK);
+        body=eval_copy(rule->bbbb_2,STACK);
 	head->status=4;
 	
         if (rule->next) /* 17.6 */
-          push_choice_point(eval,funct,result,rule->next);
+          push_choice_point(eval,funct,result,(GENERIC)rule->next); // REV401PLUS cast
 
         push_goal(unify,body,result,NULL);
-        /* RESID */ push_goal(eval_cut,body,cutpt,rb); /* 13.6 */
-        /* RESID */ push_goal(match,funct,head,rb);
+        /* RESID */ push_goal(eval_cut,body,(ptr_psi_term)cutpt,(GENERIC)rb); /* 13.6 */ // REV401PLUS casts
+        /* RESID */ push_goal(match,funct,head,(GENERIC)rb); // REV401PLUS cast
         /* eval_args(head->attr_list); */
       }
       else {
@@ -570,7 +551,7 @@ long eval_aim()
 
 
 /* Match the corresponding arguments */
-/* RESID */ match_attr1(u,v,rb)
+/* RESID */ void match_attr1(u,v,rb) //REV401PLUS add void 
 ptr_node *u,v;
 /* RESID */ ptr_resid_block rb;
 {
@@ -586,7 +567,7 @@ ptr_node *u,v;
         ptr_psi_term t;
   	/* RESID */ match_attr1(&((*u)->right),v->right,rb);
         t = (ptr_psi_term) (*u)->data;
-  	/* RESID */ push_goal(match,(*u)->data,v->data,rb);
+  	/* RESID */ push_goal(match,(ptr_psi_term)(*u)->data,(ptr_psi_term)v->data,(GENERIC)rb); // REV401PLUS casts
         /* deref2_eval(t); */
   	/* RESID */ match_attr1(&((*u)->left),v->left,rb);
       }
@@ -610,7 +591,7 @@ ptr_node *u,v;
 
 
 /* Evaluate the lone arguments (for lazy failure + eager success) */
-/* RESID */ match_attr2(u,v,rb)
+/* RESID */ void match_attr2(u,v,rb) // REV401PLUS add void
 ptr_node *u,v;
 /* RESID */ ptr_resid_block rb;
 {
@@ -661,7 +642,7 @@ ptr_node *u,v;
 
 
 /* Evaluate the corresponding arguments */
-/* RESID */ match_attr3(u,v,rb)
+/* RESID */ void match_attr3(u,v,rb) // REV401PLUS add void
 ptr_node *u,v;
 /* RESID */ ptr_resid_block rb;
 {
@@ -739,28 +720,28 @@ long match_aim()
   ptr_resid_block rb;
   ptr_psi_term match_date;
   
-  u=(ptr_psi_term )aim->a;
-  v=(ptr_psi_term )aim->b;
+  u=(ptr_psi_term )aim->aaaa_1;
+  v=(ptr_psi_term )aim->bbbb_1;
   deref_ptr(u);
   deref_ptr(v);
-  rb=(ptr_resid_block)aim->c;
+  rb=(ptr_resid_block)aim->cccc_1;
   restore_resid(rb,&match_date);
   
   if (u!=v) {
     if (success=matches(u->type,v->type,&lesseq)) {
       if (lesseq) {
         if (u->type!=cut || v->type!=cut) { /* Ignore value field for cut! */
-          if (v->value) {
-            if (u->value) {
+          if (v->value_3) {
+            if (u->value_3) {
               if (overlap_type(v->type,real))
-                success=(*((REAL *)u->value)==(*((REAL *)v->value)));
+                success=(*((REAL *)u->value_3)==(*((REAL *)v->value_3)));
               else if (overlap_type(v->type,quoted_string))
-                success=(strcmp((char *)u->value,(char *)v->value)==0);
+                success=(strcmp((char *)u->value_3,(char *)v->value_3)==0);
 	      /* DENYS: BYTEDATA */
               else if (overlap_type(v->type,sys_bytedata)) {
-		unsigned long ulen = *((unsigned long *) u->value);
-		unsigned long vlen = *((unsigned long *) v->value);
-                success=(ulen==vlen && bcmp((char *)u->value,(char *)v->value,ulen)==0);
+		unsigned long ulen = *((unsigned long *) u->value_3);
+		unsigned long vlen = *((unsigned long *) v->value_3);
+                success=(ulen==vlen && bcmp((char *)u->value_3,(char *)v->value_3,ulen)==0);
 	      }
             }
             else
@@ -768,16 +749,16 @@ long match_aim()
           }
         }
       }
-      else if (u->value) {
+      else if (u->value_3) {
         /* Here we have U <| V but U and V have values which cannot match. */
         success=TRUE;
           
-        if (v->value) {
+        if (v->value_3) {
           if (overlap_type(v->type,real))
-            success=(*((REAL *)u->value)==(*((REAL *)v->value)));
+            success=(*((REAL *)u->value_3)==(*((REAL *)v->value_3)));
         }
         else if (overlap_type(u->type,integer)) {
-          r= *((REAL *)u->value);
+          r= *((REAL *)u->value_3);
           success=(r==floor(r));
         }
           
@@ -855,7 +836,7 @@ ptr_node n;
   
   if (n) {
     flag = eval_args(n->right);
-    flag = check_out(n->data) && flag;
+    flag = check_out((ptr_psi_term)n->data) && flag; // REV401PLUS cast
     flag = eval_args(n->left) && flag;
   }
   
@@ -871,7 +852,7 @@ void check_disj(t)
 ptr_psi_term t;
 {
   Traceline("push disjunction goal %P\n",t);
-  if (t->value)
+  if (t->value_3) 
     push_goal(disj,t,t,(GENERIC)TRUE); /* 18.2 PVR */
   else
     push_goal(fail,NULL,NULL,NULL);
@@ -906,11 +887,11 @@ ptr_psi_term t;
   
     /* Bind the calling term to the result */
     /* push_ptr_value(psi_term_ptr,&(t->coref)); */
-    push_psi_ptr_value(t,&(t->coref));
+    push_psi_ptr_value(t,(GENERIC *)&(t->coref)); // REV401PLUS cast
     t->coref=result;
 
     /* Evaluate the copy of the calling term */
-    push_goal(eval,copy,result,t->type->rule);
+    push_goal(eval,copy,result,(GENERIC)t->type->rule); // REV401PLUS cast
   
     /* Avoid evaluation for built-in functions with unevaluated arguments */
     /* (cond and such_that) */
@@ -949,7 +930,7 @@ ptr_psi_term t;
 {
   long flag=FALSE;
 
-  push2_ptr_value(int_ptr,&(t->status),(t->status & SMASK));
+  push2_ptr_value(int_ptr,(GENERIC *)&(t->status),(GENERIC)(t->status & SMASK)); // REV401PLUS casts
   /* push_ptr_value(int_ptr,&(t->status)); */
   
   if (t->type->properties) {
@@ -1036,9 +1017,9 @@ ptr_psi_term t;
   else {
     t->status |= RMASK;
 
-    switch(t->type->type) { /*  RM: Feb  8 1993  */
+    switch((long)t->type->type_def) { /*  RM: Feb  8 1993  */
       
-    case function:
+    case function_it:
       if (check_func_flag) {
 	check_func(t);
 	flag=TRUE;
@@ -1049,11 +1030,11 @@ ptr_psi_term t;
       }
       break;
 
-    case type:
+    case type_it:
       flag=check_type(t);
       break;
 
-    case global: /*  RM: Feb  8 1993  */
+    case global_it: /*  RM: Feb  8 1993  */
       eval_global_var(t);
       check_out(t);
       flag=FALSE;
@@ -1120,12 +1101,12 @@ ptr_psi_term t;
   goal_stack=aim;
 
   if (t->status==0) {
-    if(t->type->type==function) {
+    if(t->type->type_def==(def_type)function_it) {
       check_func(t);    /* Push eval goals to evaluate the function. */
       deref_flag=TRUE;  /* TRUE so that caller will return to main_prove. */
     }
     else
-      if(t->type->type==global) { /*  RM: Feb 10 1993  */
+      if(t->type->type_def==(def_type)global_it) { /*  RM: Feb 10 1993  */
 	eval_global_var(t);
 	deref_ptr(t);/*  RM: Jun 25 1993  */
 	deref_flag=deref_eval(t);
@@ -1133,7 +1114,7 @@ ptr_psi_term t;
       else {
 	if (t->status!=2) {
 	  if((GENERIC)t<heap_pointer)
-	    push_ptr_value(int_ptr,&(t->status)); /*  RM: Jul 15 1993  */
+	    push_ptr_value(int_ptr,(GENERIC *)&(t->status)); /*  RM: Jul 15 1993  */ // REV401PLUS cast
 	  t->status=4;
 	  deref_flag=FALSE;
 	}
@@ -1163,12 +1144,12 @@ void deref_rec_body(t)
 ptr_psi_term t;
 {
   if (t->status==0) {
-    if (t->type->type==function) {
+    if (t->type->type_def==(def_type)function_it) {
       check_func(t);
       deref_flag=TRUE;
     }
     else
-      if(t->type->type==global) { /*  RM: Feb 10 1993  */
+      if(t->type->type_def==(def_type)global_it) { /*  RM: Feb 10 1993  */
 	eval_global_var(t);
 	deref_ptr(t);/*  RM: Jun 25 1993  */
 	deref_rec_body(t);
@@ -1176,7 +1157,7 @@ ptr_psi_term t;
       else {
 	/* if (t->status!=2) Tried adding this -- PVR 9.2.94 */
 	  if((GENERIC)t<heap_pointer)
-	    push_ptr_value(int_ptr,&(t->status));/*  RM: Jul 15 1993  */
+	    push_ptr_value(int_ptr,(GENERIC *)&(t->status));/*  RM: Jul 15 1993  */ // REV401PLUS cast
 	  t->status=4;
 	  deref_rec_args(t->attr_list);
       }
@@ -1253,11 +1234,11 @@ ptr_psi_term t;
 {
   deref_ptr(t);
   if (t->status==0) {
-    if (t->type->type==function) {
+    if (t->type->type_def==(def_type)function_it) {
       check_func(t);
     }
     else 
-      if(t->type->type==global) { /*  RM: Feb 10 1993  */
+      if(t->type->type_def==(def_type)global_it) { /*  RM: Feb 10 1993  */
       	eval_global_var(t);
 	deref_ptr(t);/*  RM: Jun 25 1993  */
 	deref2_eval(t);
@@ -1333,8 +1314,8 @@ void eval_global_var(t)     /*  RM: Feb 10 1993  */
       ptr_stack n;
       n=STACK_ALLOC(stack);
       n->type=psi_term_ptr;
-      n->a= (GENERIC) &(t->type->global_value);
-      n->b= NULL;
+      n->aaaa_3= (GENERIC *) &(t->type->global_value);
+      n->bbbb_3= NULL;
       n->next=undo_stack;
       undo_stack=n;
     }
@@ -1347,9 +1328,9 @@ void eval_global_var(t)     /*  RM: Feb 10 1993  */
 
   /* var_occurred=TRUE; RM: Feb  4 1994  */
 
-  if(t->type->type==global && t!=t->type->global_value) {
+  if(t->type->type_def==(def_type) global_it && t!=t->type->global_value) {
     /*Traceline("dereferencing variable %P\n",t);*/
-    push_psi_ptr_value(t,&(t->coref));
+    push_psi_ptr_value(t,(GENERIC *)&(t->coref)); // REV401PLUS cast
     t->coref=t->type->global_value;
   }
 }

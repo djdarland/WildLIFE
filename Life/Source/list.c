@@ -14,8 +14,9 @@ static char vcid[] = "$Id: list.c,v 1.2 1994/12/08 23:28:16 duchier Exp $";
 ** Links belongs to each atom
 */
 
-#include "list.h"
-
+#ifdef REV401PLUS
+#include "defs.h"
+#endif
 
 
 /*=============================================================================*/
@@ -416,7 +417,7 @@ RefListHeader header;
 {
     long n = 0;
     
-    List_Enum (header, List_CountAtom, &n);
+    List_Enum (header,(RefListEnumProc) List_CountAtom, &n); // REV401PLUS cast
     return n;
 }
 

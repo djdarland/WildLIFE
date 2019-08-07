@@ -46,7 +46,7 @@ timer.t.h:	tests
 # Regression test.
 r:	Try tests
 	@echo 'No news is good news...'
-	Try <tests
+	./Try <tests
 
 lint:	timer.t.h
 	@echo 'Complaints about multiply-declared regerror() are legit.'

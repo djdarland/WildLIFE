@@ -16,19 +16,16 @@ static char vcid[] = "$Id: hash_table.c,v 1.2 1994/12/08 23:24:09 duchier Exp $"
 #endif /* lint */
 
 
-#include "extern.h"
-
-
-ptr_definition first_definition=NULL;
-
-int rand_array[256];
-
-
+#ifdef REV401PLUS
+#include "defs.h"
+#endif
 
 /******** HASH_CREATE(size)
   Create a hash-table for max size keywords.
   */
   
+ptr_definition first_definition=NULL;  // REV401PLUS moved
+
 ptr_hash_table hash_create(size)
 
      int size;
@@ -196,7 +193,7 @@ void hash_display(table)
   int c=0;
   int t=0;
   
-  printf("*** Hash table %x:\n",table);
+  printf("*** Hash table %lx:\n",(unsigned long)table); // added ->%lx & cast
   printf("Size: %d\n",table->size);
   printf("Used: %d\n",table->used);
   

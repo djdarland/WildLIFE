@@ -8,8 +8,9 @@ static int dummy;
 
 #ifdef ARITY
 
-#include "extern.h"
-#include "trees.h"
+#ifdef REV401PLUS
+#include "defs.h"
+#endif
 
 FILE *features;
 static int Aunif=0;

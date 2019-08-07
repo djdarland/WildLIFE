@@ -7,19 +7,9 @@
 static char vcid[] = "$Id: built_ins.c,v 1.14 1995/07/27 21:26:28 duchier Exp $";
 #endif /* lint */
 
-#include "extern.h"
-#include "trees.h"
-#include "login.h"
-#include "types.h"
-#include "parser.h"
-#include "copy.h"
-#include "token.h"
-#include "print.h"
-#include "lefun.h"
-#include "memory.h"
-#include "built_ins.h"
-#include "error.h" 
-#include "modules.h"  /*  RM: Jan  8 1993  */
+#ifdef REV401PLUS
+#include "defs.h"
+#endif
 
 #ifdef X11
 #include "xpred.h"
@@ -30,110 +20,11 @@ static char vcid[] = "$Id: built_ins.c,v 1.14 1995/07/27 21:26:28 duchier Exp $"
 static unsigned int randomseed;
 #endif
 
-
-long (* c_rule[MAX_BUILT_INS])();
-
-ptr_definition abortsym; /* 26.1 */
-ptr_definition aborthooksym; /* 26.1 */
-
-ptr_definition add_module1;  /*  RM: Mar 12 1993  */
-ptr_definition add_module2;
-ptr_definition add_module3;
-
-ptr_definition and;
-ptr_definition apply;
-ptr_definition boolean;
-ptr_definition boolpredsym;
-ptr_definition built_in;
-ptr_definition calloncesym;
-ptr_definition colonsym;
-ptr_definition commasym;
-ptr_definition comment;
-/* ptr_definition conjunction; 19.8 */
-ptr_definition constant;
-ptr_definition cut;
-ptr_definition disjunction;
-ptr_definition disj_nil;/*  RM: Feb  1 1993  */
-ptr_definition eof;
-ptr_definition eqsym;
-ptr_definition leftarrowsym;
-ptr_definition false;
-ptr_definition funcsym;
-ptr_definition functor;
-ptr_definition iff;
-ptr_definition integer;
-ptr_definition alist;
-ptr_definition life_or; /*  RM: Apr  6 1993  */
-ptr_definition minus_symbol; /*  RM: Jun 21 1993  */
-ptr_definition nil; /*** RM 9 Dec 1992 ***/
-ptr_definition nothing;
-ptr_definition predsym;
-ptr_definition quote;
-ptr_definition quoted_string;
-ptr_definition real;
-ptr_definition stream;
-ptr_definition succeed;
-ptr_definition such_that;
-ptr_definition top;
-ptr_definition true;
-ptr_definition timesym;
-ptr_definition tracesym; /* 26.1 */
-ptr_definition typesym;
-ptr_definition variable;
-ptr_definition opsym;
-ptr_definition loadsym;
-ptr_definition dynamicsym;
-ptr_definition staticsym;
-ptr_definition encodesym;
-ptr_definition listingsym;
-/* ptr_definition provesym; */
-ptr_definition delay_checksym;
-ptr_definition eval_argsym;
-ptr_definition inputfilesym;
-ptr_definition call_handlersym;
-ptr_definition xf_sym;
-ptr_definition fx_sym;
-ptr_definition yf_sym;
-ptr_definition fy_sym;
-ptr_definition xfx_sym;
-ptr_definition xfy_sym;
-ptr_definition yfx_sym;
-ptr_definition nullsym;
-
-
-/*  RM: Jul  7 1993  */
-ptr_definition final_dot;
-ptr_definition final_question;
-
-
-ptr_psi_term null_psi_term;
-
-char *one;
-char *two;
-char *three;
-char *year_attr;
-char *month_attr;
-char *day_attr;
-char *hour_attr;
-char *minute_attr;
-char *second_attr;
-char *weekday_attr;
-
-static long built_in_index=0;
-
-int all_public_symbols();  /* RM: Jan 28 1994  */
-
-/*  RM: Sep 20 1993  */
-int arg_c;
-char **arg_v;
-
-
-
-/***  RM: Dec  9 1992  (START) ***/
-
 /********* STACK_NIL
   Create the NIL object on the stack.
   */
+
+static long built_in_index=0;
 
 ptr_psi_term stack_nil()
 
@@ -162,9 +53,9 @@ ptr_psi_term stack_cons(head,tail)
   cons=stack_psi_term(4);
   cons->type=alist;
   if(head)
-    stack_insert(featcmp,one,&(cons->attr_list),head);
+    stack_insert(FEATCMP,one,&(cons->attr_list),(GENERIC)head); //cast REV401PLUS
   if(tail)
-    stack_insert(featcmp,two,&(cons->attr_list),tail);
+    stack_insert(FEATCMP,two,&(cons->attr_list),(GENERIC)tail); // cast REV401PLUS
 
   return cons;
 }
@@ -182,9 +73,9 @@ ptr_psi_term stack_pair(left,right)
   pair=stack_psi_term(4);
   pair->type=and;
   if(left)
-    stack_insert(featcmp,one,&(pair->attr_list),left);
+    stack_insert(FEATCMP,one,&(pair->attr_list),(GENERIC)left);  // cast REV401PLUS
   if(right)
-    stack_insert(featcmp,two,&(pair->attr_list),right);
+    stack_insert(FEATCMP,two,&(pair->attr_list),(GENERIC)right);  // cast REV401PLUS
 
   return pair;
 }
@@ -199,8 +90,8 @@ ptr_psi_term stack_int(n)
   ptr_psi_term m;
   m=stack_psi_term(4);
   m->type=integer;
-  m->value=heap_alloc(sizeof(REAL));
-  *(REAL *)m->value=(REAL)n;
+  m->value_3=heap_alloc(sizeof(REAL));
+  *(REAL *)m->value_3=(REAL)n;
   return m;
 }
 
@@ -209,11 +100,11 @@ ptr_psi_term stack_int(n)
   */
 
 ptr_psi_term stack_string(s)
-     char *s;
+     char *s;			  
 {
   ptr_psi_term t = stack_psi_term(4);
   t->type = quoted_string;
-  t->value=(GENERIC)heap_copy_string(s);
+  t->value_3=(GENERIC)heap_copy_string(s);
   return t;
 }
 
@@ -229,7 +120,7 @@ ptr_psi_term stack_bytes(s,n)
 {
   ptr_psi_term t = stack_psi_term(4);
   t->type = quoted_string;
-  t->value=(GENERIC)heap_ncopy_string(s,n);
+  t->value_3=(GENERIC)heap_ncopy_string(s,n);
   return t;
 }
 
@@ -244,8 +135,8 @@ ptr_psi_term t;
 char **fn;
 {
   if (equal_types(t->type,quoted_string)) {
-    if (t->value) {
-      *fn = (char *) t->value;
+    if (t->value_3) {
+      *fn = (char *) t->value_3;
       return TRUE;
     }
     else {
@@ -286,7 +177,7 @@ ptr_psi_term make_feature_list(tree,tail,module,val)
       def=update_feature(module,tree->key); /* Extract module RM: Feb 3 1993 */
       if(def) {
 	if(val) /* RM: Mar  3 1994 Distinguish between features & values */
-	  tail=stack_cons(tree->data,tail);
+	  tail=stack_cons((ptr_psi_term)tree->data,tail); // REV401PLUS cast
 	else {
 	  new=stack_psi_term(4);      
 	  new->type=def;
@@ -296,12 +187,12 @@ ptr_psi_term make_feature_list(tree,tail,module,val)
     }
     else { /* Feature is a number */
       if(val) /* RM: Mar  3 1994 Distinguish between features & values */
-	tail=stack_cons(tree->data,tail);
+	tail=stack_cons((ptr_psi_term)tree->data,tail); // REV401PLUS cast
       else {
 	new=stack_psi_term(4);      
 	new->type=(d==floor(d))?integer:real;
-	new->value=heap_alloc(sizeof(REAL));
-	*(REAL *)new->value=(REAL)d;
+	new->value_3=heap_alloc(sizeof(REAL));
+	*(REAL *)new->value_3=(REAL)d;
 	tail=stack_cons(new,tail);
       }
     }
@@ -335,8 +226,8 @@ long *n;
     success=matches(t->type,real,&smaller);
     if (success) {
       *n=FALSE;
-      if (smaller && t->value) {
-        *v= *(REAL *)t->value;
+      if (smaller && t->value_3){
+	  *v= *(REAL *)t->value_3;
         *n=TRUE;
       }
     }
@@ -365,15 +256,15 @@ long *n;
     if (success) {
       *n=FALSE;
       if (smaller) {
-	if (t->value) {
-	  *v= *(REAL *)t->value;
+	if (t->value_3) {
+	  *v= *(REAL *)t->value_3;
 	  *n=TRUE;
 	}
       }
       else {
 	if((GENERIC)t<heap_pointer) { /*  RM: Jun  8 1993  */
-	  push_ptr_value(def_ptr,&(t->type));
-	  push_ptr_value(int_ptr,&(t->status));
+	  push_ptr_value(def_ptr,(GENERIC *)&(t->type)); //cast REV401PLUS
+	  push_ptr_value(int_ptr,(GENERIC *)&(t->status)); //cast REV401PLUS
 	  t->type=real;
 	  t->status=0;
 	  i_check_out(t);
@@ -405,20 +296,20 @@ long *n;
     if(success) {
       *n=FALSE;
       if(smaller) {
-	if(matches(t->type,false,&smaller) && smaller) {
+	if(matches(t->type,lf_false,&smaller) && smaller) {
 	  *v= 0;
 	  *n=TRUE;
 	}
 	else
-	  if(matches(t->type,true,&smaller) && smaller) {
+	  if(matches(t->type,lf_true,&smaller) && smaller) {
 	    *v= 1;
 	    *n=TRUE;
 	  }
       }
       else {
 	if((GENERIC)t<heap_pointer) { /*  RM: Jun  8 1993  */
-	  push_ptr_value(def_ptr,&(t->type));
-	  push_ptr_value(int_ptr,&(t->status));
+	  push_ptr_value(def_ptr,(GENERIC *)&(t->type)); //cast REV401PLUS
+	  push_ptr_value(int_ptr,(GENERIC *)&(t->status)); //cast REV401PLUS
 	  t->type=boolean;
 	  t->status=0;
 	  i_check_out(t);
@@ -443,14 +334,14 @@ long v;
   ptr_psi_term u;
 
   u=stack_psi_term(4);
-  u->type=v?true:false;
+  u->type=v?lf_true:lf_false;
   push_goal(unify,t,u,NULL);
   
   /* Completely commented out by Richard on Nov 25th 1993
      What's *your* Birthday? Maybe you'd like a Birthday-Bug-Card!
      
   if((GENERIC)t<heap_pointer) {
-    push_ptr_value(def_ptr,&(t->type));
+    push_ptr_value(def_ptr,(GENERIC *)&(t->type)); //cast REV401PLUS
     if (v) {
       t->type=true;
       t->status=0;
@@ -492,16 +383,16 @@ REAL v;
 
   if((GENERIC)t<heap_pointer) { /*  RM: Jun  8 1993  */
     deref_ptr(t);
-    assert(t->value==NULL); /* 10.6 */
-    push_ptr_value(int_ptr,&(t->value));
-    t->value=heap_alloc(sizeof(REAL)); /* 12.5 */
-    *(REAL *)t->value = v;
+    assert(t->value_3==NULL); /* 10.6 */
+    push_ptr_value(int_ptr,(GENERIC *)&(t->value_3)); //cast REV401PLUS
+    t->value_3=heap_alloc(sizeof(REAL)); /* 12.5 */
+    *(REAL *)t->value_3 = v;
     
     matches(t->type,integer,&smaller);
     
     if (v==floor(v)){
       if (!smaller) {
-	push_ptr_value(def_ptr,&(t->type));
+	push_ptr_value(def_ptr,(GENERIC *)&(t->type)); //cast REV401PLUS
 	t->type=integer;
 	t->status=0;
       }
@@ -535,10 +426,10 @@ static long c_gt()
   long num1,num2,num3;
   REAL val1,val2,val3;
   
-  t=aim->a;
+  t=aim->aaaa_1;
   deref_ptr(t);
   get_two_args(t->attr_list,&arg1,&arg2);
-  arg3=aim->b;
+  arg3=aim->bbbb_1;
   
   if (arg1) {
     deref(arg1);
@@ -601,10 +492,10 @@ static long c_equal()
   long num1,num2,num3;
   REAL val1,val2,val3;
   
-  t=aim->a;
+  t=aim->aaaa_1;
   deref_ptr(t);
   get_two_args(t->attr_list,&arg1,&arg2);
-  arg3=aim->b;
+  arg3=aim->bbbb_1;
   
   if(arg1) {
     deref(arg1);
@@ -681,9 +572,9 @@ static long c_eval_disjunction()
   ptr_psi_term arg1,arg2,funct,result;
 
   
-  funct=aim->a;
+  funct=aim->aaaa_1;
   deref_ptr(funct);
-  result=aim->b;
+  result=aim->bbbb_1;
   get_two_args(funct->attr_list,&arg1,&arg2);
 
   /* deref_args(funct,set_1_2); Don't know about this */
@@ -696,7 +587,7 @@ static long c_eval_disjunction()
 
     if(arg2->type!=disj_nil) /*  RM: Feb  1 1993  */
       /* Create the alternative */
-      push_choice_point(eval,arg2,result,funct->type->rule);
+      push_choice_point(eval,arg2,result,(GENERIC)funct->type->rule); //REV401 cast
     
     /* Unify the result with the first argument */
     push_goal(unify,result,arg1,NULL);
@@ -726,10 +617,10 @@ static long c_lt()
   long num1,num2,num3;
   REAL val1,val2,val3;
   
-  t=aim->a;
+  t=aim->aaaa_1;
   deref_ptr(t);
   get_two_args(t->attr_list,&arg1,&arg2);
-  arg3=aim->b;
+  arg3=aim->bbbb_1;
   
   if(arg1) {
     deref(arg1);
@@ -793,10 +684,10 @@ static long c_gtoe()
   long num1,num2,num3;
   REAL val1,val2,val3;
   
-  t=aim->a;
+  t=aim->aaaa_1;
   deref_ptr(t);
   get_two_args(t->attr_list,&arg1,&arg2);
-  arg3=aim->b;
+  arg3=aim->bbbb_1;
   
   if(arg1) {
     deref(arg1);
@@ -859,10 +750,10 @@ static long c_ltoe()
   long num1,num2,num3;
   REAL val1,val2,val3;
   
-  t=aim->a;
+  t=aim->aaaa_1;
   deref_ptr(t);
   get_two_args(t->attr_list,&arg1,&arg2);
-  arg3=aim->b;
+  arg3=aim->bbbb_1;
   
   if(arg1) {
     deref(arg1);
@@ -926,7 +817,7 @@ static long c_boolpred()
   long success=TRUE,succ,lesseq;
   ptr_psi_term t,arg1;
 
-  t=aim->a;
+  t=aim->aaaa_1;
   deref_ptr(t);
   get_one_arg(t->attr_list,&arg1);
   if (arg1) {
@@ -936,7 +827,7 @@ static long c_boolpred()
       residuate(arg1);
     }
     else {
-      succ=matches(arg1->type,true,&lesseq);
+      succ=matches(arg1->type,lf_true,&lesseq);
       if (succ) {
         if (lesseq) {
           /* Function returns true: success. */
@@ -945,7 +836,7 @@ static long c_boolpred()
           residuate(arg1);
       }
       else {
-        succ=matches(arg1->type,false,&lesseq);
+        succ=matches(arg1->type,lf_false,&lesseq);
         if (succ) {
           if (lesseq) {
             /* Function returns false: failure. */
@@ -956,8 +847,8 @@ static long c_boolpred()
         }
         else {
           /* Both true and false are disentailed. */
-          if (arg1->type->type==predicate) {
-            push_goal(prove,arg1,DEFRULES,NULL);
+          if (arg1->type->type_def==(def_type)predicate_it) { // REV401PLUS _def & _it & cast
+            push_goal(prove,arg1,(ptr_psi_term)DEFRULES,NULL);
           }
           else {
             Errorline("function result '%P' should be a boolean or a predicate.\n",
@@ -979,8 +870,8 @@ static long c_boolpred()
 static long get_bool(typ)
 ptr_definition typ;
 {
-  if (sub_type(typ,true)) return TRUE;
-  else if (sub_type(typ,false)) return FALSE;
+  if (sub_type(typ,lf_true)) return TRUE;
+  else if (sub_type(typ,lf_false)) return FALSE;
   else return UNDEF;
 }
 
@@ -1005,14 +896,14 @@ long sel;
   long a1comp, a2comp, a3comp;
   long a1, a2, a3;
 
-  funct=aim->a;
+  funct=aim->aaaa_1;
   deref_ptr(funct);
   get_two_args(funct->attr_list,&arg1,&arg2);
   if (arg1 && arg2) {
     deref(arg1);
     deref(arg2);
     deref_args(funct,set_1_2);
-    arg3=aim->b;
+    arg3=aim->bbbb_1;
     deref(arg3);
 
     a1comp = matches(arg1->type,boolean,&sm1);
@@ -1094,13 +985,13 @@ static long c_not()
   long a1comp, a2comp;
   long a1, a2;
 
-  funct=aim->a;
+  funct=aim->aaaa_1;
   deref_ptr(funct);
   get_one_arg(funct->attr_list,&arg1);
   if (arg1) {
     deref(arg1);
     deref_args(funct,set_1);
-    arg2=aim->b;
+    arg2=aim->bbbb_1;
     deref(arg2);
  
     a1comp = matches(arg1->type,boolean,&sm1);
@@ -1147,14 +1038,14 @@ static long c_xor()
   long a1comp, a2comp, a3comp;
   long a1, a2, a3;
 
-  funct=aim->a;
+  funct=aim->aaaa_1;
   deref_ptr(funct);
   get_two_args(funct->attr_list,&arg1,&arg2);
   if (arg1 && arg2) {
     deref(arg1);
     deref(arg2);
     deref_args(funct,set_1_2);
-    arg3=aim->b;
+    arg3=aim->bbbb_1;
     deref(arg3);
 
     a1comp = matches(arg1->type,boolean,&sm1);
@@ -1224,16 +1115,16 @@ static long c_apply()
   ptr_psi_term funct,other;
   ptr_node n,fattr;
   
-  funct=aim->a;
+  funct=aim->aaaa_1;
   deref_ptr(funct);
-  n=find(featcmp,functor->keyword->symbol,funct->attr_list);
+  n=find(FEATCMP,functor->keyword->symbol,funct->attr_list);
   if (n) {
     other=(ptr_psi_term )n->data;
     deref(other);
     if (other->type==top)
       residuate(other);
     else
-      if(other->type && other->type->type!=function) {
+      if(other->type && other->type->type_def!=(def_type)function_it) {// REV401PLUS _type & (def_type) & _it
 	success=FALSE;
         Errorline("argument is not a function in %P.\n",funct);
       }
@@ -1243,7 +1134,7 @@ static long c_apply()
 	clear_copy();
 	other=distinct_copy(other);
         fattr=distinct_tree(funct->attr_list); /* Make distinct copy: PVR */
-	push_goal(eval,other,aim->b,other->type->rule);
+	push_goal(eval,other,aim->bbbb_1,(GENERIC)other->type->rule); // REV401PLUS cast
 	merge_unify(&(other->attr_list),fattr);
         /* We don't want to remove anything from funct->attr_list here. */
 	delete_attr(functor->keyword->symbol,&(other->attr_list));
@@ -1275,9 +1166,9 @@ static long c_project()
   /* char *thebuffer="integer"; 18.5 */
   char thebuffer[20]; /* Maximum number of digits in an integer */
   
-  funct=aim->a;
+  funct=aim->aaaa_1;
   deref_ptr(funct);
-  result=aim->b;
+  result=aim->bbbb_1;
   get_two_args(funct->attr_list,&arg1,&arg2);
   if (arg2 && arg1) {
     deref(arg1);
@@ -1288,11 +1179,11 @@ static long c_project()
 
     /*  RM: Jul 20 1993: Don't residuate on 'string' etc...  */
     if(arg2->type!=top) {
-      if(arg2->value && sub_type(arg2->type,quoted_string)) /* 10.8 */
-	label=(char *)arg2->value;
+      if(arg2->value_3 && sub_type(arg2->type,quoted_string)) /* 10.8 */
+	label=(char *)arg2->value_3;
       else
-	if(arg2->value && sub_type(arg2->type,integer)) { /* 10.8 */
-	  v= *(REAL *)arg2->value;
+	if(arg2->value_3 && sub_type(arg2->type,integer)) { /* 10.8 */
+	  v= *(REAL *)arg2->value_3;
 	  if(v==floor(v)) {
 	    sprintf(thebuffer,"%ld",(long)v);
 	    label=heap_copy_string(thebuffer); /* A little voracious */
@@ -1311,11 +1202,11 @@ static long c_project()
     }
     
     if (label) {
-      n=find(featcmp,label,arg1->attr_list);
+      n=find(FEATCMP,label,arg1->attr_list);
       
       if (n)
-	push_goal(unify,result,n->data,NULL);
-      else if (arg1->type->type==function && !(arg1->flags&QUOTED_TRUE)) {
+	push_goal(unify,result,(ptr_psi_term)n->data,NULL); //REV401PLUS cast
+      else if (arg1->type->type_def==(def_type)function_it && !(arg1->flags&QUOTED_TRUE)) { // _def & (def_type) & _it
 	Errorline("attempt to add a feature to curried function %P\n",
 		  arg1);
 	return FALSE;
@@ -1324,10 +1215,10 @@ static long c_project()
 	deref_ptr(result);
 	if((GENERIC)arg1>=heap_pointer) { /*  RM: Feb  9 1993  */
 	  if((GENERIC)result<heap_pointer)
-	    push_psi_ptr_value(result,&(result->coref));
+	    push_psi_ptr_value(result,(GENERIC *)&(result->coref)); //REV401PLUS cast
 	  clear_copy();
 	  result->coref=inc_heap_copy(result);
-	  heap_insert(featcmp,label,&(arg1->attr_list),result->coref);
+	  heap_insert(FEATCMP,label,&(arg1->attr_list),(GENERIC)result->coref);//REV401PLUS cast
 	}
 	else {
     
@@ -1337,10 +1228,11 @@ static long c_project()
 	  
 	  /*  RM: Mar 25 1993  */
 	  if(arg1->type->always_check || arg1->attr_list)
-	    bk_stack_insert(featcmp,label,&(arg1->attr_list),result);
+	    bk_stack_insert(FEATCMP,label,&(arg1->attr_list),(GENERIC)result);  // cast REV401PLUS
 	  else {
-	    bk_stack_insert(featcmp,label,&(arg1->attr_list),result);
-	    fetch_def_lazy(arg1, arg1->type,arg1->type,NULL,NULL);
+	    bk_stack_insert(FEATCMP,label,&(arg1->attr_list),(GENERIC)result);  // cast REV401PLUS
+	    fetch_def_lazy(arg1, arg1->type,arg1->type,NULL,NULL,0,0); // djd added zeros // REV401PLUS copied from 2.33
+	    // WAS	    fetch_def_lazy(arg1, arg1->type,arg1->type,NULL,NULL);
 	  }
 	  
 	  if (arg1->resid)
@@ -1370,10 +1262,10 @@ static long c_diff()
   long num1,num2,num3;
   REAL val1,val2,val3;
   
-  t=aim->a;
+  t=aim->aaaa_1;
   deref_ptr(t);
   get_two_args(t->attr_list,&arg1,&arg2);
-  arg3=aim->b;
+  arg3=aim->bbbb_1;
   
   if(arg1) {
     deref(arg1);
@@ -1456,7 +1348,7 @@ static long c_succeed()
 {
   ptr_psi_term t;
 
-  t=aim->a;
+  t=aim->aaaa_1;
   deref_args(t,set_empty);
   return TRUE;
 }
@@ -1470,9 +1362,9 @@ static long c_repeat()
 {
   ptr_psi_term t;
 
-  t=aim->a;
+  t=aim->aaaa_1;
   deref_args(t,set_empty);
-  push_choice_point(prove,t,DEFRULES,NULL);
+  push_choice_point(prove,t,(ptr_psi_term)DEFRULES,NULL);
   return TRUE;
 }
 
@@ -1485,16 +1377,16 @@ static long c_var()
   long success=TRUE;
   ptr_psi_term arg1,result,g,other;
   
-  g=aim->a;
+  g=aim->aaaa_1;
   deref_ptr(g);
-  result=aim->b;
+  result=aim->bbbb_1;
   deref(result);
   get_one_arg(g->attr_list,&arg1);
   if (arg1) {
     deref(arg1);
     deref_args(g,set_1);
     other=stack_psi_term(4); /* 19.11 */
-    other->type=((arg1->type==top)&&(arg1->attr_list==NULL))?true:false;
+    other->type=((arg1->type==top)&&(arg1->attr_list==NULL))?lf_true:lf_false;
     resid_aim=NULL;
     push_goal(unify,result,other,NULL);
   }
@@ -1516,16 +1408,16 @@ static long c_nonvar()
   long success=TRUE;
   ptr_psi_term arg1,result,g,other;
   
-  g=aim->a;
+  g=aim->aaaa_1;
   deref_ptr(g);
-  result=aim->b;
+  result=aim->bbbb_1;
   deref(result);
   get_one_arg(g->attr_list,&arg1);
   if (arg1) {
     deref(arg1);
     deref_args(g,set_1);
     other=stack_psi_term(4); /* 19.11 */
-    other->type=((arg1->type==top)&&(arg1->attr_list==NULL))?false:true;
+    other->type=((arg1->type==top)&&(arg1->attr_list==NULL))?lf_false:lf_true;
     resid_aim=NULL;
     push_goal(unify,result,other,NULL);
   }
@@ -1547,16 +1439,16 @@ static long c_is_function()
   long success=TRUE;
   ptr_psi_term arg1,result,g,other;
   
-  g=aim->a;
+  g=aim->aaaa_1;
   deref_ptr(g);
-  result=aim->b;
+  result=aim->bbbb_1;
   deref(result);
   get_one_arg(g->attr_list,&arg1);
   if (arg1) {
     deref(arg1);
     deref_args(g,set_1);
     other=stack_psi_term(4); /* 19.11 */
-    other->type=(arg1->type->type==function)?true:false;
+    other->type=(arg1->type->type_def==(def_type)function_it)?lf_true:lf_false; // REV401PLUS _def & (def_type) & _it
     resid_aim=NULL;
     push_goal(unify,result,other,NULL);
   }
@@ -1578,16 +1470,16 @@ static long c_is_predicate()
   long success=TRUE;
   ptr_psi_term arg1,result,g,other;
   
-  g=aim->a;
+  g=aim->aaaa_1;
   deref_ptr(g);
-  result=aim->b;
+  result=aim->bbbb_1;
   deref(result);
   get_one_arg(g->attr_list,&arg1);
   if (arg1) {
     deref(arg1);
     deref_args(g,set_1);
     other=stack_psi_term(4); /* 19.11 */
-    other->type=(arg1->type->type==predicate)?true:false;
+    other->type=(arg1->type->type_def==(def_type)predicate_it)?lf_true:lf_false; // REV401PLUS _def & (def_type) & _it
     resid_aim=NULL;
     push_goal(unify,result,other,NULL);
   }
@@ -1609,16 +1501,16 @@ static long c_is_sort()
   long success=TRUE;
   ptr_psi_term arg1,result,g,other;
   
-  g=aim->a;
+  g=aim->aaaa_1;
   deref_ptr(g);
-  result=aim->b;
+  result=aim->bbbb_1;
   deref(result);
   get_one_arg(g->attr_list,&arg1);
   if (arg1) {
     deref(arg1);
     deref_args(g,set_1);
     other=stack_psi_term(4); /* 19.11 */
-    other->type=(arg1->type->type==type)?true:false;
+    other->type=(arg1->type->type_def==(def_type)type_it)?lf_true:lf_false; // REV401PLUS _def & (def_type) & _it
     resid_aim=NULL;
     push_goal(unify,result,other,NULL);
   }
@@ -1656,7 +1548,7 @@ ptr_psi_term *arg1;
 */
 static long c_dynamic()
 {
-  ptr_psi_term t=aim->a;
+  ptr_psi_term t=aim->aaaa_1;
   deref_ptr(t);
   /* mark_quote(t); 14.9 */
   assert_protected(t->attr_list,FALSE);
@@ -1671,7 +1563,7 @@ static long c_dynamic()
 */
 static long c_static()
 {
-  ptr_psi_term t=aim->a;
+  ptr_psi_term t=aim->aaaa_1;
   deref_ptr(t);
   /* mark_quote(t); 14.9 */
   assert_protected(t->attr_list,TRUE);
@@ -1688,7 +1580,7 @@ static long c_static()
 */
 static long c_delay_check()
 {
-  ptr_psi_term t=aim->a;
+  ptr_psi_term t=aim->aaaa_1;
 
   deref_ptr(t);
   /* mark_quote(t); 14.9 */
@@ -1705,7 +1597,7 @@ static long c_delay_check()
 */
 static long c_non_strict()
 {
-  ptr_psi_term t=aim->a;
+  ptr_psi_term t=aim->aaaa_1;
 
   deref_ptr(t);
   /* mark_quote(t); 14.9 */
@@ -1721,7 +1613,7 @@ static long c_non_strict()
 static long c_op()
 {
   long declare_operator();
-  ptr_psi_term t=aim->a;
+  ptr_psi_term t=aim->aaaa_1;
 
   return declare_operator(t);
 }
@@ -1756,11 +1648,11 @@ static long c_exists()
   ptr_psi_term arg1; 
   char *c_arg1; 
 
-  g=aim->a;
+  g=aim->aaaa_1;
   deref_ptr(g);
 
   if (success) {
-    n=find(featcmp,one,g->attr_list);
+    n=find(FEATCMP,one,g->attr_list);
     if (n) {
       arg1= (ptr_psi_term )n->data;
       deref(arg1);
@@ -1794,7 +1686,7 @@ static long c_load()
   ptr_psi_term arg1,arg2,t;
   char *fn;
 
-  t=aim->a;
+  t=aim->aaaa_1;
   deref_ptr(t);
   get_two_args(t->attr_list,&arg1,&arg2);
   if(arg1) {
@@ -1804,7 +1696,7 @@ static long c_load()
       success=open_input_file(fn);
       if (success) {
 	file_date+=2;
-	push_goal(load,input_state,file_date,fn);
+	push_goal(load,input_state,(ptr_psi_term)file_date,(GENERIC)fn); // REV401PLUS casts
 	file_date+=2;
       }
     }
@@ -1832,9 +1724,9 @@ static long c_get_choice()
   long gts,success=TRUE;
   ptr_psi_term funct,result;
 
-  funct=aim->a;
+  funct=aim->aaaa_1;
   deref_ptr(funct);
-  result=aim->b;
+  result=aim->bbbb_1;
   deref_args(funct,set_empty);
   if (choice_stack)
     gts=choice_stack->time_stamp;
@@ -1872,7 +1764,7 @@ static long c_set_choice()
   ptr_psi_term t,arg1;
   ptr_choice_point cutpt;
 
-  t=aim->a;
+  t=aim->aaaa_1;
   deref_ptr(t);
   get_one_arg(t->attr_list,&arg1);
   if (arg1) {
@@ -1926,9 +1818,9 @@ static long c_exists_choice()
   ptr_psi_term funct,result,arg1,arg2,ans_term;
   ptr_choice_point cp;
 
-  funct=aim->a;
+  funct=aim->aaaa_1;
   deref_ptr(funct);
-  result=aim->b;
+  result=aim->bbbb_1;
   deref_args(funct,set_empty);
   get_two_args(funct->attr_list,&arg1,&arg2);
   if (arg1 && arg2) {
@@ -1949,7 +1841,7 @@ static long c_exists_choice()
         else
           ans=FALSE;
         ans_term=stack_psi_term(4);
-        ans_term->type=ans?true:false;
+        ans_term->type=ans?lf_true:lf_false;
         push_goal(unify,result,ans_term,NULL);
       }
       else {
@@ -1993,7 +1885,7 @@ long sort;
   ptr_psi_term arg;       /* argumenrt 2 psi-term */
   ptr_psi_term queryflag; /* query term created by this function */
 
-  n=find(featcmp,two,thelist);
+  n=find(FEATCMP,two,thelist);
   if (n) {
     /* there was a second argument */
     arg=(ptr_psi_term)n->data;
@@ -2021,23 +1913,23 @@ static long c_parse()
   ptr_node n;
   parse_block pb;
 
-  funct=aim->a;
+  funct=aim->aaaa_1;
   deref_ptr(funct);
-  result=aim->b;
+  result=aim->bbbb_1;
   get_one_arg(funct->attr_list,&arg1);
   if (arg1) {
     deref(arg1);
     deref_args(funct,set_1);
     success=matches(arg1->type,quoted_string,&smaller);
     if (success) {
-      if (arg1->value) {
+      if (arg1->value_3) {
         ptr_psi_term t;
 
         /* Parse the string in its own state */
         save_parse_state(&pb);
         init_parse_state();
         stringparse=TRUE;
-        stringinput=(char*)arg1->value;
+        stringinput=(char*)arg1->value_3;
 
         old_var_occurred=var_occurred;
         var_occurred=FALSE;
@@ -2045,7 +1937,7 @@ static long c_parse()
         
           /* Optional second argument returns 'query', 'declaration', or
           /* 'error'. */
-          n=find(featcmp,two,funct->attr_list);
+          n=find(FEATCMP,two,funct->attr_list);
    	  if (n) {
             ptr_psi_term queryflag;
             arg2=(ptr_psi_term)n->data;
@@ -2059,12 +1951,12 @@ static long c_parse()
   
           /* Optional third argument returns true or false if the psi-term
           /* contains a variable or not. */
-          n=find(featcmp,three,funct->attr_list);
+          n=find(FEATCMP,three,funct->attr_list);
           if (n) {
             ptr_psi_term varflag;
             arg3=(ptr_psi_term)n->data;
             varflag=stack_psi_term(4);
-            varflag->type=var_occurred?true:false;
+            varflag->type=var_occurred?lf_true:lf_false;
             push_goal(unify,varflag,arg3,NULL);
           }
 
@@ -2118,7 +2010,7 @@ long psi_flag;
   ptr_node n;
   int line=line_count+1;
   
-  g=aim->a;
+  g=aim->aaaa_1;
   deref_ptr(g);
   get_one_arg(g->attr_list,&arg1);
   if (arg1) {
@@ -2137,7 +2029,7 @@ long psi_flag;
 
 	/* Optional second argument returns 'query', 'declaration', or
 	   'error'. */
-	n=find(featcmp,two,g->attr_list); /*  RM: Jun  8 1993  */
+	n=find(FEATCMP,two,g->attr_list); /*  RM: Jun  8 1993  */
 	if (n) {
 	  ptr_psi_term queryflag;
 	  arg2=(ptr_psi_term)n->data;
@@ -2152,13 +2044,13 @@ long psi_flag;
 
 	/* Optional third argument returns the starting line number */
 	/*  RM: Oct 11 1993  */
-	n=find(featcmp,three,g->attr_list);
+	n=find(FEATCMP,three,g->attr_list);
 	if (n) {
 	  arg3=(ptr_psi_term)n->data;
 	  g=stack_psi_term(4);
 	  g->type=integer;
-	  g->value=heap_alloc(sizeof(REAL));
-	  *(REAL *)g->value=line;
+	  g->value_3=heap_alloc(sizeof(REAL));
+	  *(REAL *)g->value_3=line;
 	  push_goal(unify,g,arg3,NULL);
 	}
 	
@@ -2192,7 +2084,7 @@ long psi_flag;
 /******** C_HALT
   Exit the Wild_Life interpreter.
 */
-int c_halt()   /*  RM: Jan  8 1993  Used to be 'void' */
+long c_halt()   /*  RM: Jan  8 1993  Used to be 'void' */ // REV401PLUS chg to long
 {
   exit_life(TRUE);
 }
@@ -2235,9 +2127,9 @@ long c_abort()   /*  RM: Feb 15 1993  */
 long abort_life(nlflag) /*  RM: Feb 15 1993  */
 int nlflag;
 {
-  if ( aborthooksym->type!=function ||
-       !aborthooksym->rule->b ||
-       aborthooksym->rule->b->type==abortsym) {
+  if ( aborthooksym->type_def!=(def_type)function_it ||
+       !aborthooksym->rule->bbbb_2 ||
+       aborthooksym->rule->bbbb_2->type==abortsym) {
     /* Do a true abort if aborthook is not a function or is equal to 'abort'.*/
     main_loop_ok = FALSE;
     undo(NULL); /* 8.10 */
@@ -2257,8 +2149,11 @@ int nlflag;
     if(NOTQUIET && nlflag) fprintf(stderr,"\n");/*  RM: Feb 17 1993  */
     aborthook=stack_psi_term(0);
     aborthook->type=aborthooksym;
-    push_goal(prove,aborthook,DEFRULES,NULL);
+    push_goal(prove,aborthook,(ptr_psi_term)DEFRULES,NULL);
   }
+  // REV401PLUS added next 2 lines to match Reference
+    if(NOTQUIET) fprintf(stderr,"\n*** END Abort"); /*  RM: Feb 17 1993  */
+    if(NOTQUIET && nlflag) fprintf(stderr,"\n");/*  RM: Feb 17 1993  */
   return TRUE;
 }
 
@@ -2271,7 +2166,7 @@ static long c_not_implemented()
 {
   ptr_psi_term t;
   
-  t=aim->a;
+  t=aim->aaaa_1;
   deref_ptr(t);
   Errorline("built-in %P is not implemented yet.\n",t);
   return FALSE;
@@ -2286,7 +2181,7 @@ static long c_declaration()
 {
   ptr_psi_term t;
   
-  t=aim->a;
+  t=aim->aaaa_1;
   deref_ptr(t);
   Errorline("%P is a declaration, not a query.\n",t);
   return FALSE;
@@ -2311,22 +2206,22 @@ static long c_setq()
   ptr_pair_list p;
   ptr_definition d;
 
-  g=aim->a;
+  g=aim->aaaa_1;
   get_two_args(g->attr_list,&arg1,&arg2);
   if (arg1 && arg2) {
     deref_rec(arg2); /*  RM: Jan  6 1993  */
     deref_ptr(arg1);
     d=arg1->type;
-    if (d->type==function || d->type==undef) {
-      if (d->type==undef || !d->protected) {
+    if (d->type_def==(def_type)function_it || d->type_def==(def_type)undef_it) {
+      if (d->type_def==(def_type)undef_it || !d->protected) {
         if (!arg1->attr_list) {
-          d->type=function;
+          d->type_def=(def_type)function_it;
           d->protected=FALSE;
           p=HEAP_ALLOC(pair_list);
-          p->a=heap_psi_term(4);
-          p->a->type=d;
+          p->aaaa_2=heap_psi_term(4);
+          p->aaaa_2->type=d;
           clear_copy();
-          p->b=quote_copy(arg2,HEAP);
+          p->bbbb_2=quote_copy(arg2,HEAP);
           p->next=NULL;
           d->rule=p;
           success=TRUE;
@@ -2357,7 +2252,7 @@ static long c_assert_first()
   long success=FALSE;
   ptr_psi_term arg1,g;
   
-  g=aim->a;
+  g=aim->aaaa_1;
   bk_mark_quote(g); /*  RM: Apr  7 1993  */
   get_one_arg(g->attr_list,&arg1);
   assert_first=TRUE;
@@ -2385,7 +2280,7 @@ static long c_assert_last()
   long success=FALSE;
   ptr_psi_term arg1,g;
   
-  g=aim->a;
+  g=aim->aaaa_1;
   bk_mark_quote(g); /*  RM: Apr  7 1993  */
   get_one_arg(g->attr_list,&arg1);
   assert_first=FALSE;
@@ -2426,7 +2321,7 @@ long r;
       if (head) {
 	deref_ptr(head);
 	if (head && body &&
-            (head->type->type==function || head->type->type==undef))
+            (head->type->type_def==(def_type)function_it || head->type->type_def==(def_type)undef_it))
 	  success=TRUE;
       }
     }
@@ -2435,7 +2330,7 @@ long r;
       if (head) {
         deref_ptr(head);
         if (head &&
-            (head->type->type==predicate || head->type->type==undef)) {
+            (head->type->type_def==(def_type)predicate_it || head->type->type_def==(def_type)undef_it)) {
           success=TRUE;
           if (!body) {
             body=stack_psi_term(4);
@@ -2445,7 +2340,7 @@ long r;
       }
     }
     /* There is no body, so t is a fact */
-    else if (t->type->type==predicate || t->type->type==undef) {
+    else if (t->type->type_def==(def_type)predicate_it || t->type->type_def==(def_type)undef_it) {
       head=t;
       body=stack_psi_term(4);
       body->type=succeed;
@@ -2456,12 +2351,12 @@ long r;
   if (success) {
     if (r) {
       if (redefine(head))
-        push_goal(del_clause,head,body,&(head->type->rule));
+        push_goal(del_clause,head,body,(GENERIC)&(head->type->rule));
       else
         success=FALSE;
     }
     else
-      push_goal(clause,head,body,&(head->type->rule));
+      push_goal(clause,head,body,(GENERIC)&(head->type->rule));
   }
   else
     Errorline("bad argument in %s.\n", (r?"retract":"clause"));
@@ -2481,7 +2376,7 @@ static long c_clause()
   long success=FALSE;
   ptr_psi_term arg1,arg2,g;
   
-  g=aim->a;
+  g=aim->aaaa_1;
   get_two_args(g->attr_list,&arg1,&arg2);
   success=pred_clause(arg1,0,g);
   return success;
@@ -2498,7 +2393,7 @@ static long c_retract()
   long success=FALSE;
   ptr_psi_term arg1,arg2,g;
   
-  g=aim->a;
+  g=aim->aaaa_1;
   get_two_args(g->attr_list,&arg1,&arg2);
   success=pred_clause(arg1,1,g);
   
@@ -2506,7 +2401,7 @@ static long c_retract()
 }
 
 
-void global_error_check();
+// void global_error_check(); // commented REV401PLUS
 void global_tree();
 void global_one();
 
@@ -2519,35 +2414,35 @@ void global_one();
 */
 static long c_global()    /*  RM: Feb 10 1993  */
 {
-  long error=FALSE, eval=FALSE;
+  long error_2=FALSE, eval_2 = FALSE; // REV401PLUS add _2 conflict with define
   ptr_psi_term g;
   
-  g=aim->a;
+  g=aim->aaaa_1;
   deref_ptr(g);
   if (g->attr_list) {
     /* Do error check of all arguments first: */
-    global_error_check(g->attr_list, &error, &eval);
-    if (eval) return !error;
+    global_error_check(g->attr_list, &error_2, &eval_2);
+    if (eval_2) return !error_2;
     /* If no errors, then make the arguments global: */
-    if (!error)
+    if (!error_2)
       global_tree(g->attr_list);
   } else {
     Errorline("argument(s) missing in %P\n",g);
   }
   
-  return !error;
+  return !error_2;
 }
 
 
 
-void global_error_check(n, error, eval)
+void global_error_check(n, error_2, eval_2)
 ptr_node n;
-int *error, *eval;
+long *error_2, *eval_2; // REV401PLUS added _2 and made long 
 {
   if (n) {
     ptr_psi_term t,a1,a2;
     int bad_init=FALSE;
-    global_error_check(n->left, error, eval);
+    global_error_check(n->left, error_2, eval_2);
 
     t=(ptr_psi_term)n->data;
     deref_ptr(t);
@@ -2555,25 +2450,25 @@ int *error, *eval;
       get_two_args(t->attr_list,&a1,&a2);
       if (a1==NULL || a2==NULL) {
         Errorline("%P is an incorrect global variable declaration (%E).\n",t);
-	*error=TRUE;
+	*error_2=TRUE;
 	bad_init=TRUE;
       } else {
 	deref_ptr(a1);
 	deref_ptr(a2);
 	t=a1;
-        if (deref_eval(a2)) *eval=TRUE;
+        if (deref_eval(a2)) *eval_2=TRUE;
       }
     }
-    if (!bad_init && t->type->type!=undef && t->type->type!=global) {
+    if (!bad_init && t->type->type_def!=(def_type)undef_it && t->type->type_def!=(def_type)global_it) {
       Errorline("%T %P cannot be redeclared as a global variable (%E).\n",
-		t->type->type,
+		t->type->type_def,
 		t);
       t->type=error_psi_term->type;
-      t->value=NULL; /*  RM: Mar 23 1993  */
-      *error=TRUE;
+      t->value_3=NULL; /*  RM: Mar 23 1993  */
+      *error_2=TRUE;
     }
 
-    global_error_check(n->right, error, eval);
+    global_error_check(n->right, error_2, eval_2);
   }
 }
 
@@ -2608,7 +2503,7 @@ ptr_psi_term t;
     u=stack_psi_term(4);
   
   clear_copy();
-  t->type->type=global;
+  t->type->type_def=(def_type)global_it;
   t->type->init_value=quote_copy(u,HEAP); /*  RM: Mar 23 1993  */
 
   /* eval_global_var(t);   RM: Feb  4 1994  */
@@ -2634,7 +2529,7 @@ static long c_persistent()     /*  RM: Feb 10 1993  */
   long error=FALSE;
   ptr_psi_term g;
 
-  g=aim->a;
+  g=aim->aaaa_1;
   deref_ptr(g);
   if (g->attr_list) {
     /* Do error check of all arguments first: */
@@ -2650,9 +2545,9 @@ static long c_persistent()     /*  RM: Feb 10 1993  */
 }
 
 
-persistent_error_check(n, error)
+void persistent_error_check(n, error) //REV401PLUS add void
 ptr_node n;
-int *error;
+long *error;  // REV401PLUS long
 {
   if (n) {
     ptr_psi_term t;
@@ -2660,9 +2555,9 @@ int *error;
 
     t=(ptr_psi_term)n->data;
     deref_ptr(t);
-    if (t->type->type!=undef && t->type->type!=global) {
+    if (t->type->type_def!=(def_type)undef_it && t->type->type_def!=(def_type)global_it) {
       Errorline("%T %P cannot be redeclared persistent (%E).\n",
-	         t->type->type,
+	         t->type->type_def,
 	         t);
       t->type=error_psi_term->type;
       *error=TRUE;
@@ -2673,7 +2568,7 @@ int *error;
 }
 
 
-persistent_tree(n)
+void persistent_tree(n) // REV401PLUS add void
 ptr_node n;
 {
   if (n) {
@@ -2689,10 +2584,10 @@ ptr_node n;
 }
 
 
-persistent_one(t)
+void persistent_one(t) // REV401PLUS add void
 ptr_psi_term t;
 {
-  t->type->type=global;
+  t->type->type_def=(def_type)global_it;
   if ((GENERIC)t->type->global_value<(GENERIC)heap_pointer)
     t->type->global_value=heap_psi_term(4);
 }
@@ -2708,7 +2603,7 @@ static long c_open_in()
   ptr_psi_term arg1,arg2,g;
   char *fn;
   
-  g=aim->a;
+  g=aim->aaaa_1;
   deref_ptr(g);
   get_two_args(g->attr_list,&arg1,&arg2);
   if(arg1) {
@@ -2719,8 +2614,8 @@ static long c_open_in()
         deref_args(g,set_1_2);
 	if (is_top(arg2)) {
 	  if (open_input_file(fn)) {
-	    /* push_ptr_value(psi_term_ptr,&(arg2->coref)); 9.6 */
-	    push_psi_ptr_value(arg2,&(arg2->coref));
+	    /* push_ptr_value(psi_term_ptr,(GENERIC *)&(arg2->coref)); 9.6 */ //cast REV401PLUS
+	    push_psi_ptr_value(arg2,(GENERIC *)&(arg2->coref)); // REV401PLUS cast
 	    arg2->coref=input_state;
 	    success=TRUE;
 	  }
@@ -2752,7 +2647,7 @@ static long c_open_out()
   ptr_psi_term arg1,arg2,arg3,g;
   char *fn;
   
-  g=aim->a;
+  g=aim->aaaa_1;
   deref_ptr(g);
   get_two_args(g->attr_list,&arg1,&arg2);
   if(arg1) {
@@ -2765,9 +2660,9 @@ static long c_open_out()
 	  if (open_output_file(fn)) {
             arg3=stack_psi_term(4);
 	    arg3->type=stream;
-	    arg3->value=(GENERIC)output_stream;
-	    /* push_ptr_value(psi_term_ptr,&(arg2->coref)); 9.6 */
-	    push_psi_ptr_value(arg2,&(arg2->coref));
+	    arg3->value_3=(GENERIC)output_stream;
+	    /* push_ptr_value(psi_term_ptr,(GENERIC *)&(arg2->coref)); 9.6 */ //cast REV401PLUS
+	    push_psi_ptr_value(arg2,(GENERIC *)&(arg2->coref));
 	    arg2->coref=arg3;
 	    success=TRUE;
 	  }
@@ -2799,7 +2694,7 @@ static long c_set_input()
   ptr_psi_term arg1,arg2,g;
   FILE *thestream;
   
-  g=aim->a;
+  g=aim->aaaa_1;
   deref_ptr(g);
   get_two_args(g->attr_list,&arg1,&arg2);
   if (arg1) {
@@ -2833,15 +2728,15 @@ static long c_set_output()
   long success=FALSE;
   ptr_psi_term arg1,arg2,g;
   
-  g=aim->a;
+  g=aim->aaaa_1;
   deref_ptr(g);
   get_two_args(g->attr_list,&arg1,&arg2);
   if(arg1) {
     deref(arg1);
     deref_args(g,set_1);
-    if(equal_types(arg1->type,stream) && arg1->value) {
+    if(equal_types(arg1->type,stream) && arg1->value_3) {
       success=TRUE;
-      output_stream=(FILE *)arg1->value;
+      output_stream=(FILE *)arg1->value_3;
     }
     else
       Errorline("bad stream in %P.\n",g);
@@ -2861,7 +2756,7 @@ static long c_close()
   long inclose,outclose;
   ptr_psi_term arg1,arg2,g,s;
   
-  g=aim->a;
+  g=aim->aaaa_1;
   deref_ptr(g);
   get_two_args(g->attr_list,&arg1,&arg2);
   if (arg1) {
@@ -2871,26 +2766,26 @@ static long c_close()
     if (sub_type(arg1->type,sys_stream))
       return sys_close(arg1);
 */
-    outclose=equal_types(arg1->type,stream) && arg1->value;
+    outclose=equal_types(arg1->type,stream) && arg1->value_3;
     inclose=FALSE;
     if (equal_types(arg1->type,inputfilesym)) {
-      ptr_node n=find(featcmp,STREAM,arg1->attr_list);
+      ptr_node n=find(FEATCMP,STREAM,arg1->attr_list);
       if (n) {
         arg1=(ptr_psi_term)n->data;
-        inclose=(arg1->value!=NULL);
+        inclose=(arg1->value_3!=NULL);
       }
     }
 
     if (inclose || outclose) {
       success=TRUE;
-      fclose((FILE *)arg1->value);
+      fclose((FILE *)arg1->value_3);
       
-      if (inclose && arg1->value==(GENERIC)input_stream)
+      if (inclose && arg1->value_3==(GENERIC)input_stream)
 	open_input_file("stdin");
-      else if (outclose && arg1->value==(GENERIC)output_stream)
+      else if (outclose && arg1->value_3==(GENERIC)output_stream)
 	open_output_file("stdout");
       
-      arg1->value=NULL;
+      arg1->value_3=NULL;
     }
     else
       Errorline("bad stream in %P.\n",g);
@@ -2916,7 +2811,7 @@ static long c_get()
   ptr_psi_term arg1,arg2,g,t;
   long c;
   
-  g=aim->a;
+  g=aim->aaaa_1;
   deref_ptr(g);
   get_two_args(g->attr_list,&arg1,&arg2);
   if (arg1) {
@@ -2936,8 +2831,8 @@ static long c_get()
       }
       else {
         t->type=integer;
-        t->value=heap_alloc(sizeof(REAL)); /* 12.5 */
-        * (REAL *)t->value = (REAL) c;
+        t->value_3=heap_alloc(sizeof(REAL)); /* 12.5 */
+        * (REAL *)t->value_3 = (REAL) c;
       }
     }
     
@@ -2982,15 +2877,15 @@ long to_stderr;
   ptr_psi_term arg1,arg2,g;
   char tstr[2], *str=tstr;
   
-  g=aim->a;
+  g=aim->aaaa_1;
   deref_ptr(g);
   get_two_args(g->attr_list,&arg1,&arg2);
   if (arg1) {
     deref(arg1);
     deref_args(g,set_1);
     if ((equal_types(arg1->type,integer) || equal_types(arg1->type,real))
-        && arg1->value) {
-      i = (unsigned long) floor(*(REAL *) arg1->value);
+        && arg1->value_3) {
+      i = (unsigned long) floor(*(REAL *) arg1->value_3);
       if (i==(unsigned long)(unsigned char)i) {
         str[0] = i; str[1] = 0;
         success=TRUE;
@@ -3020,7 +2915,7 @@ static long generic_write()
 {
   ptr_psi_term g;
 
-  g=aim->a;
+  g=aim->aaaa_1;
   /* deref_rec(g); */
   deref_args(g,set_empty);
   pred_write(g->attr_list);
@@ -3146,14 +3041,14 @@ static long c_page_width()
   ptr_psi_term arg1,arg2,g;
   long pw;
   
-  g=aim->a;
+  g=aim->aaaa_1;
   deref_ptr(g);
   get_two_args(g->attr_list,&arg1,&arg2);
   if(arg1) {
     deref(arg1);
     deref_args(g,set_1);
-    if (equal_types(arg1->type,integer) && arg1->value) {
-      pw = *(REAL *)arg1->value;
+    if (equal_types(arg1->type,integer) && arg1->value_3) {
+      pw = *(REAL *)arg1->value_3;
       if (pw>0)
         page_width=pw;
       else
@@ -3184,14 +3079,14 @@ static long c_print_depth()
   ptr_psi_term arg1,arg2,g;
   long dl;
   
-  g=aim->a;
+  g=aim->aaaa_1;
   deref_ptr(g);
   get_two_args(g->attr_list,&arg1,&arg2);
   if (arg1) {
     deref(arg1);
     deref_args(g,set_1);
-    if (equal_types(arg1->type,integer) && arg1->value) {
-      dl = *(REAL *)arg1->value;
+    if (equal_types(arg1->type,integer) && arg1->value_3) {
+      dl = *(REAL *)arg1->value_3;
       if (dl>=0)
         print_depth=dl;
       else
@@ -3225,9 +3120,9 @@ static long c_rootsort()
   long success=TRUE;
   ptr_psi_term arg1,arg2,arg3,g,other;
   
-  g=aim->a;
+  g=aim->aaaa_1;
   deref_ptr(g);
-  arg3=aim->b;
+  arg3=aim->bbbb_1;
   deref(arg3);
   get_two_args(g->attr_list,&arg1,&arg2);
   if(arg1) {
@@ -3235,7 +3130,7 @@ static long c_rootsort()
     deref_args(g,set_1);
     other=stack_psi_term(4); /* 19.11 */
     other->type=arg1->type;    
-    other->value=arg1->value;
+    other->value_3=arg1->value_3;
     resid_aim=NULL;
     push_goal(unify,arg3,other,NULL);
   }
@@ -3260,14 +3155,14 @@ static long c_disj()
   long success=TRUE;
   ptr_psi_term arg1,arg2,g;
 
-  g=aim->a;
+  g=aim->aaaa_1;
   resid_aim=NULL;
   deref_ptr(g);
   get_two_args(g->attr_list,&arg1,&arg2);
   deref_args(g,set_1_2);
   Traceline("pushing predicate disjunction choice point for %P\n",g);
-  if (arg2) push_choice_point(prove,arg2,DEFRULES,NULL);
-  if (arg1) push_goal(prove,arg1,DEFRULES,NULL);
+  if (arg2) push_choice_point(prove,arg2,(ptr_psi_term)DEFRULES,NULL);
+  if (arg1) push_goal(prove,arg1,(ptr_psi_term)DEFRULES,NULL);
   if (!arg1 && !arg2) {
     success=FALSE;
     Errorline("neither first nor second arguments exist in %P.\n",g);
@@ -3293,16 +3188,16 @@ static long c_cond()
   long num1;
   ptr_node n;
   
-  g=aim->a;
+  g=aim->aaaa_1;
   deref_ptr(g);
-  result=aim->b;
+  result=aim->bbbb_1;
   deref(result);
   
   get_one_arg_addr(g->attr_list,&arg1addr);
   if (arg1addr) {
     arg1= *arg1addr;
     deref_ptr(arg1);
-    if (arg1->type->type==predicate) {
+    if (arg1->type->type_def==(def_type)predicate_it) {
       ptr_psi_term call_once;
       ptr_node ca;
 
@@ -3314,7 +3209,7 @@ static long c_cond()
       ca->key=one;
       ca->left=ca->right=NULL;
       ca->data=(GENERIC)arg1;
-      push_ptr_value(psi_term_ptr,arg1addr);
+      push_ptr_value(psi_term_ptr,(GENERIC *)arg1addr); //cast REV401PLUS
       *arg1addr=call_once;
       return success;
     }
@@ -3324,7 +3219,7 @@ static long c_cond()
     if (success) {
       if (num1) {
 	resid_aim=NULL;
-        n=find(featcmp,(val1?two:three),g->attr_list);
+        n=find(FEATCMP,(val1?two:three),g->attr_list);
         if (n) {
           arg2=(ptr_psi_term)n->data;
 	  /* mark_eval(arg2); XXX 24.8 */
@@ -3334,7 +3229,7 @@ static long c_cond()
         else {
           ptr_psi_term trueterm;
           trueterm=stack_psi_term(4);
-          trueterm->type=true;
+          trueterm->type=lf_true;
           push_goal(unify,result,trueterm,NULL);
         }
       }
@@ -3369,13 +3264,14 @@ static long c_exist_feature()  /*  PVR: Dec 17 1992  */  /* PVR 11.4.94 */
   /* char *thebuffer="integer"; 18.5 */
   char thebuffer[20]; /* Maximum number of digits in an integer */
 
-  funct=aim->a;
+  funct=aim->aaaa_1;
   deref_ptr(funct);
-  result=aim->b;
+  result=aim->bbbb_1;
   get_two_args(funct->attr_list,&arg1,&arg2);
 
   
-  n=find(featcmp,three,funct->attr_list,&arg3); /*  RM: Feb 10 1993  */
+  n=find(FEATCMP,three,funct->attr_list); /*  RM: Feb 10 1993  */ // REV401PLUS - was too many args
+ // was  n=find(FEATCMP,three,funct->attr_list,&arg3); /*  RM: Feb 10 1993  */
   if(n)
     arg3=(ptr_psi_term)n->data;
   else
@@ -3391,10 +3287,10 @@ static long c_exist_feature()  /*  PVR: Dec 17 1992  */  /* PVR 11.4.94 */
     deref_args(funct,set_1_2);
     label=NULL;
     
-    if (arg1->value && sub_type(arg1->type,quoted_string))
-      label=(char *)arg1->value;
-    else if (arg1->value && sub_type(arg1->type,integer)) {
-      v= *(REAL *)arg1->value;
+    if (arg1->value_3 && sub_type(arg1->type,quoted_string))
+      label=(char *)arg1->value_3;
+    else if (arg1->value_3 && sub_type(arg1->type,integer)) {
+      v= *(REAL *)arg1->value_3;
       sprintf(thebuffer,"%ld",(long)v);
       label=heap_copy_string(thebuffer); /* A little voracious */
     } else if (arg1->type->keyword->private_feature) {
@@ -3402,12 +3298,12 @@ static long c_exist_feature()  /*  PVR: Dec 17 1992  */  /* PVR 11.4.94 */
     } else
       label=arg1->type->keyword->symbol;
 
-    n=find(featcmp,label,arg2->attr_list);
+    n=find(FEATCMP,label,arg2->attr_list);
     ans=stack_psi_term(4);
-    ans->type=(n!=NULL)?true:false;
+    ans->type=(n!=NULL)?lf_true:lf_false;
       
     if(arg3 && n) /*  RM: Feb 10 1993  */
-      push_goal(unify,arg3,n->data,NULL);
+      push_goal(unify,arg3,(ptr_psi_term)n->data,NULL);
       
     push_goal(unify,result,ans,NULL);
   }
@@ -3439,9 +3335,9 @@ static long c_features()
 
 
   
-  funct=aim->a;
+  funct=aim->aaaa_1;
   deref_ptr(funct);
-  result=aim->b;
+  result=aim->bbbb_1;
   get_two_args(funct->attr_list,&arg1,&arg2);
 
   
@@ -3493,9 +3389,9 @@ static long c_feature_values()
   ptr_module save_current;
 
   
-  funct=aim->a;
+  funct=aim->aaaa_1;
   deref_ptr(funct);
-  result=aim->b;
+  result=aim->bbbb_1;
   get_two_args(funct->attr_list,&arg1,&arg2);
 
   
@@ -3578,8 +3474,8 @@ ptr_psi_term collect_symbols(sel) /*  RM: Feb  3 1993  */
       /* Insert the node if it's a good one */
       if (((botflag?def->children:def->parents)==NULL &&
            def!=top && def!=nothing &&
-           def->type==type ||
-           def->type==undef)
+           def->type_def==(def_type)type_it ||
+           def->type_def==(def_type)undef_it)
           && !hidden_type(def)) {
         /* Create the node that will be inserted */
         new=stack_psi_term(4);
@@ -3648,9 +3544,9 @@ static long c_ops()
   long success=TRUE;
   ptr_psi_term result, g, t;
 
-  g=aim->a;
+  g=aim->aaaa_1;
   deref_args(g,set_empty);
-  result=aim->b;
+  result=aim->bbbb_1;
   t=collect_symbols(op_sel);   /*  RM: Feb  3 1993  */
   push_goal(unify,result,t,NULL);
 
@@ -3687,9 +3583,9 @@ static long c_strip()
   long success=TRUE;
   ptr_psi_term arg1,arg2,funct,result;
   
-  funct=aim->a;
+  funct=aim->aaaa_1;
   deref_ptr(funct);
-  result=aim->b;
+  result=aim->bbbb_1;
   get_two_args(funct->attr_list,&arg1,&arg2);
   if(arg1) {
     deref(arg1);
@@ -3717,9 +3613,9 @@ static long c_same_address()
   REAL val3;
   long num3;
   
-  funct=aim->a;
+  funct=aim->aaaa_1;
   deref_ptr(funct);
-  result=aim->b;
+  result=aim->bbbb_1;
   get_two_args(funct->attr_list,&arg1,&arg2);
   
   if (arg1 && arg2) {
@@ -3759,9 +3655,9 @@ static long c_diff_address()
   REAL val3;
   long num3;
   
-  funct=aim->a;
+  funct=aim->aaaa_1;
   deref_ptr(funct);
-  result=aim->b;
+  result=aim->bbbb_1;
   get_two_args(funct->attr_list,&arg1,&arg2);
   
   if (arg1 && arg2) {
@@ -3800,9 +3696,9 @@ static long c_eval()
   long success=TRUE;
   ptr_psi_term arg1, copy_arg1, arg2, funct, result;
 
-  funct = aim->a;
+  funct = aim->aaaa_1;
   deref_ptr(funct);
-  result = aim->b;
+  result = aim->bbbb_1;
   deref(result);
   get_two_args(funct->attr_list, &arg1, &arg2);
   if (arg1) {
@@ -3831,9 +3727,9 @@ static long c_eval_inplace()
   long success=TRUE;
   ptr_psi_term arg1, copy_arg1, arg2, funct, result;
 
-  funct = aim->a;
+  funct = aim->aaaa_1;
   deref_ptr(funct);
-  result = aim->b;
+  result = aim->bbbb_1;
   deref(result);
   get_two_args(funct->attr_list, &arg1, &arg2);
   if (arg1) {
@@ -3862,9 +3758,9 @@ static long c_quote()
   long success=TRUE;
   ptr_psi_term arg1,arg2,funct,result;
 
-  funct = aim->a;
+  funct = aim->aaaa_1;
   deref_ptr(funct);
-  result = aim->b;
+  result = aim->bbbb_1;
   deref(result);
   get_two_args(funct->attr_list, &arg1, &arg2);
   if (arg1) {
@@ -3885,7 +3781,7 @@ static long c_split_double()
 {
   long success=FALSE;
   ptr_psi_term arg1,arg2,funct,result;
-  int n;
+  long n;  // REV401PLUS chg to long
   union {
     double d;
     struct {
@@ -3894,11 +3790,11 @@ static long c_split_double()
     } w2;
   }hack;
   double hi,lo;
-  int n1,n2;
+  long n1,n2;   // REV401PLUS chg to long
   
-  funct = aim->a;
+  funct = aim->aaaa_1;
   deref_ptr(funct);
-  result=aim->b;
+  result=aim->bbbb_1;
   
   get_two_args(funct->attr_list, &arg1, &arg2);
   if(arg1 && arg2) {
@@ -3947,13 +3843,13 @@ static long c_string_address()
   long success=FALSE;
   ptr_psi_term arg1,arg2,funct,result,t;
   double val;
-  int num;
-  int smaller;
+  long num;  // REV401PLUS chg long
+  long smaller;  // REV401PLUS chg long
   
   
-  funct = aim->a;
+  funct = aim->aaaa_1;
   deref_ptr(funct);
-  result=aim->b;
+  result=aim->bbbb_1;
   
   get_two_args(funct->attr_list, &arg1, &arg2);
   if(arg1) {
@@ -3961,15 +3857,15 @@ static long c_string_address()
     deref_ptr(result);
       success=matches(arg1->type,quoted_string,&smaller);
       if (success) {
-	if (arg1->value) {
-	  unify_real_result(result,(REAL)(long)(arg1->value));
+	if (arg1->value_3) {
+	  unify_real_result(result,(REAL)(long)(arg1->value_3));
 	}
 	else {
 	  if(success=get_real_value(result,&val,&num)) {
 	    if(num) {
 	      t=stack_psi_term(4);
 	      t->type=quoted_string;
-	      t->value=(GENERIC)(long)val;
+	      t->value_3=(GENERIC)(long)val;
 	      push_goal(unify,t,arg1,NULL);
 	    }
 	    else
@@ -4000,18 +3896,18 @@ static long c_chdir()
   long success=FALSE;
   ptr_psi_term arg1,arg2,funct,result,t;
   double val;
-  int num;
-  int smaller;
+  long num;  // REV401PLUS chg long
+  long smaller;  // REV401PLUS chg long
   
   
-  funct = aim->a;
+  funct = aim->aaaa_1;
   deref_ptr(funct);
   
   get_two_args(funct->attr_list, &arg1, &arg2);
   if(arg1) {
     deref_ptr(arg1);
-    if(matches(arg1->type,quoted_string,&smaller) && arg1->value)
-      success=!chdir(expand_file_name((char *)arg1->value));
+    if(matches(arg1->type,quoted_string,&smaller) && arg1->value_3)
+      success=!chdir(expand_file_name((char *)arg1->value_3));
     else
       Errorline("bad argument in %P\n",funct);
   }
@@ -4034,9 +3930,9 @@ static long c_call_once()
   ptr_psi_term arg1,arg2,funct,result,other;
   ptr_choice_point cutpt; 
 
-  funct=aim->a;
+  funct=aim->aaaa_1;
   deref_ptr(funct);
-  result=aim->b;
+  result=aim->bbbb_1;
   get_two_args(funct->attr_list,&arg1,&arg2);
   if (arg1) {
     deref_ptr(arg1);
@@ -4064,7 +3960,7 @@ static long c_call_once()
 
         push_goal(unify,result,other,NULL);
         push_goal(eval_cut,other,cutpt,NULL);
-        push_goal(prove,arg1,DEFRULES,NULL);
+        push_goal(prove,arg1,(ptr_psi_term)DEFRULES,NULL);
       }
   }
   else
@@ -4086,9 +3982,9 @@ static long c_call()
   ptr_psi_term arg1,arg2,funct,result,other;
   ptr_choice_point cutpt; 
 
-  funct=aim->a;
+  funct=aim->aaaa_1;
   deref_ptr(funct);
-  result=aim->b;
+  result=aim->bbbb_1;
   get_two_args(funct->attr_list,&arg1,&arg2);
   if (arg1) {
     deref_ptr(arg1);
@@ -4106,16 +4002,16 @@ static long c_call()
 
         /* Result is FALSE */
         other=stack_psi_term(0);
-        other->type=false;
+        other->type=lf_false;
 
         push_choice_point(unify,result,other,NULL);
 
         /* Result is TRUE */
         other=stack_psi_term(0);
-        other->type=true;
+        other->type=lf_true;
 
         push_goal(unify,result,other,NULL);
-        push_goal(prove,arg1,DEFRULES,NULL);
+        push_goal(prove,arg1,(ptr_psi_term)DEFRULES,NULL);
       }
   }
   else
@@ -4134,7 +4030,7 @@ static long c_bk_assign()
   long success=FALSE;
   ptr_psi_term arg1,arg2,g;
   
-  g=aim->a;
+  g=aim->aaaa_1;
   deref_ptr(g);
   get_two_args(g->attr_list,&arg1,&arg2);
   if (arg1 && arg2) {
@@ -4157,16 +4053,16 @@ static long c_bk_assign()
         /* If no trail, then can safely overwrite the psi-term */
         release_resid_notrail(arg1);
         *arg1 = *arg2;
-        push_psi_ptr_value(arg2,&(arg2->coref)); /* 14.12 */
+        push_psi_ptr_value(arg2,(GENERIC *)&(arg2->coref)); /* 14.12 */ // REV401PLUS added cast
         arg2->coref=arg1; /* 14.12 */
       }
       else {
-        push_psi_ptr_value(arg1,&(arg1->coref));
+        push_psi_ptr_value(arg1,(GENERIC *)&(arg1->coref)); // REV401PLUS added cast
         arg1->coref=arg2;
         release_resid(arg1);
       }
 #else
-      push_psi_ptr_value(arg1,&(arg1->coref));
+      push_psi_ptr_value(arg1,(GENERIC *)&(arg1->coref)); // REV401PLUS added cast
       arg1->coref=arg2;
       release_resid(arg1);
 #endif
@@ -4192,7 +4088,7 @@ static long c_assign()
   long success=FALSE;
   ptr_psi_term arg1,arg2,g,perm,smallest;
   
-  g=aim->a;
+  g=aim->aaaa_1;
   deref_ptr(g);
   get_two_args(g->attr_list,&arg1,&arg2);
   if (arg1 && arg2) {
@@ -4227,7 +4123,7 @@ static long c_global_assign()
   ptr_psi_term arg1,arg2,g,perm,smallest;
   ptr_psi_term new;
   
-  g=aim->a;
+  g=aim->aaaa_1;
   deref_ptr(g);
   get_two_args(g->attr_list,&arg1,&arg2);
   if (arg1 && arg2) {
@@ -4241,7 +4137,7 @@ static long c_global_assign()
       new=inc_heap_copy(arg2);
       
       if((GENERIC)arg1<heap_pointer) {
-	push_psi_ptr_value(arg1,&(arg1->coref));
+	push_psi_ptr_value(arg1,(GENERIC *)&(arg1->coref)); // REV401PLUS cast
 	arg1->coref= new;
       }
       else {
@@ -4266,14 +4162,14 @@ static long c_unify_func()
   long success=TRUE;
   ptr_psi_term funct,arg1,arg2,result;
 
-  funct=aim->a;
+  funct=aim->aaaa_1;
   deref_ptr(funct);
   get_two_args(funct->attr_list,&arg1,&arg2);
   if (arg1 && arg2) {
     deref(arg1);
     deref(arg2);
     deref_args(funct,set_1_2);
-    result=aim->b;
+    result=aim->bbbb_1;
     push_goal(unify,arg1,result,NULL);
     push_goal(unify,arg1,arg2,NULL);
   }
@@ -4294,7 +4190,7 @@ static long c_unify_pred()
   long success=FALSE;
   ptr_psi_term arg1,arg2,g;
   
-  g=aim->a;
+  g=aim->aaaa_1;
   deref_ptr(g);
   get_two_args(g->attr_list,&arg1,&arg2);
   if (arg1 && arg2) {
@@ -4321,7 +4217,7 @@ static long c_copy_pointer()   /*  PVR: Dec 17 1992  */
   long success=TRUE;
   ptr_psi_term funct,arg1,result,other;
 
-  funct=aim->a;
+  funct=aim->aaaa_1;
   deref_ptr(funct);
   get_one_arg(funct->attr_list,&arg1);
   if (arg1) {
@@ -4329,9 +4225,9 @@ static long c_copy_pointer()   /*  PVR: Dec 17 1992  */
     deref_args(funct,set_1);
     other=stack_psi_term(4);
     other->type=arg1->type;
-    other->value=arg1->value;
+    other->value_3=arg1->value_3;
     other->attr_list=copy_attr_list(arg1->attr_list); /* PVR 23.2.94 */
-    result=aim->b;
+    result=aim->bbbb_1;
     push_goal(unify,other,result,NULL);
   }
   else
@@ -4351,13 +4247,13 @@ static long c_copy_term()
   long success=TRUE;
   ptr_psi_term funct,arg1,copy_arg1,result;
 
-  funct=aim->a;
+  funct=aim->aaaa_1;
   deref_ptr(funct);
   get_one_arg(funct->attr_list,&arg1);
   if (arg1) {
     deref(arg1);
     deref_args(funct,set_1);
-    result=aim->b;
+    result=aim->bbbb_1;
     clear_copy();
     copy_arg1=exact_copy(arg1,STACK);
     push_goal(unify,copy_arg1,result,NULL);
@@ -4388,12 +4284,12 @@ static long c_undo()
   long success=TRUE;
   ptr_psi_term arg1,arg2,g;
   
-  g=aim->a;
+  g=aim->aaaa_1;
   deref_ptr(g);
   get_two_args(g->attr_list,&arg1,&arg2);
   if (arg1) {
     deref_args(g,set_1);
-    push_choice_point(prove,arg1,DEFRULES,NULL);
+    push_choice_point(prove,arg1,(ptr_psi_term)DEFRULES,NULL);
   }
   else {
     success=FALSE;
@@ -4437,7 +4333,7 @@ long freeze_flag;
   ptr_choice_point cutpt;
   ptr_psi_term match_date;
   
-  g=aim->a;
+  g=aim->aaaa_1;
   deref_ptr(g);
   get_one_arg(g->attr_list,&arg1);
   
@@ -4447,7 +4343,7 @@ long freeze_flag;
     deref_args(g,set_1);
     deref_ptr(arg1);
     
-    if (arg1->type->type!=predicate) {
+    if (arg1->type->type_def!=(def_type)predicate_it) {
       success=FALSE;
       Errorline("the argument %P of freeze must be a predicate.\n",arg1);
       /* main_loop_ok=FALSE; 8.9 */
@@ -4458,13 +4354,13 @@ long freeze_flag;
     cutpt=choice_stack; /* 13.6 */
     /* Third argument of freeze's aim is used to keep track of which */
     /* clause is being tried in the frozen goal. */
-    rule=(ptr_pair_list)aim->c; /* 8.9 */ /* Isn't aim->c always NULL? */
+    rule=(ptr_pair_list)aim->cccc_1; /* 8.9 */ /* Isn't aim->cccc_1 always NULL? */
     resid_vars=NULL;
     curried=FALSE;
     can_curry=TRUE; /* 8.9 */
 
     if (!rule) rule=arg1->type->rule; /* 8.9 */
-    /* if ((unsigned long)rule==DEFRULES) rule=arg1->type->rule; 8.9 */
+    /* if ((unsigned long)rule==(ptr_psi_term)DEFRULES) rule=arg1->type->rule; 8.9 */
 
     if (rule) {
       Traceline("evaluate frozen predicate %P\n",g);
@@ -4477,7 +4373,7 @@ long freeze_flag;
 	/* Removed obsolete stuff here 11.9 */
       }
       else {
-        while (rule && (rule->a==NULL || rule->b==NULL)) {
+        while (rule && (rule->aaaa_2==NULL || rule->bbbb_2==NULL)) {
           rule=rule->next;
 	  Traceline("alternative clause has been retracted\n");
         }
@@ -4488,22 +4384,22 @@ long freeze_flag;
 
 	  clear_copy();
           if (TRUE /*arg1->type->evaluate_args 8.9 */)
-	    head=eval_copy(rule->a,STACK);
+	    head=eval_copy(rule->aaaa_2,STACK);
           else
-	    head=quote_copy(rule->a,STACK);
-	  body=eval_copy(rule->b,STACK);
+	    head=quote_copy(rule->aaaa_2,STACK);
+	  body=eval_copy(rule->bbbb_2,STACK);
 	  head->status=4;
 
 	  if (rule->next)
 	    /* push_choice_point(prove,g,rule->next,NULL); 8.9 */
-	    push_choice_point(prove,g,DEFRULES,rule->next);
+	    push_choice_point(prove,g,(ptr_psi_term)DEFRULES,(GENERIC)rule->next); // added cast REV401PLUS
 	
-	  push_goal(prove,body,DEFRULES,NULL);
+	  push_goal(prove,body,(ptr_psi_term)DEFRULES,NULL);
 	  if (freeze_flag) /* 12.10 */
-	    push_goal(freeze_cut,body,cutpt,rb); /* 13.6 */
+	    push_goal(freeze_cut,body,(ptr_psi_term)cutpt,(GENERIC)rb); /* 13.6 */ // added cast REV401PLUS
 	  else
-	    push_goal(implies_cut,body,cutpt,rb);
-	  /* RESID */ push_goal(match,arg1,head,rb);
+	    push_goal(implies_cut,body,(ptr_psi_term)cutpt,(GENERIC)rb);  // added cast REV401PLUS
+	  /* RESID */ push_goal(match,arg1,head,(GENERIC)rb);  // added cast REV401PLUS
 	  /* eval_args(head->attr_list); */
         }
         else {
@@ -4563,9 +4459,9 @@ static long c_char()
   REAL val1;
   char *str;
   
-  funct=aim->a;
+  funct=aim->aaaa_1;
   deref_ptr(funct);
-  result=aim->b;
+  result=aim->bbbb_1;
   deref(result);
 
   get_two_args(funct->attr_list,&arg1,&arg2);
@@ -4573,15 +4469,15 @@ static long c_char()
     deref(arg1);
     deref_args(funct,set_1);
     if (overlap_type(arg1->type,integer)) {
-      if (arg1->value) {
+      if (arg1->value_3) {
         ptr_psi_term t;
 
         t=stack_psi_term(4);
 	t->type=quoted_string;
 	str=(char *)heap_alloc(2);
-        str[0] = (unsigned char) floor(*(REAL *) arg1->value);
+        str[0] = (unsigned char) floor(*(REAL *) arg1->value_3);
 	str[1] = 0;
-	t->value=(GENERIC)str;
+	t->value_3=(GENERIC)str;
 
         push_goal(unify,t,result,NULL);
       }
@@ -4614,9 +4510,9 @@ static long c_ascii()
   long num1;
   REAL val1;
   
-  funct=aim->a;
+  funct=aim->aaaa_1;
   deref_ptr(funct);
-  result=aim->b;
+  result=aim->bbbb_1;
   deref(result);
 
   /* success=get_real_value(result,&val1,&num1); */
@@ -4627,8 +4523,8 @@ static long c_ascii()
       deref_args(funct,set_1);
       success=matches(arg1->type,quoted_string,&smaller);
       if (success) {
-	if (arg1->value) {
-	  unify_real_result(result,(REAL)(*((unsigned char *)arg1->value)));
+	if (arg1->value_3) {
+	  unify_real_result(result,(REAL)(*((unsigned char *)arg1->value_3)));
 	}
 	else
 	  residuate(arg1);
@@ -4665,9 +4561,9 @@ static long c_string2psi()
   ptr_module save_current; /*  RM: Mar 12 1993  */
   
   
-  funct=aim->a;
+  funct=aim->aaaa_1;
   deref_ptr(funct);
-  result=aim->b;
+  result=aim->bbbb_1;
   deref(result);
 
   get_two_args(funct->attr_list,&arg1,&arg2);
@@ -4686,14 +4582,14 @@ static long c_string2psi()
 	success=get_module(arg2,&mod);
       
       if (success) {
-	if(!arg1->value)
+	if(!arg1->value_3)
 	  residuate(arg1);
 	else {
 	  t=stack_psi_term(4);
 	  save_current=current_module;
 	  if(mod)
 	    current_module=mod;
-	  t->type=update_symbol(mod,(char *)arg1->value);
+	  t->type=update_symbol(mod,(char *)arg1->value_3);
 	  current_module=save_current;
 	  if(t->type==error_psi_term->type)
 	    success=FALSE;
@@ -4728,9 +4624,9 @@ static long c_psi2string()
   ptr_psi_term arg1,arg3,funct,result,t;
   char buf[100]; /*  RM: Mar 10 1993  */
   
-  funct=aim->a;
+  funct=aim->aaaa_1;
   deref_ptr(funct);
-  result=aim->b;
+  result=aim->bbbb_1;
   deref(result);
 
   get_one_arg(funct->attr_list,&arg1);
@@ -4741,16 +4637,16 @@ static long c_psi2string()
     t->type=quoted_string;
 
     /*  RM: Mar 10 1993  */
-    if(arg1->value && sub_type(arg1->type,real)) {
-      sprintf(buf,"%g", *((double *)(arg1->value)));
-      t->value=(GENERIC)heap_copy_string(buf);
+    if(arg1->value_3 && sub_type(arg1->type,real)) {
+      sprintf(buf,"%g", *((double *)(arg1->value_3)));
+      t->value_3=(GENERIC)heap_copy_string(buf);
     }
     else
-      if(arg1->value && sub_type(arg1->type,quoted_string)) {
-	t->value=(GENERIC)heap_copy_string((char *)arg1->value);
+      if(arg1->value_3 && sub_type(arg1->type,quoted_string)) {
+	t->value_3=(GENERIC)heap_copy_string((char *)arg1->value_3);
       }
       else
-	t->value=(GENERIC)heap_copy_string(arg1->type->keyword->symbol);
+	t->value_3=(GENERIC)heap_copy_string(arg1->type->keyword->symbol);
     
     push_goal(unify,t,result,NULL);
   }
@@ -4772,9 +4668,9 @@ static long c_int2string()
   ptr_psi_term arg1,arg3,funct,result,t;
   REAL the_int,next,neg;
 
-  funct=aim->a;
+  funct=aim->aaaa_1;
   deref_ptr(funct);
-  result=aim->b;
+  result=aim->bbbb_1;
   deref(result);
 
   get_one_arg(funct->attr_list,&arg1);
@@ -4782,8 +4678,8 @@ static long c_int2string()
     deref(arg1);
     deref_args(funct,set_1);
     if (overlap_type(arg1->type,integer)) {
-      if (arg1->value) {
-        the_int = *(REAL *)arg1->value;
+      if (arg1->value_3) {
+        the_int = *(REAL *)arg1->value_3;
 
         if (the_int!=floor(the_int)) return FALSE;
 
@@ -4806,7 +4702,7 @@ static long c_int2string()
         if (neg) { i--; val[i]='-'; }
         t=stack_psi_term(0);
         t->type=quoted_string;
-        t->value=(GENERIC)heap_copy_string(&val[i]);
+        t->value_3=(GENERIC)heap_copy_string(&val[i]);
         push_goal(unify,t,result,NULL);
       }
       else
@@ -4836,16 +4732,16 @@ static long c_such_that()
   long success=TRUE;
   ptr_psi_term arg1,arg2,funct,result;
   
-  funct=aim->a;
+  funct=aim->aaaa_1;
   deref_ptr(funct);
-  result=aim->b;
+  result=aim->bbbb_1;
   get_two_args(funct->attr_list,&arg1,&arg2);
   if (arg1 && arg2) {
     deref_ptr(arg1);
     deref_ptr(arg2);
     deref_args(funct,set_1_2);
     resid_aim=NULL;
-    push_goal(prove,arg2,DEFRULES,NULL);
+    push_goal(prove,arg2,(ptr_psi_term)DEFRULES,NULL);
     push_goal(unify,arg1,result,NULL);
     i_check_out(arg1);
   }
@@ -4913,7 +4809,7 @@ ptr_pair_list r;
 {
   if (r==NULL) return FALSE;
   while (r) {
-    if (r->a!=NULL) return TRUE;
+    if (r->aaaa_2!=NULL) return TRUE;
     r=r->next;
   }
   return FALSE;
@@ -4929,14 +4825,14 @@ ptr_pair_list r;
 
 /* List the characteristics (delay_check, dynamic/static, non_strict) */
 /* in such a way that they can be immediately read in. */
-list_special(t)
+void list_special(t) // REV401PLUS add void
 ptr_psi_term t;
 {
   ptr_definition d = t->type;
   ptr_pair_list r = t->type->rule;
   long prflag=FALSE;
 
-  if (t->type->type==type) {
+  if (t->type->type_def==(def_type)type_it) {
     if (!d->always_check) {
       if (is_built_in(r)) fprintf(output_stream,"%% ");
       fprintf(output_stream,"delay_check(");
@@ -4978,13 +4874,13 @@ static long c_listing()
   ptr_psi_term t, t2, *a1, *a2, *a3;
   char *s1,*s2;
   
-  g=aim->a;
+  g=aim->aaaa_1;
   deref_ptr(g);
   get_two_args(g->attr_list,&arg1,&arg2);
   if (arg1) {
     deref_ptr(arg1);
     list_special(arg1);
-    fp=arg1->type->type;
+    fp=arg1->type->type_def;
     r=arg1->type->rule;
     if (is_built_in(r) || !has_rules(r)) {
 
@@ -4996,17 +4892,17 @@ static long c_listing()
         s1="user-defined ";
         s2=" with an empty definition";
       }
-      switch (fp) {
-      case function:
+      switch ((long)fp) {
+      case function_it:
         fprintf(output_stream,"%% '%s' is a %sfunction%s.\n",
                 arg1->type->keyword->symbol,s1,s2);
         break;
-      case predicate:
+      case predicate_it:
         fprintf(output_stream,"%% '%s' is a %spredicate%s.\n",
                 arg1->type->keyword->symbol,s1,s2);
         break;
-      case type:
-        if (arg1->value) {
+      case type_it:
+        if (arg1->value_3) {
           fprintf(output_stream,"%% ");
           if (arg1->type!=quoted_string) fprintf(output_stream,"'");
           display_psi_stream(arg1);
@@ -5016,7 +4912,7 @@ static long c_listing()
         }
         break;
 
-      case global: /*  RM: Feb  9 1993  */
+      case global_it: /*  RM: Feb  9 1993  */
 	fprintf(output_stream,"%% ");
 	outputline("'%s' is a %sglobal variable worth %P.\n",
 		   arg1->type->keyword->symbol,
@@ -5035,11 +4931,11 @@ static long c_listing()
       }
     }
     else {
-      if (fp==type || fp==function || fp==predicate) {
+      if (fp==(def_type)type_it || fp==(def_type)function_it || fp==(def_type)predicate_it) {
         n = one_attr();
-        if (fp==function)
+        if (fp==(def_type)function_it)
           t = new_psi_term(2, funcsym, &a1, &a2);
-        else if (fp==predicate)
+        else if (fp==(def_type)predicate_it)
           t = new_psi_term(2, predsym, &a1, &a2);
         else { /* fp==type */
           t = new_psi_term(1, typesym, &a3, &a2); /* a2 is a dummy */
@@ -5047,12 +4943,12 @@ static long c_listing()
         }
         n->data = (GENERIC) t;
         while (r) {
-          *a1 = r->a; /* Func, pred, or type */
-          *a2 = r->b;
-          if (r->a) {
+          *a1 = r->aaaa_2; /* Func, pred, or type */
+          *a2 = r->bbbb_2;
+          if (r->aaaa_2) {
             /* Handle an attribute constraint with no predicate: */
-            if (fp==type) { if (r->b==NULL) *a3 = r->a; else *a3 = t2; }
-            listing_pred_write(n, (fp==function)||(fp==type));
+            if (fp==(def_type)type_it) { if (r->bbbb_2==NULL) *a3 = r->aaaa_2; else *a3 = t2; }
+            listing_pred_write(n, (fp==(def_type)function_it)||(fp==(def_type)type_it));
             fprintf(output_stream,".\n");
           }
           r = r->next;
@@ -5083,7 +4979,7 @@ static long c_print_codes()
 {
   ptr_psi_term t;
 
-  t=aim->a;
+  t=aim->aaaa_1;
   deref_args(t,set_empty);
   outputline("There are %d sorts.\n",type_count);
   print_codes();
@@ -5104,7 +5000,7 @@ static long c_pred()
   long success=TRUE;
   ptr_psi_term arg1,arg2,g;
   
-  g=aim->a;
+  g=aim->aaaa_1;
   deref_ptr(g);
   get_two_args(g->attr_list,&arg1,&arg2);
   if (arg1 && arg2) {
@@ -5129,7 +5025,7 @@ static long c_funct()
   ptr_psi_term arg1,arg2,funct;
 
   
-  funct=aim->a;
+  funct=aim->aaaa_1;
   deref_ptr(funct);
 
   get_two_args(funct->attr_list,&arg1,&arg2);
@@ -5180,7 +5076,7 @@ void new_built_in(m,s,t,r)
     set_current_module(m);
   
   d=update_symbol(m,s); /* RM: Jan  8 1993 */
-  d->type=t;
+  d->type_def=t;
   built_in_index++;
   d->rule=(ptr_pair_list )built_in_index;
   c_rule[built_in_index]=r;
@@ -5237,16 +5133,16 @@ ptr_psi_term t;
   deref_ptr(t);
   n=t->attr_list;
   get_two_args(n,&prec,&type);
-  n=find(featcmp,three,n);
+  n=find(FEATCMP,three,n);
   if (n && prec && type) {
     atom=(ptr_psi_term )n->data;
     deref_ptr(prec);
     deref_ptr(type);
     deref_ptr(atom);
-    if (!atom->value) {
+    if (!atom->value_3) {
       s=atom->type->keyword->symbol;
-      if (sub_type(prec->type,integer) && prec->value) { /* 10.8 */
-        p = * (REAL *)prec->value;
+      if (sub_type(prec->type,integer) && prec->value_3) { /* 10.8 */
+        p = * (REAL *)prec->value_3;
 	if (p>0 && p<=MAX_PRECEDENCE) {
 	  
           if (type->type == xf_sym) kind=xf;
@@ -5367,17 +5263,17 @@ long c_concatenate()
   ptr_psi_term arg2; 
   char * c_arg2; 
 
-  funct=aim->a;
+  funct=aim->aaaa_1;
   deref_ptr(funct);
-  result=aim->b;
+  result=aim->bbbb_1;
 
   /* Evaluate all arguments first: */
-  n1=find(featcmp,one,funct->attr_list);
+  n1=find(FEATCMP,one,funct->attr_list);
   if (n1) {
     arg1= (ptr_psi_term )n1->data;
     deref(arg1);
   }
-  n2=find(featcmp,two,funct->attr_list);
+  n2=find(FEATCMP,two,funct->attr_list);
   if (n2) {
     arg2= (ptr_psi_term )n2->data;
     deref(arg2);
@@ -5387,8 +5283,8 @@ long c_concatenate()
   if (success) {
     if (n1) {
        if (overlap_type(arg1->type,quoted_string)) /* 10.8 */
-          if (arg1->value)
-              c_arg1= (char *)arg1->value;
+          if (arg1->value_3)
+              c_arg1= (char *)arg1->value_3;
           else {
             residuate(arg1);
             all_args=FALSE;
@@ -5405,8 +5301,8 @@ long c_concatenate()
   if (success) {
     if (n2) {
        if (overlap_type(arg2->type,quoted_string)) /* 10.8 */
-          if (arg2->value)
-              c_arg2= (char *)arg2->value;
+          if (arg2->value_3)
+              c_arg2= (char *)arg2->value_3;
           else {
             residuate(arg2);
             all_args=FALSE;
@@ -5424,7 +5320,7 @@ long c_concatenate()
       c_result=str_conc( c_arg1, c_arg2 );
       temp_result=stack_psi_term(0);
       temp_result->type=quoted_string;
-      temp_result->value=(GENERIC) c_result;
+      temp_result->value_3=(GENERIC) c_result;
       push_goal(unify,temp_result,result,NULL);
   }
 
@@ -5442,8 +5338,8 @@ static long c_module_name()
   ptr_psi_term arg1,arg2,funct,result;
   
   
-  funct=aim->a;
-  result=aim->b;
+  funct=aim->aaaa_1;
+  result=aim->bbbb_1;
   deref_ptr(funct);
   deref_ptr(result);
   
@@ -5453,7 +5349,7 @@ static long c_module_name()
     deref_ptr(arg1);
     arg2=stack_psi_term(0);
     arg2->type=quoted_string;
-    arg2->value=(GENERIC)heap_copy_string(arg1->type->keyword->module->module_name);
+    arg2->value_3=(GENERIC)heap_copy_string(arg1->type->keyword->module->module_name);
     push_goal(unify,arg2,result,NULL);
   }
   else
@@ -5473,8 +5369,8 @@ static long c_combined_name()
   ptr_psi_term arg1,arg2,funct,result;
   
   
-  funct=aim->a;
-  result=aim->b;
+  funct=aim->aaaa_1;
+  result=aim->bbbb_1;
   deref_ptr(funct);
   deref_ptr(result);
   
@@ -5484,7 +5380,7 @@ static long c_combined_name()
     deref_ptr(arg1);
     arg2=stack_psi_term(0);
     arg2->type=quoted_string;
-    arg2->value=(GENERIC)heap_copy_string(arg1->type->keyword->combined_name);
+    arg2->value_3=(GENERIC)heap_copy_string(arg1->type->keyword->combined_name);
     push_goal(unify,arg2,result,NULL);
   }
   else
@@ -5509,12 +5405,12 @@ long c_string_length()
   ptr_psi_term arg1; 
   char * c_arg1; 
 
-  funct=aim->a;
+  funct=aim->aaaa_1;
   deref_ptr(funct);
-  result=aim->b;
+  result=aim->bbbb_1;
 
   /* Evaluate all arguments first: */
-  n1=find(featcmp,one,funct->attr_list);
+  n1=find(FEATCMP,one,funct->attr_list);
   if (n1) {
     arg1= (ptr_psi_term )n1->data;
     deref(arg1);
@@ -5524,8 +5420,8 @@ long c_string_length()
   if (success) {
     if (n1) {
        if (overlap_type(arg1->type,quoted_string)) /* 10.8 */
-          if (arg1->value)
-              c_arg1= (char *)arg1->value;
+          if (arg1->value_3)
+              c_arg1= (char *)arg1->value_3;
           else {
             residuate(arg1);
             all_args=FALSE;
@@ -5568,22 +5464,22 @@ long c_sub_string()
   ptr_psi_term arg3; 
   long c_arg3; 
 
-  funct=aim->a;
+  funct=aim->aaaa_1;
   deref_ptr(funct);
-  result=aim->b;
+  result=aim->bbbb_1;
 
   /* Evaluate all arguments first: */
-  n1=find(featcmp,one,funct->attr_list);
+  n1=find(FEATCMP,one,funct->attr_list);
   if (n1) {
     arg1= (ptr_psi_term )n1->data;
     deref(arg1);
   }
-  n2=find(featcmp,two,funct->attr_list);
+  n2=find(FEATCMP,two,funct->attr_list);
   if (n2) {
     arg2= (ptr_psi_term )n2->data;
     deref(arg2);
   }
-  n3=find(featcmp,three,funct->attr_list);
+  n3=find(FEATCMP,three,funct->attr_list);
   if (n3) {
     arg3= (ptr_psi_term )n3->data;
     deref(arg3);
@@ -5593,8 +5489,8 @@ long c_sub_string()
   if (success) {
     if (n1) {
        if (overlap_type(arg1->type,quoted_string)) /* 10.8 */
-          if (arg1->value)
-              c_arg1= (char *)arg1->value;
+          if (arg1->value_3)
+              c_arg1= (char *)arg1->value_3;
           else {
             residuate(arg1);
             all_args=FALSE;
@@ -5611,8 +5507,8 @@ long c_sub_string()
   if (success) {
     if (n2) {
        if (overlap_type(arg2->type,integer)) /* 10.8 */
-          if (arg2->value)
-              c_arg2= (long)(* (double *)(arg2->value));
+          if (arg2->value_3)
+              c_arg2= (long)(* (double *)(arg2->value_3));
           else {
             residuate(arg2);
             all_args=FALSE;
@@ -5629,8 +5525,8 @@ long c_sub_string()
   if (success) {
     if (n3) {
        if (overlap_type(arg3->type,integer)) /* 10.8 */
-          if (arg3->value)
-              c_arg3= (long)(* (double *)(arg3->value));
+          if (arg3->value_3)
+              c_arg3= (long)(* (double *)(arg3->value_3));
           else {
             residuate(arg3);
             all_args=FALSE;
@@ -5648,7 +5544,7 @@ long c_sub_string()
       c_result=sub_str(c_arg1,c_arg2,c_arg3);
       temp_result=stack_psi_term(0);
       temp_result->type=quoted_string;
-      temp_result->value=(GENERIC) c_result;
+      temp_result->value_3=(GENERIC) c_result;
       push_goal(unify,temp_result,result,NULL);
   };
 
@@ -5672,16 +5568,16 @@ long c_append_file()
   ptr_psi_term arg2; 
   char * c_arg2; 
 
-  g=aim->a;
+  g=aim->aaaa_1;
   deref_ptr(g);
 
   /* Evaluate all arguments first: */
-  n1=find(featcmp,one,g->attr_list);
+  n1=find(FEATCMP,one,g->attr_list);
   if (n1) {
     arg1= (ptr_psi_term )n1->data;
     deref(arg1);
   }
-  n2=find(featcmp,two,g->attr_list);
+  n2=find(FEATCMP,two,g->attr_list);
   if (n2) {
     arg2= (ptr_psi_term )n2->data;
     deref(arg2);
@@ -5691,8 +5587,8 @@ long c_append_file()
   if (success) {
     if (n1) {
        if (overlap_type(arg1->type,quoted_string))
-          if (arg1->value)
-              c_arg1= (char *)arg1->value;
+          if (arg1->value_3)
+              c_arg1= (char *)arg1->value_3;
           else {
             success=FALSE;
             Errorline("bad argument in %P.\n",g);
@@ -5709,8 +5605,8 @@ long c_append_file()
   if (success) {
     if (n2) {
        if (overlap_type(arg2->type,quoted_string))
-          if (arg2->value)
-              c_arg2= (char *)arg2->value;
+          if (arg2->value_3)
+              c_arg2= (char *)arg2->value_3;
           else {
             success=FALSE;
             Errorline("bad argument in %P.\n",g);
@@ -5746,12 +5642,12 @@ long c_random()
   ptr_psi_term arg1; 
   long c_arg1; 
 
-  funct=aim->a;
+  funct=aim->aaaa_1;
   deref_ptr(funct);
-  result=aim->b;
+  result=aim->bbbb_1;
 
   /* Evaluate all arguments first: */
-  n1=find(featcmp,one,funct->attr_list);
+  n1=find(FEATCMP,one,funct->attr_list);
   if (n1) {
     arg1= (ptr_psi_term )n1->data;
     deref(arg1);
@@ -5761,8 +5657,8 @@ long c_random()
   if (success) {
     if (n1) {
        if (overlap_type(arg1->type,integer))
-          if (arg1->value)
-              c_arg1= (long)(* (double *)(arg1->value));
+          if (arg1->value_3)
+              c_arg1= (long)(* (double *)(arg1->value_3));
           else {
             residuate(arg1);
             all_args=FALSE;
@@ -5810,11 +5706,11 @@ long c_initrandom()
   ptr_psi_term arg1; 
   long c_arg1; 
 
-  t=aim->a;
+  t=aim->aaaa_1;
   deref_ptr(t);
 
   /* Evaluate all arguments first: */
-  n1=find(featcmp,one,t->attr_list);
+  n1=find(FEATCMP,one,t->attr_list);
   if (n1) {
     arg1= (ptr_psi_term )n1->data;
     deref(arg1);
@@ -5824,8 +5720,8 @@ long c_initrandom()
   if (success) {
     if (n1) {
        if (overlap_type(arg1->type,integer))
-          if (arg1->value)
-              c_arg1= (long)(* (double *)(arg1->value));
+          if (arg1->value_3)
+              c_arg1= (long)(* (double *)(arg1->value_3));
           else {
             residuate(arg1);
             all_args=FALSE;
@@ -5861,11 +5757,11 @@ long c_deref_length()
   ptr_psi_term arg1,arg2;
   ptr_node n1;
   
-  funct=aim->a;
+  funct=aim->aaaa_1;
   deref_ptr(funct);
-  result=aim->b;
+  result=aim->bbbb_1;
 
-  n1=find(featcmp,one,funct->attr_list);
+  n1=find(FEATCMP,one,funct->attr_list);
   if (n1) {
     count=0;
     arg1= (ptr_psi_term )n1->data;
@@ -5893,13 +5789,13 @@ long c_args()
   long success=TRUE;
   int i;
 
-  result=aim->b;
+  result=aim->bbbb_1;
   
   list=stack_nil();
   for(i=arg_c-1;i>=0;i--) {
     str=stack_psi_term(0);
     str->type=quoted_string;
-    str->value=(GENERIC)heap_copy_string(arg_v[i]);
+    str->value_3=(GENERIC)heap_copy_string(arg_v[i]);
     list=stack_cons(str,list);
   }
   push_goal(unify,result,list,NULL);
@@ -5980,7 +5876,7 @@ void init_built_in_types()
 
   constant		=update_symbol(bi_module,"*constant*");
   disjunction		=update_symbol(bi_module,"disj");/*RM:9 Dec 92*/
-  false			=update_symbol(bi_module,"false");
+  lf_false			=update_symbol(bi_module,"false");
   functor		=update_symbol(bi_module,"functor");
   iff			=update_symbol(bi_module,"cond");
   integer		=update_symbol(bi_module,"int");
@@ -5991,7 +5887,7 @@ void init_built_in_types()
   real			=update_symbol(bi_module,"real");
   stream		=update_symbol(bi_module,"stream");
   succeed		=update_symbol(bi_module,"succeed");
-  true			=update_symbol(bi_module,"true");
+  lf_true			=update_symbol(bi_module,"true");
   timesym		=update_symbol(bi_module,"time");
   variable		=update_symbol(bi_module,"*variable*");
   opsym			=update_symbol(bi_module,"op");
@@ -6040,62 +5936,62 @@ void init_built_in_types()
   t=update_symbol(bi_module,"weekday");
   weekday_attr=t->keyword->symbol;
   
-  nothing->type=type;
-  top->type=type;
+  nothing->type_def=(def_type)type_it;
+  top->type_def=(def_type)type_it;
 
   /* Built-in routines */
 
   /* Program database */
-  new_built_in(bi_module,"dynamic",predicate,c_dynamic);
-  new_built_in(bi_module,"static",predicate,c_static);
-  new_built_in(bi_module,"assert",predicate,c_assert_last);
-  new_built_in(bi_module,"asserta",predicate,c_assert_first);
-  new_built_in(bi_module,"clause",predicate,c_clause);
-  new_built_in(bi_module,"retract",predicate,c_retract);
-  new_built_in(bi_module,"setq",predicate,c_setq);
-  new_built_in(bi_module,"c_listing",predicate,c_listing);
-  new_built_in(bi_module,"print_codes",predicate,c_print_codes);
+  new_built_in(bi_module,"dynamic",(def_type)predicate_it,c_dynamic);
+  new_built_in(bi_module,"static",(def_type)predicate_it,c_static);
+  new_built_in(bi_module,"assert",(def_type)predicate_it,c_assert_last);
+  new_built_in(bi_module,"asserta",(def_type)predicate_it,c_assert_first);
+  new_built_in(bi_module,"clause",(def_type)predicate_it,c_clause);
+  new_built_in(bi_module,"retract",(def_type)predicate_it,c_retract);
+  new_built_in(bi_module,"setq",(def_type)predicate_it,c_setq);
+  new_built_in(bi_module,"c_listing",(def_type)predicate_it,c_listing);
+  new_built_in(bi_module,"print_codes",(def_type)predicate_it,c_print_codes);
 
   /* File I/O */
-  new_built_in(bi_module,"get",predicate,c_get);
-  new_built_in(bi_module,"put",predicate,c_put);
-  new_built_in(bi_module,"open_in",predicate,c_open_in);
-  new_built_in(bi_module,"open_out",predicate,c_open_out);
-  new_built_in(bi_module,"set_input",predicate,c_set_input);
-  new_built_in(bi_module,"set_output",predicate,c_set_output);
-  new_built_in(bi_module,"exists_file",predicate,c_exists);
-  new_built_in(bi_module,"close",predicate,c_close);
-  new_built_in(bi_module,"simple_load",predicate,c_load);
-  new_built_in(bi_module,"put_err",predicate,c_put_err);
-  new_built_in(bi_module,"chdir",predicate,c_chdir);
+  new_built_in(bi_module,"get",(def_type)predicate_it,c_get);
+  new_built_in(bi_module,"put",(def_type)predicate_it,c_put);
+  new_built_in(bi_module,"open_in",(def_type)predicate_it,c_open_in);
+  new_built_in(bi_module,"open_out",(def_type)predicate_it,c_open_out);
+  new_built_in(bi_module,"set_input",(def_type)predicate_it,c_set_input);
+  new_built_in(bi_module,"set_output",(def_type)predicate_it,c_set_output);
+  new_built_in(bi_module,"exists_file",(def_type)predicate_it,c_exists);
+  new_built_in(bi_module,"close",(def_type)predicate_it,c_close);
+  new_built_in(bi_module,"simple_load",(def_type)predicate_it,c_load);
+  new_built_in(bi_module,"put_err",(def_type)predicate_it,c_put_err);
+  new_built_in(bi_module,"chdir",(def_type)predicate_it,c_chdir);
 
   /* Term I/O */
-  new_built_in(bi_module,"write",predicate,c_write);
-  new_built_in(bi_module,"writeq",predicate,c_writeq);
-  new_built_in(bi_module,"pretty_write",predicate,c_pwrite);
-  new_built_in(bi_module,"pretty_writeq",predicate,c_pwriteq);
-  new_built_in(bi_module,"write_canonical",predicate,c_write_canonical);
-  new_built_in(bi_module,"page_width",predicate,c_page_width);
-  new_built_in(bi_module,"print_depth",predicate,c_print_depth);
-  new_built_in(bi_module,"put_err",predicate,c_put_err);
-  new_built_in(bi_module,"parse",function,c_parse);
-  new_built_in(bi_module,"read",predicate,c_read_psi);
-  new_built_in(bi_module,"read_token",predicate,c_read_token);
-  new_built_in(bi_module,"c_op",predicate,c_op); /*  RM: Jan 13 1993  */
-  new_built_in(bi_module,"ops",function,c_ops);
-  new_built_in(bi_module,"write_err",predicate,c_write_err);
-  new_built_in(bi_module,"writeq_err",predicate,c_writeq_err);
+  new_built_in(bi_module,"write",(def_type)predicate_it,c_write);
+  new_built_in(bi_module,"writeq",(def_type)predicate_it,c_writeq);
+  new_built_in(bi_module,"pretty_write",(def_type)predicate_it,c_pwrite);
+  new_built_in(bi_module,"pretty_writeq",(def_type)predicate_it,c_pwriteq);
+  new_built_in(bi_module,"write_canonical",(def_type)predicate_it,c_write_canonical);
+  new_built_in(bi_module,"page_width",(def_type)predicate_it,c_page_width);
+  new_built_in(bi_module,"print_depth",(def_type)predicate_it,c_print_depth);
+  new_built_in(bi_module,"put_err",(def_type)predicate_it,c_put_err);
+  new_built_in(bi_module,"parse",(def_type)function_it,c_parse);
+  new_built_in(bi_module,"read",(def_type)predicate_it,c_read_psi);
+  new_built_in(bi_module,"read_token",(def_type)predicate_it,c_read_token);
+  new_built_in(bi_module,"c_op",(def_type)predicate_it,c_op); /*  RM: Jan 13 1993  */
+  new_built_in(bi_module,"ops",(def_type)function_it,c_ops);
+  new_built_in(bi_module,"write_err",(def_type)predicate_it,c_write_err);
+  new_built_in(bi_module,"writeq_err",(def_type)predicate_it,c_writeq_err);
 
   /* Type checks */
-  new_built_in(bi_module,"nonvar",function,c_nonvar);
-  new_built_in(bi_module,"var",function,c_var);
-  new_built_in(bi_module,"is_function",function,c_is_function);
-  new_built_in(bi_module,"is_predicate",function,c_is_predicate);
-  new_built_in(bi_module,"is_sort",function,c_is_sort);
+  new_built_in(bi_module,"nonvar",(def_type)function_it,c_nonvar);
+  new_built_in(bi_module,"var",(def_type)function_it,c_var);
+  new_built_in(bi_module,"is_function",(def_type)function_it,c_is_function);
+  new_built_in(bi_module,"is_predicate",(def_type)function_it,c_is_predicate);
+  new_built_in(bi_module,"is_sort",(def_type)function_it,c_is_sort);
   
   new_built_in(bi_module,
 	       disjunction->keyword->symbol,
-	       function,
+	       (def_type)function_it,
 	       c_eval_disjunction);
   
   /*  RM: Dec 16 1992  So the symbol can be changed easily */
@@ -6105,116 +6001,116 @@ void init_built_in_types()
   insert_math_builtins();
 
   /* Comparison */
-  new_built_in(syntax_module,"<",function,c_lt);  
-  new_built_in(syntax_module,"=<",function,c_ltoe);  
-  new_built_in(syntax_module,">",function,c_gt);  
-  new_built_in(syntax_module,">=",function,c_gtoe);  
-  new_built_in(syntax_module,"=\\=",function,c_diff);
-  new_built_in(syntax_module,"=:=",function,c_equal);
-  new_built_in(syntax_module,"and",function,c_and);
-  new_built_in(syntax_module,"or",function,c_or);
-  new_built_in(syntax_module,"not",function,c_not);
-  new_built_in(syntax_module,"xor",function,c_xor);
-  new_built_in(syntax_module,"===",function,c_same_address);
+  new_built_in(syntax_module,"<",(def_type)function_it,c_lt);  
+  new_built_in(syntax_module,"=<",(def_type)function_it,c_ltoe);  
+  new_built_in(syntax_module,">",(def_type)function_it,c_gt);  
+  new_built_in(syntax_module,">=",(def_type)function_it,c_gtoe);  
+  new_built_in(syntax_module,"=\\=",(def_type)function_it,c_diff);
+  new_built_in(syntax_module,"=:=",(def_type)function_it,c_equal);
+  new_built_in(syntax_module,"and",(def_type)function_it,c_and);
+  new_built_in(syntax_module,"or",(def_type)function_it,c_or);
+  new_built_in(syntax_module,"not",(def_type)function_it,c_not);
+  new_built_in(syntax_module,"xor",(def_type)function_it,c_xor);
+  new_built_in(syntax_module,"===",(def_type)function_it,c_same_address);
   
   /* RM: Nov 22 1993  */
-  new_built_in(syntax_module,"\\===",function,c_diff_address); 
+  new_built_in(syntax_module,"\\===",(def_type)function_it,c_diff_address); 
 
   /* Psi-term navigation */
-  new_built_in(bi_module,"features",function,c_features);
-  new_built_in(bi_module,"feature_values",function,c_feature_values); /* RM: Mar  3 1994  */
+  new_built_in(bi_module,"features",(def_type)function_it,c_features);
+  new_built_in(bi_module,"feature_values",(def_type)function_it,c_feature_values); /* RM: Mar  3 1994  */
 
   /*  RM: Jul 20 1993  */
   
-  new_built_in(syntax_module,".",function,c_project);/*  RM: Jul  7 1993  */
-  new_built_in(bi_module,"root_sort",function,c_rootsort);
-  new_built_in(bi_module,"strip",function,c_strip);
-  new_built_in(bi_module,"copy_pointer",function,c_copy_pointer); /* PVR: Dec 17 1992 */
-  new_built_in(bi_module,"has_feature",function,c_exist_feature); /* PVR: Dec 17 1992 */
+  new_built_in(syntax_module,".",(def_type)function_it,c_project);/*  RM: Jul  7 1993  */
+  new_built_in(bi_module,"root_sort",(def_type)function_it,c_rootsort);
+  new_built_in(bi_module,"strip",(def_type)function_it,c_strip);
+  new_built_in(bi_module,"copy_pointer",(def_type)function_it,c_copy_pointer); /* PVR: Dec 17 1992 */
+  new_built_in(bi_module,"has_feature",(def_type)function_it,c_exist_feature); /* PVR: Dec 17 1992 */
 
   /* Unification and assignment */
-  new_built_in(syntax_module,"<-",predicate,c_bk_assign);
-  /* new_built_in(syntax_module,"<<-",predicate,c_assign);  RM: Feb 24 1993  */
+  new_built_in(syntax_module,"<-",(def_type)predicate_it,c_bk_assign);
+  /* new_built_in(syntax_module,"<<-",(def_type)predicate_it,c_assign);  RM: Feb 24 1993  */
   
   /*  RM: Feb 24 1993  */
-  new_built_in(syntax_module,"<<-",predicate,c_global_assign);
-  /* new_built_in(syntax_module,"<<<-",predicate,c_global_assign); */
+  new_built_in(syntax_module,"<<-",(def_type)predicate_it,c_global_assign);
+  /* new_built_in(syntax_module,"<<<-",(def_type)predicate_it,c_global_assign); */
   
   /*  RM: Feb  8 1993  */
-  new_built_in(syntax_module,"{}",function,c_fail); /*  RM: Feb 16 1993  */
-  new_built_in(syntax_module,"=",predicate,c_unify_pred);
-  new_built_in(syntax_module,"&",function,c_unify_func);
-  new_built_in(bi_module,"copy_term",function,c_copy_term);
-  /* UNI new_built_in(syntax_module,":",function,c_unify_func); */
+  new_built_in(syntax_module,"{}",(def_type)function_it,c_fail); /*  RM: Feb 16 1993  */
+  new_built_in(syntax_module,"=",(def_type)predicate_it,c_unify_pred);
+  new_built_in(syntax_module,"&",(def_type)function_it,c_unify_func);
+  new_built_in(bi_module,"copy_term",(def_type)function_it,c_copy_term);
+  /* UNI new_built_in(syntax_module,":",(def_type)function_it,c_unify_func); */
 
   /* Type hierarchy navigation */
   insert_type_builtins();
 
   /* String and character utilities */
-  new_built_in(bi_module,"str2psi",function,c_string2psi);
-  new_built_in(bi_module,"psi2str",function,c_psi2string);
-  new_built_in(bi_module,"int2str",function,c_int2string);
-  new_built_in(bi_module,"asc",function,c_ascii);
-  new_built_in(bi_module,"chr",function,c_char);
+  new_built_in(bi_module,"str2psi",(def_type)function_it,c_string2psi);
+  new_built_in(bi_module,"psi2str",(def_type)function_it,c_psi2string);
+  new_built_in(bi_module,"int2str",(def_type)function_it,c_int2string);
+  new_built_in(bi_module,"asc",(def_type)function_it,c_ascii);
+  new_built_in(bi_module,"chr",(def_type)function_it,c_char);
 
   /* Control */
-  new_built_in(syntax_module,"|",function,c_such_that);
-  new_built_in(bi_module,"cond",function,c_cond);
-  new_built_in(bi_module,"if",function,c_cond);
-  new_built_in(bi_module,"eval",function,c_eval);
-  new_built_in(bi_module,"evalin",function,c_eval_inplace);
-  /* new_built_in(bi_module,"quote",function,c_quote); */
-  /*new_built_in(bi_module,"call_once",function,c_call_once);*/ /* DENYS: Jan 25 1995 */
-  /* new_built_in(bi_module,"call",function,c_call); */
-  /* new_built_in(bi_module,"undefined",function,c_fail); */ /* RM: Jan 13 1993 */
-  new_built_in(bi_module,"print_variables",predicate,c_print_variables);
-  new_built_in(bi_module,"get_choice",function,c_get_choice);
-  new_built_in(bi_module,"set_choice",predicate,c_set_choice);
-  new_built_in(bi_module,"exists_choice",function,c_exists_choice);
-  new_built_in(bi_module,"apply",function,c_apply);
-  new_built_in(bi_module,"bool_pred",predicate,c_boolpred);
+  new_built_in(syntax_module,"|",(def_type)function_it,c_such_that);
+  new_built_in(bi_module,"cond",(def_type)function_it,c_cond);
+  new_built_in(bi_module,"if",(def_type)function_it,c_cond);
+  new_built_in(bi_module,"eval",(def_type)function_it,c_eval);
+  new_built_in(bi_module,"evalin",(def_type)function_it,c_eval_inplace);
+  /* new_built_in(bi_module,"quote",(def_type)function_it,c_quote); */
+  /*new_built_in(bi_module,"call_once",(def_type)function_it,c_call_once);*/ /* DENYS: Jan 25 1995 */
+  /* new_built_in(bi_module,"call",(def_type)function_it,c_call); */
+  /* new_built_in(bi_module,"undefined",(def_type)function_it,c_fail); */ /* RM: Jan 13 1993 */
+  new_built_in(bi_module,"print_variables",(def_type)predicate_it,c_print_variables);
+  new_built_in(bi_module,"get_choice",(def_type)function_it,c_get_choice);
+  new_built_in(bi_module,"set_choice",(def_type)predicate_it,c_set_choice);
+  new_built_in(bi_module,"exists_choice",(def_type)function_it,c_exists_choice);
+  new_built_in(bi_module,"apply",(def_type)function_it,c_apply);
+  new_built_in(bi_module,"bool_pred",(def_type)predicate_it,c_boolpred);
 
-  new_built_in(syntax_module,":-",predicate,c_declaration);
-  new_built_in(syntax_module,"->",predicate,c_declaration);
-  /* new_built_in(syntax_module,"::",predicate,c_declaration); */
-  new_built_in(syntax_module,"<|",predicate,c_declaration);
-  new_built_in(syntax_module,":=",predicate,c_declaration);
-  new_built_in(syntax_module,";",predicate,c_disj);
-  new_built_in(syntax_module,"!",predicate,c_not_implemented);
-  new_built_in(syntax_module,",",predicate,c_succeed);
-  new_built_in(bi_module,"abort",predicate,c_abort);
-  new_built_in(bi_module,"halt",predicate,c_halt);
-  new_built_in(bi_module,"succeed",predicate,c_succeed);
-  new_built_in(bi_module,"repeat",predicate,c_repeat);
-  new_built_in(bi_module,"fail",predicate,c_fail);
-  /* new_built_in(bi_module,"freeze",predicate,c_freeze); PVR 16.9.93 */
-  new_built_in(bi_module,"implies",predicate,c_implies);
-  new_built_in(bi_module,"undo",predicate,c_undo);
-  new_built_in(bi_module,"delay_check",predicate,c_delay_check);
-  new_built_in(bi_module,"non_strict",predicate,c_non_strict);
+  new_built_in(syntax_module,":-",(def_type)predicate_it,c_declaration);
+  new_built_in(syntax_module,"->",(def_type)predicate_it,c_declaration);
+  /* new_built_in(syntax_module,"::",(def_type)predicate_it,c_declaration); */
+  new_built_in(syntax_module,"<|",(def_type)predicate_it,c_declaration);
+  new_built_in(syntax_module,":=",(def_type)predicate_it,c_declaration);
+  new_built_in(syntax_module,";",(def_type)predicate_it,c_disj);
+  new_built_in(syntax_module,"!",(def_type)predicate_it,c_not_implemented);
+  new_built_in(syntax_module,",",(def_type)predicate_it,c_succeed);
+  new_built_in(bi_module,"abort",(def_type)predicate_it,c_abort);
+  new_built_in(bi_module,"halt",(def_type)predicate_it,c_halt);
+  new_built_in(bi_module,"succeed",(def_type)predicate_it,c_succeed);
+  new_built_in(bi_module,"repeat",(def_type)predicate_it,c_repeat);
+  new_built_in(bi_module,"fail",(def_type)predicate_it,c_fail);
+  /* new_built_in(bi_module,"freeze",(def_type)predicate_it,c_freeze); PVR 16.9.93 */
+  new_built_in(bi_module,"implies",(def_type)predicate_it,c_implies);
+  new_built_in(bi_module,"undo",(def_type)predicate_it,c_undo);
+  new_built_in(bi_module,"delay_check",(def_type)predicate_it,c_delay_check);
+  new_built_in(bi_module,"non_strict",(def_type)predicate_it,c_non_strict);
   
   /* System */
   insert_system_builtins();
 
-  new_built_in(bi_module,"strcon",function,c_concatenate);
-  new_built_in(bi_module,"strlen",function,c_string_length);
-  new_built_in(bi_module,"substr",function,c_sub_string);
-  new_built_in(bi_module,"append_file",predicate,c_append_file);
-  new_built_in(bi_module,"random",function,c_random);
-  new_built_in(bi_module,"initrandom",predicate,c_initrandom);
+  new_built_in(bi_module,"strcon",(def_type)function_it,c_concatenate);
+  new_built_in(bi_module,"strlen",(def_type)function_it,c_string_length);
+  new_built_in(bi_module,"substr",(def_type)function_it,c_sub_string);
+  new_built_in(bi_module,"append_file",(def_type)predicate_it,c_append_file);
+  new_built_in(bi_module,"random",(def_type)function_it,c_random);
+  new_built_in(bi_module,"initrandom",(def_type)predicate_it,c_initrandom);
 
   /*  RM: Jan  8 1993  */
-  new_built_in(bi_module,"set_module",predicate,c_set_module);
-  new_built_in(bi_module,"open_module",predicate,c_open_module);
-  new_built_in(bi_module,"public",predicate,c_public);
-  new_built_in(bi_module,"private",predicate,c_private);
-  new_built_in(bi_module,"display_modules",predicate,c_display_modules);
-  new_built_in(bi_module,"trace_input",predicate,c_trace_input);
-  new_built_in(bi_module,"substitute",predicate,c_replace);
-  new_built_in(bi_module,"current_module",function,c_current_module);
-  new_built_in(bi_module,"module_name",function,c_module_name);
-  new_built_in(bi_module,"combined_name",function,c_combined_name);
-  /* new_built_in(bi_module,"#",function,c_module_access); */
+  new_built_in(bi_module,"set_module",(def_type)predicate_it,c_set_module);
+  new_built_in(bi_module,"open_module",(def_type)predicate_it,c_open_module);
+  new_built_in(bi_module,"public",(def_type)predicate_it,c_public);
+  new_built_in(bi_module,"private",(def_type)predicate_it,c_private);
+  new_built_in(bi_module,"display_modules",(def_type)predicate_it,c_display_modules);
+  new_built_in(bi_module,"trace_input",(def_type)predicate_it,c_trace_input);
+  new_built_in(bi_module,"substitute",(def_type)predicate_it,c_replace);
+  new_built_in(bi_module,"current_module",(def_type)function_it,c_current_module);
+  new_built_in(bi_module,"module_name",(def_type)function_it,c_module_name);
+  new_built_in(bi_module,"combined_name",(def_type)function_it,c_combined_name);
+  /* new_built_in(bi_module,"#",(def_type)function_it,c_module_access); */
   
   /* Hack so '.set_up' doesn't issue a Warning message */
   /*  RM: Feb  3 1993  */
@@ -6228,30 +6124,30 @@ void init_built_in_types()
 
   
   /*  RM: Feb  9 1993  */
-  new_built_in(bi_module,"global",predicate,c_global);
-  new_built_in(bi_module,"persistent",predicate,c_persistent);
-  new_built_in(bi_module,"display_persistent",predicate,c_display_persistent);
-  new_built_in(bi_module,"alias",predicate,c_alias);
+  new_built_in(bi_module,"global",(def_type)predicate_it,c_global);
+  new_built_in(bi_module,"persistent",(def_type)predicate_it,c_persistent);
+  new_built_in(bi_module,"display_persistent",(def_type)predicate_it,c_display_persistent);
+  new_built_in(bi_module,"alias",(def_type)predicate_it,c_alias);
 
   /*  RM: Mar 11 1993  */
-  new_built_in(bi_module,"private_feature",predicate,c_private_feature);
+  new_built_in(bi_module,"private_feature",(def_type)predicate_it,c_private_feature);
   add_module1=update_symbol(bi_module,"features");
   add_module2=update_symbol(bi_module,"str2psi");
   add_module3=update_symbol(bi_module,"feature_values"); /* RM: Mar  3 1994  */
 
   /*  RM: Jun 29 1993  */
-  new_built_in(bi_module,"split_double",function,c_split_double);
-  new_built_in(bi_module,"string_address",function,c_string_address);
+  new_built_in(bi_module,"split_double",(def_type)function_it,c_split_double);
+  new_built_in(bi_module,"string_address",(def_type)function_it,c_string_address);
 
   /*  RM: Jul 15 1993  */
-  new_built_in(bi_module,"deref_length",function,c_deref_length);
+  new_built_in(bi_module,"deref_length",(def_type)function_it,c_deref_length);
 
 
   /*  RM: Sep 20 1993  */
-  new_built_in(bi_module,"argv",function,c_args);
+  new_built_in(bi_module,"argv",(def_type)function_it,c_args);
 
   /* RM: Jan 28 1994  */
-  new_built_in(bi_module,"public_symbols",function,all_public_symbols);
+  new_built_in(bi_module,"public_symbols",(def_type)function_it,all_public_symbols);
 	       
 #ifdef CLIFE
   life_reals();

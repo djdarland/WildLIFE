@@ -7,65 +7,20 @@
 static char vcid[] = "$Id: login.c,v 1.4 1995/01/14 00:25:33 duchier Exp $";
 #endif /* lint */
 
-#include "extern.h"
-#include "login.h"
-#include "trees.h"
-#include "copy.h"
-#include "parser.h"
-#include "token.h"
-#include "print.h"
-#include "built_ins.h"
-#include "types.h"
-#include "lefun.h"
-#include "memory.h"
-#include "error.h"
-#include "xpred.h"
-#include "modules.h" /*  RM: Jan 27 1993  */
-#include "interrupt.h"
+#ifdef REV401PLUS
+#include "defs.h"
+#endif
 
-
-int global_unify_attr();   /*  RM: Feb  9 1993  */
-int global_unify();        /*  RM: Feb 11 1993  */
-
-/* Clean trail toggle */
-/* Removed temporarily because of comb bug 1.6 */
-#define CLEAN_TRAIL
 
 /* Statistics on trail cleaning */
 long clean_iter=0;
 long clean_succ=0;
 
-ptr_stack undo_stack;
-ptr_choice_point choice_stack;
-/* ptr_choice_point prompt_choice_stack; 12.7 */
 #ifdef TS
 /* Should never wrap (32 bit is enough) 9.6 */
 /* Rate of incrementing: One per choice point */
 unsigned long global_time_stamp=INIT_TIME_STAMP; /* 9.6 */
 #endif
-
-ptr_goal goal_stack,aim;
-
-
-long goal_count;
-struct tms start_time,end_time;
-
-long ignore_eff; /* 'Ignore efficiency' flag */
-
-long assert_first;
-long assert_ok;
-
-long main_loop_ok;
-long xeventdelay;
-long xcount;
-
-long more_u_attr; /* TRUE if U has attributes V doesn't */
-long more_v_attr; /* Vice-versa */
-
-long u_func,v_func;  /* TRUE if U or V is a curried function */
-long new_stat;
-
-char prompt_buffer[PROMPT_BUFFER];
 
 
 /******************************************************************************
@@ -99,7 +54,7 @@ void get_two_args(t,a,b)
 	if (n->key==two)
 	  *b=(ptr_psi_term )n->data;
 	else {
-	  n=find(featcmp,two,t);
+	  n=find(FEATCMP,two,t);
 	  if(n==NULL)
 	    *b=NULL;
 	  else
@@ -109,12 +64,12 @@ void get_two_args(t,a,b)
 	*b=NULL;
     }
     else {
-      n=find(featcmp,one,t);
+      n=find(FEATCMP,one,t);
       if (n==NULL)
 	*a=NULL;
       else
 	*a=(ptr_psi_term )n->data;
-      n=find(featcmp,two,t);
+      n=find(FEATCMP,two,t);
       if (n==NULL)
 	*b=NULL;
       else
@@ -143,7 +98,7 @@ void get_one_arg(t,a)
       *a=(ptr_psi_term)t->data;
     }
     else {
-      n=find(featcmp,one,t);
+      n=find(FEATCMP,one,t);
       if (n==NULL)
 	*a=NULL;
       else
@@ -172,7 +127,7 @@ void get_one_arg_addr(t,a)
     if (t->key==one)
       *a= (ptr_psi_term *)(&t->data);
     else {
-      n=find(featcmp,one,t);
+      n=find(FEATCMP,one,t);
       if (n==NULL)
 	*a=NULL;
       else
@@ -203,9 +158,9 @@ void add_rule(head,body,typ)
   ptr_definition def;
   ptr_pair_list p, *p2;
   
-  if (!body && typ==predicate) {
+  if (!body && typ==(def_type)predicate_it) {
     succ.type=succeed;
-    succ.value=NULL;
+    succ.value_3=NULL;
     succ.coref=NULL;
     succ.resid=NULL;
     succ.attr_list=NULL;
@@ -222,7 +177,7 @@ void add_rule(head,body,typ)
     
     def=head->type;
     
-    if (def->type==undef || def->type==typ)
+    if (def->type_def==(def_type)undef_it || def->type_def==(def_type)typ)
       
       /*  RM: Jan 27 1993  */
       if(TRUE
@@ -232,10 +187,10 @@ void add_rule(head,body,typ)
 	 ) {
 	if (def->rule && (unsigned long)def->rule<=MAX_BUILT_INS) {
 	  Errorline("the built-in %T '%s' may not be redefined.\n",
-		    def->type, def->keyword->symbol);
+		    def->type_def, def->keyword->symbol);
 	}
 	else {
-	  def->type=typ;
+	  def->type_def=typ;
 	  
 	  /* PVR single allocation in source */
 	  p=HEAP_ALLOC(pair_list);
@@ -243,8 +198,8 @@ void add_rule(head,body,typ)
 	  /* p->a=exact_copy(head2,HEAP); 24.8 25.8 */
 	  /* p->b=exact_copy(body,HEAP); 24.8 25.8 */
 	  
-	  p->a=quote_copy(head2,HEAP); /* 24.8 25.8 */
-	  p->b=quote_copy(body,HEAP); /* 24.8 25.8 */
+	  p->aaaa_2=quote_copy(head2,HEAP); /* 24.8 25.8 */
+	  p->bbbb_2=quote_copy(body,HEAP); /* 24.8 25.8 */
 	  
 	  if (assert_first) {
 	    p->next=def->rule;
@@ -263,13 +218,13 @@ void add_rule(head,body,typ)
       }
       else { /*  RM: Jan 27 1993  */
 	Errorline("the %T '%s' may not be redefined from within module %s.\n",
-		  def->type,
+		  def->type_def,
 		  def->keyword->combined_name,
 		  current_module->module_name);
       }
     else {
       Errorline("the %T '%s' may not be redefined as a %T.\n",
-                def->type, def->keyword->symbol, typ);
+                def->type_def, def->keyword->symbol, typ);
     }
   }
 }
@@ -341,10 +296,10 @@ void assert_clause(t)
       */
   
   if (equ_tok((*t),":-"))
-    assert_rule((*t),predicate);
+    assert_rule((*t),(def_type)predicate_it);
   else
     if (equ_tok((*t),"->"))
-      assert_rule((*t),function);
+      assert_rule((*t),(def_type)function_it);
     else
       if (equ_tok((*t),"::"))
 	assert_attributes(t);
@@ -364,7 +319,7 @@ void assert_clause(t)
 	  if (equ_tok((*t),"<|") || equ_tok((*t),":="))
 	    assert_complicated_type(t);
 	  else
-	    add_rule(t,NULL,predicate);
+	    add_rule(t,NULL,(def_type)predicate_it);
   
   /* if (!assert_ok && warning()) perr("the declaration is ignored.\n"); */
 }
@@ -418,8 +373,8 @@ void push_ptr_value(t,p)
     {
       n=STACK_ALLOC(stack);
       n->type=t;
-      n->a= (GENERIC)p;
-      n->b= *p;
+      n->aaaa_3= (GENERIC *)p;   // REV401PLUS cast
+      n->bbbb_3= (GENERIC *)*p;  // REV401PLUS cast
       n->next=undo_stack;
       undo_stack=n;
     }
@@ -454,20 +409,20 @@ void push_def_ptr_value(q,p)
       
       m=STACK_ALLOC(stack); /* Trail time_stamp */
       m->type=int_ptr;
-      m->a= (GENERIC) &(q->time_stamp);
-      m->b= (GENERIC) (q->time_stamp);
+      m->aaaa_3= (GENERIC *) &(q->time_stamp); // REV401PLUS add * to cast
+      m->bbbb_3= (GENERIC *) (q->time_stamp); // REV401PLUS add * to cast
       m->next=undo_stack;
       n=STACK_ALLOC(stack); /* Trail definition field (top of undo_stack) */
       n->type=def_ptr;
-      n->a= (GENERIC)p;
-      n->b= *p;
+      n->aaaa_3= (GENERIC *)p; // REV401PLUS add * to cast
+      n->bbbb_3= (GENERIC *)*p; // REV401PLUS add cast
       n->next=m;
       undo_stack=n;
 #else
       n=STACK_ALLOC(stack); /* Trail definition field (top of undo_stack) */
       n->type=def_ptr;
-      n->a= (GENERIC)p;
-      n->b= *p;
+      n->aaaa_3= (GENERIC *)p;  // REV401PLUS add * to cast
+      n->bbbb_3= (GENERIC *)*p;  // REV401PLUS add cast
       n->next=undo_stack;
       undo_stack=n;
 #endif
@@ -505,20 +460,20 @@ void push_psi_ptr_value(q,p)
 #ifdef TRAIL_TS
       m=STACK_ALLOC(stack); /* Trail time_stamp */
       m->type=int_ptr;
-      m->a= (GENERIC) &(q->time_stamp);
-      m->b= (GENERIC) (q->time_stamp);
+      m->aaaa_3= (GENERIC *) &(q->time_stamp); // REV401PLUS add * to cast
+      m->bbbb_3= (GENERIC *) (q->time_stamp); // REV401PLUS add * to cast
       m->next=undo_stack;
       n=STACK_ALLOC(stack); /* Trail coref field (top of undo_stack) */
       n->type=psi_term_ptr;
-      n->a= (GENERIC)p;
-      n->b= *p;
+      n->aaaa_3= (GENERIC *)p; // REV401PLUS add * to cast
+      n->bbbb_3= (GENERIC *)*p;  // REV401PLUS add cast
       n->next=m;
       undo_stack=n;
 #else
       n=STACK_ALLOC(stack); /* Trail coref field (top of undo_stack) */
       n->type=psi_term_ptr;
-      n->a= (GENERIC)p;
-      n->b= *p;
+      n->aaaa_3= (GENERIC *)p; // REV401PLUS add * to cast
+      n->bbbb_3= (GENERIC *)*p; // REV401PLUS add cast
       n->next=undo_stack;
       undo_stack=n;
 #endif
@@ -542,8 +497,8 @@ void push_ptr_value_global(t,p)
   assert(VALID_ADDRESS(p)); /* 17.8 */
   n=STACK_ALLOC(stack);
   n->type=t;
-  n->a= (GENERIC)p;
-  n->b= *p;
+  n->aaaa_3= (GENERIC *)p;   // REV401PLUS add  cast
+  n->bbbb_3= (GENERIC *)*p;  // REV401PLUS add cast
   n->next=undo_stack;
   undo_stack=n;
 }
@@ -563,8 +518,8 @@ void push_window(type,disp,wind)
   assert(type & undo_action);
   n=STACK_ALLOC(stack);
   n->type=type;
-  n->a=(GENERIC)disp;
-  n->b=(GENERIC)wind;
+  n->aaaa_3=(GENERIC *)disp; // REV401PLUS add * to cast
+  n->bbbb_3=(GENERIC *)wind; // REV401PLUS add * to cast
   n->next=undo_stack;
   undo_stack=n;
 }
@@ -586,8 +541,8 @@ void push2_ptr_value(t,p,v)
   if (p<(GENERIC *)choice_stack || p>(GENERIC *)stack_pointer) {
     n=STACK_ALLOC(stack);
     n->type=t;
-    n->a= (GENERIC)p;
-    n->b= (GENERIC)v;
+    n->aaaa_3= (GENERIC *)p; // REV401PLUS add * to cast
+    n->bbbb_3= (GENERIC *)v; // REV401PLUS add * to cast
     n->next=undo_stack;
     undo_stack=n;
   }
@@ -611,9 +566,9 @@ void push_goal(t,a,b,c)
   thegoal=STACK_ALLOC(goal);
   
   thegoal->type=t;
-  thegoal->a=a;
-  thegoal->b=b;
-  thegoal->c=c;
+  thegoal->aaaa_1=a;
+  thegoal->bbbb_1=b;
+  thegoal->cccc_1=c;
   thegoal->next=goal_stack;
   thegoal->pending=FALSE;
   
@@ -649,9 +604,9 @@ void push_choice_point(t,a,b,c)
   alternative=STACK_ALLOC(goal);
   
   alternative->type=t;
-  alternative->a=a;
-  alternative->b=b;
-  alternative->c=c;
+  alternative->aaaa_1=a;
+  alternative->bbbb_1=b;
+  alternative->cccc_1=c;
   alternative->next=goal_stack;
   alternative->pending=FALSE;
   
@@ -723,7 +678,7 @@ void undo(limit)
     else
 #endif
       /* Restoring variable value on backtracking */
-      *((GENERIC *)(undo_stack->a))=undo_stack->b;
+      *((GENERIC *)(undo_stack->aaaa_3))=(GENERIC)undo_stack->bbbb_3; // REV401PLUS add 2nd cast
     undo_stack=undo_stack->next;
   }
 }
@@ -821,8 +776,8 @@ static void clean_trail(cutpt)
   
   while ((unsigned long)u > (unsigned long)cut_limit) {
     clean_iter++;
-    if (!(u->type & undo_action) && VALID_RANGE(u->a) &&
-        (unsigned long)u->a>(unsigned long)cut_sp && (unsigned long)u->a<=(unsigned long)stack_pointer) {
+    if (!(u->type & undo_action) && VALID_RANGE(u->aaaa_3) &&
+        (unsigned long)u->aaaa_3>(unsigned long)cut_sp && (unsigned long)u->aaaa_3<=(unsigned long)stack_pointer) {
       *prev = u->next;
       clean_succ++;
     }
@@ -897,7 +852,7 @@ void merge1(u,v)
 	if (v->right)
 	  merge1(&((*u)->right),v->right);
 	
-	push_goal(unify,(*u)->data,v->data,NULL);
+	push_goal(unify,(ptr_psi_term)(*u)->data,(ptr_psi_term)v->data,NULL); // REV401PLUS add casts
 	
 	if (v->left)
 	  merge1(&((*u)->left),v->left);
@@ -987,7 +942,7 @@ void merge3(u,v)
   
   if (v) {
     if (*u==NULL) {
-      push_ptr_value(int_ptr,u);
+      push_ptr_value(int_ptr,(GENERIC *)u); // REV401PLUS add cast
       (*u)=STACK_ALLOC(node);
       **u= *v;
       more_v_attr=TRUE;
@@ -1182,7 +1137,7 @@ void fetch_def(u, allflag)
   ptr_definition utype;
   
   /* Uses SMASK because called from check_out */
-  push2_ptr_value(int_ptr,&(u->status),(u->status & SMASK));
+  push2_ptr_value(int_ptr,(GENERIC *)&(u->status),(GENERIC)(u->status & SMASK));
   u->status=(4 & SMASK) | (u->status & RMASK);
   
   utype=u->type;
@@ -1192,12 +1147,12 @@ void fetch_def(u, allflag)
     Traceline("fetching definition of %P\n",u);
     
     while (prop) {
-      if (allflag || prop->c==utype) {
+      if (allflag || prop->cccc_4==utype) {
         clear_copy();
-        v=eval_copy(prop->a,STACK);
-        w=eval_copy(prop->b,STACK);
+        v=eval_copy(prop->aaaa_4,STACK);
+        w=eval_copy(prop->bbbb_4,STACK);
         
-        if (w) push_goal(prove,w,DEFRULES,NULL);
+        if (w) push_goal(prove,w,(ptr_psi_term)DEFRULES,NULL); // REV401PLUS add cast
         
         deref_ptr(v);
         v->status=4;
@@ -1246,7 +1201,7 @@ void fetch_def_lazy(u, old1, old2, old1attr, old2attr, old1stat, old2stat)
   
   if (!u->type->always_check) if (u->attr_list==NULL) return;
   
-  push_ptr_value(int_ptr,&(u->status));
+  push_ptr_value(int_ptr,(GENERIC *)&(u->status)); // REV401PLUS add cast
   u->status=4;
   
   prop=u->type->properties;
@@ -1262,16 +1217,16 @@ void fetch_def_lazy(u, old1, old2, old1attr, old2attr, old1stat, old2stat)
     while (prop) {
       /* Only do those constraints that have not yet been done: */
       /* In matches, mi is TRUE iff oldi <| prop->c.            */
-      if (!checked1) m1=FALSE; else matches(old1,prop->c,&m1);
-      if (!checked2) m2=FALSE; else matches(old2,prop->c,&m2);
+      if (!checked1) m1=FALSE; else matches(old1,prop->cccc_4,&m1);
+      if (!checked2) m2=FALSE; else matches(old2,prop->cccc_4,&m2);
       if (!m1 && !m2) {
 	/* At this point, prop->c is an attribute that has not yet */
 	/* been checked. */
 	clear_copy();
-	v=eval_copy(prop->a,STACK);
-	w=eval_copy(prop->b,STACK);
+	v=eval_copy(prop->aaaa_4,STACK);
+	w=eval_copy(prop->bbbb_4,STACK);
 	
-	if (w) push_goal(prove,w,DEFRULES,NULL);
+	if (w) push_goal(prove,w,(ptr_psi_term)DEFRULES,NULL);
 	
 	deref_ptr(v);
 	v->status=4;
@@ -1329,8 +1284,8 @@ long unify_body(eval_flag)
   ptr_int_list d=NULL;
   long old1stat,old2stat; /* 18.2.94 */
   
-  u=(ptr_psi_term )aim->a;
-  v=(ptr_psi_term )aim->b;
+  u=(ptr_psi_term )aim->aaaa_1;
+  v=(ptr_psi_term )aim->bbbb_1;
   
   deref_ptr(u);
   deref_ptr(v);
@@ -1348,8 +1303,8 @@ long unify_body(eval_flag)
     if (u>v) { tmp=v; v=u; u=tmp; }
       
     /**** Check for curried functions ****/
-    u_func=(u->type->type==function);
-    v_func=(v->type->type==function);
+    u_func=(u->type->type_def==(def_type)function_it);
+    v_func=(v->type->type_def==(def_type)function_it);
     old1stat=u->status; /* 18.2.94 */
     old2stat=v->status; /* 18.2.94 */
     
@@ -1390,7 +1345,7 @@ long unify_body(eval_flag)
       if (!new_type) {
 	d=decode(new_code);
 	if (d) {
-	  new_type=(ptr_definition )d->value;
+	  new_type=(ptr_definition )d->value_1;
 	  d=d->next;
 	}
 	else
@@ -1399,10 +1354,10 @@ long unify_body(eval_flag)
       
       /**** Make COMPARE a little more precise ****/
       if (compare==1)
-	if (u->value && !v->value)
+	if (u->value_3 && !v->value_3)
 	  compare=2;
 	else
-	  if (v->value && !u->value)
+	  if (v->value_3 && !u->value_3)
 	    compare=3;
       
       /**** Determine the status of the resulting psi-term ****/
@@ -1436,41 +1391,41 @@ long unify_body(eval_flag)
 	*/
       
       /**** Check that integers have no decimals ****/
-      if (u->value && sub_type(new_type,integer)) {
-	r= *(REAL *)u->value;
+      if (u->value_3 && sub_type(new_type,integer)) {
+	r= *(REAL *)u->value_3;
 	success=(r==floor(r));
       }
-      if (success && v->value && sub_type(new_type,integer)) {
-	r= *(REAL *)v->value;
+      if (success && v->value_3 && sub_type(new_type,integer)) {
+	r= *(REAL *)v->value_3;
 	success=(r==floor(r));
       }
       
       /**** Unify the values of INTs REALs STRINGs LISTs etc... ****/
       if (success) {
         /* LAZY-EAGER */
-	if (u->value!=v->value)
-	  if (!u->value) {
+	if (u->value_3!=v->value_3)
+	  if (!u->value_3) {
 	    compare=4;
-	    push_ptr_value(int_ptr,&(u->value));
-	    u->value=v->value;		
+	    push_ptr_value(int_ptr,&(u->value_3));
+	    u->value_3=v->value_3;		
 	  }
-	  else if (v->value) {
+	  else if (v->value_3) {
 	    if (overlap_type(new_type,real))
-              success=(*((REAL *)u->value)==(*((REAL *)v->value)));
+              success=(*((REAL *)u->value_3)==(*((REAL *)v->value_3)));
             else if (overlap_type(new_type,quoted_string))
-              success=(strcmp((char *)u->value,(char *)v->value)==0);
+              success=(strcmp((char *)u->value_3,(char *)v->value_3)==0);
 	    else if (overlap_type(new_type,sys_bytedata)) {
-	      unsigned long ulen = *((unsigned long *)u->value);
-	      unsigned long vlen = *((unsigned long *)v->value);
+	      unsigned long ulen = *((unsigned long *)u->value_3);
+	      unsigned long vlen = *((unsigned long *)v->value_3);
               success=(ulen==vlen &&
-		       (bcmp((char *)u->value,(char *)v->value,ulen)==0));
+		       (bcmp((char *)u->value_3,(char *)v->value_3,ulen)==0));
 	    }
             else if (u->type==cut && v->type==cut) { /* 22.9 */
               GENERIC mincut;
-              mincut = (u->value<v->value?u->value:v->value);
-              if (mincut!=u->value) {
-                push_ptr_value(cut_ptr,&(u->value));
-                u->value=mincut;
+              mincut = (u->value_3<v->value_3?u->value_3:v->value_3);
+              if (mincut!=u->value_3) {
+                push_ptr_value(cut_ptr,&(u->value_3));
+                u->value_3=mincut;
               }
             }
             else {
@@ -1485,18 +1440,18 @@ long unify_body(eval_flag)
       /**** Bind the two psi-terms ****/
       if (success) {
 	/* push_ptr_value(psi_term_ptr,&(v->coref)); 9.6 */
-	push_psi_ptr_value(v,&(v->coref));
+	push_psi_ptr_value(v,(GENERIC *)&(v->coref)); // REV401PLUS cast
 	v->coref=u;
 	
 	if (!equal_types(u->type,new_type)) {	      
-	  push_ptr_value(def_ptr,&(u->type));
+	  push_ptr_value(def_ptr,(GENERIC *)&(u->type)); // REV401PLUS cast
           /* This does not seem to work right with cut.lf: */
           /* push_def_ptr_value(u,&(u->type)); */ /* 14.8 */
 	  u->type=new_type;
 	}
 	
 	if (u->status!=new_stat) {
-	  push_ptr_value(int_ptr,&(u->status));
+	  push_ptr_value(int_ptr,(GENERIC *)&(u->status));   // REV401PLUS cast
 	  u->status=new_stat;
 	}
 	
@@ -1528,7 +1483,7 @@ long unify_body(eval_flag)
 	  */
 	
 	if (v->flags&QUOTED_TRUE && !(u->flags&QUOTED_TRUE)) { /* 16.9 */
-	  push_ptr_value(int_ptr,&(u->flags));
+	  push_ptr_value(int_ptr,(GENERIC *)&(u->flags));  // REV401PLUS cast
 	  u->flags|=QUOTED_TRUE;
         }
 	
@@ -1542,13 +1497,13 @@ long unify_body(eval_flag)
         /**** Alternatives in a type disjunction ****/
         if (d) {
           Traceline("pushing type disjunction choice point for %P\n",u);
-          push_choice_point(type_disj,u,d,NULL);
+          push_choice_point(type_disj,u,(ptr_psi_term)d,NULL); // REV401PLUS cast
         }
 	
 	/**** VERIFY CONSTRAINTS ****/
 	/* if ((old1stat<4 || old2stat<4) &&
 	     (u->type->type==type || v->type->type==type)) { 18.2.94 */
-        if (new_stat<4 && u->type->type==type) {
+        if (new_stat<4 && u->type->type_def==(def_type)type_it) {
           /* This does not check the already-checked properties     */
           /* (i.e. those in types t with t>=old1 or t>=old2),       */
           /* and it does not check anything if u has no attributes. */
@@ -1598,8 +1553,8 @@ long prove_aim()
   ptr_psi_term thegoal,head,body,arg1,arg2;
   ptr_pair_list rule;
   
-  thegoal=(ptr_psi_term )aim->a;
-  rule=(ptr_pair_list )aim->b;
+  thegoal=(ptr_psi_term )aim->aaaa_1;
+  rule=(ptr_pair_list )aim->bbbb_1;
   
   if (thegoal && rule) {
     
@@ -1619,16 +1574,16 @@ long prove_aim()
 	    
 	    if ((unsigned long)rule==DEFRULES) {
 	      rule=(ptr_pair_list)thegoal->type->rule;
-	      if (thegoal->type->type==predicate) {
+	      if (thegoal->type->type_def==(def_type)predicate_it) {
 		if (!rule) /* This can happen when RETRACT is used */
 		  success=FALSE;
 	      }
-	      else if ( thegoal->type->type==function
-		      || ( thegoal->type->type==type
+	      else if ( thegoal->type->type_def==(def_type)function_it
+			|| ( thegoal->type->type_def==(def_type)type_it
 			 && sub_type(boolean,thegoal->type)
 			 )
 	              ) {
-		if (thegoal->type->type==function && !rule)
+		if (thegoal->type->type_def==(def_type)function_it && !rule)
 		  /* This can happen when RETRACT is used */
 		  success=FALSE;
 		else {
@@ -1643,18 +1598,18 @@ long prove_aim()
 		  a->key=one;
 		  a->left=a->right=NULL;
 		  a->data=(GENERIC) thegoal;
-		  push_goal(prove,bool_pred,DEFRULES,NULL);
+		  push_goal(prove,bool_pred,(ptr_psi_term)DEFRULES,NULL); // REV401PLUS cast
 		  return success; /* We're done! */
 		}
 	      }
-	      else if (!thegoal->type->protected && thegoal->type->type==undef) {
+	      else if (!thegoal->type->protected && thegoal->type->type_def==(def_type)undef_it) {
 		/* Don't give an error message for undefined dynamic objects */
 		/* that do not yet have a definition */
 		success=FALSE;
 	      }
-	      else if (thegoal->type==true || thegoal->type==false) {
+	      else if (thegoal->type==lf_true || thegoal->type==lf_false) {
 		/* What if the 'true' or 'false' have arguments? */
-		success=(thegoal->type==true);
+		success=(thegoal->type==lf_true);
 		return success; /* We're done! */
 	      }
 	      else {
@@ -1669,7 +1624,7 @@ long prove_aim()
 		call_handler=stack_psi_term(0);
 		call_handler->type=call_handlersym;
 		stack_add_psi_attr(call_handler,"1",thegoal);
-		push_goal(prove,call_handler,DEFRULES,NULL);
+		push_goal(prove,call_handler,(ptr_psi_term)DEFRULES,NULL); // REV401PLUS cast
 		return success; /* We're done! */
 	      }
 	    }
@@ -1709,7 +1664,7 @@ long prove_aim()
 		resid_vars=NULL;
 		/* resid_limit=(ptr_goal )stack_pointer; 12.6 */
 		
-		while (rule && (rule->a==NULL || rule->b==NULL)) {
+		while (rule && (rule->aaaa_2==NULL || rule->bbbb_2==NULL)) {
 		  rule=rule->next;
 		  Traceline("alternative clause has been retracted\n");
 		}
@@ -1718,24 +1673,24 @@ long prove_aim()
 		  clear_copy();
 		  if (TRUE) /* 8.9 */
 		    /* if (thegoal->type->evaluate_args) 8.9 */
-		    head=eval_copy(rule->a,STACK);
+		    head=eval_copy(rule->aaaa_2,STACK);
 		  else
-		    head=quote_copy(rule->a,STACK);
+		    head=quote_copy(rule->aaaa_2,STACK);
 
-		  body=eval_copy(rule->b,STACK);
+		  body=eval_copy(rule->bbbb_2,STACK);
 
 		  /* What does this do?? */
 		  /* if (body->type==built_in) */
 		  /*   body->coref=head; */
 		  
 		  if (rule->next)
-		    push_choice_point(prove,thegoal,rule->next,NULL);
+		    push_choice_point(prove,thegoal,(ptr_psi_term)rule->next,NULL); // REV401PLUS cast
 		  
 		  if (body->type!=succeed)
-		    push_goal(prove,body,DEFRULES,NULL);
+		    push_goal(prove,body,(ptr_psi_term)DEFRULES,NULL); // REV401PLUS cast
 		  
 		  /* push_ptr_value(psi_term_ptr,&(head->coref)); 9.6 */
-		  push_psi_ptr_value(head,&(head->coref));
+		  push_psi_ptr_value(head,(GENERIC *)&(head->coref)); // REV401PLUS cast
 		  head->coref=thegoal;
 		  merge(&(thegoal->attr_list),head->attr_list);
 		  if (!head->status) {
@@ -1754,14 +1709,14 @@ long prove_aim()
 	  goal_stack=aim->next;
 	  goal_count++;
 	  get_two_args(thegoal->attr_list,&arg1,&arg2);
-	  push_choice_point(prove,arg2,DEFRULES,NULL);
-	  push_goal(prove,arg1,DEFRULES,NULL);
+	  push_choice_point(prove,arg2,(ptr_psi_term)DEFRULES,NULL); // REV401PLUS cast
+	  push_goal(prove,arg1,(ptr_psi_term)DEFRULES,NULL);  // REV401PLUS cast
 	}
       else { /* 'Cut' built-in*/
 	goal_stack=aim->next;
 	goal_count++;
 	/* assert((ptr_choice_point)(thegoal->value)<=choice_stack); 12.7 */
-	cut_to(thegoal->value); /* 12.7 */
+	cut_to(thegoal->value_3); /* 12.7 */
 #ifdef CLEAN_TRAIL
         clean_trail(choice_stack);
 #endif
@@ -1772,8 +1727,8 @@ long prove_aim()
       goal_stack=aim->next;
       goal_count++;
       get_two_args(thegoal->attr_list,&arg1,&arg2);
-      push_goal(prove,arg2,DEFRULES,NULL);
-      push_goal(prove,arg1,DEFRULES,NULL);
+      push_goal(prove,arg2,(ptr_psi_term)DEFRULES,NULL);  // REV401PLUS cast
+      push_goal(prove,arg1,(ptr_psi_term)DEFRULES,NULL); // REV401PLUS cast
     }
   }
   else
@@ -1796,18 +1751,18 @@ void type_disj_aim()
   ptr_psi_term t;
   ptr_int_list d;
   
-  t=(ptr_psi_term)aim->a;
-  d=(ptr_int_list)aim->b;
+  t=(ptr_psi_term)aim->aaaa_1;
+  d=(ptr_int_list)aim->bbbb_1;
   
   if (d->next) {
     Traceline("pushing type disjunction choice point for %P\n", t);
-    push_choice_point(type_disj,t,d->next,NULL);
+    push_choice_point(type_disj,t,(ptr_psi_term)d->next,NULL); // REV401PLUS cast
   }
   
-  push_ptr_value(def_ptr,&(t->type));
+  push_ptr_value(def_ptr,(GENERIC *)&(t->type));  // REV401PLUS cast
   /* Below makes cut.lf behave incorrectly: */
   /* push_def_ptr_value(t,&(t->type)); */ /* 14.8 */
-  t->type=(ptr_definition)d->value;
+  t->type=(ptr_definition)d->value_1;
   
   Traceline("setting type disjunction to %s.\n", t->type->keyword->symbol);
   
@@ -1829,9 +1784,9 @@ long clause_aim(r)
   ptr_pair_list *p;
   ptr_psi_term head,body,rule_head,rule_body;
   
-  head=(ptr_psi_term)aim->a;
-  body=(ptr_psi_term)aim->b;
-  p=(ptr_pair_list *)aim->c;
+  head=(ptr_psi_term)aim->aaaa_1;
+  body=(ptr_psi_term)aim->bbbb_1;
+  p=(ptr_pair_list *)aim->cccc_1;
   
   if ((unsigned long)(*p)>MAX_BUILT_INS) {
     success=TRUE;
@@ -1840,21 +1795,21 @@ long clause_aim(r)
     if ((*p)->next) {
       if (r) {
         Traceline("pushing 'retract' choice point for %P\n", head);
-	push_choice_point(del_clause,head,body,&((*p)->next));
+	push_choice_point(del_clause,head,body,(GENERIC)&((*p)->next)); // REV401PLUS cast
 	/* push_choice_point(del_clause,head,body,p); */
       }
       else {
         Traceline("pushing 'clause' choice point for %P\n", head);
-	push_choice_point(clause,head,body,&((*p)->next));
+	push_choice_point(clause,head,body,(GENERIC)&((*p)->next));  // REV401PLUS cast
       }
     }
     
     if (r)
-      push_goal(retract,p,NULL,NULL);
-    if ((*p)->a) {
+      push_goal(retract,(ptr_psi_term)p,NULL,NULL);  // REV401PLUS cast
+    if ((*p)->aaaa_2) {
       clear_copy();
-      rule_head=quote_copy((*p)->a,STACK);
-      rule_body=quote_copy((*p)->b,STACK);
+      rule_head=quote_copy((*p)->aaaa_2,STACK);
+      rule_body=quote_copy((*p)->bbbb_2,STACK);
       
       push_goal(unify,body,rule_body,NULL);
       push_goal(unify,head,rule_head,NULL);
@@ -2002,13 +1957,13 @@ long what_next_aim()
   
   begin_terminal_io();
   
-  level=((unsigned long)aim->c);
+  level=((unsigned long)aim->cccc_1);
   
-  if (aim->a) {
+  if (aim->aaaa_1) {
     /* Must remember var_occurred from the what_next goal and from */
     /* execution of previous query (it may have contained a parse) */
-    var_occurred=var_occurred || ((unsigned long)aim->b)&TRUEMASK; /* 18.8 */
-    eventflag=(((unsigned long)aim->b)&(TRUEMASK*2))!=0;
+    var_occurred=var_occurred || ((unsigned long)aim->bbbb_1)&TRUEMASK; /* 18.8 */
+    eventflag=(((unsigned long)aim->bbbb_1)&(TRUEMASK*2))!=0;
     if (
         !var_occurred && no_choices() && level>0
 #ifdef X11
@@ -2030,9 +1985,9 @@ long what_next_aim()
   x_window_creation=FALSE;
 #endif
   
-  Infoline(aim->a?"\n*** Yes":"\n*** No");
+  Infoline(aim->aaaa_1?"\n*** Yes":"\n*** No");
   show_count();
-  if (aim->a || level>0) print_variables(NOTQUIET);
+  if (aim->aaaa_1 || level>0) print_variables(NOTQUIET);
 
   {
     long lev=(MAX_LEVEL<level?MAX_LEVEL:level);
@@ -2087,7 +2042,7 @@ long what_next_aim()
       }
     }
     else {
-      if (level>0) push_choice_point(what_next,FALSE,FALSE,level);
+      if (level>0) push_choice_point(what_next,FALSE,FALSE,(GENERIC)level);  // REV401PLUS casts
   
       put_back_char(c);
       var_occurred=FALSE;
@@ -2098,13 +2053,13 @@ long what_next_aim()
 	reset_stacks();
 	put_back_char(EOF);
       } else if (sort==QUERY) {
-        push_goal(what_next,TRUE,var_occurred,level+1);
-        push_goal(prove,s,DEFRULES,NULL);
+        push_goal(what_next,(ptr_psi_term)TRUE,(ptr_psi_term)var_occurred,(GENERIC)(level+1));  // REV401PLUS casts // added paren around level+1
+        push_goal(prove,s,(ptr_psi_term)DEFRULES,NULL);  // REV401PLUS cast
         reset_step();
         result=TRUE;
       }
       else if (sort==FACT) { /* A declaration */
-        push_goal(what_next,TRUE,FALSE,level+1); /* 18.5 */
+        push_goal(what_next,(ptr_psi_term)TRUE,FALSE,(GENERIC)(level+1)); /* 18.5 */  // REV401PLUS casts  // added paren around level+1
         assert_first=FALSE;
         assert_clause(s);
         /* Variables in the query may be used in a declaration, */
@@ -2115,7 +2070,7 @@ long what_next_aim()
       }
       else {
 	/* Stay at same level on syntax error */
-        push_goal(what_next,TRUE,FALSE,level+1); /* 20.8 */
+        push_goal(what_next,(ptr_psi_term)TRUE,FALSE,(GENERIC)(level+1)); /* 20.8 */  // REV401PLUS casts added paren around level+1
 	result=TRUE; /* 20.8 */
       }
     }
@@ -2154,15 +2109,25 @@ long load_aim()
   int end_of_file=FALSE; /*  RM: Jan 27 1993  */
 
   
+    dennis_debug("load_aim 00001");
   save_state(input_state);
-  input_state=(ptr_psi_term)aim->a;
+    dennis_debug("load_aim 00002");
+  input_state=(ptr_psi_term)aim->aaaa_1;
+    dennis_debug("load_aim 00003");
   restore_state(input_state);
+    dennis_debug("load_aim 00004");
   old_file_date=file_date;
-  file_date=(unsigned long)aim->b;
+    dennis_debug("load_aim 00005");
+  file_date=(unsigned long)aim->bbbb_1;
+    dennis_debug("load_aim 00006");
   old_noisy=noisy;
+    dennis_debug("load_aim 00007");
   noisy=FALSE;
-  fn=(char*)aim->c;
+  dennis_debug("load_aim 00008");
+  fn=(char*)aim->cccc_1;
+    dennis_debug("load_aim 00009");
   exitloop=FALSE;
+    dennis_debug("load_aim 000010");
 
 
   
@@ -2170,35 +2135,52 @@ long load_aim()
     /* Variables in queries in files are *completely independent* of top- */
     /* level variables.  I.e.: top-level variables are *not* recognized   */
     /* while loading files and variables in file queries are *not* added. */
+    dennis_debug("load_aim 000011");
     old_var_occurred=var_occurred; /* 18.8 */
     old_var_tree=var_tree;
     var_tree=NULL;
     s=stack_copy_psi_term(parse(&sort));
     var_tree=old_var_tree;
     var_occurred=old_var_occurred; /* 18.8 */
+    dennis_debug("load_aim 000012");
 
     if (s->type==eof) {
+    dennis_debug("load_aim 000013");
       encode_types();
       if (input_stream!=stdin) fclose(input_stream);
       exitloop=TRUE;
       end_of_file=TRUE; /*  RM: Jan 27 1993  */
+    dennis_debug("load_aim 000014");
     }
     else if (sort==FACT) {
+    dennis_debug("load_aim 000015");
       assert_first=FALSE;
       assert_clause(s);
+    dennis_debug("load_aim 000016");
     }
     else if (sort==QUERY) {
+    dennis_debug("load_aim 000017A");
       encode_types();
+    dennis_debug("load_aim 000017B");
       save_state(input_state);
+    dennis_debug("load_aim 000017C");
       /* Handle both successful and failing queries correctly. */
       cutpt=choice_stack;
-      push_choice_point(load,input_state,file_date,fn);
-      push_goal(load,input_state,file_date,fn);
-      push_goal(general_cut,cutpt,NULL,NULL);
-      push_goal(prove,s,DEFRULES,NULL);
+    dennis_debug("load_aim 000017D");
+      push_choice_point(load,input_state,(ptr_psi_term)file_date,(GENERIC)fn); // REV401PLUS cast
+      dennis_debug("load_aim 000017E");    
+      push_goal(load,input_state,(ptr_psi_term)file_date,(GENERIC)fn);  // REV401PLUS casts
+    dennis_debug("load_aim 000017F");
+      push_goal(general_cut,(ptr_psi_term)cutpt,NULL,NULL); // REV401PLUS cast
+    dennis_debug("load_aim 000017G");
+      push_goal(prove,s,(ptr_psi_term)DEFRULES,NULL); // REV401PLUS cast
+    dennis_debug("load_aim 000017H");
       exitloop=TRUE;
+    dennis_debug("load_aim 000018");
     }
     else {
+    dennis_debug("load_aim 000019");
+      
       /* fprintf(stderr,"*** Error: in input file %c%s%c.\n",34,fn,34); */
       /* success=FALSE; */
       /* fail_all(); */
@@ -2207,11 +2189,14 @@ long load_aim()
       /* printf("\n*** Abort\n"); */
       /* main_loop_ok=FALSE; */
     }
+    dennis_debug("load_aim 000020");
   } while (success && !exitloop);
 
+    dennis_debug("load_aim 000021");
 
   /*  RM: Jan 27 1993 */
   if(end_of_file || !success) {
+    dennis_debug("load_aim 000022");
     /*
       printf("END OF FILE %s, setting module to %s\n",
       ((ptr_psi_term)get_attr(input_state,
@@ -2220,16 +2205,20 @@ long load_aim()
       CURRENT_MODULE))->value);
       */
 	   
+    dennis_debug("load_aim 000023");
     set_current_module(
-       find_module(((ptr_psi_term)get_attr(input_state,
-       CURRENT_MODULE))->value));
+		       find_module((char *)((ptr_psi_term)get_attr(input_state,
+       CURRENT_MODULE))->value_3));
+    dennis_debug("load_aim 000024");
   }
 
+    dennis_debug("load_aim 000025");
   
   noisy=old_noisy;
   file_date=old_file_date;
   open_input_file("stdin");
 
+    dennis_debug("load_aim 000026");
   
   return success;
 }
@@ -2247,11 +2236,13 @@ void main_prove()
   long success=TRUE;
   ptr_pair_list *p;
   ptr_psi_term unused_match_date; /* 13.6 */
+    dennis_debug("0000001");
     
   xcount=0;
   xeventdelay=XEVENTDELAY;
   interrupted=FALSE;
   main_loop_ok=TRUE;
+    dennis_debug("0000002");
   
   while (main_loop_ok && goal_stack) {
 
@@ -2270,11 +2261,14 @@ void main_prove()
     }
     */
 
+    dennis_debug("0000003");
     
     aim=goal_stack;
+    dennis_debug("0000004");
     switch(aim->type) {
       
     case unify:
+    dennis_debug("unify");
       goal_stack=aim->next;
       goal_count++;
       success=unify_aim();
@@ -2283,45 +2277,54 @@ void main_prove()
     /* Same as above, but do not evaluate top level */
     /* Used to bind with unbound variables */
     case unify_noeval:
+    dennis_debug("unify_noeval");
       goal_stack=aim->next;
       goal_count++;
       success=unify_aim_noeval();
       break;
       
     case prove:
+    dennis_debug("prove");
       success=prove_aim();
       break;
       
     case eval:
+    dennis_debug("eval");
       goal_stack=aim->next;
       goal_count++;
       success=eval_aim();
       break;
 
     case load:
+    dennis_debug("load");
       goal_stack=aim->next;
       goal_count++;
       success=load_aim();
       break;
       
     case match:
+    dennis_debug("match");
       goal_stack=aim->next;
       goal_count++;
       success=match_aim();
       break;
       
     case disj:
+          dennis_debug("disj");
+
       goal_stack=aim->next;
       goal_count++;
       success=disjunct_aim();
       break;
 
     case general_cut:
+          dennis_debug("general_cut");
+
       goal_stack=aim->next;
       goal_count++;
       /* assert((ptr_choice_point)aim->a <= choice_stack); 12.7 */
       /* choice_stack=(ptr_choice_point)aim->a; */
-      cut_to(aim->a); /* 12.7 */
+      cut_to(aim->aaaa_1); /* 12.7 */
 #ifdef CLEAN_TRAIL
       clean_trail(choice_stack);
 #endif
@@ -2331,26 +2334,28 @@ void main_prove()
       break;
       
     case eval_cut:
-      /* RESID */ restore_resid((ptr_resid_block)aim->c, &unused_match_date);
+          dennis_debug("eval_cut");
+
+      /* RESID */ restore_resid((ptr_resid_block)aim->cccc_1, &unused_match_date);
       if (curried)
 	do_currying();
       else if (resid_vars) {
 	success=do_residuation_user(); /* 21.9 */ /* PVR 9.2.94 */
       } else {
         if (resid_aim)
-          Traceline("result of %P is %P\n", resid_aim->a, aim->a);
+          Traceline("result of %P is %P\n", resid_aim->aaaa_1, aim->aaaa_1);
         goal_stack=aim->next;
         goal_count++;
         /* resid_aim=NULL; 21.9 */
         /* PVR 5.11 choice_stack=(ptr_choice_point)aim->b; */
-        i_check_out(aim->a);
+        i_check_out(aim->aaaa_1);
       }
       resid_aim=NULL; /* 21.9 */
       resid_vars=NULL; /* 22.9 */
       /* assert((ptr_choice_point)aim->b<=choice_stack); 12.7 */
       /* PVR 5.11 */ /* choice_stack=(ptr_choice_point)aim->b; */
       if (success) { /* 21.9 */
-        cut_to(aim->b); /* 12.7 */
+        cut_to(aim->bbbb_1); /* 12.7 */
 #ifdef CLEAN_TRAIL
         clean_trail(choice_stack);
 #endif
@@ -2362,15 +2367,17 @@ void main_prove()
       break;
       
     case freeze_cut:
-      /* RESID */ restore_resid((ptr_resid_block)aim->c, &unused_match_date);
+          dennis_debug("freeze_cut");
+
+      /* RESID */ restore_resid((ptr_resid_block)aim->cccc_1, &unused_match_date);
       if (curried) {
-        Warningline("frozen goal has a missing parameter '%P' and fails.\n",aim->a);
+        Warningline("frozen goal has a missing parameter '%P' and fails.\n",aim->aaaa_1);
 	success=FALSE;
       }
       else if (resid_vars) {
 	success=do_residuation_user(); /* 21.9 */ /* PVR 9.2.94 */
       } else {
-        if (resid_aim) Traceline("releasing frozen goal: %P\n", aim->a);
+        if (resid_aim) Traceline("releasing frozen goal: %P\n", aim->aaaa_1);
 	/* resid_aim=NULL; 21.9 */
 	/* PVR 5.12 choice_stack=(ptr_choice_point)aim->b; */
 	goal_stack=aim->next;
@@ -2381,7 +2388,7 @@ void main_prove()
       if (success) { /* 21.9 */
         /* assert((ptr_choice_point)aim->b<=choice_stack); 12.7 */
         /* PVR 5.12 */ /* choice_stack=(ptr_choice_point)aim->b; */
-        cut_to(aim->b); /* 12.7 */
+        cut_to(aim->bbbb_1); /* 12.7 */
 #ifdef CLEAN_TRAIL
         clean_trail(choice_stack);
 #endif
@@ -2393,16 +2400,18 @@ void main_prove()
       break;
       
     case implies_cut: /* 12.10 */
+          dennis_debug("implies_cut");
+
       /* This 'cut' is actually more like a no-op! */
-      restore_resid((ptr_resid_block)aim->c, &unused_match_date);
+      restore_resid((ptr_resid_block)aim->cccc_1, &unused_match_date);
       if (curried) {
-        Warningline("implied goal has a missing parameter '%P' and fails.\n",aim->a);
+        Warningline("implied goal has a missing parameter '%P' and fails.\n",aim->aaaa_1);
 	success=FALSE;
       }
       else if (resid_vars)
 	success=FALSE;
       else {
-        if (resid_aim) Traceline("executing implied goal: %P\n", aim->a);
+        if (resid_aim) Traceline("executing implied goal: %P\n", aim->aaaa_1);
 	goal_stack=aim->next;
 	goal_count++;
       }
@@ -2411,52 +2420,69 @@ void main_prove()
       break;
 
     case fail:
+          dennis_debug("fail");
+
       goal_stack=aim->next;
       success=FALSE;
       break;
       
     case what_next:
+          dennis_debug("what_next");
+
       goal_stack=aim->next;
       success=what_next_aim();
       break;
       
     case type_disj:
+          dennis_debug("type_disj");
+
       goal_stack=aim->next;
       goal_count++;
       type_disj_aim();
       break;
       
     case clause:
+          dennis_debug("clause");
+
       goal_stack=aim->next;
       goal_count++;
       success=clause_aim(0);
       break;
       
     case del_clause:
+          dennis_debug("del_clause");
+
       goal_stack=aim->next;
       goal_count++;
       success=clause_aim(1);
       break;
       
     case retract:
+          dennis_debug("retract");
+
       goal_stack=aim->next;
       goal_count++;
-      p=(ptr_pair_list*)aim->a;
+      p=(ptr_pair_list*)aim->aaaa_1;
       Traceline("deleting clause (%P%s%P)\n",
-                (*p)->a,((*p)->a->type->type==function?"->":":-"),(*p)->b);
-      (*p)->a=NULL;
-      (*p)->b=NULL;
+                (*p)->aaaa_2,((*p)->aaaa_2->type->type_def==(def_type)function_it?"->":":-"),(*p)->bbbb_2);
+      (*p)->aaaa_2=NULL;
+      (*p)->bbbb_2=NULL;
       (*p)=(*p)->next; /* Remove retracted element from pairlist */
       break;
 
     case c_what_next: /*  RM: Mar 31 1993  */
+          dennis_debug("c_what_next");
+
       main_loop_ok=FALSE; /* Exit the main loop */
       break;
       
     default:
+          dennis_debug("default");
+
       Errorline("bad goal on stack %d.\n",goal_stack->type);
       goal_stack=aim->next;
     }
+    dennis_debug("past case");
 
     if (main_loop_ok) {
     

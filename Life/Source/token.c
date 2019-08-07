@@ -7,57 +7,13 @@
 static char vcid[] = "$Id: token.c,v 1.4 1995/07/27 19:22:17 duchier Exp $";
 #endif /* lint */
 
-#include <pwd.h>
 
-#include "extern.h"
-#include "trees.h"
-#include "types.h"
-#include "token.h"
-#include "memory.h"
-#include "error.h"
-#include "parser.h" /* For heap_copy_psi_term */
-#include "modules.h"
+#ifdef REV401PLUS
+#include "defs.h"
+#endif
 
-
-long var_occurred;
-ptr_node symbol_table;
-ptr_psi_term error_psi_term;
-long psi_term_line_number;
+// REV401PLUS moved down
 long trace_input=FALSE;
-
-FILE *output_stream;
-char *prompt;
-
-long stdin_terminal;
-
-/* For parsing from a string */
-long stringparse;
-char *stringinput;
-
-/****************************************************************************/
-
-/* Abstract Data Type for the Input File State */
-
-/* FILE *last_eof_read; */
-
-/* Global input file state information */
-/* Note: all characters should be stored in longs.  This ensures
-   that noncharacters (i.e., EOF) can also be stored. */
-FILE *input_stream;
-string input_file_name;
-long line_count;
-long start_of_line;
-long saved_char; /*  RM: Jul  7 1993  changed to 'int' */
-long old_saved_char;
-ptr_psi_term saved_psi_term;
-ptr_psi_term old_saved_psi_term;
-long eof_flag;
-
-/* Psi-term containing global input file state */
-ptr_psi_term input_state;
-
-/* Psi-term containing stdin file state */
-ptr_psi_term stdin_state;
 
 /***********************************************/
 /* Utilities */
@@ -65,8 +21,6 @@ ptr_psi_term stdin_state;
 /* Many utilities exist in two versions that allocate on the heap */
 /* or the stack. */
 /* All these routines are NON-backtrackable. */
-
-
 
 void TOKEN_ERROR(p)    /*  RM: Feb  1 1993  */
 
@@ -105,10 +59,10 @@ long value;
 
   t1=heap_psi_term(4);
   t1->type=integer;
-  t1->value=heap_alloc(sizeof(REAL));
-  *(REAL *)t1->value = (REAL) value;
+  t1->value_3=heap_alloc(sizeof(REAL));
+  *(REAL *)t1->value_3 = (REAL) value;
 
-  heap_insert(featcmp,heap_copy_string(attrname),&(t->attr_list), t1);
+  heap_insert(FEATCMP,heap_copy_string(attrname),&(t->attr_list), (GENERIC)t1); // REV401PLUS cast
 }
 
 void stack_add_int_attr(t, attrname, value)
@@ -120,10 +74,10 @@ long value;
 
   t1=stack_psi_term(4);
   t1->type=integer;
-  t1->value=heap_alloc(sizeof(REAL)); /* 12.5 */
-  *(REAL *)t1->value = (REAL) value;
+  t1->value_3=heap_alloc(sizeof(REAL)); /* 12.5 */
+  *(REAL *)t1->value_3 = (REAL) value;
 
-  stack_insert(featcmp,heap_copy_string(attrname),&(t->attr_list), t1);
+  stack_insert(FEATCMP,heap_copy_string(attrname),&(t->attr_list), (GENERIC)t1); // REV401PLUS cast
 }
 
 
@@ -137,9 +91,9 @@ long value;
   ptr_node n;
   ptr_psi_term t1;
 
-  n=find(featcmp,attrname,t->attr_list);
+  n=find(FEATCMP,attrname,t->attr_list);
   t1=(ptr_psi_term)n->data;
-  *(REAL *)t1->value = (REAL) value;
+  *(REAL *)t1->value_3 = (REAL) value;
 }
 
 /*
@@ -151,7 +105,7 @@ long value;
   ptr_node n;
   ptr_psi_term t1;
 
-  n=find(featcmp,attrname,t->attr_list);
+  n=find(FEATCMP,attrname,t->attr_list);
   t1=(ptr_psi_term)n->data;
   *(REAL *)t1->value = (REAL) value;
 }
@@ -169,9 +123,10 @@ char *str;
 
   t1=heap_psi_term(4);
   t1->type=quoted_string;
-  t1->value=(GENERIC)heap_copy_string(str);
+  t1->value_3=(GENERIC)heap_copy_string(str);
 
-  heap_insert(featcmp,heap_copy_string(attrname),&(t->attr_list), t1);
+  heap_insert(FEATCMP,heap_copy_string(attrname),&(t->attr_list), (GENERIC)t1); // REV401PLUS cast
+ 
 }
 
 void stack_add_str_attr(t, attrname, str)
@@ -183,9 +138,9 @@ char *str;
 
   t1=stack_psi_term(4);
   t1->type=quoted_string;
-  t1->value=(GENERIC)stack_copy_string(str);
+  t1->value_3=(GENERIC)stack_copy_string(str);
 
-  stack_insert(featcmp,heap_copy_string(attrname),&(t->attr_list), t1);
+  stack_insert(FEATCMP,heap_copy_string(attrname),&(t->attr_list), (GENERIC)t1); // REV401PLUS cast
 }
 
 
@@ -199,9 +154,9 @@ char *str;
   ptr_node n;
   ptr_psi_term t1;
 
-  n=find(featcmp,attrname,t->attr_list);
+  n=find(FEATCMP,attrname,t->attr_list);
   t1=(ptr_psi_term)n->data;
-  t1->value=(GENERIC)heap_copy_string(str);
+  t1->value_3=(GENERIC)heap_copy_string(str);
 }
 
 /*
@@ -214,7 +169,7 @@ char *str;
   ptr_node n;
   ptr_psi_term t1;
 
-  n=find(featcmp,attrname,t->attr_list);
+  n=find(FEATCMP,attrname,t->attr_list);
   t1=(ptr_psi_term)n->data;
   t1->value=(GENERIC)stack_copy_string(str);
 }
@@ -227,7 +182,7 @@ ptr_psi_term t;
 char *attrname;
 ptr_psi_term g;
 {
-  heap_insert(featcmp,heap_copy_string(attrname),&(t->attr_list), g);
+  heap_insert(FEATCMP,heap_copy_string(attrname),&(t->attr_list), (GENERIC)g); // REV401PLUS cast
 }
 
 void stack_add_psi_attr(t, attrname, g)
@@ -235,7 +190,7 @@ ptr_psi_term t;
 char *attrname;
 ptr_psi_term g;
 {
-  stack_insert(featcmp,heap_copy_string(attrname),&(t->attr_list), g);
+  stack_insert(FEATCMP,heap_copy_string(attrname),&(t->attr_list), (GENERIC)g); // REV401PLUS cast
 }
 
 void bk_stack_add_psi_attr(t, attrname, g)
@@ -243,7 +198,7 @@ ptr_psi_term t;
 char *attrname;
 ptr_psi_term g;
 {
-  bk_stack_insert(featcmp,heap_copy_string(attrname),&(t->attr_list), g);
+  bk_stack_insert(FEATCMP,heap_copy_string(attrname),&(t->attr_list), (GENERIC)g); // REV401PLUS
 }
 
 
@@ -252,7 +207,7 @@ GENERIC get_attr(t, attrname)
 ptr_psi_term t;
 char *attrname;
 {
-  ptr_node n=find(featcmp,attrname,t->attr_list);
+  ptr_node n=find(FEATCMP,attrname,t->attr_list);
   return (GENERIC) n->data;
 }
 
@@ -260,7 +215,7 @@ char *attrname;
 FILE *get_stream(t)
 ptr_psi_term t;
 {
-  return (FILE *) ((ptr_psi_term)get_attr(t,STREAM))->value;
+  return (FILE *) ((ptr_psi_term)get_attr(t,STREAM))->value_3;
 }
 
 /***********************************************/
@@ -274,9 +229,9 @@ ptr_psi_term t;
   ptr_node n;
   ptr_psi_term t1;
 
-  n=find(featcmp,STREAM,t->attr_list);
+  n=find(FEATCMP,STREAM,t->attr_list);
   t1=(ptr_psi_term)n->data;
-  t1->value=(GENERIC)input_stream;
+  t1->value_3=(GENERIC)input_stream;
 
   /*  RM: Jan 27 1993
   heap_mod_str_attr(t,CURRENT_MODULE,current_module->module_name);
@@ -294,11 +249,11 @@ ptr_psi_term t;
   heap_add_psi_attr(t,OLD_SAVED_PSI_TERM,t1);
 
   t1=heap_psi_term(4);
-  t1->type=(eof_flag?true:false);
+  t1->type=(eof_flag?lf_true:lf_false);
   heap_add_psi_attr(t,EOF_FLAG,t1);
 
   t1=heap_psi_term(4);
-  t1->type=(start_of_line?true:false);
+  t1->type=(start_of_line?lf_true:lf_false);
   heap_add_psi_attr(t,START_OF_LINE,t1);
 }
 
@@ -312,13 +267,13 @@ ptr_psi_term t;
   char *str;
 
   
-  input_stream = (FILE *) ((ptr_psi_term)get_attr(t,STREAM))->value;
-  str = (char*) ((ptr_psi_term)get_attr(t,INPUT_FILE_NAME))->value;
+  input_stream = (FILE *) ((ptr_psi_term)get_attr(t,STREAM))->value_3;
+  str = (char*) ((ptr_psi_term)get_attr(t,INPUT_FILE_NAME))->value_3;
   strcpy(input_file_name,str);
   /* for (i=0;i++;i<=strlen(str)) input_file_name[i]=str[i]; */
-  line_count = *(REAL *) ((ptr_psi_term)get_attr(t,LINE_COUNT))->value;
-  saved_char = *(REAL *) ((ptr_psi_term)get_attr(t,SAVED_CHAR))->value;
-  old_saved_char= *(REAL *)((ptr_psi_term)get_attr(t,OLD_SAVED_CHAR))->value;
+  line_count = *(REAL *) ((ptr_psi_term)get_attr(t,LINE_COUNT))->value_3;
+  saved_char = *(REAL *) ((ptr_psi_term)get_attr(t,SAVED_CHAR))->value_3;
+  old_saved_char= *(REAL *)((ptr_psi_term)get_attr(t,OLD_SAVED_CHAR))->value_3;
 
   saved_psi_term=(ptr_psi_term)get_attr(t,SAVED_PSI_TERM);
   if (saved_psi_term==null_psi_term) saved_psi_term=NULL;
@@ -326,8 +281,8 @@ ptr_psi_term t;
   old_saved_psi_term=(ptr_psi_term)get_attr(t,OLD_SAVED_PSI_TERM);
   if (old_saved_psi_term==null_psi_term) old_saved_psi_term=NULL;
 
-  eof_flag = ((ptr_psi_term)get_attr(t,EOF_FLAG))->type==true;
-  start_of_line = ((ptr_psi_term)get_attr(t,START_OF_LINE))->type==true;
+  eof_flag = ((ptr_psi_term)get_attr(t,EOF_FLAG))->type==lf_true;
+  start_of_line = ((ptr_psi_term)get_attr(t,START_OF_LINE))->type==lf_true;
 
   
   /*  RM: Jan 27 1993
@@ -349,7 +304,7 @@ ptr_psi_term *t;
 
   t1=heap_psi_term(4);
   t1->type=stream;
-  t1->value=(GENERIC)input_stream;
+  t1->value_3=(GENERIC)input_stream;
   heap_add_psi_attr(*t,STREAM,t1);
 
   /*  RM: Jan 27 1993  */
@@ -373,11 +328,11 @@ ptr_psi_term *t;
   heap_add_psi_attr(*t,OLD_SAVED_PSI_TERM,t1);
 
   t1=heap_psi_term(4);
-  t1->type=(eof_flag?true:false);
+  t1->type=(eof_flag?lf_true:lf_false);
   heap_add_psi_attr(*t,EOF_FLAG,t1);
 
   t1=heap_psi_term(4);
-  t1->type=(start_of_line?true:false);
+  t1->type=(start_of_line?lf_true:lf_false);
   heap_add_psi_attr(*t,START_OF_LINE,t1);
 }
 
@@ -652,7 +607,7 @@ long read_char()
     
     if(trace_input)   /*  RM: Jan 13 1993  */
       if(c!=EOF)
-	printf("%c",c);
+	printf("%c",(int)c); // REV401PLUS cast
       else
 	printf(" <EOF>\n");
     
@@ -875,10 +830,10 @@ long e;
   } while(flag);
   
   if (e=='"')
-    tok->value=(GENERIC)heap_copy_string(str);
+    tok->value_3=(GENERIC)heap_copy_string(str);
   else {
     tok->type=update_symbol(NULL,str); /* Maybe no_module would be better */
-    tok->value=NULL;
+    tok->value_3=NULL;
     TOKEN_ERROR(tok);		/*  RM: Feb  1 1993  */
   }
 }
@@ -985,12 +940,12 @@ ptr_definition typ;
   if(typ==constant) {
     /* printf("module=%s\n",module->module_name); */
     tok->type=update_symbol(module,str); /*  RM: Feb  3 1993  */
-    tok->value=NULL;
+    tok->value_3=NULL;
 
     TOKEN_ERROR(tok); /*  RM: Feb  1 1993  */
 
     /* PVR 4.2.94 for correct level incrementing */
-    if (tok->type->type==global) {
+    if (tok->type->type_def==(def_type)global_it) {
       var_occurred=TRUE;
     }
     if (FALSE /*tok->type->type==global && tok->type->global_value*/) {
@@ -1002,19 +957,19 @@ ptr_definition typ;
       /*  RM: Feb  9 1993  */
       /* Add into the variable tree */
       var_occurred=TRUE;
-      n=find(strcmp,tok->type->keyword->symbol,var_tree);
+      n=find(STRCMP,tok->type->keyword->symbol,var_tree);
       if (n==NULL) {
 	/* The change is always trailed. */
-	bk2_stack_insert(strcmp,
+	bk2_stack_insert(STRCMP,
 			 tok->type->keyword->symbol,
 			 &var_tree,
-			 tok->type->global_value);
+			 (GENERIC)tok->type->global_value); // REV401PLUS cast
       }
     }
     
   }
   else	
-    tok->value=(GENERIC)heap_copy_string(str);
+    tok->value_3=(GENERIC)heap_copy_string(str);
 }
 
 
@@ -1080,8 +1035,8 @@ long c;
     put_back_char(c);
 
   /* if (sgn) f = -f; */
-  tok->value=heap_alloc(sizeof(REAL)); /* 12.5 */
-  *(REAL *)tok->value=f;
+  tok->value_3=heap_alloc(sizeof(REAL)); /* 12.5 */
+  *(REAL *)tok->value_3=f;
 
   /*  RM: Mar  8 1993  */
   if(f==floor(f))
@@ -1136,7 +1091,7 @@ long for_parser;
     switch(c) {
     case EOF:
       tok->type=eof;
-      tok->value=NULL;
+      tok->value_3=NULL;
       break;
     case '%':
       read_comment(tok);
@@ -1168,7 +1123,7 @@ long for_parser;
 	  else
 	    tok->type=final_question;
 	  
-	  tok->value=NULL;
+	  tok->value_3=NULL;
 	}
 	else
 	  read_name(tok,c,symbolic,constant);
@@ -1192,7 +1147,7 @@ long for_parser;
 		  if SINGLE(c) {
 		    p[0]=c; p[1]=0;
 		    tok->type=update_symbol(current_module,p);
-		    tok->value=NULL;
+		    tok->value_3=NULL;
 		    TOKEN_ERROR(tok); /*  RM: Feb  1 1993  */
 		  }
 		  else {
@@ -1201,24 +1156,24 @@ long for_parser;
     }
 
     if (tok->type==variable) {
-      if (tok->value) {
+      if (tok->value_3) {
         /* If the variable read in has name "_", then it becomes 'top' */
         /* and is no longer a variable whose name must be remembered.  */
         /* As a result, '@' and '_' are synonyms in the program input. */
-        if (!strcmp((char *)tok->value,"_")) {
+        if (!strcmp((char *)tok->value_3,"_")) {
 	  p[0]='@'; p[1]=0;
           tok->type=update_symbol(current_module,p);
-          tok->value=NULL;
+          tok->value_3=NULL;
 	  TOKEN_ERROR(tok); /*  RM: Feb  1 1993  */
         }
         else {
           /* Insert into variable tree, create 'top' value if need be. */
           var_occurred=TRUE;
-          n=find(strcmp,tok->value,var_tree);
+          n=find(STRCMP,(char *)tok->value_3,var_tree); // REV401PLUS cast
           if (n==NULL) {
             ptr_psi_term t=stack_psi_term(0);
             /* The change is always trailed. */
-            bk2_stack_insert(strcmp,tok->value,&var_tree,t); /* 17.8 */
+            bk2_stack_insert(STRCMP,(char *)tok->value_3,&var_tree,(GENERIC)t); /* 17.8 */ // REV401PLUS casts
             tok->coref=t;
           }
           else
@@ -1241,7 +1196,7 @@ long for_parser;
   tok->resid=NULL;
 
   if (tok->type==cut) /* 12.7 */
-    tok->value=(GENERIC)choice_stack;
+    tok->value_3=(GENERIC)choice_stack;
 
   do {
     c=read_char();

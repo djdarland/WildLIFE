@@ -10,22 +10,10 @@ static char vcid[] = "$Id: lib.c,v 1.2 1994/12/08 23:26:47 duchier Exp $";
 /* VERSION of Wild-LIFE for calling from C */
 /*  RM: Mar 31 1993  */
 
-#include "extern.h"
-#include "trees.h"
-#include "print.h"
-#include "parser.h"
-#include "info.h"
-#include "login.h"
-#include "lefun.h"
-#include "built_ins.h"
-#include "types.h"
-#include "copy.h"
-#include "token.h"
-#include "interrupt.h"
-#include "error.h"
-#include "modules.h" /*  RM: Jan  8 1993  */
+#ifdef REV401PLUS
+#include "defs.h"
+#endif
 
-#include "c_life.h"
 
 
 #ifdef X11
@@ -37,21 +25,13 @@ static char vcid[] = "$Id: lib.c,v 1.2 1994/12/08 23:26:47 duchier Exp $";
 static unsigned int libseed;
 #endif
 
+
+
+// REV401PLUS -- moved nex 4 down
 long noisy=TRUE;
 long file_date=3;
 long types_done=FALSE;
-
-struct tms life_start,life_end;
 float garbage_time=0;
-
-extern int rand_array[256];
-
-
-int c_query_level;
-
-extern jmp_buf env;
-
-
 
 char **group_features(f,n)
      char **f;
@@ -96,9 +76,9 @@ void init_io()
   output_stream=stdout;
 }
 
-
+#ifdef REV102
 extern char prompt_buffer[];
-
+#endif
 
 /* Initial state of system to begin a query */
 void init_system()
@@ -131,25 +111,9 @@ void init_system()
   init_global_vars(); /*  RM: Feb 15 1993  */
 }
 
-
-extern int rand_array[];
-
-
-
-/******** WFINIT(argc,argv)
-  This routine contains the Read-Solve-Prlong loop.
-  */
-
-WFInit(argc, argv)
-     
-     long argc;
-     char **argv;
+void WFInit(long argc, char *argv[])
 {
-  ptr_psi_term s;  
   ptr_stack save_undo_stack;
-  long sort,exitflag;
-  int c; /* 21.12 (prev. char) */ 
-  
   
   int i;
 #ifdef SOLARIS
@@ -160,9 +124,17 @@ WFInit(argc, argv)
     rand_array[i]=random();
 #endif
   
-  
-  arg_c=argc;
-  arg_v=argv;
+  if (argc < 10)
+    {
+      arg_c=argc;
+      for (i = 0; i < argc; i++) {
+	arg_v[i]=argv[i];
+      }
+    }
+  else
+    {
+      Errorline("Too many command line arguments\n");
+    }
   
   quietflag = TRUE; /*  RM: Mar 31 1993  */
   
@@ -209,7 +181,7 @@ WFInit(argc, argv)
   
   
   open_input_file("+SETUP+");
-  push_goal(load,input_state,file_date,heap_copy_string("+SETUP+"));
+  push_goal(load,input_state,(ptr_psi_term)file_date,(GENERIC)heap_copy_string("+SETUP+")); // REV401PLUS casts
   file_date+=2;
   main_prove();
   
@@ -270,10 +242,10 @@ int WFInput(query)
 	ignore_eff=TRUE;
 	goal_count=0;
 		
-	push_choice_point(c_what_next,c_query_level,NULL,NULL);
+	push_choice_point(c_what_next,(ptr_psi_term)c_query_level,NULL,NULL); // REV401PLUS cast
 	c_query_level++;
-	push_goal(c_what_next,c_query_level,var_occurred,NULL);
-	push_goal(prove,t,DEFRULES,NULL);
+	push_goal(c_what_next,(ptr_psi_term)c_query_level,(ptr_psi_term)var_occurred,NULL); // REV401PLUS casts
+	push_goal(prove,t,(ptr_psi_term)DEFRULES,NULL); // REV401PLUS cast
 	/* reset_step(); */
       }
       else if (sort==FACT) {
@@ -293,7 +265,7 @@ int WFInput(query)
       
       if(goal_stack && goal_stack->type==c_what_next) {
 	  
-	if((int)(goal_stack->a)==c_query_level)
+	if((unsigned long)(goal_stack->aaaa_1)==c_query_level) // REV401PLUS cast
 	  if(choice_stack==old_choice) {
 	    result=WFyes;
 	    c_query_level--;
@@ -322,7 +294,7 @@ PsiTerm WFGetVar(name)
   ptr_psi_term result=NULL;
   ptr_node n;
   
-  n=find(strcmp,name,var_tree);
+  n=find(STRCMP,name,var_tree);
   if(n) {
     result=(ptr_psi_term)n->data;
     if(result)
@@ -417,8 +389,8 @@ double WFGetDouble(psi,ok)
   if(psi) {
     deref_ptr(psi);
     
-    if(sub_type(psi->type,real) && psi->value) {
-      value= *((double *)psi->value);
+    if(sub_type(psi->type,real) && psi->value_3) {
+      value= *((double *)psi->value_3);
       if(ok)
 	*ok=TRUE;
     }
@@ -440,8 +412,8 @@ char *WFGetString(psi,ok)
   if(psi) {
     deref_ptr(psi);
     
-    if(sub_type(psi->type,quoted_string) && psi->value) {
-      value=(char *)psi->value;
+    if(sub_type(psi->type,quoted_string) && psi->value_3) {
+      value=(char *)psi->value_3;
       if(ok)
 	*ok=TRUE;
     }
@@ -461,7 +433,7 @@ PsiTerm WFGetFeature(psi,feature)
 
   if(psi && feature) {
     deref_ptr(psi);
-    n=find(featcmp,feature,psi->attr_list);
+    n=find(FEATCMP,feature,psi->attr_list);
     if(n)
       result=(PsiTerm)n->data;
   }

@@ -7,15 +7,9 @@
 static char vcid[] = "$Id: copy.c,v 1.2 1994/12/08 23:21:30 duchier Exp $";
 #endif /* lint */
 
-#include "extern.h"
-#include "memory.h"
-#include "parser.h"
-#include "trees.h"
-#include "login.h"
-#include "copy.h"
-/* #include <malloc.h> 11.9 */
-
-jmp_buf env; /* To jump back to main() when copy(..) overflows */
+#ifdef REV401PLUS
+#include "defs.h"
+#endif
 
 /****************************************************************************/
 
@@ -27,40 +21,12 @@ jmp_buf env; /* To jump back to main() when copy(..) overflows */
 
 /* Size of hash table; must be a power of 2 */
 /* A big hash table means it is sparse and therefore fast */
-#define HASHSIZE 2048
-
-/* Total number of buckets in initial hash table; */
-/* this is dynamically increased if necessary.    */
-#define NUMBUCKETS 1024
-
-/* Simple hash function */
-#define HASH(A) (((long) A + ((long) A >> 3)) & (HASHSIZE-1))
-
-/* Tail of hash bucket */
-#define HASHEND (-1)
-
-struct hashbucket {
-   ptr_psi_term old_value;
-   ptr_psi_term new_value;
-   long info;
-   long next;
-};
-
-struct hashentry {
-   long timestamp;
-   long bucketindex;
-};
 
 static struct hashentry hashtable[HASHSIZE];
 static struct hashbucket *hashbuckets; /* Array of buckets */
 static long hashtime; /* Currently valid timestamp */
 static long hashfree; /* Index into array of buckets */
 static long numbuckets; /* Total number of buckets; initially=NUMBUCKETS */
-
-
-/* #define HASHSTATS 1000 20.8 */
-/* long hashstats[HASHSTATS]; 20.8 */
-
 
 /******** INIT_COPY()
   Execute once upon startup of Wild_Life.
@@ -343,17 +309,17 @@ ptr_psi_term copy(t, copy_flag, heap_flag)
 	u->attr_list=copy_tree(t->attr_list, local_copy_flag, heap_flag);
       
       if (copy_flag==EVAL_FLAG) {
-	switch(t->type->type) {
-	case type:
+	switch((long)t->type->type_def) {
+	case type_it:
 	  if (t->type->properties)
 	    curr_status=0;
 	  break;
 	  
-	case function:
+	case function_it:
 	  curr_status=0;
 	  break;
 
-	case global: /*  RM: Feb  8 1993  */
+	case global_it: /*  RM: Feb  8 1993  */
 	  curr_status=0;
 	  break;
 
@@ -372,10 +338,10 @@ ptr_psi_term copy(t, copy_flag, heap_flag)
       /* else copy_flag==EXACT_FLAG & u->status=t->status */
       
       if (heap_flag==HEAP) {
-	if (t->type==cut) u->value=NULL;
+	if (t->type==cut) u->value_3=NULL;
       }	else {
 	if (t->type==cut) {
-	  u->value=(GENERIC)choice_stack;
+	  u->value_3=(GENERIC)choice_stack;
 	  Traceline("current choice point is %x\n",choice_stack);
 	}
       }
@@ -437,10 +403,6 @@ ptr_psi_term t;
 
 
 /****************************************************************************/
-
-/* The new mark_quote to be used from copy. */
-
-extern void mark_quote_tree_c(); /* A forward declaration */
 
 /* Meaning of the info field in the translation table: */
 /* With u=translate(t,&infoptr): */
@@ -582,17 +544,17 @@ ptr_psi_term t;
       else
 	mark_quote_tree_new(t->attr_list);
 
-      switch(t->type->type) {
-      case type:
+      switch((long)t->type->type_def) {
+      case type_it:
         if (t->type->properties)
           curr_status=0;
         break;
 	
-      case function:
+      case function_it:
         curr_status=0;
         break;
 
-      case global: /*  RM: Feb  8 1993  */
+      case global_it: /*  RM: Feb  8 1993  */
         curr_status=0;
         break;
 
@@ -707,7 +669,7 @@ ptr_psi_term t;
 
   if (t && !(t->status&RMASK)) {
     if(t->status!=4 && (GENERIC)t<heap_pointer)/*  RM: Jul 16 1993  */
-      push_ptr_value(int_ptr,&(t->status));
+      push_ptr_value(int_ptr,(GENERIC *)&(t->status)); // REV401PLUS cast
     t->status = 4;
     t->flags=QUOTED_TRUE; /* 14.9 */
     t->status |= RMASK;

@@ -11,14 +11,11 @@
 static char vcid[] = "$Id: modules.c,v 1.3 1994/12/15 22:05:39 duchier Exp $";
 #endif /* lint */
 
+#ifdef REV401PLUS
+#include "defs.h"
+#endif
 
-#include "extern.h"
-#include "modules.h"
-#include "trees.h"
-#include "copy.h"
-#include "token.h"
-#include "built_ins.h"
-
+// REV401PLUS moved the next several down
 ptr_node module_table=NULL;        /* The table of modules */
 ptr_module current_module=NULL;    /* The current module for the tokenizer */
 
@@ -33,8 +30,7 @@ ptr_module sys_module=NULL;
 
 long display_modules=TRUE;   /* Should really default to FALSE */
 
-extern ptr_goal resid_aim;
-
+ptr_goal resid_aim;
 
 
 /******** INIT_MODULES()
@@ -65,7 +61,7 @@ ptr_module find_module(module)
 {
   ptr_node nodule;
 
-  nodule=find(strcmp,module,module_table);
+  nodule=find(STRCMP,module,module_table);
   if(nodule)
     return (ptr_module)(nodule->data);
   else
@@ -94,7 +90,7 @@ ptr_module create_module(module)
     new->inherited_modules=NULL;
     new->symbol_table=hash_create(16); /*  RM: Feb  3 1993  */
 
-    heap_insert(strcmp,new->module_name,&module_table,new);
+    heap_insert(STRCMP,new->module_name,&module_table,(GENERIC)new); // REV401PLUS cast
 
     /* printf("*** New module: '%s' from file %s\n",input_file_name); */
   }
@@ -181,8 +177,8 @@ char *string_val(term)
      ptr_psi_term term;
 {
   deref_ptr(term);
-  if(term->value && term->type==quoted_string)
-    return (char *)term->value;
+  if(term->value_3 && term->type==quoted_string)
+    return (char *)term->value_3;
   else
     return term->type->keyword->symbol;
 }
@@ -247,7 +243,7 @@ ptr_definition new_definition(key)    /*  RM: Feb 22 1993  */
   result->rule=NULL;
   result->properties=NULL;
   result->date=0;
-  result->type=undef;
+  result->type_def=(def_type)undef_it;
   result->always_check=TRUE;
   result->protected=TRUE;
   result->evaluate_args=TRUE;
@@ -334,7 +330,7 @@ ptr_definition update_symbol(module,symbol)   /*  RM: Jan  8 1993  */
 	opens=module->open_modules;
 	openkey=NULL;
 	while(opens) {
-	  opened=(ptr_module)(opens->value);
+	  opened=(ptr_module)(opens->value_1);
 	  if(opened!=module) {
 	    
 	    tempkey=hash_lookup(opened->symbol_table,symbol);
@@ -414,7 +410,7 @@ ptr_definition update_symbol(module,symbol)   /*  RM: Jan  8 1993  */
   ptr_pair_list rule;
   
   
-  n=find(strcmp,make_module_token(module,symbol),symbol_table);
+  n=find(STRCMP,make_module_token(module,symbol),symbol_table);
   if(n) {
   def=(ptr_definition)n->data;
   if(def && def->type==function) {
@@ -501,7 +497,7 @@ long c_set_module()
   ptr_psi_term arg1,arg2;
   ptr_psi_term call;
   
-  call=aim->a;
+  call=aim->aaaa_1;
   deref_ptr(call);
   get_two_args(call->attr_list,&arg1,&arg2);
   
@@ -532,7 +528,7 @@ long c_open_module()
   ptr_psi_term call;
   int onefailed=FALSE;
   
-  call=aim->a;
+  call=aim->aaaa_1;
   deref_ptr(call);
   if (call->attr_list) {
     open_module_tree(call->attr_list, &onefailed);
@@ -546,7 +542,7 @@ long c_open_module()
 
 
 
-open_module_tree(n, onefailed)
+void open_module_tree(n, onefailed)  // REV401PLUS void
 ptr_node n;
 int *onefailed;
 {
@@ -563,7 +559,7 @@ int *onefailed;
 
 
 
-open_module_one(t, onefailed)
+void open_module_one(t, onefailed)  // REV401PLUS void
 ptr_psi_term t;
 int *onefailed;
 {
@@ -577,7 +573,7 @@ int *onefailed;
   if (open_module) {
     
     for (opens=current_module->open_modules;opens;opens=opens->next)
-	if (opens->value==(GENERIC)open_module) {
+	if (opens->value_1==(GENERIC)open_module) {
 	  /* Warningline("module \"%s\" is already open\n",
 	     open_module->module_name); */ /*  RM: Jan 27 1993  */
 	  found=TRUE;
@@ -585,7 +581,7 @@ int *onefailed;
     
     if (!found) {
 	opens=HEAP_ALLOC(struct wl_int_list);
-	opens->value=(GENERIC)open_module;
+	opens->value_1=(GENERIC)open_module;
 	opens->next=current_module->open_modules;
 	current_module->open_modules=opens;
 
@@ -653,7 +649,7 @@ long make_public(term,bool)   /*  RM: Feb 22 1993  Modified */
 /* Do for all arguments, for the built-ins
    c_public, c_private, and c_private_feature.
 */
-traverse_tree(n,flag)
+void traverse_tree(n,flag)   // REV401PLUS void
 ptr_node n;
 int flag;
 {
@@ -691,7 +687,7 @@ long c_public()
   ptr_psi_term call;
   int success;
   
-  call=aim->a;
+  call=aim->aaaa_1;
   deref_ptr(call);
   if (call->attr_list) {
     traverse_tree(call->attr_list,MAKE_PUBLIC);
@@ -717,7 +713,7 @@ long c_private()
   ptr_psi_term call;
   int success;
   
-  call=aim->a;
+  call=aim->aaaa_1;
   deref_ptr(call);
   if (call->attr_list) {
     traverse_tree(call->attr_list,MAKE_PRIVATE);
@@ -744,16 +740,16 @@ long c_display_modules()
   int success=TRUE;
   
   
-  call=aim->a;
+  call=aim->aaaa_1;
   deref_ptr(call);
   get_two_args(call->attr_list,&arg1,&arg2);
   
   if(arg1) {
     deref_ptr(arg1);
-    if(arg1->type==true)
+    if(arg1->type==lf_true)
       display_modules=TRUE;
     else
-      if(arg1->type==false)
+      if(arg1->type==lf_false)
 	display_modules=FALSE;
       else {
 	Errorline("argument should be boolean in '%P'\n",call);
@@ -780,16 +776,16 @@ long c_display_persistent()       /*  RM: Feb 12 1993  */
   int success=TRUE;
   
   
-  call=aim->a;
+  call=aim->aaaa_1;
   deref_ptr(call);
   get_two_args(call->attr_list,&arg1,&arg2);
   
   if(arg1) {
     deref_ptr(arg1);
-    if(arg1->type==true)
+    if(arg1->type==lf_true)
       display_persistent=TRUE;
     else
-      if(arg1->type==false)
+      if(arg1->type==lf_false)
 	display_persistent=FALSE;
       else {
 	Errorline("argument should be boolean in '%P'\n",call);
@@ -816,16 +812,16 @@ long c_trace_input()
   int success=TRUE;
   
   
-  call=aim->a;
+  call=aim->aaaa_1;
   deref_ptr(call);
   get_two_args(call->attr_list,&arg1,&arg2);
   
   if(arg1) {
     deref_ptr(arg1);
-    if(arg1->type==true)
+    if(arg1->type==lf_true)
       trace_input=TRUE;
     else
-      if(arg1->type==false)
+      if(arg1->type==lf_false)
 	trace_input=FALSE;
       else {
 	Errorline("argument should be boolean in '%P'\n",call);
@@ -847,7 +843,7 @@ long c_trace_input()
 void rec_replace();
 void replace_attr();
 
-int replace(old,new,term)
+void replace(old,new,term)  // REV401PLUS changed to void from int
      
      ptr_definition old;
      ptr_definition new;
@@ -870,17 +866,17 @@ void rec_replace(old,new,term)
   ptr_node old_attr;
   
   deref_ptr(term);
-  done=translate(term,&info);
+  done=translate(term,(long **)&info); // REV401PLUS cast
   if(!done) {
     insert_translation(term,term,0);
     
-    if(term->type==old && !term->value) {
-      push_ptr_value(def_ptr,&(term->type));
+    if(term->type==old && !term->value_3) {
+      push_ptr_value(def_ptr,(GENERIC *)&(term->type)); // REV401PLUS cast
       term->type=new;
     }
     old_attr=term->attr_list;
     if(old_attr) {
-      push_ptr_value(int_ptr,&(term->attr_list));
+      push_ptr_value(int_ptr,(GENERIC *)&(term->attr_list));  // REV401PLUS cast
       term->attr_list=NULL;
       replace_attr(old_attr,term,old,new);
     }
@@ -916,9 +912,9 @@ void replace_attr(old_attr,term,old,new)
     newlabel=new->keyword->symbol;
   
   if(!strcmp(old_attr->key,oldlabel))
-    stack_insert(featcmp,newlabel,&(term->attr_list),value);
+    stack_insert(FEATCMP,newlabel,&(term->attr_list),(GENERIC)value);
   else
-    stack_insert(featcmp,old_attr->key,&(term->attr_list),value);
+    stack_insert(FEATCMP,old_attr->key,&(term->attr_list),(GENERIC)value);
   
   if(old_attr->right)
     replace_attr(old_attr->right,term,old,new);
@@ -940,11 +936,11 @@ long c_replace()
   int success=FALSE;
   ptr_node n;
   
-  call=aim->a;
+  call=aim->aaaa_1;
   deref_ptr(call);
   
   get_two_args(call->attr_list,&arg1,&arg2);
-  n=find(featcmp,three,call->attr_list);
+  n=find(FEATCMP,three,call->attr_list);
   if (n)
     arg3=(ptr_psi_term)n->data;
   
@@ -976,16 +972,16 @@ long c_current_module()
   ptr_psi_term result,g,other;
   
   
-  g=aim->a;
+  g=aim->aaaa_1;
   deref_ptr(g);
-  result=aim->b;
+  result=aim->bbbb_1;
   deref_ptr(result);
   
   
   other=stack_psi_term(4);
   /* PVR 24.1.94 */
   other->type=quoted_string;
-  other->value=(GENERIC)heap_copy_string(current_module->module_name);
+  other->value_3=(GENERIC)heap_copy_string(current_module->module_name);
   /*
     update_symbol(current_module,
     current_module->module_name)
@@ -1013,11 +1009,11 @@ long c_module_access()
   ptr_psi_term result,module,symbol,call,other;
   
   
-  call=aim->a;
+  call=aim->aaaa_1;
   deref_ptr(call);
   
   /*
-    result=aim->b;
+    result=aim->bbbb_1;
     deref_ptr(result);
     get_two_args(call,&module,&symbol);
     
@@ -1083,25 +1079,25 @@ int global_unify(u,v)      /*  RM: Feb 11 1993  */
   if (compare==1 || compare==3) { /* Match only */
     
     /**** Check for values ****/
-    if(v->value) {
-      if(u->value) {
-	if(u->value!=v->value) { /* One never knows */
+    if(v->value_3) {
+      if(u->value_3) {
+	if(u->value_3!=v->value_3) { /* One never knows */
 	  if (overlap_type(v->type,real))
-	    success=(*((REAL *)u->value)==(*((REAL *)v->value)));
+	    success=(*((REAL *)u->value_3)==(*((REAL *)v->value_3)));
 	  else if (overlap_type(v->type,quoted_string))
-	    success=(strcmp((char *)u->value,(char *)v->value)==0);
+	    success=(strcmp((char *)u->value_3,(char *)v->value_3)==0);
 	  else
 	    return FALSE; /* Don't unify CUTs and STREAMs and things */
 	}
       }
     }
     else
-      if(u->value)
+      if(u->value_3)
 	return FALSE;
     
     if(success) {
       /**** Bind the two psi-terms ****/
-      push_psi_ptr_value(u,&(u->coref));
+      push_psi_ptr_value(u,(GENERIC *)&(u->coref)); // REV401PLUS
       u->coref=v;
       
       /**** Match the attributes ****/
@@ -1161,7 +1157,7 @@ int global_unify_attr(u,v)    /*  RM: Feb  9 1993  */
 	  success=
 	    global_unify_attr(u->left,v->left) &&
 	      global_unify_attr(u->right,v->right) &&
-		global_unify(u->data,v->data);
+	    global_unify((ptr_psi_term)u->data,(ptr_psi_term)v->data); // REV401PLUS cast
 	}
     }
     else
@@ -1182,7 +1178,7 @@ long c_alias()
   ptr_psi_term arg1,arg2,g;
   ptr_keyword key;
 
-  g=aim->a;
+  g=aim->aaaa_1;
 
   deref_ptr(g);
   get_two_args(g->attr_list,&arg1,&arg2);
@@ -1230,8 +1226,8 @@ int get_module(psi,module)
   *module=NULL;
   
   deref_ptr(psi);
-  if(overlap_type(psi->type,quoted_string) && psi->value)
-    s=(char *)psi->value;
+  if(overlap_type(psi->type,quoted_string) && psi->value_3)
+    s=(char *)psi->value_3;
   else
     s=psi->type->keyword->symbol;
   
@@ -1307,7 +1303,7 @@ long c_private_feature()    /*  RM: Mar 11 1993  */
   ptr_psi_term call;
   int success;
   
-  call=aim->a;
+  call=aim->aaaa_1;
   deref_ptr(call);
   if (call->attr_list) {
     traverse_tree(call->attr_list,MAKE_FEATURE_PRIVATE);
@@ -1361,7 +1357,7 @@ ptr_definition update_feature(module,feature)
   Returns all public symbols from all modules or a specific module.
   */
 
-int all_public_symbols()
+long all_public_symbols()   // REV401PLUS change to long
 {
   ptr_psi_term arg1,arg2,funct,result;
   ptr_psi_term list;
@@ -1369,9 +1365,9 @@ int all_public_symbols()
   ptr_module module=NULL;
   ptr_definition d;
   
-  funct=aim->a;
+  funct=aim->aaaa_1;
   deref_ptr(funct);
-  result=aim->b;
+  result=aim->bbbb_1;
   get_two_args(funct->attr_list,&arg1,&arg2);
   
   if(arg1) {

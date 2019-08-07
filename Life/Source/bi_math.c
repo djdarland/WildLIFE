@@ -21,19 +21,9 @@
 static char vcid[] = "$Id: bi_math.c,v 1.2 1994/12/08 23:07:37 duchier Exp $";
 #endif /* lint */
 
-#include "extern.h"
-#include "trees.h"
-#include "login.h"
-#include "parser.h"
-#include "copy.h"
-#include "token.h"
-#include "print.h"
-#include "lefun.h"
-#include "memory.h"
-#include "modules.h"
-#include "built_ins.h"
-#include "error.h"
-
+#ifdef REV401PLUS
+#include "defs.h"
+#endif
 
 /* Incorrect when long conversion causes overflow: */
 /* #define trunc(x) ((double)((long)(x))) */
@@ -63,10 +53,10 @@ static long c_mult()
   long num1,num2,num3;
   REAL val1,val2,val3;
   
-  t=aim->a;
+  t=aim->aaaa_1;
   deref_ptr(t);
   get_two_args(t->attr_list,&arg1,&arg2);
-  arg3=aim->b;
+  arg3=aim->bbbb_1;
   
   if(arg1) {
     deref(arg1);
@@ -170,10 +160,10 @@ static long c_div()
   long num1,num2,num3;
   REAL val1,val2,val3;
   
-  t=aim->a;
+  t=aim->aaaa_1;
   deref_ptr(t);
   get_two_args(t->attr_list,&arg1,&arg2);
-  arg3=aim->b;
+  arg3=aim->bbbb_1;
   
   if (arg1) {
     deref(arg1);
@@ -296,10 +286,10 @@ static long c_intdiv()
   long num1,num2,num3;
   REAL val1,val2,val3;
   
-  t=aim->a;
+  t=aim->aaaa_1;
   deref_ptr(t);
   get_two_args(t->attr_list,&arg1,&arg2);
-  arg3=aim->b;
+  arg3=aim->bbbb_1;
   
   if (arg1) {
     deref(arg1);
@@ -460,10 +450,10 @@ long floorflag;
   long num1,num3;
   REAL val1,val3;
   
-  t=aim->a;
+  t=aim->aaaa_1;
   deref_ptr(t);
   get_two_args(t->attr_list,&arg1,&arg2);
-  arg3=aim->b;
+  arg3=aim->bbbb_1;
   
   if(arg1) {
     deref(arg1);
@@ -528,10 +518,10 @@ static long c_sqrt()
   long num1,num3;
   REAL val1,val3;
   
-  t=aim->a;
+  t=aim->aaaa_1;
   deref_ptr(t);
   get_one_arg(t->attr_list,&arg1);
-  arg3=aim->b;
+  arg3=aim->bbbb_1;
   
   if (arg1) {
     deref(arg1);
@@ -584,10 +574,10 @@ long trigflag;
   long num1,num3;
   REAL val1,val3,ans;
 
-  t=aim->a;
+  t=aim->aaaa_1;
   deref_ptr(t);
   get_one_arg(t->attr_list,&arg1);
-  arg3=aim->b;
+  arg3=aim->bbbb_1;
 
   if (arg1) {
     deref(arg1);
@@ -671,10 +661,10 @@ static long c_bit_not()
   long num1,num3;
   REAL val1,val3;
 
-  t=aim->a;
+  t=aim->aaaa_1;
   deref_ptr(t);
   get_one_arg(t->attr_list,&arg1);
-  arg3=aim->b;
+  arg3=aim->bbbb_1;
 
   if (arg1) {
     deref(arg1);
@@ -725,10 +715,10 @@ static long c_bit_and()
   long num1,num2,num3;
   REAL val1,val2,val3;
   
-  t=aim->a;
+  t=aim->aaaa_1;
   deref_ptr(t);
   get_two_args(t->attr_list,&arg1,&arg2);
-  arg3=aim->b;
+  arg3=aim->bbbb_1;
   
   if(arg1) {
     deref(arg1);
@@ -806,10 +796,10 @@ static long c_bit_or()
   long num1,num2,num3;
   REAL val1,val2,val3;
   
-  t=aim->a;
+  t=aim->aaaa_1;
   deref_ptr(t);
   get_two_args(t->attr_list,&arg1,&arg2);
-  arg3=aim->b;
+  arg3=aim->bbbb_1;
   
   if(arg1) {
     deref(arg1);
@@ -886,10 +876,10 @@ long dir;
   long num1,num2,num3;
   REAL val1,val2,val3,ans;
   
-  t=aim->a;
+  t=aim->aaaa_1;
   deref_ptr(t);
   get_two_args(t->attr_list,&arg1,&arg2);
-  arg3=aim->b;
+  arg3=aim->bbbb_1;
   
   if(arg1) {
     deref(arg1);
@@ -953,10 +943,10 @@ static long c_mod()
   long num1,num2,num3;
   REAL val1,val2,val3;
   
-  t=aim->a;
+  t=aim->aaaa_1;
   deref_ptr(t);
   get_two_args(t->attr_list,&arg1,&arg2);
-  arg3=aim->b;
+  arg3=aim->bbbb_1;
   
   if(arg1) {
     deref(arg1);
@@ -1024,10 +1014,10 @@ static long c_add()
   long num1,num2,num3;
   REAL val1,val2,val3;
   
-  t=aim->a;
+  t=aim->aaaa_1;
   deref_ptr(t);
   get_two_args(t->attr_list,&arg1,&arg2);
-  arg3=aim->b;
+  arg3=aim->bbbb_1;
   
   if(arg1) {
     deref(arg1);
@@ -1136,10 +1126,10 @@ static long c_sub()
   long num1,num2,num3;
   REAL val1,val2,val3;
   
-  t=aim->a;
+  t=aim->aaaa_1;
   deref_ptr(t);
   get_two_args(t->attr_list,&arg1,&arg2);
-  arg3=aim->b;
+  arg3=aim->bbbb_1;
   
   if(arg1) {
     deref(arg1);
@@ -1239,10 +1229,10 @@ static long c_log()
   long num1,num3;
   REAL val1,val3;
   
-  t=aim->a;
+  t=aim->aaaa_1;
   deref_ptr(t);
   get_one_arg(t->attr_list,&arg1);
-  arg3=aim->b;
+  arg3=aim->bbbb_1;
   
   if(arg1) {
     deref(arg1);
@@ -1296,10 +1286,10 @@ static long c_exp()
   long num1,num3;
   REAL val1,val3;
   
-  t=aim->a;
+  t=aim->aaaa_1;
   deref_ptr(t);
   get_two_args(t->attr_list,&arg1,&arg2);
-  arg3=aim->b;
+  arg3=aim->bbbb_1;
   
   if(arg1) {
     deref(arg1);
@@ -1336,24 +1326,24 @@ static long c_exp()
 
 void insert_math_builtins()
 {
-  new_built_in(syntax_module,"*",function,c_mult);
-  new_built_in(syntax_module,"+",function,c_add);
-  new_built_in(syntax_module,"-",function,c_sub);
-  new_built_in(syntax_module,"/",function,c_div);  
-  new_built_in(syntax_module,"//",function,c_intdiv);  
-  new_built_in(syntax_module,"mod",function,c_mod); /* PVR 24.2.94 */
-  new_built_in(syntax_module,"/\\",function,c_bit_and);
-  new_built_in(syntax_module,"\\/",function,c_bit_or);
-  new_built_in(syntax_module,"\\",function,c_bit_not);
-  new_built_in(syntax_module,">>",function,c_shift_right);
-  new_built_in(syntax_module,"<<",function,c_shift_left);
-  new_built_in(bi_module,"floor",function,c_floor);
-  new_built_in(bi_module,"ceiling",function,c_ceiling);
-  new_built_in(bi_module,"exp",function,c_exp);
-  new_built_in(bi_module,"log",function,c_log);
-  new_built_in(bi_module,"cos",function,c_cos);
-  new_built_in(bi_module,"sin",function,c_sin);
-  new_built_in(bi_module,"tan",function,c_tan);
-  new_built_in(bi_module,"sqrt",function,c_sqrt);
+  new_built_in(syntax_module,"*",(def_type)function_it,c_mult);
+  new_built_in(syntax_module,"+",(def_type)function_it,c_add);
+  new_built_in(syntax_module,"-",(def_type)function_it,c_sub);
+  new_built_in(syntax_module,"/",(def_type)function_it,c_div);  
+  new_built_in(syntax_module,"//",(def_type)function_it,c_intdiv);  
+  new_built_in(syntax_module,"mod",(def_type)function_it,c_mod); /* PVR 24.2.94 */
+  new_built_in(syntax_module,"/\\",(def_type)function_it,c_bit_and);
+  new_built_in(syntax_module,"\\/",(def_type)function_it,c_bit_or);
+  new_built_in(syntax_module,"\\",(def_type)function_it,c_bit_not);
+  new_built_in(syntax_module,">>",(def_type)function_it,c_shift_right);
+  new_built_in(syntax_module,"<<",(def_type)function_it,c_shift_left);
+  new_built_in(bi_module,"floor",(def_type)function_it,c_floor);
+  new_built_in(bi_module,"ceiling",(def_type)function_it,c_ceiling);
+  new_built_in(bi_module,"exp",(def_type)function_it,c_exp);
+  new_built_in(bi_module,"log",(def_type)function_it,c_log);
+  new_built_in(bi_module,"cos",(def_type)function_it,c_cos);
+  new_built_in(bi_module,"sin",(def_type)function_it,c_sin);
+  new_built_in(bi_module,"tan",(def_type)function_it,c_tan);
+  new_built_in(bi_module,"sqrt",(def_type)function_it,c_sqrt);
 }
 

@@ -27,15 +27,9 @@
 static char vcid[] = "$Id: lub.c,v 1.3 1995/08/25 21:34:37 duchier Exp $";
 #endif /* lint */
 
-#include "extern.h"
-#include "login.h"
-#include "trees.h"
-#include "print.h"
-#include "memory.h"
-#include "error.h"
-#include "token.h"
-
-extern ptr_definition built_in;
+#ifdef REV401PLUS
+#include "defs.h"
+#endif
 
 ptr_int_list appendIntList(tail, more)
 ptr_int_list tail;				/* attach copies of more to tail */
@@ -45,7 +39,7 @@ ptr_int_list more;
 	{
 		tail->next = STACK_ALLOC(int_list);
 		tail= tail->next;
-		tail->value = more->value;
+		tail->value_1 = more->value_1;
 		tail->next = NULL;
 		more = more->next;
 	}
@@ -65,7 +59,7 @@ mark_ancestors(def, flags)
     ptr_definition p;
     long len;
   
-    p=(ptr_definition)par->value;
+    p=(ptr_definition)par->value_1;
     len=bit_length(p->code);
     if (!flags[len]) {
       flags[len]=1;
@@ -89,8 +83,8 @@ long *flags;
 	
 	if (p == top)
 	{
-		or_codes(ans, top);
-		return;
+	  or_codes(ans, (ptr_int_list)top);
+	  return found;  // REV401PLUS -- added "found"
 	}
 
 /*	print_code(pattern);*/
@@ -100,9 +94,9 @@ long *flags;
 	if (par == NULL)
 		return 0;				/* only parent is top */
 	
-	assert(par->value != NULL);
+	assert(par->value_1 != NULL);
 
-	head->value = par->value;
+	head->value_1 = par->value_1;
 	head->next  = NULL;
 	par = par->next;
 	tail = appendIntList(head, par);
@@ -110,25 +104,25 @@ long *flags;
 	while (head)
 	{
 /*		pc(head->value);*/
-		len = bit_length(((ptr_definition )head->value)->code);
+		len = bit_length(((ptr_definition )head->value_1)->code);
 		if (!flags[len])
 		{
 			/* we havn't checked this type before */
 			
-			if (!((ptr_definition )head->value == top) &&
-				!((ptr_definition )head->value == built_in) &&
-				(sub_CodeType(pattern,((ptr_definition)head->value)->code)))
+			if (!((ptr_definition )head->value_1 == top) &&
+				!((ptr_definition )head->value_1 == built_in) &&
+				(sub_CodeType(pattern,((ptr_definition)head->value_1)->code)))
 			{
-				or_codes(ans, ((ptr_definition)head->value)->code);
+				or_codes(ans, ((ptr_definition)head->value_1)->code);
 /*				print_code(ans);*/
 /*				printf("ans\n");*/
 				found++;
 				/* must set flags of ALL ancestors of head! */
-				mark_ancestors((ptr_definition)head->value,flags);
+				mark_ancestors((ptr_definition)head->value_1,flags);
 			}
 			else
 				tail = appendIntList(tail,
-									 ((ptr_definition )head->value)->parents);
+									 ((ptr_definition )head->value_1)->parents);
 			flags[len] = 1;
 		}
 		head = head->next;
@@ -147,7 +141,7 @@ ptr_definition x;
 	ptr_int_list ans;
 
 	ans = STACK_ALLOC(int_list);
-	ans->value = (GENERIC )x;
+	ans->value_1 = (GENERIC )x;
 	ans->next = NULL;
 	return ans;
 }

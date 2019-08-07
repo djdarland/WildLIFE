@@ -12,33 +12,9 @@
 static char vcid[] = "$Id: parser.c,v 1.2 1994/12/08 23:32:03 duchier Exp $";
 #endif /* lint */
 
-#include "extern.h"
-#include "memory.h"
-#include "trees.h"
-#include "token.h"
-#include "print.h"
-#include "copy.h"
-#include "modules.h"
-#include "login.h"
-
-
-#define NOP 2000
-  
-psi_term read_life_form();
-
-psi_term psi_term_stack[PARSER_STACK_SIZE];
-long int_stack[PARSER_STACK_SIZE];
-operator op_stack[PARSER_STACK_SIZE];
-
-long parse_ok;
-long parser_stack_index;
-ptr_node var_tree;
-long no_var_tree;
-
-/*** RICHARD Nov_4 start ***/
-psi_term parse_list();
-/*** RICHARD Nov_4 end ***/
-
+#ifdef REV401PLUS
+#include "defs.h"
+#endif
 
 
 /******** BAD_PSI_TERM(t)
@@ -48,7 +24,7 @@ psi_term parse_list();
   Example: "A=)+6."  would otherwise be parsed as: "=(A,+(')',6))", this was
 	             going a bit far.
 */
-bad_psi_term(t)
+int bad_psi_term(t)   // REV401PLUS add int
 ptr_psi_term t;
 {
   char *s,c;
@@ -90,7 +66,7 @@ long limit;
       printf("-> ");
     else
       printf("   ");
-    printf("%3d: ",i);
+    printf("%3ld: ",i);   // REV401PLUS add l
     switch (op_stack[i]) {
     case fx:
       printf("FX  ");
@@ -107,7 +83,7 @@ long limit;
     default:
       printf("??? ");
     }
-    printf(" prec=%4d  ",int_stack[i]);
+    printf(" prec=%4ld  ",int_stack[i]);  // REV401PLUS add l
     display_psi_stdout(&(psi_term_stack[i]));
     printf("\n");
   }
@@ -122,7 +98,7 @@ long limit;
 void push(tok,prec,op)
 psi_term tok;
 long prec;
-operator op;
+operator op;   
 {
   if (parser_stack_index==PARSER_STACK_SIZE) {
     perr("*** Parser error ");
@@ -145,7 +121,7 @@ operator op;
 */
 long pop(tok,op)
 ptr_psi_term tok;
-operator *op;
+operator *op;   
 {
   long r=0;
   
@@ -189,7 +165,7 @@ long look()
 */
 long precedence(tok,typ)
 psi_term tok;
-operator typ;
+operator typ;  
 {
   long r=NOP;
   ptr_operator_data o;
@@ -252,7 +228,7 @@ psi_term t;
   If the feature already exists, create a call to the unification
   function.
 */
-feature_insert(keystr,tree,psi)
+void feature_insert(keystr,tree,psi)  // REV401PLUS add void
 char *keystr;
 ptr_node *tree;
 ptr_psi_term psi;
@@ -260,7 +236,7 @@ ptr_psi_term psi;
   ptr_node loc;
   /* ptr_psi_term stk_psi=stack_copy_psi_term(*psi); 19.8 */
 
-  if (loc=find(featcmp,keystr,*tree)) {
+  if (loc=find(FEATCMP,keystr,*tree)) {
     /* Give an error message if there is a duplicate feature: */
     Syntaxerrorline("duplicate feature %s (%E)\n",keystr);
   }
@@ -296,7 +272,7 @@ psi_term list_nil(type) /*  RM: Feb  1 1993  */
   nihil.flags=FALSE; /* 14.9 */
   nihil.attr_list=NULL;
   nihil.resid=NULL;
-  nihil.value=NULL;
+  nihil.value_3=NULL;
   nihil.coref=NULL;
 
   return nihil;
@@ -391,9 +367,9 @@ psi_term parse_list(typ,e,s)
 
       result.type=typ;
       if(car)
-	stack_insert(featcmp,one,&(result.attr_list),car);
+	stack_insert(FEATCMP,one,&(result.attr_list),(GENERIC)car);
       if(cdr)
-	stack_insert(featcmp,two,&(result.attr_list),cdr);
+	stack_insert(FEATCMP,two,&(result.attr_list),(GENERIC)cdr);
     }
   }
   
@@ -464,7 +440,7 @@ psi_term read_psi_term()
 	  f2=TRUE;
 	  read_token(&t2);
 	  
-	  if(wl_const(t2) && !bad_psi_term(&t2)) {
+	  if(wl_const_3(t2) && !bad_psi_term(&t2)) {  // REV401PLUS for value_3
 	    read_token(&t3);
 	    if(equ_tok(t3,"=>")) {
 	      t3=read_life_form(',',')');
@@ -490,8 +466,8 @@ psi_term read_psi_term()
 	    read_token(&t3);
 	    if(equ_tok(t3,"=>")) {
 	      t3=read_life_form(',',')');
-	      v= *(REAL *)t2.value;
-	      sprintf(s,"%ld",v,0);
+	      v= *(REAL *)t2.value_3;   // REV401PLUS
+	      sprintf(s,"%ld",v);  // REV401PLUS remove extra 0
               feature_insert(s,&(t.attr_list),&t3);
 	      f2=FALSE;
 	    }
@@ -503,7 +479,7 @@ psi_term read_psi_term()
 	    put_back_token(t2);
 	    t2=read_life_form(',',')');
 	    ++count;
-	    sprintf(s,"%ld",count,0);
+	    sprintf(s,"%ld",count); // REV401PLUS remove extra 0
             feature_insert(s,&(t.attr_list),&t2);
 	  }
 	  
@@ -539,24 +515,24 @@ psi_term read_psi_term()
   if(t.type==variable && t.attr_list) {
     t2=t;
     t.type=apply;
-    t.value=NULL;
+    t.value_3=NULL;
     t.coref=NULL;
     t.resid=NULL;
-    stack_insert(featcmp,functor->keyword->symbol,
+    stack_insert(FEATCMP,functor->keyword->symbol,
 		 &(t.attr_list),
-		 stack_copy_psi_term(t2));
+		 (GENERIC)stack_copy_psi_term(t2)); // REV401PLUS add cast
   }
 
 
   /*  RM: Mar 12 1993  Nasty hack for Bruno's features in modules */
   if((t.type==add_module1 || t.type==add_module2 || t.type==add_module3) &&
-     !find(featcmp,two,t.attr_list)) {
+     !find(FEATCMP,two,t.attr_list)) {
 
     module=stack_psi_term(4);
     module->type=quoted_string;
-    module->value=(GENERIC)heap_copy_string(current_module->module_name);
+    module->value_3=(GENERIC)heap_copy_string(current_module->module_name);
     
-    stack_insert(featcmp,two,&(t.attr_list),module);
+    stack_insert(FEATCMP,two,&(t.attr_list),(GENERIC)module); // REV401PLUS cast
   }
   
   return t;
@@ -606,7 +582,7 @@ ptr_psi_term tok,arg1,arg2;
 	 !a1->resid) {
 	if(a1!=arg1)
 	  /* push_ptr_value(psi_term_ptr,&(a1->coref)); 9.6 */
-	  push_psi_ptr_value(a1,&(a1->coref));
+	  push_psi_ptr_value(a1,(GENERIC *)&(a1->coref));  // REV401PLUS cast
 	a1->coref=stack_copy_psi_term(*arg2);
 	tok=arg1;
       }
@@ -616,7 +592,7 @@ ptr_psi_term tok,arg1,arg2;
 	   !a2->resid) {
 	  if(a2!=arg2)
 	    /* push_ptr_value(psi_term_ptr,&(a2->coref)); 9.6 */
-	    push_psi_ptr_value(a2,&(a2->coref));
+	    push_psi_ptr_value(a2,(GENERIC *)&(a2->coref)); // REV401PLUS
 	  a2->coref=stack_copy_psi_term(*arg1);
 	  tok=arg2;
 	}
@@ -636,20 +612,20 @@ ptr_psi_term tok,arg1,arg2;
     if(tok->type==minus_symbol &&
        a1 &&
        !a2 &&
-       a1->value &&
+       a1->value_3 &&
        (a1->type==integer || a1->type==real))  {
       
       tok->type=a1->type;
-      tok->value=(GENERIC)heap_alloc(sizeof(REAL));
-      *(REAL *)tok->value = - *(REAL *)a1->value;
+      tok->value_3=(GENERIC)heap_alloc(sizeof(REAL));
+      *(REAL *)tok->value_3 = - *(REAL *)a1->value_3;
       
       return *tok;
     }
     /* End of other nasty hack */
     
-    stack_insert(featcmp,one,&(tok->attr_list),stack_copy_psi_term(*arg1));
+    stack_insert(FEATCMP,one,&(tok->attr_list),(GENERIC)stack_copy_psi_term(*arg1));  // REV401PLUS cast
     if (arg2)
-      stack_insert(featcmp,two,&(tok->attr_list),stack_copy_psi_term(*arg2));
+      stack_insert(FEATCMP,two,&(tok->attr_list),(GENERIC)stack_copy_psi_term(*arg2));    // REV401PLUS cast
   }
   
   return *tok;

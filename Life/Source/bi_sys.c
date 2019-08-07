@@ -7,18 +7,9 @@
 static char vcid[] = "$Id: bi_sys.c,v 1.2 1994/12/08 23:08:17 duchier Exp $";
 #endif /* lint */
 
-#include "extern.h"
-#include "trees.h"
-#include "login.h"
-#include "parser.h"
-#include "copy.h"
-#include "token.h"
-#include "print.h"
-#include "lefun.h"
-#include "memory.h"
-#include "modules.h"
-#include "built_ins.h"
-#include "error.h"
+#ifdef REV401PLUS
+#include "defs.h"
+#endif
 
 #define copyPsiTerm(a,b)        (ptr_psi_term )memcpy(a,b,sizeof(psi_term))
 
@@ -37,7 +28,7 @@ long c_trace()
   long success=TRUE;
   ptr_psi_term t,arg1,arg2;
 
-  t=aim->a;
+  t=aim->aaaa_1;
   deref_args(t,set_empty);
   get_two_args(t->attr_list,&arg1,&arg2);
   if (arg1) {
@@ -46,9 +37,9 @@ long c_trace()
       unify_bool_result(arg1,trace);
       trace=FALSE;
     }
-    else if (arg1->type==true)
+    else if (arg1->type==lf_true)
       trace=TRUE;
-    else if (arg1->type==false)
+    else if (arg1->type==lf_false)
       trace=FALSE;
     else {
       Errorline("bad first argument in %P.\n",t);
@@ -62,9 +53,9 @@ long c_trace()
       unify_bool_result(arg2,stepflag);
       stepflag=FALSE;
     }
-    else if (arg2->type==true)
+    else if (arg2->type==lf_true)
       stepflag=TRUE;
-    else if (arg2->type==false)
+    else if (arg2->type==lf_false)
       stepflag=FALSE;
     else {
       Errorline("bad second argument in %P.\n",t);
@@ -81,7 +72,7 @@ long c_tprove()
 {
   ptr_psi_term t;
 
-  t=aim->a;
+  t=aim->aaaa_1;
   deref_args(t,set_empty);
   set_trace_to_prove();
   return TRUE;
@@ -95,7 +86,7 @@ static long c_step()
 {
   ptr_psi_term t;
 
-  t=aim->a;
+  t=aim->aaaa_1;
   deref_args(t,set_empty);
   toggle_step();
   return TRUE;
@@ -109,7 +100,7 @@ static long c_verbose()
 {
   ptr_psi_term t;
 
-  t=aim->a;
+  t=aim->aaaa_1;
   deref_args(t,set_empty);
   verbose = !verbose;
   printf("*** Verbose mode is turned ");
@@ -127,7 +118,7 @@ static long c_warning()
 {
   ptr_psi_term t;
 
-  t=aim->a;
+  t=aim->aaaa_1;
   deref_args(t,set_empty);
   warningflag = !warningflag;
 
@@ -147,9 +138,9 @@ static long c_maxint()
   REAL val;
   long num,success;
   
-  t=aim->a;
+  t=aim->aaaa_1;
   deref_args(t,set_empty);
-  result=aim->b;
+  result=aim->bbbb_1;
   deref_ptr(result);
   success=get_real_value(result,&val,&num);
   if (success) {
@@ -172,12 +163,12 @@ long c_quiet()
   ptr_psi_term t,result,ans;
   int success=TRUE;
   
-  t=aim->a;
+  t=aim->aaaa_1;
   deref_args(t,set_empty);
-  result=aim->b;
+  result=aim->bbbb_1;
   deref_ptr(result);
   ans=stack_psi_term(4);
-  ans->type = NOTQUIET ? false : true;
+  ans->type = NOTQUIET ? lf_false : lf_true;
   push_goal(unify,result,ans,NULL);
   return success;
 }
@@ -193,9 +184,9 @@ static long c_cputime()
   REAL thetime,val;
   long num,success;
   
-  t=aim->a;
+  t=aim->aaaa_1;
   deref_args(t,set_empty);
-  result=aim->b;
+  result=aim->bbbb_1;
   deref_ptr(result);
   success=get_real_value(result,&val,&num);
   if (success) {
@@ -221,9 +212,9 @@ static long c_realtime()
   struct timeval tp;
   struct timezone tzp;
   
-  t=aim->a;
+  t=aim->aaaa_1;
   deref_args(t,set_empty);
-  result=aim->b;
+  result=aim->bbbb_1;
   deref_ptr(result);
   success=get_real_value(result,&val,&num);
   if (success) {
@@ -251,9 +242,9 @@ static long c_localtime()
   struct timezone tzp;
   struct tm *thetime;
   
-  t=aim->a;
+  t=aim->aaaa_1;
   deref_args(t,set_empty);
-  result=aim->b;
+  result=aim->bbbb_1;
   deref_ptr(result);
 
   gettimeofday(&tp, &tzp);
@@ -283,7 +274,7 @@ static long c_statistics()
   long success=TRUE;
   long t1,t2,t3;
 
-  t=aim->a;
+  t=aim->aaaa_1;
   deref_args(t,set_empty);
 
   t1 = sizeof(mem_base)*(stack_pointer-mem_base);
@@ -292,9 +283,9 @@ static long c_statistics()
 
   printf("\n");
   /* printf("************** SYSTEM< INFORMATION **************\n"); */
-  printf("Stack size  : %8d bytes (%5dK) (%ld%%)\n",t1,t1/1024,100*t1/t3);
-  printf("Heap size   : %8d bytes (%5dK) (%ld%%)\n",t2,t2/1024,100*t2/t3);
-  printf("Total memory: %8d bytes (%5dK)\n",t3,t3/1024);
+  printf("Stack size  : %8ld bytes (%5ldK) (%ld%%)\n",t1,t1/1024,100*t1/t3);
+  printf("Heap size   : %8ld bytes (%5ldK) (%ld%%)\n",t2,t2/1024,100*t2/t3);
+  printf("Total memory: %8ld bytes (%5ldK)\n",t3,t3/1024);
 
 #ifdef X11
   printf("X predicates are installed.\n");
@@ -315,7 +306,7 @@ static long c_garbage()
 {
   ptr_psi_term t;
 
-  t=aim->a;
+  t=aim->aaaa_1;
   deref_args(t,set_empty);
   garbage();
   return TRUE;
@@ -329,23 +320,24 @@ static long c_getenv()
 {
   long success=FALSE;
   ptr_psi_term arg1,arg2,funct,result,t;
-  int smaller;
+  long smaller;  // REV401PLUS int -> long
   
-  funct = aim->a;
-  result=aim->b;
+  funct = aim->aaaa_1;
+  result=aim->bbbb_1;
   deref_ptr(funct);
   deref_ptr(result);
   
   get_two_args(funct->attr_list, &arg1, &arg2);
   if(arg1) {
     deref_ptr(arg1);
-    if(matches(arg1->type,quoted_string,&smaller) && arg1->value) {
-      char *s=(char *)getenv((char *)arg1->value);
+    if(matches(arg1->type,quoted_string,&smaller) && arg1->value_3) {
+      // above REV401PLUS value -> value_3
+      char *s=(char *)getenv((char *)arg1->value_3);
       if(s) {
 	success=TRUE;
 	t=stack_psi_term(4);
 	t->type=quoted_string;
-	t->value=(GENERIC)heap_copy_string(s);
+	t->value_3=(GENERIC)heap_copy_string(s);
 	push_goal(unify,result,t,NULL);
       }
     }
@@ -369,16 +361,16 @@ static long c_system()
   REAL value;
   long smaller;
   
-  funct=aim->a;
+  funct=aim->aaaa_1;
   deref_ptr(funct);
-  result=aim->b;
+  result=aim->bbbb_1;
   get_two_args(funct->attr_list,&arg1,&arg2);
   if(arg1) {
     deref(arg1);
     deref_args(funct,set_1);
     if((success=matches(arg1->type,quoted_string,&smaller)))
-      if(arg1->value) {
-	value=(REAL)system((char *)arg1->value);
+      if(arg1->value_3) {
+	value=(REAL)system((char *)arg1->value_3);
 	if(value==127) {
 	  success=FALSE;
           Errorline("could not execute shell in %P.\n",funct);
@@ -412,7 +404,7 @@ static long c_encode()
 {
   ptr_psi_term t;
 
-  t=aim->a;
+  t=aim->aaaa_1;
   deref_args(t,set_empty);
   encode_types();
   return TRUE;
@@ -440,7 +432,7 @@ GENERIC unitListNext()
 ptr_psi_term intListValue(p)
 ptr_int_list p;
 {
-	return makePsiTerm((void *)p->value);
+	return makePsiTerm((void *)p->value_1); 
 }
 
 GENERIC intListNext(p)
@@ -449,15 +441,17 @@ ptr_int_list p;
 	return (GENERIC )(p->next);
 }
 
+#if FALSE
 ptr_psi_term quotedStackCopy(p)
-ptr_psi_term p;
+  ptr_psi_term p;  // REV401PLUS unveverting - def_proto.h
 {
 	ptr_psi_term q;
 
-	q = stack_copy_psi_term(p);
+	q = stack_copy_psi_term(p); // added * REV401PLUS
 	mark_quote(q);
 	return q;
 }
+#endif
 
 /* Return a ptr to a psi-term marked as  evaluated.  The psi-term is a copy at
  * the top level of the goal residuated on p, with the rest of the psi-term
@@ -470,7 +464,7 @@ ptr_residuation p;
 	ptr_psi_term psi;
 
 	psi = stack_psi_term(4);
-	copyPsiTerm(psi, p->goal->a);
+	copyPsiTerm(psi, p->goal->aaaa_1);
 	psi->status = 4;
 	return psi;
 }
@@ -522,7 +516,7 @@ static long c_residList()
 	ptr_psi_term func;
 	ptr_psi_term result,arg1, other;
 	
-	func = aim->a;
+	func = aim->aaaa_1;
 	deref_ptr(func);
 
 	get_one_arg(func->attr_list, &arg1);
@@ -532,7 +526,7 @@ static long c_residList()
 		return TRUE;
 	}
 	
-	result = aim->b;
+	result = aim->bbbb_1;
 	deref(result);
 	deref_ptr(arg1);
 	deref_args(func, set_1);
@@ -552,7 +546,7 @@ ptr_psi_term p;
 	ptr_goal old = goal_stack;
 	ptr_goal g;
 	
-	push_goal(prove, p, DEFRULES, NULL);
+	push_goal(prove, p, (ptr_psi_term)DEFRULES, NULL);
 	g = goal_stack;
 	g->next=NULL;
 	goal_stack = old;
@@ -569,7 +563,7 @@ static long c_residuate()
 	ptr_psi_term arg1, arg2;
 	ptr_goal g;
 	
-	pred = aim->a;
+	pred = aim->aaaa_1;
 	deref_ptr(pred);
 
 	get_two_args(pred->attr_list, &arg1, &arg2);
@@ -602,7 +596,7 @@ static long c_mresiduate()
   ptr_psi_term arg1, arg2, tmp, var;
   ptr_goal g;
   
-  pred = aim->a;
+  pred = aim->aaaa_1;
   deref_ptr(pred);
   
   get_two_args(pred->attr_list, &arg1, &arg2);
@@ -641,22 +635,22 @@ static long c_mresiduate()
 
 void insert_system_builtins()
 {
-  new_built_in(bi_module,"trace",predicate,c_trace);
-  new_built_in(bi_module,"step",predicate,c_step);
-  new_built_in(bi_module,"verbose",predicate,c_verbose);
-  new_built_in(bi_module,"warning",predicate,c_warning);
-  new_built_in(bi_module,"maxint",function,c_maxint);
-  new_built_in(bi_module,"cpu_time",function,c_cputime);
-  new_built_in(bi_module,"quiet",function,c_quiet); /* 21.1 */
-  new_built_in(bi_module,"real_time",function,c_realtime);
-  new_built_in(bi_module,"local_time",function,c_localtime);
-  new_built_in(bi_module,"statistics",predicate,c_statistics);
-  new_built_in(bi_module,"gc",predicate,c_garbage);
-  new_built_in(bi_module,"system",function,c_system);
-  new_built_in(bi_module,"getenv",function,c_getenv);
-  new_built_in(bi_module,"encode",predicate,c_encode);
-  new_built_in(bi_module,"rlist",function,c_residList);
-  new_built_in(bi_module,"residuate",predicate,c_residuate);
-  new_built_in(bi_module,"mresiduate",predicate,c_mresiduate);
-  new_built_in(bi_module,"tprove",predicate,c_tprove);
+  new_built_in(bi_module,"trace",(def_type)predicate_it,c_trace);
+  new_built_in(bi_module,"step",(def_type)predicate_it,c_step);
+  new_built_in(bi_module,"verbose",(def_type)predicate_it,c_verbose);
+  new_built_in(bi_module,"warning",(def_type)predicate_it,c_warning);
+  new_built_in(bi_module,"maxint",(def_type)function_it,c_maxint);
+  new_built_in(bi_module,"cpu_time",(def_type)function_it,c_cputime);
+  new_built_in(bi_module,"quiet",(def_type)function_it,c_quiet); /* 21.1 */
+  new_built_in(bi_module,"real_time",(def_type)function_it,c_realtime);
+  new_built_in(bi_module,"local_time",(def_type)function_it,c_localtime);
+  new_built_in(bi_module,"statistics",(def_type)predicate_it,c_statistics);
+  new_built_in(bi_module,"gc",(def_type)predicate_it,c_garbage);
+  new_built_in(bi_module,"system",(def_type)function_it,c_system);
+  new_built_in(bi_module,"getenv",(def_type)function_it,c_getenv);
+  new_built_in(bi_module,"encode",(def_type)predicate_it,c_encode);
+  new_built_in(bi_module,"rlist",(def_type)function_it,c_residList);
+  new_built_in(bi_module,"residuate",(def_type)predicate_it,c_residuate);
+  new_built_in(bi_module,"mresiduate",(def_type)predicate_it,c_mresiduate);
+  new_built_in(bi_module,"tprove",(def_type)predicate_it,c_tprove);
 }
