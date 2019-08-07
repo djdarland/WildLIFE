@@ -1,0 +1,255 @@
+Record of Report of WildLIFE from version 1.02
+Started 7/31/2019 6:30pm CT
+Working in Ubuntu 18.04 Linux
+
+Created WildLIFE-4.01 Directory
+Created WildLIFE-4.01 Subdirectory
+Copied Life-1.02.tar.gz into Subdirectory
+Unpacked to Life-1.02 Subdirectory
+Rnamed it to WildLIFE-4.01
+Unpacked Life-1.02.tar.gz again
+chmod -R u-w Life-1.02
+Copy Life-2.33 to WildLIFE-4.01/WildLIFE-4.01
+Unpacked to Life-2.33 Subdirectory
+chmod -R u-w Life-2.33
+
+I worked my way through the source file by file from 1.02 using the Makefie.
+I use option "111" of ./ee - it delete all ".o" files.
+I believe dependencies not correct in my Makefile - this assures everything compiled.
+My computer so fast it seems not worth while to fix Makefile.
+
+For each ".c" file
+I added
+
+#ifdef REV401PLUS
+#include "defs.h"
+// These are all ".h" files from my version 2.33
+// A lot of work had went into trying to make these correct
+#endif
+
+#ifdef REV102
+.... whatever includes were there already.
+also in many cases global declarations. - I was not so careful
+I think compiler would tell of any conflicting declarations.
+#endif
+
+Also - I am not using "configure".
+My code is hoped to work on any 64 bit Linux or cygwin without "configure."
+I copied Makefile in WildLIFE-4.01 to Makefile.orig (to make sure saved)
+I copied Makefile from 2.33 Source directory to 4.01 Source directory
+Also "ee" and "ee?"
+Also copied defs.h, def_const.h, def_glob.h, def_macro.h, def_proto.h, def_struct.h
+
+Made ee writable and added Port.txt
+Copied mk.sh & made writable.
+Added "./" before Try in Makefile in regexp
+
+The following fields were changed mainly to make searching easier.
+The compiler would give errors if the changes were made incorrectly.
+
+Also in goal
+a was changed to aaaa_1
+b was changed to bbbb_1
+c was changed to cccc_1
+
+Also in pair_list
+a was changed to aaaa_2
+b was changed to bbbb_2
+
+Also in stack
+a was changed to aaaa_3
+b was changed to bbbb_3
+
+Also in triple_list
+a was changed to aaaa_4
+b was changed to bbbb_4
+c was changed to cccc_4
+
+Also in int_list value was changed to value_1
+
+Also in residuation value was changed to value_2
+
+Also in psi_term value was changed to value_3
+
+
+
+The following defines replace enums:
+#define   undef_it 1
+#define   predicate_it 2
+#define   function_it 3
+#define   type_it 4
+#define   global_it 5
+#define   block_it 6
+
+These had been an enumeration in 1.02 - now they an integer defines.
+They are sometimes cast to a pointer. (def_type)
+Also field "type" in "definition" structure was changed to "type_def"
+
+Where I worked we did not use enumerations.
+And it is used as pointer - I did not feel compfortable with enum as pointer.
+My defines are cast with (def_type) to pointers when compared
+
+changed "true" & "false" to "lf_true" and "lf_false" (avoiding possible conflicts)
+
+Added following -- seems I eliminated these in 233
+
+#define Infoline   if (NOTQUIET) infoline
+#define Warningline if (warningflag) warningline
+
+#ifndef NOTRACE
+#define Traceline  if (trace) traceline
+#else
+#define Traceline  if (0) traceline
+#endif
+
+Im memory statistics (and some othee places) added "l" in format strings (for longs)
+
+ptr_psi_term quotedStackCopy(ptr_psi_term p); // Reverted - ptr back in arg REV401PLUS - it was wrong in 2.33 
+
+changed char *arg_v[ARGNN]; // Modified DJD in built_ins.c
+
+following defines used to indicate comparison function rather than
+passing function pointer which is difficult when function parameters differ.
+
+#define STRCMP  1L 
+#define INTCMP  2L
+#define FEATCMP 3L
+
+in ptr_node general_insert(comp,keystr,tree,info,heapflag,copystr,bkflag)
+used
+      // revised logic not using function pointer
+      if (comp == INTCMP) cmp=intcmp((long)keystr,(long)(*tree)->key); // REV401PLUS cast
+      else if (comp == STRCMP) cmp=strcmp(keystr,(*tree)->key);
+      else if (comp == FEATCMP) cmp=featcmp(keystr,(*tree)->key);
+
+and in ptr_node find(comp,keystr,tree)
+      // revised logic not using function pointer
+      if (comp == INTCMP) cmp=intcmp((long)keystr,(long)((struct wl_node *)tree)->key);
+      else if (comp == STRCMP) cmp=strcmp((char *)keystr,(char *)((struct wl_node *)tree)->key);
+      else if (comp == FEATCMP) cmp=featcmp(keystr,((struct wl_node *)tree)->key);
+
+Replace DEFRULES with (ptr_psi_term)DEFRULES
+
+change several locals from "eval" to "eval_2" because of conflict with a define
+
+true & false changed to lf_true & lf_false
+
+Used error.c from 2.33 - it is much work to change from varags.h to stdarg.h
+
+Used sys.c from 2.33 - wanted to at least skip till later - types of changes were different.
+
+I #ifdef'd out raw.c - and attempted nothing with the x-windows code - yet anyway.
+
+Copied a bit of argument code from 2.33 for lib.c & life.c
+
+Also, I added many casts - I tried to note all with "// REV3401PLUS cast"
+Similar for other changes - I did not comment the field aaaa_1, ..., value_1, ...changes however or type_def, (def_type) or ..._it changes, however.'
+They all follow the same pattern.
+
+After 1st clean compile got segmentation fault.
+
+Added
+
+#define dennis_debug(str) printf ("This is line %d of file \"%s\" in function \"%s\" str = %s.\n",	__LINE__, __FILE__,__FUNCTION__,str);
+
+And tracked problem down.
+
+I had missed ckanging true & false to lf_true & lf_false in 1 file (built_ins.c I think).
+
+I have had no more run time errors.
+
+I copied Test Suite from 2.33 to new place - separate.
+
+It runs wild_life in my path (new one).
+Some results match exactly.
+Most do not - but differences seem mostly white space.
+Reponses are coming back on one line instead of multiple lines.
+One test seemed stuck - removed it for now.
+
+I will try removing white space in test suite.
+
+after removing whitespace
+84 match perfectly
+310 out differ
+42 err differ
+
+Noticed indent level seemed sometimes to increment by sizeof long instead of 1
+
+Added paren around level+1 in login.c
+then 
+161 match perfectly
+225 out differ
+42 err differ
+
+Thought quotedStacCopy might be wrong - had made a change.
+On investigation - it is not used - #if'd it out.
+
+I #ifdef's out any remaining externs - they all should be in headers.
+Made no difference.
+
+Started going through .c files putting back initializations of globals.
+After list.c - switching header (thare had not been any compiler errors)
+got:
+
+echo 406 Total Tests completed
+echo 162 Total Tests match
+echo 244 Total Tests differ
+echo 224 Total Tests out differ
+echo 41 Total Tests err differ
+
+After completing moving initializations:
+echo 406 Total Tests completed
+echo 379 Total Tests match
+echo 27 Total Tests differ
+echo 4 Total Tests out differ
+echo 25 Total Tests err differ
+
+Systematically going through all files for which there are .o files.
+Removing "dead" code & checking fo anything missed.
+
+Discovered missing initializations in error.c
+After fixing:
+
+echo 406 Total Tests completed
+echo 392 Total Tests match
+echo 14 Total Tests differ
+echo 4 Total Tests out differ
+echo 12 Total Tests err differ
+
+Completed going through files.
+Found a few more missing initializations - but they did not affect tests.
+
+Added back the test that was getting stuck - it now passed.
+
+Results now:
+
+echo 407 Total Tests completed
+echo 393 Total Tests match
+echo 14 Total Tests differ
+echo 4 Total Tests out differ
+echo 12 Total Tests err differ
+
+Examined output some
+Added "END Abort" message in built_ins.c in long abort_life(nlflag)
+Then have:
+
+echo 407 Total Tests completed
+echo 401 Total Tests match
+echo 6 Total Tests differ
+echo 4 Total Tests out differ
+echo 4 Total Tests err differ
+
+Examined these cases.
+
+1 -- condpred -- refout file missing -- checked - also missing in 1.02
+2 -- dupfeat  -- 4.01 gives line number error is near -- reference does not
+3 -- eoftest2 -- out differ in ">" - err - 4.01 gives syntax error'
+4 -- eoftest  -- out different -- err - dfferent errors
+5 -- testslc  -- out differ -- Files may be missing -- think this superlint?
+6 -- testsl   -- get slightly different warning messages -- another superlint?
+
+I should go over sys.c - I am still using 2.33 version.
+I see little reason to study error.c - I worked it over a lot before.
+
+Not really using arity.c or raw.x or xpred.c or xdisplaylist.c currently.
+
