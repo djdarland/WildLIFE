@@ -1,0 +1,8 @@
+*.o
+*.tmp
+*2.c
+djd?
+Try
+wild_life
+*~
+c_life.a
