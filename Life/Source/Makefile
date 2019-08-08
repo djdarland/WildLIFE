@@ -1,10 +1,6 @@
-# Generated automatically from Makefile.in by configure.
-# DIST: This is the distribution Makefile for WILD Life.  configure
-# DIST: can make most of the changes to this file you might want, so
-# DIST: try that first.
-
+# Makefile made manually from studying Mkefile.in - did not use configure
+# There is much obsolete - It should be cleaned up. Don't have time yet. 
 SHELL		= /bin/sh
-
 CC		= gcc
 CFLAGS		= -g -O
 CPPFLAGS	= 
@@ -16,7 +12,7 @@ DEFS 		= -DREV401PLUS=1
 RANLIB		= ranlib
 INSTALL		= /usr/bin/install -c
 MKDIRHIER	= mkdirhier
-prefix		= ../life_local
+prefix		= ~/life_local
 exec_prefix	= ${prefix}
 bindir		= ${exec_prefix}/bin
 libdir		= ${prefix}/lib/life

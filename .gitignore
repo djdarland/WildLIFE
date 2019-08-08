@@ -9,3 +9,4 @@ c_life.a
 Life/Tests/OUT/
 Life/Tests/ERR/
 Life/Tests/editdiffs.sh
+*.tar.gz
