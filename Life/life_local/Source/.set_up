@@ -190,16 +190,16 @@ open_module("syntax")? % This module contains symbols init. in built_ins.c
 % open_module("x")?
 
 %% BD June 11 1993
-global(tools_dir<-"~/life_local/Tools/") ?
+global(tools_dir<-"../life_local/Tools/") ?
 
-global(examples_dir<-"~/life_local/Examples/") ?
-global(superlint_dir<-"~/life_local/Examples/SuperLint/") ?
-global(demo_dir<-"~/life_local/Demo/") ? %% MJV January 16 1996
-global(lib_dir<-"~/life_local/Lib/") ?
+global(examples_dir<-"../life_local/Examples/") ?
+global(superlint_dir<-"../life_local/Examples/SuperLint/") ?
+global(demo_dir<-"../life_local/Demo/") ? %% MJV January 16 1996
+global(lib_dir<-"../life_local/Lib/") ?
 
-simple_load("~/life_local/Source/built_ins.lf") ?       %% BD June 10 1993
-simple_load("~/life_local/Source/term_expansion.lf") ?
-simple_load("~/life_local/Source/onlinedoc.lf")?
+simple_load("../life_local/Source/built_ins.lf") ?       %% BD June 10 1993
+simple_load("../life_local/Source/term_expansion.lf") ?
+simple_load("../life_local/Source/onlinedoc.lf")?
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % X start up.
