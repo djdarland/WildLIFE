@@ -5,15 +5,18 @@ Plans and Goals
   * Update Test Suite with my improvements. -- *Done*
   * Update documents directory - I have created pdf's. *Done*
   * Change local directory to just be in Life tree. -- *Done*
-  * Now, I believe, to install:
+  * Realized local directory would not be found if
+  wild_life executed elsewhere.
+  * Added cp_local.sh
+  * Now, I believe, to install: (in Life/Source directory)
     * ./mk.sh
-    * everything should be usable where it is in the source tree.
-    * (e.g. *life_local*)
+    * ./cp_local.sh
     * to run test_suite ./ts.sh
     * The Test Suite gives slightly different results from 4.01
     * I did not overwrite 1.02 files in IN or LF directories.
-    * I have not investigated yet.
-  * Add separate Makefile to make x version - and create different executable
+    * I have not investigated differeces yet.
+  * Plan to add separate Makefile to make x version
+  - and create different executable
   * Eventually work on x version
 
 ---------------------------------------------------------------------------
