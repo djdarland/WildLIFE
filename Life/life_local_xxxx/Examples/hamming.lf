@@ -1,0 +1,31 @@
+% Copyright 1992 Digital Equipment Corporation
+% All Rights Reserved
+
+% Hamming sequence problem in Life.
+% Author: Hassan Ait-Kaci.
+
+module("hamming") ?
+public(hamming) ?
+
+
+% Multiple each list element by F, up to a maximum of N.
+mult_list(F,N,[H|T]) ->
+        cond(R:(F*H) =< N, [R|mult_list(F,N,T)], []).
+
+% Merge two lists of ascending integers.
+merge(L,[]) -> L.
+merge([],L) -> L.
+merge(L1:[H1|T1],L2:[H2|T2]) ->
+        cond(H1 =:= H2,
+             [H1|merge(T1,T2)],
+             cond(H1 > H2,
+                  [H2|merge(L1,T2)],
+                  [H1|merge(T1,L2)])).
+
+% Generate the Hamming sequence from 1 to N.
+hamming_f(N) ->
+        S:[1|merge(mult_list(2,N,S),
+                   merge(mult_list(3,N,S),
+                         mult_list(5,N,S)))].
+
+hamming :- write(hamming_f(1000)), nl.

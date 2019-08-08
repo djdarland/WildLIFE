@@ -1,0 +1,202 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%	$Id: structures.lf,v 1.3 1995/07/06 18:24:14 duchier Exp $	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% STRUCTURES LIBRARY
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+module("structures") ?
+
+public(+>=,+=<,+>,+<,+><,==,+\>=,+\=<,+\>,+\<,+\><,\==) ?
+
+
+import("lists") ?
+
+%%% operators
+
+op(600,xfx, +>= ) ?  %%% is more general than
+op(600,xfx, +=< ) ?  %%% is less general than
+op(600,xfx, +> ) ?   %%% is strictly more general than
+op(600,xfx, +< ) ?   %%% is strictly less general than
+op(600,xfx, +>< ) ?  %%% is comparable to
+op(600,xfx, ==  ) ?  %%% structurally equal to
+op(600,xfx, +\>= ) ? %%% is not more general than
+op(600,xfx, +\=< ) ? %%% is not less general than
+op(600,xfx, +\> ) ?  %%% is not strictly more general than
+op(600,xfx, +\< ) ?  %%% is not strictly less general than
+op(600,xfx, +\>< ) ? %%% is not comparable to
+op(600,xfx, \== ) ?  %%% is not structurally equal to
+
+
+add_man([structures,+>=,+=<,+>,+<,+><,==,+\>=,+\=<,+\>,+\<,+\><,\==],
+     " Structural Comparison Operators:
+
+  +>=,+=<,+>,+<,+><,==,+\>=,+\=<,+\>,+\<,+\><,\==
+
+  All these operators are of type xfx, precedence 600.
+  They are implemented as boolean functions.
+
+  They all have two arguments that may be any psi-term.
+  They never residuate.
+
+  The usual naming conventions for comparison operators are preserved
+  here. For example:
+
+  X +>= Y returns true if X is structurally greater or identical to Y,  
+                  false otherwise.
+
+  X == Y returns true if X is structurally identical to Y,   
+                 false otherwise.
+  ") ?
+
+       
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% MAIN FUNCTIONS
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+persistent(res) ?
+res <<- false ?
+
+X +>= Y -> 
+	Bool 
+    | 
+        (
+	    res <<- false,
+	    is_struct_more_general(X, Y),
+	    res <<- true,
+	    fail                              
+	;
+	    Bool = res
+	).
+
+X +> Y -> 
+	Bool 
+    | 
+        (
+	    res <<- false,
+	    is_strict_struct_more_general(X,Y, strict => S),
+	    res <<- (S :== true),
+	    fail                              
+	;
+	    Bool = res
+	).
+
+X == Y -> 
+	Bool 
+    | 
+        (
+	    res <<- false,
+	    is_struct_equal(X,Y),
+	    res <<- true,
+	    fail                              
+	;
+	    Bool = res
+	).
+
+X +>< Y -> cond( X +>= Y, true, Y +> X ).
+
+%%% symetries
+
+X +=< Y -> Y +>= X.
+X +< Y -> Y +> X.
+
+%%% negations
+
+X +\>= Y -> not(X +>= Y).
+X +\=< Y -> not(X +=< Y).
+X +\>  Y -> not(X +>  Y).
+X +\<  Y -> not(X +<  Y).
+X +\>< Y -> not(X +>< Y).
+X \== Y  -> not(X ==  Y).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% COMPARISON PREDICATES
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% comparison
+
+is_struct_more_general( A, B) :-
+	has_feature(visited,A), !,
+	project(visited,A) === B
+    ;
+	root_sort(A) :>= root_sort(B),
+	sort_order_included(Fa:features(A),features(B)),
+	build_features_list(Fa,A,B,LA,LB),
+	A = @(visited => B),
+	are_struct_more_general(LA, LB).
+
+
+are_struct_more_general([],[]) :- !.
+are_struct_more_general([F1A|FsA],[F1B|FsB]) :-
+	is_struct_more_general( F1A,F1B),
+	are_struct_more_general(FsA,FsB).
+
+
+
+%%% strict comparison
+
+is_strict_struct_more_general( A, B, strict => S) :-
+	has_feature(visited,A), !,
+	project(visited,A) === B
+    ;
+	Ra:root_sort(A) :>= Rb:root_sort(B),
+	Bool:sort_order_included(Fa:features(A),features(B)),
+	cond( Ra :> Rb or has_feature(visited,B) or project(1,Bool),
+	      S = true),
+	build_features_list(Fa,A,B,LA,LB),
+	A = @(visited => B&@(visited => A)),
+	are_strict_struct_more_general(LA, LB, strict => S).
+
+
+are_strict_struct_more_general([],[]) :- !.
+are_strict_struct_more_general( [F1A|FsA], [F1B|FsB], strict => S) :-
+	is_strict_struct_more_general( F1A, F1B, strict => S),
+	are_strict_struct_more_general( FsA, FsB, strict => S).
+
+
+%%% equality
+
+is_struct_equal( A, B) :-
+	has_feature(visited,A) or has_feature(visited,B), !,
+	project(visited,A) === B
+    ;
+	root_sort(A) :== root_sort(B),
+	Fa:features(A) = Fb:features(B),
+	build_features_list(Fa,A,B,LA,LB),
+	A = @(visited => B&@(visited => A)),
+	are_struct_equal(LA, LB).
+
+
+are_struct_equal([],[]) :- !.
+are_struct_equal([F1A|FsA],[F1B|FsB]) :-
+	is_struct_equal( F1A,F1B),
+	are_struct_equal(FsA,FsB).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%    utilities
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+build_features_list([],A,B,[],[]) :- !.
+build_features_list([F1|Fs],A,B,[FA|NFA],[FB|NFB]) :-
+	FA = project(F1,A),
+	FB = project(F1,B),
+	build_features_list(Fs,A,B,NFA,NFB).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+

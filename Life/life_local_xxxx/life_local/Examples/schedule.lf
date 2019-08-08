@@ -1,0 +1,147 @@
+% Copyright 1992 Digital Equipment Corporation
+% All Rights Reserved
+
+% Simple PERT scheduler written in Life.
+% Author: Bruno Dumant.
+
+% usage: look at the sample inputs below
+
+module("schedule") ?
+public( task,visAllTasks,sch_1,sch_2,sch_3,sch_4)?
+
+%%%% Do the scheduling %%%%
+:: A:task( duration => D:real,
+	       earlyStart => earlyCalc(R),
+	       lateStart  => {1e10;real}, 
+	       prerequisites => R:{[];list} ) | !, lateCalc(A,R).
+	    
+% Pass 1: Calculate the earliest time that A can start.
+earlyCalc([]) -> 0.
+earlyCalc([B|ListOfTasks]) ->
+	max(B.earlyStart+B.duration,earlyCalc(ListOfTasks)).
+
+% Pass 2: Calculate the latest time that A's prerequisites can start
+% and still finish before A starts.
+lateCalc(A,[]) -> true.
+lateCalc(A,[B:task|ListOfTasks]) -> lateCalc(A,ListOfTasks) | 
+	assign(LSB:(B.lateStart),
+	       min(LSB, A.earlyStart-B.duration)).
+
+% Wait until B is an integer before doing the assignment:
+assign(A,B:int) -> succeed | A<-B.
+
+%%%% Prettyprint the output %%%%
+visAllTasks([A|B],N:{1;real}) :- !, visualize(A,N), visAllTasks(B,N+1).
+visAllTasks([]).
+
+visualize(A,N:int) :-
+	write("Task ",N,": "),
+	visStart(A.earlyStart),visDuration(A.duration,"*"),nl,
+	write("            "),
+	% Only print lateStart if it fits on the screen (it could
+	% be infinite, after all!):
+	cond( A.lateStart=<50,
+	      (visStart(A.lateStart),visDuration(A.duration,"-"),nl,nl),
+	      nl
+	).
+
+visStart(N:int) :- visNcar(N," ").
+visDuration(N,S):- visNcar(N,S).
+
+visNcar(0) :- !.
+visNcar(N,S) :- write(S), visNcar(N-1,S).
+
+
+% Sample input for the PERT scheduler:
+% The three examples sch_[123] are permutations of the
+% same problem, to illustrate that calculations in Life do not
+% depend on order of execution.
+
+sch_1 :-
+A1=task(duration=>10),
+A2=task(duration=>20),
+A3=task(duration=>30),
+A4=task(duration=>18,prerequisites=>[A1,A2]),
+A5=task(duration=>8 ,prerequisites=>[A2,A3]),
+A6=task(duration=>3 ,prerequisites=>[A1,A4]),
+A7=task(duration=>4 ,prerequisites=>[A5,A6]),
+visAllTasks([A1,A2,A3,A4,A5,A6,A7]).
+
+sch_2 :-
+A3=task(duration=>30),
+A7=task(duration=>4 ,prerequisites=>[A5,A6]),
+A5=task(duration=>8 ,prerequisites=>[A2,A3]),
+A1=task(duration=>10),
+A4=task(duration=>18,prerequisites=>[A1,A2]),
+A6=task(duration=>3 ,prerequisites=>[A1,A4]),
+A2=task(duration=>20),
+visAllTasks([A3,A2,A4,A7,A6,A5,A1]).
+
+sch_3 :-
+A3=task(duration=>30),
+A7=task(duration=>4 ,prerequisites=>[A5,A6]),
+A5=task(duration=>8 ,prerequisites=>[A2,A3]),
+A1=task(duration=>10),
+A4=task(duration=>18,prerequisites=>[A1,A2]),
+A6=task(duration=>3 ,prerequisites=>[A1,A4]),
+A2=task(duration=>20),
+visAllTasks([A1,A2,A3,A4,A5,A6,A7]).
+
+
+% A dependency graph with large amounts of sharing:
+% This illustrates that the scheduler runs in linear time.  This is true
+% because each arithmetic operation is executed only once--it waits until
+% its argument becomes available and then does the operation.  This
+% pathological example is due to Herve' Touati.
+
+sch_4 :-
+
+A1=task(duration=>2, prerequisites=>[B1,C1]),
+B1=task(duration=>2, prerequisites=>[A2]),
+C1=task(duration=>2, prerequisites=>[A2]),
+
+A2=task(duration=>2, prerequisites=>[B2,C2]),
+B2=task(duration=>2, prerequisites=>[A3]),
+C2=task(duration=>2, prerequisites=>[A3]),
+
+A3=task(duration=>2, prerequisites=>[B3,C3]),
+B3=task(duration=>2, prerequisites=>[A4]),
+C3=task(duration=>2, prerequisites=>[A4]),
+
+A4=task(duration=>2, prerequisites=>[B4,C4]),
+B4=task(duration=>2, prerequisites=>[A5]),
+C4=task(duration=>2, prerequisites=>[A5]),
+
+A5=task(duration=>2, prerequisites=>[B5,C5]),
+B5=task(duration=>2, prerequisites=>[A6]),
+C5=task(duration=>2, prerequisites=>[A6]),
+
+A6=task(duration=>2, prerequisites=>[B6,C6]),
+B6=task(duration=>2, prerequisites=>[A7]),
+C6=task(duration=>2, prerequisites=>[A7]),
+
+A7=task(duration=>2, prerequisites=>[B7,C7]),
+B7=task(duration=>2, prerequisites=>[A8]),
+C7=task(duration=>2, prerequisites=>[A8]),
+
+A8=task(duration=>2, prerequisites=>[B8,C8]),
+B8=task(duration=>2, prerequisites=>[A9]),
+C8=task(duration=>2, prerequisites=>[A9]),
+
+A9=task(duration=>2, prerequisites=>[B9,C9]),
+B9=task(duration=>2, prerequisites=>[A10]),
+C9=task(duration=>2, prerequisites=>[A10]),
+
+A10=task(duration=>2, prerequisites=>[B10,C10]),
+B10=task(duration=>2, prerequisites=>[A11]),
+C10=task(duration=>2, prerequisites=>[A11]),
+
+A11=task(duration=>2, prerequisites=>[B11,C11]),
+B11=task(duration=>2, prerequisites=>[A12]),
+C11=task(duration=>2, prerequisites=>[A12]),
+
+A12=task(duration=>2),
+
+visAllTasks([A1,B1,C1,A2,B2,C2,A3,B3,C3,A4,B4,C4,A5,B5,C5,
+	    A6,B6,C6,A7,B7,C7,A8,B8,C9,A9,B9,C9,A10,B10,C10,
+	    A11,B11,C11,A12]).

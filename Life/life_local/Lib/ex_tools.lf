@@ -1,0 +1,226 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%	$Id: ex_tools.lf,v 1.2 1994/12/08 23:57:30 duchier Exp $	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Small example of some the features of the X-toolkit
+%
+% Author: Bruno Dumant
+% (c) Copyright 1993 - Digital Equipment Corporation
+% All rights reserved.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% load the toolkit, open the xtools module
+
+
+module("ex_tools") ?
+public(ex_tools) ?
+
+import("xtools")?
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% interface design
+
+persistent(panels) ?
+
+interface :-
+
+	%% declaration of the some of the buttons used. Except button1 and
+	%% t_box1, all the sorts are predefined by the toolkit.
+
+	B1 = text_field_button(height => Hb,
+	                       text => "100",
+			       action => set_slider(B1,Slider), 
+			       offset => -5),
+	B2 = push_button(text => "Push Button"),
+	B3 = on_off_button(text => "On/Off"),
+	B4 = button1(text => "Custom Button",        % see def of button1 below
+		     action => action4),
+	B5 = menu_button(menu => Menu,text => "Menu..."),
+	B6 = push_button(text => "Quit", action => abort), 
+		      
+        TB1 = t_box1(width => Wt,text => "Text Box"), % see def of t_box1 below
+	
+
+        %%% B1..B6 must have the same size
+
+        same_size([B1,B2,B3,B4,B5,B6]),
+
+
+	%% PLACEMENT CONSTRAINTS
+
+        %% vl_list: Vertical_Left-aligned_list
+        %% hc_list: Horizontal_Centered_list
+        %% All these operators are prefix operators
+        %% r: right; l: left; t: top; b: bottom; c: center 
+
+	Box1 =   vl_list [B1,B2,B3] t_left_of 
+	         hc_list [h_box(10),TB1,B4] r_above
+	         B5,
+        Box2:@(width => Width,height => Height) = vc_list [Box1,v_box(15),B6],
+
+	VSlide = v_slide_bar(height => Height) containing
+		    Slider:v_slider(min => 0,
+			            max => 100,
+				    action => set_text(Slider,B1)),
+	HSlide = slide_bar(width => Width) containing 
+		    h_slider(min => 0,
+			     max => 100,
+			     action => succeed),
+
+	Box3 = ht_list [Box2,h_box(5),VSlide],
+	Box4 = vl_list [Box3,v_box(5),HSlide],
+
+
+	%% definition of the main panel
+	
+	Panel = panel(title => "XTools Demo") 
+   	            containing Box4,
+	
+	%% definition of the menu
+	
+        FirstCol:@(height => MenuHeight) = 
+            menu_list [item_2(text => T1:"Unix"),
+	               item_2(text => T2:"VMS"),
+		       item_2(text => T3:"OSF/1"),
+		       item_2(text => T4:"Windoze NT")],
+
+	I1 = item_1(text => "Tile",           %%% see def of
+		    action => do_tiles,       %%% item_1 below
+		    height => MenuHeight/2,
+		    true_text_color_id => 2),
+	I2 = item_1(text => "Refresh",
+		    action => do_refresh,
+		    height => MenuHeight/2,
+		    true_text_color_id => 2),
+
+	same_width([I1,I2]),
+	
+	Menu =  menu_panel containing 
+                    FirstCol c_left_of 
+                    vl_list [I1,I2],
+
+	%% It is possible to add buttons to a panel in any order before
+        %% its creation.
+		    
+	Push2:push_button(width => Wt,height => Hb,text =>"Scroll",
+	                  action => scroll([B1,B2,B3])) 
+              lr_aligned B6,
+	B6 tb_aligned Push2,
+
+	Panel contains Push2,
+
+	%% Panel and Menu are now completely specified, they may be saved in a
+	%% persistent term.
+	
+	panels <<- [Panel,Menu].
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% Custom Button Types
+%%% These buttons don't have the standard colors & fonts. The ids are used by
+%%% the tables defined below (see Tables)
+
+%%% There is no predefined color id, and two predefined font ids: medium and
+%%% bold. 
+
+button1 <| on_off_button.
+:: button1(color_id => 1,text_color_id => 4,led_on_color_id => 3,
+	   font_id => custom,true_text_color_id => 3).
+
+t_box1 <| text_box.
+:: t_box1(text_color_id => 2,font_id => medium).
+
+item_1 <| item_c.
+item_1 <| frame.
+item_1 <| text_box.
+:: I:item_1(on => On,
+	    depth => 2,
+	    change_state => change_menu_item(On,I)).
+
+item_2 <| menu_item.
+:: I:item_2(text => T,action => writeln(T)).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% Tables
+
+%%% Color Tables 
+
+def_color(shade_colors,1,X:new_color(63,106,106)),
+  def_color(main_colors,4,X)?
+def_color(highlight_colors,1,new_color(118,197,197))?
+def_color(main_colors,1,'cadet blue') ?
+
+def_color(main_colors,2,red) ?
+
+def_color(shade_colors,3,'lime green') ?
+def_color(highlight_colors,3,'green yellow') ?
+def_color(main_colors,3,green) ?
+
+
+%%% font table
+
+def_font(custom,new_font("souvenir_demi10")) ?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% the interface may be compiled at load time
+
+interface ?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% Actions
+
+set_slider(@(text => T),Slider:@(max => Max,min => Min)) :-
+	Y = parse(T),
+	cond( Y :< real,
+	    cond( Y >= Min and Y =< Max,
+	        move_slider(Slider,Y)
+	    )
+	).
+
+set_text(@(value => V),BT:@(text => T)) :-
+        T <<- int2str(floor(V)),
+	refresh_look(BT).
+
+scroll(L:[B1:@(X1,Y1),B2:@(X2,Y2),B3:@(X3,Y3)]) :-
+	X4 = root_sort(X1),
+	Y4 = root_sort(Y1),
+	move_widget(B1,X2,Y2),
+	move_widget(B2,X3,Y3),
+	move_widget(B3,X4,Y4),
+	L <- [B3,B1,B2].
+
+action4 :-
+	writeln("Button pressed: ",button_pressed).
+
+do_tiles.
+
+do_refresh :-
+	X = system("xrefresh").
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% utility 
+
+C:writeln :- write&strip(C), nl.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% main predicate
+
+ex_tools :- create_boxes(copy_term(panels)) .

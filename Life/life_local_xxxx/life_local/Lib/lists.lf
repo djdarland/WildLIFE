@@ -1,0 +1,110 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%	$Id: lists.lf,v 1.2 1994/12/08 23:58:25 duchier Exp $	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% List manipulation
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+import("sets") ?
+
+module("lists") ?
+
+add_man(lists,
+     " module(""lists"").
+
+  This module contains a number of utilities for list manipulation.
+
+  It imports the 'sets' library, and adds a few more utilities:
+
+  sort_remove_all, ad_remove_all,
+
+  and a generic quicksort function:
+
+     gen_quicksort.")?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+%%% generic operations on lists; the method feature describes the function used
+%%% to method for equality.
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+add_man(sort_remove_all,
+     " sort_remove_all(Sort,List) -> List2
+
+  input: Sort: sort. 
+         List: a list of terms.
+  output: List2: a list.
+
+  List2 is List1 with no element of sort Sort")?
+
+public(sort_remove_all) ? 
+sort_remove_all(A,[B|C]) ->
+	cond( A :== B,
+	      sort_remove_all(A,C),
+	      [B|sort_remove_all(A,C)]
+	    ).
+sort_remove_all(_,[]) -> [].
+
+
+add_man(ad_remove_all,
+     " ad_remove_all(Elt,List) -> List2
+
+  input: Elt: any psi term. 
+         List: a list of terms.
+  output: List2: a list.
+
+  List2 is List1 with no element unified with Elt")?
+
+
+public(ad_remove_all) ? 
+ad_remove_all(A,[B|C]) ->
+	cond( A === B,
+	      ad_remove_all(A,C),
+	      [B|ad_remove_all(A,C)]
+	    ).
+ad_remove_all(_,[]) -> [].
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+%%% quicksort
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+add_man(gen_quicksort,
+     " gen_quicksort(List,order => Order) -> List2.
+
+  input: List: a list of elements.
+         Order: an order on these elements (a boolean function).
+  output: List2: a list.
+
+  List2 is the ordered version of List1.")?
+
+public(gen_quicksort)?
+
+gen_quicksort(List,order => Order) -> gen_dqsort(List,[],order => Order).
+
+
+% Difference list version
+gen_dqsort([Pivot|Rest],End,order => Order) -> L |
+	gen_split(Pivot,Rest,Less,More,order => Order),
+	L = gen_dqsort(Less,
+		       [Pivot|gen_dqsort(More,End,order => Order)],
+		       order => Order).
+gen_dqsort([],End) -> End.
+
+
+% split a list at pivot value
+gen_split(X,[H|T],R,More,order => Order) :-
+	Order(H,X),!,
+	R=[H|Less],
+	gen_split(X,T,Less,More,order => Order).
+gen_split(X,[H|T],Less,R,order => Order) :-
+	!,
+	R=[H|More],
+	gen_split(X,T,Less,More,order => Order).
+gen_split(@,[],[],[]).
+
+

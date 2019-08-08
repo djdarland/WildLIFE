@@ -1,0 +1,3 @@
+import("boxes","dictionary","hamming","machine","nl","palette","prime",
+       "simple","magic","queens","schedule","soap","solve","xxxooo","flowers",
+       "display_terms","gauss")?

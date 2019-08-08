@@ -1,0 +1,121 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%                           UTILITIES
+%
+% This file contains a number of utilities used by the demo. 
+%
+% This file is loaded automatically by the main file of the demo.
+%                                                                             
+% Author: Bruno Dumant                                                      
+%
+% Copyright 1992 Digital Equipment Corporation                                
+% All Rights Reserved                                                         
+%                                                                             
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+module("utils") ?
+
+
+%%% dynamic definition of a predicate (equivalent of setq for predicates)
+
+public(setPred) ?
+non_strict(setPred)?
+setPred(A,B) :-
+        C = eval(B),
+        retract(A),
+        !,
+        U=root_sort(A),
+        U=@(C),
+        assert(U).
+setPred(A,B) :-
+        dynamic(A),
+        C = eval(B),
+        U=A,
+        U=@(C),
+        assert(U).
+
+%%% pi 
+
+public(pi) ?
+pi -> 3.14159265359 .
+
+
+%%%  make a new root from an old one and a suffix
+
+public(suffixRoot) ?
+suffixRoot(P,S:string) -> str2psi(strcon(psi2str(P),S)).
+
+
+%%% convert a real to string form with fixed number of decimals
+
+public(real2str) ?
+real2str(N:int) -> int2str(N).
+real2str(N:real,P) -> 
+	X
+    |
+        decomp_real(N,Int,Dec),
+	X = strcon(strcon(int2str(Int),"."),strfy(Dec,P-1)).
+
+strfy(0,_) -> "".
+strfy(N,0) -> 
+	X 
+    | 
+        decomp_real(10*N,Int,Dec),
+	cond( Dec =< 0.5,
+	      X = int2str(Int),
+	      X = int2str(Int+1)).
+strfy(N,P) -> strcon(int2str(F:floor(M:(10*N))),strfy(M-F,P-1)).
+
+
+decomp_real(X,Int,Dec) :-
+	cond( X >= 0,
+	      ( 
+		  Int = floor(X),
+		  Dec = X - Int
+	      ),
+	      (
+		  Int = ceiling(X),
+		  Dec = abs( X - Int)
+	      )).
+
+%%% hashing
+
+public(add_in_inthash2) ?
+add_in_inthash2( Name, X, Y, Z) :-
+	T = make_inthash2_name(Name,X,Y),
+	setq(T,Z).
+
+public(find_in_inthash2) ?
+find_in_inthash2(Name, X, Y, Z) :-
+	T = make_inthash2_name(Name,X,Y),
+	is_function(T),
+	Z = eval(T).
+
+make_inthash2_name(Name,X,Y) ->
+	str2psi(strcon(strcon(int2str(X),strcon("x",int2str(Y))),Name)).
+
+
+%%% Product of a 3x2 matrix 3x2 with a 2x1 matrix
+
+public(xmat) ?
+xmat(@(X1,Y1,Z1),@(X2,Y2,Z2),A,B) -> @(A*X1+B*X2,A*Y1+B*Y2,A*Z1+B*Z2).
+
+
+%%% ns is used to encapsulate function in a non_strict environment
+
+public(ns) ?
+non_strict(ns) ?
+
+%%% long jumps
+
+public(catch) ?
+non_strict(catch) ?
+catch(A) :- C = get_choice, setq(A,C).
+
+public(throw) ?
+throw(A) :- set_choice(A), fail.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,64 @@
+%%
+%%  FILE : expand_type.lf
+%%
+%%  Provides the function expand_type which unfolds all type aliases in
+%%  a type expression.
+%%
+
+
+
+expand_type(Type) -> ExpandedType
+  | ExpandedType = expanded_type_of(Type),
+    ExpandedType.qualification = Type.qualification,
+    ExpandedType.store_class = Type.store_class,
+    (
+      has_feature(signed, Type, Signed),
+      !,
+      ExpandedType.signed = Signed
+    ;
+      succeed
+    ).    
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+expanded_type_of(type_alias(identifier(Name))) ->
+  expanded_type_of(syntactic_tree.type_definitions.Name.type).
+
+
+expanded_type_of(struct_name(identifier(Name))) ->
+  syntactic_tree.struct_definitions.Name.type.
+
+
+expanded_type_of(union_name(identifier(Name))) ->
+  syntactic_tree.union_definitions.Name.type.
+
+
+expanded_type_of(enum_name(identifier(Name))) ->
+  syntactic_tree.enum_definitions.Name.type.
+
+
+expanded_type_of(pointer(to => What, star => Star,
+                 qualification => Qualifier)) ->
+  pointer(to => expanded_type_of(What), star => Star, 
+          qualification => Qualifier).
+
+
+expanded_type_of(array(of => What, dimensions => Dimensions)) ->
+  array(of => expanded_type_of(What), dimensions => Dimensions).
+
+
+expanded_type_of(protected_type(InnerType)) ->
+  protected_type(expanded_type_of(InnerType)).
+
+
+expanded_type_of(SingleType) -> SingleType.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+

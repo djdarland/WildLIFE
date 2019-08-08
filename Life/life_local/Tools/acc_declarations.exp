@@ -1,0 +1,81 @@
+%	$Id: acc_declarations.exp,v 1.2 1994/12/08 23:48:46 duchier Exp $	
+module("acc_declarations")?
+
+public(acc_info,pred_info,pass_info,clear_acc_def,is_passed,is_acc,expandable,get_acc_info,get_pass_info,list_of_accs,dcg,check_expansion_flag,set_error_expander,reset_error_expander,non_expanded_warning)?
+
+persistent(accumulators)?
+
+persistent(passed_arguments)?
+
+persistent(predicates_info)?
+
+persistent(check_expansion_flag)?
+
+<<-(check_expansion_flag,false)?
+
+non_strict(acc_info)?
+
+associate_expanders(acc_info,acc_info_expander)?
+
+:-(acc_info_expander(_A,in_clauses => _B,out_clauses => _B),_A).
+
+:-(acc_info(_A,_B,_C,_D,acc_pred => _E,in_name => _F,in_start => _G,out_name => _H,out_start => _I),,(=(_J,psi2str(_A)),,(=(_F,{strcon("in_",_J);@}),,(=(_H,{strcon("out_",_J);@}),,(!,,(cond(has_feature(_A,accumulators),overriding_warning(_A)),<<-(.(accumulators,_A),@(_A,_B,_C,_D,acc_pred => _E,in_name => _F,in_start => _G,out_name => _H,out_start => _I)))))))).
+
+:-(_A: get_acc_info(_B),cond(has_feature(_B,accumulators,_C),=(_A,copy_term(_C)),fail)).
+
+->(is_acc(_A),has_feature(_A,accumulators)).
+
+:-(pred_info(_A,_B),cond(:<(_A,list),pred_list_info(_A,_B),pred_info2(_A,_B))).
+
+:-(pred_list_info([_A|_B],_C),,(!,,(pred_info2(_A,_C),pred_list_info(_B,_C)))).
+
+pred_list_info([]).
+
+:-(pred_info2(_A,_B),,(;(,(check_expansion_flag,,(!,,(remove_expanders(_A,error_expander),add_expanders_a(_A,error_expander)))),succeed),cond(:<(_B,list),acc_list_info(_B,combined_name(_A)),<<-(.(.(predicates_info,combined_name(_A)),_B),true)))).
+
+:-(acc_list_info([_A|_B],_C),,(!,,(<<-(.(.(predicates_info,_C),_A),true),acc_list_info(_B,_C)))).
+
+acc_list_info([]).
+
+associate_expanders(pred_info,pred_info_expander)?
+
+:-(pred_info_expander(_A,in_clauses => _B,out_clauses => _B),_A).
+
+->(expandable(_A),has_feature(combined_name(_A),predicates_info)).
+
+non_strict(pass_info)?
+
+:-(pass_info(_A,_B,_C,acc_pred => _D,start => _E),<<-(.(passed_arguments,_A),@(_A,_B,_C,acc_pred => _D,start => _E))).
+
+:-(_A: get_pass_info(_B),cond(has_feature(_B,passed_arguments,_C),=(_A,copy_term(_C)),fail)).
+
+associate_expanders(pass_info,pass_info_expander)?
+
+:-(pass_info_expander(_A,in_clauses => _B,out_clauses => _B),_A).
+
+->(is_passed(_A),has_feature(_A,passed_arguments)).
+
+:-(clear_acc_def(_A),cond(:<(_A,list),maprel(clear_one_def,_A),clear_one_def(_A))).
+
+:-(clear_one_def(_A),<<-(.(accumulators,_A),@(false))).
+
+->(list_of_accs(_A,_B),|(_C,,(=(_D,cond(has_feature(combined_name(_A),predicates_info,_E),_E,@)),,(=(_F,features(_D,current_module)),cond(_B,cond(has_feature(dcg,_D),=(_C,_F),=(_C,[dcg|_F])),=(_C,_F)))))).
+
+:-(error_expander(_A,file => _B,in_clauses => [_A|_C],line => _D,out_clauses => _C),non_expanded_warning(_A,_B,_D)).
+
+:-(set_error_expander,maprel(set_check_exp,features(predicates_info,current_module))).
+
+:-(reset_error_expander,maprel(reset_check_exp,features(predicates_info,current_module))).
+
+:-(set_check_exp(_A),,(remove_expanders(_A,error_expander),add_expanders_a(_A,error_expander))).
+
+:-(reset_check_exp(_A),remove_expanders(_A,error_expander)).
+
+:-(overriding_warning(@),,(quiet,!)).
+
+:-(overriding_warning(_A),,(write_err("*** Warning: overriding previous declaration"," of accumulator ",_A),nl_err)).
+
+:-(non_expanded_warning(@,@,@),,(quiet,!)).
+
+:-(non_expanded_warning(_A,_B,_C),,(write_err("*** Warning: ",root_sort(_A)),,(nl_err,,(write_err("             is not expanded in file ",_B," near line ",_C,"."),nl_err)))).
+

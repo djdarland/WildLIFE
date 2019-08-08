@@ -1,0 +1,397 @@
+%	$Id: x_getset.lf,v 1.2 1994/12/09 00:27:26 duchier Exp $	
+module("x")? % RM: Mar 24 1993 
+
+% Copyright 1992 Digital Equipment Corporation.
+% Distributed only by permission.
+%
+% Last modified on Mon Jun  7 17:35:19 MET DST 1993 by dumant
+%      modified on Wed Mar 24 06:25:02 1993 by Rmeyer
+%      modified on Thu Aug 27 17:41:06 MET DST 1992 by herve
+%
+%
+% X functions xGet* and xSet* for Life
+% 
+
+
+% connection attributes
+xGetConnectionNetworkDescriptor (C) -> V | xcGetConnectionAttribute(C, 0, V).
+xGetConnectionProtocolVersion (C) -> V | xcGetConnectionAttribute(C, 1, V).
+xGetConnectionProtocolRevision (C) -> V | xcGetConnectionAttribute(C, 2, V).
+xGetConnectionServerVendor (C) -> V | xcGetConnectionAttribute(C, 3, V).
+xGetConnectionImageByteOrder (C) -> V | 
+        xcGetConnectionAttribute(C, 4, R), 
+	xBoolean(V, R).
+xGetConnectionImageUnit (C) -> V | xcGetConnectionAttribute(C, 5, V).
+xGetConnectionImagePad (C) -> V | xcGetConnectionAttribute(C, 6, V).
+xGetConnectionImageBitOrder (C) -> V | 
+        xcGetConnectionAttribute(C, 7, R), 
+	xBoolean(V, R).
+xGetConnectionVendorRelease (C) -> V | xcGetConnectionAttribute(C, 8, V).
+xGetConnectionQueueLength (C) -> V | xcGetConnectionAttribute(C, 9, V).
+xGetConnectionLastEvent (C) -> V | xcGetConnectionAttribute(C, 10, L).
+xGetConnectionLastRequest (C) -> V | xcGetConnectionAttribute(C, 11, L).
+xGetConnectionConnectionName (C) -> V | xcGetConnectionAttribute(C, 12, V).
+xGetConnectionDefaultScreen (C) -> V | xcGetConnectionAttribute(C, 13, V).
+xGetConnectionMinKeycode (C) -> V | xcGetConnectionAttribute(C, 14, V).
+xGetConnectionMaxKeycode (C) -> V | xcGetConnectionAttribute(C, 15, V).
+xGetConnectionScreens (C) -> V | 
+        xcGetConnectionAttribute(C, 16, N), 
+	pxListGet(N, V).
+xGetConnectionMotionBuffer (C) -> V | xcGetConnectionAttribute(C, 17, V).
+xGetConnectionFormats (C) -> V | 
+        xcGetConnectionAttribute(C, 18, N), 
+	pxListGet(N, V).
+
+
+% format attributes
+xGetFormatConnection(F) -> V | xcGetFormatAttribute(F, 0, V).
+xGetFormatDepth(F) -> V | xcGetFormatAttribute(F, 1, V).
+xGetFormatBits(F) -> V | xcGetFormatAttribute(F, 2, V).
+xGetFormatPad(F) -> V | xcGetFormatAttribute(F, 3, V).
+
+
+% screen attributes
+xGetScreenConnection(C,S) -> V | xcGetScreenAttribute(C, S, 0, V).
+xGetScreenRootWindow(C,S) -> V | xcGetScreenAttribute(C, S, 1, V).
+xGetScreenWidth(C,S) -> V | xcGetScreenAttribute(C, S, 2, V).
+xGetScreenHeight(C,S) -> V | xcGetScreenAttribute(C, S, 3, V).
+xGetScreenPhysicalWidth(C,S) -> V | xcGetScreenAttribute(C, S, 4, V).
+xGetScreenPhysicalHeight(C,S) -> V | xcGetScreenAttribute(C, S, 5, V).
+xGetScreenRootDepth(C,S) -> V | xcGetScreenAttribute(C, S, 6, V).
+xGetScreenRootVisual(C,S) -> V | xcGetScreenAttribute(C, S, 7, V).
+xGetScreenDefaultGC(C,S) -> V | xcGetScreenAttribute(C, S, 8, V).
+xGetScreenDefaultColormap(C,S) -> V | xcGetScreenAttribute(C, S, 9, V).
+xGetScreenWhitePixel(C,S) -> V | xcGetScreenAttribute(C, S, 10, V).
+xGetScreenBlackPixel(C,S) -> V | xcGetScreenAttribute(C, S, 11, V).
+xGetScreenMaxColormaps(C,S) -> V | xcGetScreenAttribute(C, S, 12, V).
+xGetScreenMinColormaps(C,S) -> V | xcGetScreenAttribute(C, S, 13, V).
+xGetScreenBackingStore(C,S) -> V | xcGetScreenAttribute(C, S, 14, V). 
+xGetScreenSaveUnders(C,S) -> V | 
+        xcGetScreenAttribute(C, S, 15, R), 
+	xBoolean(V, R).
+xGetScreenRootEventMask(C,S) -> V | 
+        xcGetScreenAttribute(C, S, 16, V). 
+xGetScreenDepths(C,S) -> V | 
+        xcGetScreenAttribute(C, S, 17, N), 
+	pxListGet(N, V).
+
+
+% depth attributes 
+xGetDepths(D) -> V | xcGetDepthAttribute(D, 0, V).
+xGetVisuals(D) -> V | xcGetDepthAttribute(D, 1, N), pxListGet(N, V).
+
+
+% visual attribute 
+xGetVisualClass(Vis) -> V | xcGetVisualAttribute(Vis, 0, V).
+xGetVisualRedMask(Vis) -> V | xcGetVisualAttribute(Vis, 1, V).
+xGetVisualGreenMask(Vis) -> V | xcGetVisualAttribute(Vis, 2, V).
+xGetVisualBlueMask(Vis) -> V | xcGetVisualAttribute(Vis, 3, V).
+xGetVisualColormapBits(Vis) -> V | xcGetVisualAttribute(Vis, 4, V).
+xGetVisualColormapEntries(Vis) -> V | xcGetVisualAttribute(Vis, 5, V).
+
+
+% get window attribute 
+xGetWindowX (W:@(display=>Display))
+	-> V | xcGetWindowAttribute(Display, W, 0, V).
+xGetWindowY (W:@(display=>Display))
+	-> V | xcGetWindowAttribute(Display, W, 1, V).
+xGetWindowWidth (W:@(display=>Display))
+	-> V | xcGetWindowAttribute(Display, W, 2, V).
+xGetWindowHeight (W:@(display=>Display))
+	-> V | xcGetWindowAttribute(Display, W, 3, V).
+xGetWindowBorderWidth (W:@(display=>Display))
+	-> V | xcGetWindowAttribute(Display, W, 4, V).
+xGetWindowDepth (W:@(display=>Display))
+	-> V | xcGetWindowAttribute(Display, W, 5, V).
+xGetWindowRootWindow (W:@(display=>Display))
+	-> V | xcGetWindowAttribute(Display, W, 6, V).
+xGetWindowScreen (W:@(display=>Display))
+	-> V | xcGetWindowAttribute(Display, W, 7, V).
+xGetWindowVisual (W:@(display=>Display))
+	-> V | xcGetWindowAttribute(Display, W, 8, V).
+xGetWindowClass (W:@(display=>Display))
+	-> V | xcGetWindowAttribute(Display, W, 9, V).
+xGetWindowUnionEventMask (W:@(display=>Display))
+	-> V | xcGetWindowAttribute(Display, W, 10, V).
+xGetWindowBitGravity (W:@(display=>Display))
+	-> V | xcGetWindowAttribute(Display, W, 11, V).
+xGetWindowWinGravity (W:@(display=>Display))
+	-> V | xcGetWindowAttribute(Display, W, 12, V).
+xGetWindowBackingStore (W:@(display=>Display))
+	-> V | xcGetWindowAttribute(Display, W, 13, V).
+xGetWindowBackingPlanes (W:@(display=>Display))
+	-> V | xcGetWindowAttribute(Display, W, 14, V).
+xGetWindowBackingPixel (W:@(display=>Display))
+	-> V | xcGetWindowAttribute(Display, W, 15, V).
+xGetWindowOverrideRedirect (W:@(display=>Display))
+	-> V | xcGetWindowAttribute(Display, W, 16, R), xBoolean(V, R).
+xGetWindowSaveUnder (W:@(display=>Display))
+	-> V | xcGetWindowAttribute(Display, W, 17, R), xBoolean(V, R).
+xGetWindowEventMask (W:@(display=>Display))
+	-> V | xcGetWindowAttribute(Display, W, 18, V).
+xGetWindowDontPropagate (W:@(display=>Display))
+	-> V | xcGetWindowAttribute(Display, W, 19, V).
+xGetWindowColormap (W:@(display=>Display))
+	-> V | xcGetWindowAttribute(Display, W, 20, V).
+xGetWindowColormapLoaded (W:@(display=>Display))
+	-> V | xcGetWindowAttribute(Display, W, 21, R), xBoolean(V, R).
+xGetWindowState (W:@(display=>Display))
+	-> V | xcGetWindowAttribute(Display, W, 22, V).
+
+
+% set window attribute 
+xSetWindowX(W:@(display=>Display), V) 
+	:- xcSetWindowAttribute(Display, W, 0, V).
+xSetWindowY(W:@(display=>Display), V) 
+	:- xcSetWindowAttribute(Display, W, 1, V).
+xSetWindowWidth(W:@(display=>Display), V) 
+	:- xcSetWindowAttribute(Display, W, 2, V).
+xSetWindowHeight(W:@(display=>Display), V) 
+	:- xcSetWindowAttribute(Display, W, 3, V).
+xSetWindowBorderWidth(W:@(display=>Display), V) 
+	:- xcSetWindowAttribute(Display, W, 4, V).
+xSetWindowBitGravity(W:@(display=>Display), V) 
+	:- xcSetWindowAttribute(Display, W, 11, V).
+xSetWindowWinGravity(W:@(display=>Display), V) 
+	:- xcSetWindowAttribute(Display, W, 12, V).
+xSetWindowBackingStore(W:@(display=>Display), V) 
+	:- xBackingStore(V, R), xcSetWindowAttribute(Display, W, 13, R).
+xSetWindowBackingPlanes(W:@(display=>Display), V) 
+	:- xcSetWindowAttribute(Display, W, 14, V).
+xSetWindowBackingPixel(W:@(display=>Display), V) 
+	:- xcSetWindowAttribute(Display, W, 15, V).
+xSetWindowOverrideRedirect(W:@(display=>Display), V) 
+	:- xBoolean(V, R), xcSetWindowAttribute(Display, W, 16, R).
+xSetWindowSaveUnder(W:@(display=>Display), V) 
+	:- xBoolean(V, R), xcSetWindowAttribute(Display, W, 17, R).
+
+xSetWindowEventMask(W:@(display=>Display), V) 
+	:- %pxMaskFromBits(V, R, pxmEvent), 
+	xcSetWindowAttribute(Display, W, 18, V).
+
+xSetWindowDontPropagate(W:@(display=>Display), V) 
+	:- %pxMaskFromBits(V, R, pxmEvent), 
+	xcSetWindowAttribute(Display, W, 19, R).
+
+xSetWindowColormap(W:@(display=>Display), V) 
+	:- xcSetWindowAttribute(Display, W, 20, V).
+xSetWindowSibling(W:@(display=>Display), V) 
+	:- xcSetWindowAttribute(Display, W, 23, V).
+xSetWindowStackMode(W:@(display=>Display), V) 
+	:- xcSetWindowAttribute(Display, W, 24, V).
+xSetWindowBackPixmap(W:@(display=>Display), V) 
+	:- xcSetWindowAttribute(Display, W, 25, V).
+xSetWindowBackPixel(W:@(display=>Display), V) 
+	:- xcSetWindowAttribute(Display, W, 26, V), xcSync(Display,0).
+xSetWindowBorderPixmap(W:@(display=>Display), V) 
+	:- xParent(R,V), xcSetWindowAttribute(Display, W, 27, R).
+xSetWindowBorderPixel(W:@(display=>Display), V) 
+	:- xcSetWindowAttribute(Display, W, 28, V).
+xSetWindowCursor(W:@(display=>Display), V) 
+	:- xcSetWindowAttribute(Display, W, 29, V).
+
+
+% TO BE CHANGED: ADD THE PIXMAP IN THE PARAMETERS
+% pixmap attributes
+xGetPixmapWidth(V) :- xcGetPixmapAttribute(0, V).
+xGetPixmapHeight(V) :- xcGetPixmapAttribute(1, V).
+xGetPixmapBorderWidth(V) :- xcGetPixmapAttribute(2, V).
+xGetPixmapDepth(V) :- xcGetPixmapAttribute(3, V).
+xGetPixmapScreen(V) :- xcGetPixmapAttribute(4, V).
+
+
+% get GC attributes   
+
+     %%% passer C en arguments est absolument inutile !!!
+    
+xGetGCFunction(C, GC) -> V | xcGetGCAttribute(GC, 0, V).
+xGetGCPlaneMask(C, GC) -> V | xcGetGCAttribute(GC, 1, V).
+xGetGCForeground(C, GC) -> V | xcGetGCAttribute(GC, 2, V).
+xGetGCBackground(C, GC) -> V | xcGetGCAttribute(GC, 3, V).
+xGetGCLineWidth(C, GC) -> V | xcGetGCAttribute(GC, 4, V).
+xGetGCLineStyle(C, GC) -> V | xcGetGCAttribute(GC, 5, V).
+xGetGCCapStyle(C, GC) -> V | xcGetGCAttribute(GC, 6, R), xCapStyle(V, R).
+xGetGCJoinStyle(C, GC) -> V | xcGetGCAttribute(GC, 7, R), xJoinStyle(V, R).
+xGetGCFillStyle(C, GC) -> V | xcGetGCAttribute(GC, 8, V).
+xGetGCFillRule(C, GC) -> V | xcGetGCAttribute(GC, 9, R), xBoolean(V, R).
+xGetGCTile(C, GC) -> V | xcGetGCAttribute(GC, 10, V).
+xGetGCStipple(C, GC) -> V | xcGetGCAttribute(GC, 11, V).
+xGetGCTileStipXOrigin(C, GC) -> V | xcGetGCAttribute(GC, 12, V).
+xGetGCTileStipYOrigin(C, GC) -> V | xcGetGCAttribute(GC, 13, V).
+xGetGCFont(C, GC) -> V | xcGetGCAttribute(GC, 14, V).
+xGetGCSubwindowMode(C, GC) -> V | xcGetGCAttribute(GC, 15, R), xBoolean(V, R).
+xGetGCGraphicsExposures(C, GC) -> V | 
+        xcGetGCAttribute(GC, 16, R), 
+	xBoolean(V, R).
+xGetGCClipXOrigin(C, GC) -> V | xcGetGCAttribute(GC, 17, V).
+xGetGCClipYOrigin(C, GC) -> V | xcGetGCAttribute(GC, 18, V).
+xGetGCClipMask(C, GC) -> V | xcGetGCAttribute(GC, 19, V).
+xGetGCDashOffset(C, GC) -> V | xcGetGCAttribute(GC, 20, V).
+xGetGCDashLength(C, GC) -> V | xcGetGCAttribute(GC, 21, V).
+xGetGCArcMode(C, GC) -> V | xcGetGCAttribute(GC, 22, R), xBoolean(V, R).
+xGetGCClipList(C, GC) -> V | xcGetGCAttribute(GC, 23, R), xBoolean(V, R).
+xGetGCDashList(C, GC) -> V | xcGetGCAttribute(GC, 24, R), xBoolean(V, R).
+
+
+% set GC attributes 
+xSetGCFunction(C, GC, V) :- xcSetGCAttribute(C, GC, 0, V).
+xSetGCPlaneMask(C, GC, V) :- xcSetGCAttribute(C, GC, 1, V).
+xSetGCForeground(C, GC, V) :- xcSetGCAttribute(C, GC, 2, V).
+xSetGCBackground(C, GC, V) :- xcSetGCAttribute(C, GC, 3, V).
+xSetGCLineWidth(C, GC, V) :- xcSetGCAttribute(C, GC, 4, V).
+xSetGCLineStyle(C, GC, V) :- xcSetGCAttribute(C, GC, 5, V).
+xSetGCCapStyle(C, GC, V) :- xCapStyle(V, R), xcSetGCAttribute(C, GC, 6, R).
+xSetGCJoinStyle(C, GC, V) :- xJoinStyle(V, R), xcSetGCAttribute(C, GC, 7, R).
+xSetGCFillStyle(C, GC, V) :- xcSetGCAttribute(C, GC, 8, V).
+xSetGCFillRule(C, GC, V) :- xBoolean(V, R), xcSetGCAttribute(C, GC, 9, R).
+xSetGCTile(C, GC, V) :- xcSetGCAttribute(C, GC, 10, V).
+xSetGCStipple(C, GC, V) :- xcSetGCAttribute(C, GC, 11, V).
+xSetGCTileStipXOrigin(C, GC, V) :- xcSetGCAttribute(C, GC, 12, V).
+xSetGCTileStipYOrigin(C, GC, V) :- xcSetGCAttribute(C, GC, 13, V).
+xSetGCFont(C, GC, V) :- xcSetGCAttribute(C, GC, 14, V).
+xSetGCSubwindowMode(C, GC, V) :- 
+	xBoolean(V, R), 
+	xcSetGCAttribute(C, GC, 15, R).
+xSetGCGraphicsExposures(C, GC, V) :- 
+	xBoolean(V, R), 
+	xcSetGCAttribute(C, GC, 16, R).
+xSetGCClipXOrigin(C, GC, V) :- xcSetGCAttribute(C, GC, 17, V).
+xSetGCClipYOrigin(C, GC, V) :- xcSetGCAttribute(C, GC, 18, V).
+xSetGCClipMask(C, GC, V) :- xcSetGCAttribute(C, GC, 19, V).
+xSetGCDashOffset(C, GC, V) :- xcSetGCAttribute(C, GC, 20, V).
+xSetGCDashLength(C, GC, V) :- xcSetGCAttribute(C, GC, 21, V).
+xSetGCArcMode(C, GC, V) :- xBoolean(V, R), xcSetGCAttribute(C, GC, 22, R).
+
+
+% image attributes
+xGetImageWidth(I, V) :- xcGetImageAttribute(I, 0, V).
+xGetImageHeight(I, V) :- xcGetImageAttribute(I, 1, V).
+xGetImageOffset(I, V) :- xcGetImageAttribute(I, 2, V).
+xGetImageFormat(I, V) :- xcGetImageAttribute(I, 3, V).
+xGetImageByteOrder(I, V) :- xcGetImageAttribute(I, 4, R), xBoolean(V, R).
+xGetImageUnit(I, V) :- xcGetImageAttribute(I, 5, V).
+xGetImagePad(I, V) :- xcGetImageAttribute(I, 6, V).
+xGetImageBitOrder(I, V) :- xcGetImageAttribute(I, 7, R), xBoolean(V, R).
+xGetImageDepth(I, V) :- xcGetImageAttribute(I, 8, V).
+xGetImageLineBytes(I, V) :- xcGetImageAttribute(I, 9, V).
+xGetImagePixelBits(I, V) :- xcGetImageAttribute(I, 10, V).
+xGetImageRedMask(I, V) :- xcGetImageAttribute(I, 11, V).
+xGetImageGreenMask(I, V) :- xcGetImageAttribute(I, 12, V).
+xGetImageBlueMask(I, V) :- xcGetImageAttribute(I, 13, V).
+
+
+% font attributes 
+xGetFontDirection(F, V) :- xcGetFontAttribute(F, 0, R), xBoolean(V, R).
+xGetFontMinColumn(F, V) :- xcGetFontAttribute(F, 1, V).
+xGetFontMaxColumn(F, V) :- xcGetFontAttribute(F, 2, V).
+xGetFontMinRow(F, V) :- xcGetFontAttribute(F, 3, V).
+xGetFontMaxRow(F, V) :- xcGetFontAttribute(F, 4, V).
+xGetFontAllExist(F, V) :- xcGetFontAttribute(F, 5, R), xBoolean(V, R).
+xGetFontDefaultChar(F, V) :- xcGetFontAttribute(F, 6, V).
+xGetFontMinLeft(F, V) :- xcGetFontAttribute(F, 7, V).
+xGetFontMinRight(F, V) :- xcGetFontAttribute(F, 8, V).
+xGetFontMinWidth(F, V) :- xcGetFontAttribute(F, 9, V).
+xGetFontMinAscent(F, V) :- xcGetFontAttribute(F, 10, V).
+xGetFontMinDescent(F, V) :- xcGetFontAttribute(F, 11, V).
+xGetFontMinAttribute(F, V) :- xcGetFontAttribute(F, 12, V).
+xGetFontMaxLeft(F, V) :- xcGetFontAttribute(F, 13, V).
+xGetFontMaxRight(F, V) :- xcGetFontAttribute(F, 14, V).
+xGetFontMaxWidth(F, V) :- xcGetFontAttribute(F, 15, V).
+xGetFontMaxAscent(F, V) :- xcGetFontAttribute(F, 16, V).
+xGetFontMaxDescent(F, V) :- xcGetFontAttribute(F, 17, V).
+xGetFontMaxAttribute(F, V) :- xcGetFontAttribute(F, 18, V).
+xGetFontAscent(F, V) :- xcGetFontAttribute(F, 19, V).
+xGetFontDescent(F, V) :- xcGetFontAttribute(F, 20, V).
+xGetFontConnection(F, V) :- xcGetFontAttribute(F, 21, V).
+xGetFontFont(F, V) :- xcGetFontAttribute(F, 22, V).
+xGetFontProperties(F, V) :- xcGetFontAttribute(F, 23, N), pxVectorGet(N, V).
+
+
+% TO BE CHANGED: ADD THE POINTER IN THE PARAMETERS
+% get pointer attributes 
+xGetPointerNumerator(V) :- xcGetPointerAttribute(0, V).
+xGetPointerDenominator(V) :- xcGetPointerAttribute(1, V).
+xGetPointerThreshold(V) :- xcGetPointerAttribute(2, V).
+
+
+% TO BE CHANGED: ADD THE POINTER IN THE PARAMETERS
+% set pointer attributes 
+xSetPointerNumerator(V) :- xcSetPointerAttribute(0, V).
+xSetPointerDenominator(V) :- xcSetPointerAttribute(1, V).
+xSetPointerThreshold(V) :- xcSetPointerAttribute(2, V).
+
+
+% get keyboard attributes
+xGetKeyboardKeyClickPercent(V) :- xcGetKeyboardAttribute(0, V).
+xGetKeyboardBellPercent(V) :- xcGetKeyboardAttribute(1, V).
+xGetKeyboardBellPitch(V) :- xcGetKeyboardAttribute(2, V).
+xGetKeyboardBellDuration(V) :- xcGetKeyboardAttribute(3, V).
+xGetKeyboardLed(V) :- xcGetKeyboardAttribute(4, V).
+xGetKeyboardAutoRepeatMode(V) :- xcGetKeyboardAttribute(7, R), xBoolean(V, R).
+xGetKeyboardRepeatKeymap(V) :- 
+	xcGetKeyboardAttribute(8, N), 
+	pxVectorGet(N, R), 
+	pxKeymapToCodes(R,V).
+
+
+% set keyboard attributes
+xSetKeyboardKeyClickPercent(V) :- 
+	xKeyboardDefault(V, R), 
+	xcSetKeyboardAttribute(0, R).
+xSetKeyboardBellPercent(V) :- 
+	xKeyboardDefault(V, R), 
+	xcSetKeyboardAttribute(1, R).
+xSetKeyboardBellPitch(V) :- 
+	xKeyboardDefault(V, R), 
+	xcSetKeyboardAttribute(2, R).
+xSetKeyboardBellDuration(V) :- 
+	xKeyboardDefault(V, R), 
+	xcSetKeyboardAttribute(3, R).
+xSetKeyboardLed(V) :- xcSetKeyboardAttribute(4, V).
+xSetKeyboardLedMode(V) :- xBoolean(V, R), xcSetKeyboardAttribute(5, R).
+xSetKeyboardKey(V) :- xcSetKeyboardAttribute(6, V).
+xSetKeyboardAutoRepeatMode(V) :- 
+	xAutoRepeat(V, R), 
+	xcSetKeyboardAttribute(7, R).
+
+
+% WM_HINTS: format 32 
+xSetWMxInput(V) :- pxp_WM_HINTS(xInput, V, 2, 1, R).
+xSetWMInitialState(V) :- pxp_WM_HINTS(xInitialState, V, 3, 2, V). 
+xSetWMIconPixmap(V) :- pxp_WM_HINTS(xIconPixmap, V, 4, 4, V).
+xSetWMIconWindow(V) :- pxp_WM_HINTS(xIconWindow, V, 5, 8, V).
+xSetWMIconX(V) :- pxp_WM_HINTS(xIconX, V, 6, 16, V).
+xSetWMIconY(V) :- pxp_WM_HINTS(xIconY, V, 7, 16, V).
+xSetWMIconMask(V) :- pxp_WM_HINTS(xIconMask, V, 8, 32, V).
+xSetWMWindowGroup(V) :- pxp_WM_HINTS(xWindowGroup, V, 9, 64, V).
+
+
+% WM_NORMAL_HINTS: format 32 
+xSetWMUserX(V) :- pxp_WM_NORMAL_HINTS(xUserX, V, 2, 1, V).
+xSetWMUserY(V) :- pxp_WM_NORMAL_HINTS(xUserY, V, 3, 1, V).
+xSetWMUserWidth(V) :- pxp_WM_NORMAL_HINTS(xUserWidth, V, 4, 2, V).
+xSetWMUserHeight(V) :- pxp_WM_NORMAL_HINTS(xUserHeight, V, 5, 2, V).
+xSetWMProgramX(V) :- pxp_WM_NORMAL_HINTS(xProgramX, V, 2, 4, V).
+xSetWMProgramY(V) :- pxp_WM_NORMAL_HINTS(xProgramY, V, 3, 4, V).
+xSetWMProgramWidth(V) :- pxp_WM_NORMAL_HINTS(xProgramWidth, V, 4, 8, V).
+xSetWMProgramHeight(V) :- pxp_WM_NORMAL_HINTS(xProgramHeight, V, 5, 8, V).
+xSetWMMinWidth(V) :- pxp_WM_NORMAL_HINTS(xMinWidth, V, 6, 16, V).
+xSetWMMinHeight(V) :- pxp_WM_NORMAL_HINTS(xMinHeight, V, 7, 16, V).
+xSetWMMaxWidth(V) :- pxp_WM_NORMAL_HINTS(xMaxWidth, V, 8, 32, V).
+xSetWMMaxHeight(V) :- pxp_WM_NORMAL_HINTS(xMaxHeight, V, 9, 32, V).
+xSetWMWidthIncrement(V) :- pxp_WM_NORMAL_HINTS(xWidthIncrement, V, 10, 64, V).
+xSetWMHeightIncrement(V) :- 
+	pxp_WM_NORMAL_HINTS(xHeightIncrement, V, 11, 64, V).
+xSetWMMinAspectNumerator(V) :- 
+	pxp_WM_NORMAL_HINTS(xMinAspectNumerator, V, 12, 128, V).
+xSetWMMinAspectDenominator(V) :- 
+	pxp_WM_NORMAL_HINTS(xMinAspectDenominator, V, 13, 128, V).
+xSetWMMaxAspectNumerator(V) :- 
+	pxp_WM_NORMAL_HINTS(xMaxAspectNumerator, V, 14, 128, V).
+xSetWMMaxAspectDenominator(V) :- 
+	pxp_WM_NORMAL_HINTS(xMaxAspectDenominator, V, 15, 128, V).
+xSetWMBaseWidth(V) :- pxp_WM_NORMAL_HINTS(xBaseWidth, V, 16, 256, V).
+xSetWMBaseHeight(V) :- pxp_WM_NORMAL_HINTS(xBaseHeight, V, 17, 256, V).
+xSetWMWindowGravity(V) :-  
+	pxp_WM_NORMAL_HINTS(xWindowGravity, V, 18, 512, V).
+

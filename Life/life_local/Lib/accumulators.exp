@@ -1,0 +1,309 @@
+%	$Id: accumulators.exp,v 1.2 1994/12/08 23:55:59 duchier Exp $	
+module("accumulators")?
+
+import_exp("std_expander")?
+
+open("acc_declarations")?
+
+public(-->,:--,grammars_expander,accumulators_expander,with,is,insert,inv,glob,init,acc_info,pred_info,pass_info,clear_acc_def,acc_auto,in,out,dcg,set_C,reset_C,std_expander,comma,define,macro,clauses,context,code,check_expansion,meta)?
+
+op(1200,xfy,-->)?
+
+non_strict(-->)?
+
+op(1200,xfy,:--)?
+
+non_strict(:--)?
+
+op(500,xfy,=>)?
+
+op(800,xfy,with)?
+
+op(700,xfx,is)?
+
+op(1100,xfy,point_virgule)?
+
+persistent(macros_table)?
+
+persistent('C_function_name')?
+
+global(file,line,gram)?
+
+std_expander(accumulators_expander,head => acc_head,init => acc_init,leaf => acc_leaf,merge => acc_merge,save => acc_save)?
+
+std_expander(grammars_expander,head => acc_head,init => gram_init,leaf => acc_leaf,merge => acc_merge,save => gram_save)?
+
+:-(acc_init(file => _A,line => _B),,(=(file,{_A;"?"}),,(=(line,{_B;"?"}),,(!,<-(gram,false))))).
+
+:-(gram_init(file => _A,in_clauses => _B,line => _C,out_clauses => _B),,(=(file,{_A;"?"}),,(=(line,{_C;"?"}),,(!,<-(gram,true))))).
+
+:-(acc_head(_A,_A,in_clauses => _B,in_code => _C,in_context => _D,out_clauses => _B,out_code => _C,out_context => _E),,(=(_F,root_sort(_A)),,(=(_G,list_of_accs(_F,gram)),,(bind_params(_G,_A,_H,_I,_J),,(=(.(_D,accs),_H),,(=(.(_D,fold),true),,(=(.(_D,pass),_J),,(=(.(_E,accs),_I),,(=(.(_E,pass),_J),=(.(_E,fold),@)))))))))).
+
+:-(acc_save(in_code => _A,in_context => @(accs => _B,fold => _C,pass => _D),out_code => _E,out_context => @(accs => _F,fold => _C,pass => _D)),=(_A,comma(link_accs(features(_B,"accumulators"),false,_B,_F),_E))).
+
+:-(gram_save(in_code => _A,in_context => @(accs => _B,fold => @,pass => _C),out_code => _D,out_context => @(accs => _E,fold => _F,pass => _C)),,(=(_A,comma(link_other_accs(features(_B,"accumulators"),false,dcg,_B,_E),_D)),,(=(.(_B,dcg),.(_E,dcg)),=(_F,false(false))))).
+
+:-(acc_merge(in1 => @(accs => _A,fold => _B,pass => _C),in2 => @(accs => _A,fold => _D,pass => _C),in_code => _E,out => @(accs => _A,fold => _F,pass => _C),out_code => _E),=(_F,and(_B,_D))).
+
+:-(acc_leaf(_A,in_clauses => _B,in_code => _C,in_context => _D,out_clauses => _B,out_code => _E,out_context => _F),;(,(has_feature(_A,acc_expand_pred_table,_G),,(!,&(root_sort(_G),@(_A,in_code => _C,in_context => _D,out_code => _E,out_context => _F)))),acc_pred_xpand(_A,in_code => _C,in_context => _D,out_code => _E,out_context => _F))).
+
+persistent(acc_expand_pred_table)?
+
+non_strict(add_pred)?
+
+:-(add_pred(_A,_B),<<-(.(acc_expand_pred_table,psi2str(_A)),_B)).
+
+add_pred([],xpand_acc_dcg)?
+
+add_pred(cons,xpand_acc_dcg)?
+
+add_pred(!,xpand_cut)?
+
+add_pred(disj,xpand_code)?
+
+add_pred(with,xpand_with)?
+
+add_pred(+,xpand_acc)?
+
+add_pred(is,xpand_unif)?
+
+add_pred(insert,xpand_insert)?
+
+add_pred(meta,xpand_meta)?
+
+add_pred(@,xpand_interpret)?
+
+non_strict(xpand_acc)?
+
+:-(xpand_acc(+(_A,_B),in_code => _C,in_context => @(accs => _D,fold => _E,pass => _F),out_code => _G,out_context => @(accs => _H,fold => _E,pass => _F)),,(;(,(get_pass_info(_B,_A,_I,acc_pred => _J),,(!,;(,(:<(_J,@),,(!,cond(has_feature(_B,_F,_K),=(_K,_I),out_of_context_warning(_B)))),accumulation_error(_B)))),;(,(get_acc_info(_B,_A,_L,_M,acc_pred => _J),,(!,;(,(:<(_J,@),,(!,cond(has_feature(_B,_D,_L),=(.(_H,_B),_M),out_of_context_warning(_B)))),accumulation_error(_B)))),non_declared_error(_B))),=(_C,comma(link_other_accs(features(_D,current_module),true,_B,_D,_H),comma(_J,_G))))).
+
+:-(xpand_acc_dcg(_A,in_code => _B,in_context => @(accs => _C,fold => _D,pass => _E),out_code => _F,out_context => @(accs => _G,fold => true,pass => _E)),,(cond(has_feature(dcg,_C,_H),,(=(_I,'C'(_A,_D,_H,_J)),=(.(_G,dcg),_J)),out_of_context_warning(dcg)),=(_B,comma(link_other_accs(features(_C,"accumulators"),true,dcg,_C,_G),comma(_I,_F))))).
+
+:-(xpand_unif(is(_A,_B),in_code => _C,in_context => @(accs => _D,fold => _E,pass => _F),out_code => _G,out_context => @(accs => _H,fold => _E,pass => _F)),,(cond(and(:<(_A,@),has_feature(_A,_D,_I)),cond(and(:<(_B,@),has_feature(_B,_D,_J)),=(_K,=(_J,_I)),cond(and(:<(_B,@),has_feature(_B,_F,_L)),=(_K,=(_L,_I)),=(_K,=(_I,_B)))),cond(and(:<(_A,@),has_feature(_A,_F,_M)),cond(and(:<(_B,@),has_feature(_B,_D,_J)),=(_K,=(_J,_M)),cond(and(:<(_B,@),has_feature(_B,_F,_L)),=(_K,=(_L,_M)),=(_K,=(_B,_M)))),cond(and(:<(_B,@),has_feature(_B,_D,_N)),=(_K,=(_A,_N)),cond(and(:<(_B,@),has_feature(_B,_F,_L)),=(_K,=(_A,_L)),non_declared_error2(_A,_B))))),=(_C,comma(link_accs(features(_D,"accumulators"),true,_D,_H),comma(_K,_G))))).
+
+:-(xpand_insert(insert(_A,_B,_C),in_code => _D,in_context => @(accs => _E,fold => _F,pass => _G),out_code => _H,out_context => @(accs => _I,fold => _F,pass => _G)),,(cond(has_feature(_C,_E,_J),=(_K,,(=(_A,_J),=(_B,.(_I,_C)))),non_declared_error(_C)),,(link_other_accs(features(_E,current_module),true,_C,_E,_I),=(_D,comma(_K,_H))))).
+
+:-(xpand_cut(@,in_code => _A,in_context => @(accs => _B,fold => true,pass => _C),out_code => _D,out_context => @(accs => _B,fold => false,pass => _C)),=(_A,,(!,_D))).
+
+:-(xpand_cut(@,in_code => _A,in_context => @(accs => _B,fold => _C: false,pass => _D),out_code => _E,out_context => @(accs => _F,fold => false,pass => _D)),cond(:==(.(_C,1),false),,(link_other_accs(features(_B,"accumulators"),true,dcg,_B,_F),=(_A,,(=(.(_B,dcg),.(_F,dcg)),,(!,_E)))),,(=(_B,_F),=(_A,,(!,_E))))).
+
+:-(xpand_code(_A,in_code => _B,in_context => @(accs => _C,fold => true,pass => _D),out_code => _E,out_context => @(accs => _C,fold => false,pass => _D)),,(!,=(_B,comma(transLifeCode(_A),_E)))).
+
+:-(xpand_code(_A,in_code => _B,in_context => @(accs => _C,fold => _D: false,pass => _E),out_code => _F,out_context => @(accs => _G,fold => false,pass => _E)),cond(:==(.(_D,1),false),,(link_other_accs(features(_C,"accumulators"),true,dcg,_C,_G),=(_B,,(=(.(_C,dcg),.(_G,dcg)),comma(transLifeCode(_A),_F)))),,(=(_C,_G),=(_B,comma(transLifeCode(_A),_F))))).
+
+:-(xpand_meta(meta(_A,_B),in_code => _C,in_context => @(accs => _D,fold => _E,pass => _F),out_code => _G,out_context => @(accs => _H,fold => _I,pass => _F)),,(cond(_J: gram,=(_I,true),=(_I,_E)),,(;(,(=(_B,{[];cons}),!),<-(_B,[copy_pointer(_B)])),,(;(,(_J,,(!,;(,(s_member(_B,dcg),,(!,=(_K,_B))),=(_K,[dcg|_B])))),=(_K,_B)),,(part_parameters(_K,_A,_L,_M),,(part_sort(features(_D,current_module),_L,_N,_O,_P),,(bind_accs(_N,_Q,_D,_H),,(init_accs(_P,_Q),,(part_sort(features(_F,current_module),_M,_R,@,_S),,(bind_passed(_R,_Q,_F),,(init_passed(_S,_Q),=(_C,comma(link_accs(_O,true,_D,_H),comma(`(&(_A,_Q)),_G)))))))))))))).
+
+:-(acc_pred_xpand(_A,in_code => _B,in_context => @(accs => _C,fold => _D,pass => _E),out_code => _F,out_context => @(accs => _G,fold => _H,pass => _E)),,(=(_I,root_sort(_A)),,(cond(_J: gram,=(_H,true),=(_H,_D)),;(,(expandable(_I),,(!,,(=(_K,list_of_accs(_I,_J)),,(part_parameters(_K,_I,_L,_M),,(part_sort(features(_C,current_module),_L,_N,_O,_P),,(bind_accs(_N,_A,_C,_G),,(init_accs(_P,_A),,(part_sort(features(_E,current_module),_M,_Q,@,_R),,(bind_passed(_Q,_A,_E),,(init_passed(_R,_A),=(_B,comma(link_accs(_O,true,_C,_G),comma(_A,_F))))))))))))),,(;(,(gram,,(!,,(bind_accs([dcg],_A,_C,_G),link_other_accs(features(_C,"accumulators"),true,dcg,_C,_G)))),link_accs(features(_C,"accumulators"),true,_C,_G)),=(_B,comma(_A,_F))))))).
+
+:-(xpand_interpret(_A,in_code => _B,in_context => @(accs => _C,fold => @,pass => _D),out_code => _E,out_context => @(accs => _F,fold => true,pass => _D)),,(=(_G,gram),,(=(_H,root_sort('C_function_name')),,(=(_B,comma(interpret_symbols(_A,c_name => _H,gram => _G,in_context => @(accs => _C,pass => _D),out_context => @(accs => _F,pass => _D)),_E)),,(interpretation_warning,=(_F,create_out(features(_C,"accumulators")))))))).
+
+:-(xpand_with(@(_A,_B),in_code => _C,in_context => @(accs => _D,fold => _E,pass => _F),out_code => _G,out_context => @(accs => _H,fold => _I,pass => _F)),,(create_context(_B,cur_ctxt => _J: @(_D,_H,_F),globals => _K,new_ctxt => _L: @(_M,_N,_O),used => _P),,(add_other_parameters(_L,_J,_P,_K),accumulators_expander_traverse(_A,@,in_code => _C,in_context => @(accs => _M,fold => _E,pass => _O),out_code => _G,out_context => @(accs => _N,fold => _I,pass => _O))))).
+
+:-(create_context(_A,cur_ctxt => _B,globals => _C,new_ctxt => _D,used => _E),cond(:==(_A,,),create_conjunction(_A,cur_ctxt => _B,globals => _C,new_ctxt => _D,used => _E),cond(:==(_A,with),,(create_context(.(_A,1),cur_ctxt => _B,globals => _C,new_ctxt => _D,used => _E),create_context(.(_A,2),cur_ctxt => _B,globals => _C,new_ctxt => _D,used => _E)),cond(:==(_A,=),create_relation(_A,cur_ctxt => _B,globals => _C,new_ctxt => _D,used => _E),=(@,create_acc(_A,cur_ctxt => _B,globals => _C,new_ctxt => _D,used => _E)))))).
+
+:-(create_conjunction(@(_A,_B),cur_ctxt => _C,globals => _D,new_ctxt => _E,used => _F),,(!,,(create_context(_A,cur_ctxt => _C,globals => _D,new_ctxt => _E,used => _F),create_context(_B,cur_ctxt => _C,globals => _D,new_ctxt => _E,used => _F)))).
+
+:-(create_relation(@(_A,_B),cur_ctxt => _C,globals => _D,new_ctxt => _E,used => _F),,(!,=(create_acc(_A,cur_ctxt => _C,globals => _D,new_ctxt => _E,used => _F),create_acc(_B,cur_ctxt => _C,globals => _D,new_ctxt => _E,used => _F)))).
+
+->(create_acc(_A,cur_ctxt => _B,globals => _C,new_ctxt => _D,used => _E),cond(:==(_A,=>),create_composition(_A,cur_ctxt => _B,globals => _C,new_ctxt => _D,used => _E),cond(:==(_A,glob),create_global(.(_A,1),cur_ctxt => _B,globals => _C,new_ctxt => _D,used => _E),cond(:==(_A,inv),create_inverse(.(_A,1),cur_ctxt => _B,globals => _C,new_ctxt => _D,used => _E),cond(:==(_A,init),create_init(.(_A,1),.(_A,2),cur_ctxt => _B,globals => _C,new_ctxt => _D,used => _E),create_local(_A,cur_ctxt => _B,globals => _C,new_ctxt => _D,used => _E)))))).
+
+->(create_composition(@(_A,_B),cur_ctxt => _C,globals => _D,new_ctxt => _E,used => _F),|(@(_G,_H),,(=(_G,.(_I: create_acc(_A,cur_ctxt => _C,globals => _D,new_ctxt => _E,used => _F),1)),,(=(_H,.(_J: create_acc(_B,cur_ctxt => _C,globals => _D,new_ctxt => _E,used => _F),2)),=(.(_I,2),.(_J,1)))))).
+
+->(create_global(_A,cur_ctxt => @(_B,_C,@),globals => _D,new_ctxt => @,used => @),cond(has_feature(_A,_B,_E),|(&(strip(_A),@(_E,.(_C,_A))),=(.(_D,_A),true)),|(@,undefined_global_error(_A)))).
+
+->(create_inverse(_A,cur_ctxt => _B,globals => _C,new_ctxt => _D,used => _E),|(@(_F,_G),=(@(_G,_F),create_acc(_A,cur_ctxt => _B,globals => _C,new_ctxt => _D,used => _E)))).
+
+->(create_init(_A,_B,cur_ctxt => _C,globals => _D,new_ctxt => _E,used => _F),|(&(create_local(_A,cur_ctxt => _C,globals => _D,new_ctxt => _E,used => _F),@(_G,_H)),;(,(get_pass_info(_A,start => _I),,(!,=(_I,_G))),;(,(get_acc_info(_A,in_start => _J,out_start => _K),,(!,cond(:==(_B,in),=(_G,_J),cond(:==(_B,out),=(_H,_K),,(=(_G,_J),=(_H,_K)))))),initialization_error(_A))))).
+
+->(create_local(_A,cur_ctxt => _B,globals => _C,new_ctxt => _D,used => _E),cond(:<(_A,@),cond(is_passed(_A),|(_A,,(=(.(.(_D,3),_A),.(_A,1)),=(.(_E,_A),true))),cond(is_acc(_A),create_new_local(_A,cur_ctxt => _B,globals => _C,new_ctxt => _D,used => _E),|(true,non_declared_error(_A)))),strip(_A))).
+
+->(create_new_local(_A,cur_ctxt => @,globals => @,new_ctxt => @(_B,_C,@),used => _D),|(&(strip(_A),@(.(_B,_A),.(_C,_A))),=(.(_D,_A),true))).
+
+:-(add_other_parameters(@(_A,_B,_C),@(_D,_E,_F),_G,_H),,(add_other_accs(features(_D,"accumulators"),_D,_E,_A,_B,_G,_H),add_other_passed(features(_F,"accumulators"),_F,_C,_G,_H))).
+
+:-(add_other_accs([]),!).
+
+:-(add_other_accs([_A|_B],_C,_D,_E,_F,_G,_H),,(cond(has_feature(_A,_G),cond(has_feature(_A,_H),succeed,=(.(_C,_A),.(_D,_A))),cond(has_feature(_A,_H),succeed,,(=(.(_C,_A),.(_E,_A)),=(.(_D,_A),.(_F,_A))))),add_other_accs(_B,_C,_D,_E,_F,_G,_H))).
+
+:-(add_other_passed([]),!).
+
+:-(add_other_passed([_A|_B],_C,_D,_E,_F),,(cond(has_feature(_A,_E),succeed,cond(has_feature(_A,_F),succeed,=(.(_C,_A),.(_D,_A)))),add_other_passed(_B,_C,_D,_E,_F))).
+
+non_strict(interpret_symbols)?
+
+:-(_A: interpret_symbols(_B,c_name => _C,gram => _D,in_context => _E,out_context => _F),;(,(:<(_B,@),,(!,,(=(_G,root_sort('C_function_name')),,(=(_H,root_sort(gram)),,(set_C(_C),,(<-(gram,_D),,(accumulators_expander_traverse(_B,in_code => _I,in_context => _E,out_code => succeed,out_context => _F),,(_I,,(set_C(_G),<-(gram,_H)))))))))),residuate(_B,_A))).
+
+:-(acc_auto(_A,_B),make_acc_auto(_A,_B)).
+
+associate_expanders(acc_auto,acc_auto_expander)?
+
+:-(acc_auto_expander(acc_auto(_A,_B),in_clauses => _C,out_clauses => _C),make_acc_auto(_A,_B)).
+
+:-(make_acc_auto([_A|_B],_C),,(define(_A,+(_A,_C)),make_acc_auto(_B,_C))).
+
+make_acc_auto([]).
+
+std_expander(check_pred,head => check_head,init => acc_init,leaf => check_leaf)?
+
+:-(check_head(_A,_A,in_clauses => _B,in_code => _C,in_context => _D,out_clauses => _B,out_code => _C,out_context => _D),;(,(expandable(_A),,(!,non_expanded_warning(_A,file,line))),succeed)).
+
+:-(check_leaf(_A,in_clauses => _B,in_code => _C,in_context => _D,out_clauses => _B,out_code => _E,out_context => _D),,(;(,(expandable(_A),,(!,non_expanded_warning(_A,file,line))),succeed),=(_C,comma(_A,_E)))).
+
+:-(check_expansion,set_check_expansion).
+
+:-(set_check_expansion,,(remove_expanders(:-,check_pred),,(add_expanders_a(:-,check_pred,:-),,(set_error_expander,<<-(check_expansion_flag,true))))).
+
+:-(reset_check_expansion,,(remove_expanders(:-,check_pred),,(reset_error_expander,<<-(check_expansion_flag,false)))).
+
+acc_info(dcg,_A,_B,_C,acc_pred => 'C'(_A,false,_B,_C))?
+
+->(default_C(_A: list,true,_B,_C),|(succeed,=(_B,termSequence(_A,_C)))).
+
+->(default_C(_A: list,false,_B,_C),=(_B,termSequence(_A,_C))).
+
+:-(set_C(_A),,(set_func_arg('C'(_B,_C,_D,_E),apply(_B,_C,_D,_E,functor => _A)),<<-('C_function_name',`(_A)))).
+
+:-(reset_C,,(set_func_arg('C'(_A,_B,_C,_D),default_C(_A,_B,_C,_D)),<<-('C_function_name',`(default_C)))).
+
+dynamic('C')?
+
+->('C'(_A,_B,_C,_D),default_C(_A,_B,_C,_D)).
+
+<<-('C_function_name',`(default_C))?
+
+associate_expanders(-->,grammars_expander,:-)?
+
+associate_expanders(:--,accumulators_expander,:-)?
+
+:-(:--(_A,_B),,(accumulators_expander(@(_A,_B),file => "?",in_clauses => _C,line => "?",out_clauses => []),maprel(assert,_C))).
+
+:-(-->(_A,_B),,(grammars_expander(@(_A,_B),file => "?",in_clauses => _C,line => "?",out_clauses => []),maprel(assert,_C))).
+
+non_strict(transLifeCode)?
+
+->(transLifeCode({_A|_B}),point_virgule(_A,transLifeCode(_B))).
+
+->(transLifeCode({}),fail).
+
+->(transLifeCode([]),fail).
+
+->(termSequence([],_A),_A).
+
+->(termSequence([_A|_B],_C),[_A|termSequence(_B,_C)]).
+
+:-(accumulation_error(_A),,(nl_err,,(write_err("*** Error: In file """,file,""" near line ",line),,(nl_err,,(write_err("    Accumulator ",_A," has no accumulation predicate."),fail))))).
+
+:-(undefined_global_error(_A),,(nl_err,,(write_err("*** Error: In file """,file,""" near line ",line),,(nl_err,,(write_err("           ",_A," should appear in global context."),fail))))).
+
+:-(initialization_error(_A),,(nl_err,,(write_err("*** Error: In file """,file,""" near line ",line),,(nl_err,,(write_err("           No initialization information for accumulator: ",_A,"."),fail))))).
+
+:-(non_declared_error(_A),,(nl_err,,(write_err("*** Error: In file """,file,""" near line ",line),,(nl_err,,(write_err("           ",_A," is not declared as an accumulator "),,(nl_err,,(write_err("           or a passed argument."),fail))))))).
+
+:-(non_declared_error2(_A,_B),,(nl_err,,(write_err("*** Error: In file """,file,""" near line ",line),,(nl_err,,(write_err("           Nor ",_A," or ",_B," is declared as an ","accumulator "),,(nl_err,,(write_err("           or a passed argument."),fail))))))).
+
+:-(pred_info_error(_A,_B),,(nl_err,,(write_err("*** Error: ",_A," appearing in pred_info(",_B,")"),,(nl_err,,(write_err("           is not declared as an accumulator ","or a passed argument."),fail))))).
+
+:-(out_of_context_warning(@),,(quiet,!)).
+
+:-(out_of_context_warning(_A),,(nl_err,,(write_err("*** Warning: In file ",file," near line ",line),,(nl_err,,(write_err("             Attempt to accumulate in ",_A," not appearing in the context."),nl_err))))).
+
+:-(interpretation_warning,,(quiet,!)).
+
+:-(interpretation_warning,,(nl_err,,(write_err("*** Warning: In file ",file," near line ",line),,(nl_err,,(write_err("             a symbol has to be interpreted."),nl_err))))).
+
+:-(bind_params([]),!).
+
+:-(bind_params([_A|_B],_C,_D,_E,_F),,(bind_param(_A,_C,_D,_E,_F),bind_params(_B,_C,_D,_E,_F))).
+
+:-(bind_param(_A,_B,_C,_D,_E),;(,(is_passed(_A),,(!,=(.(_B,_A),.(_E,_A)))),;(,(get_acc_info(_A,in_name => _F,out_name => _G),,(!,,(=(.(_B,_F),_H),,(=(.(_C,_A),_H),,(=(.(_B,_G),_I),=(.(_D,_A),_I)))))),pred_info_error(_A,root_sort(_B))))).
+
+:-(bind_accs([]),!).
+
+:-(bind_accs([_A|_B],_C,_D,_E),,(bind_acc(_A,_C,_D,_E),bind_accs(_B,_C,_D,_E))).
+
+:-(bind_acc(_A,_B,_C,_D),,(;(get_acc_info(_A,in_name => _E,out_name => _F),,(=(_E,strcon("in_",psi2str(_A))),=(_F,strcon("out_",psi2str(_A))))),,(!,,(=(.(_B,_E),_G),,(=(.(_C,_A),_G),,(=(.(_B,_F),_H),=(.(_D,_A),_H))))))).
+
+:-(bind_passed([]),!).
+
+:-(bind_passed([_A|_B],_C,_D),,(=(.(_C,_A),.(_D,_A)),bind_passed(_B,_C,_D))).
+
+->(link_other_accs([],@,_A,_B,_C),|(succeed,cond(has_feature(_A,_B),=(.(_C,_A),@)))).
+
+->(link_other_accs([_A|_B],true,_C,_D,_E),|(succeed,,(cond(:\==(_A,_C),=(.(_D,_A),.(_E,_A))),link_other_accs(_B,true,_C,_D,_E)))).
+
+->(link_other_accs([_A|_B],false,_C,_D,_E),|(_F,,(cond(:\==(_A,_C),,(=(.(_G: accs,_A),.(_D,_A)),=(.(_H: accs,_A),.(_E,_A)))),,(link_other_accs_false(_B,_C,_D,_E,_G,_H),cond(:==(features(_G,"accumulators"),[]),=(_F,succeed),=(_F,=(_G,_H))))))).
+
+:-(link_other_accs_false([_A|_B],_C,_D,_E,_F,_G),,(!,,(cond(:\==(_A,_C),,(=(.(_F,_A),.(_D,_A)),=(.(_G,_A),.(_E,_A)))),link_other_accs_false(_B,_C,_D,_E,_F,_G)))).
+
+:-(link_other_accs_false([],_A,_B,_C),cond(has_feature(_A,_B),=(.(_C,_A),@))).
+
+->(link_accs([]),succeed).
+
+->(link_accs([_A|_B],true,_C,_D),|(succeed,,(=(.(_C,_A),.(_D,_A)),link_accs(_B,true,_C,_D)))).
+
+->(link_accs(_A,false,_B,_C),|(_D,cond(:==(_A,[]),=(_D,succeed),|(true,,(add_features(_A,_C),=(_D,=(&(copy_pointer(_B),accs),&(copy_pointer(_C),accs)))))))).
+
+:-(add_features([_A|_B],_C),,(!,,(=(.(_C,_A),@),add_features(_B,_C)))).
+
+add_features([]).
+
+:-(init_accs([]),!).
+
+:-(init_accs([_A|_B],_C),,(;(,(get_acc_info(_A,in_name => _D,in_start => _E,out_name => _F,out_start => _G),,(=(.(_C,_D),_E),=(.(_C,_F),_G))),succeed),,(!,init_accs(_B,_C)))).
+
+:-(init_passed([]),!).
+
+:-(init_passed([_A|_B],_C),,(get_pass_info(_A,start => _D),,(!,,(=(.(_C,_A),_D),init_passed(_B,_C))))).
+
+->(create_out([_A|_B]),|(_C: create_out(_B),=(.(_C,_A),@))).
+
+->(create_out([]),@).
+
+:-(part_parameters([],@,[],[]),!).
+
+:-(part_parameters(_A,_B,_C,_D),part_params_2(_A,_B,[],_C,[],_D)).
+
+:-(part_params_2([],@,_A,_A,_B,_B),!).
+
+:-(part_params_2([_A|_B],_C,_D,_E,_F,_G),,(cond(is_passed(_A),,(=(_D,_H),=(_I,[_A|_F])),cond(is_acc(_A),,(=(_I,_F),=(_H,[_A|_D])),pred_info_error(_A,_C))),part_params_2(_B,_C,_H,_E,_I,_G))).
+
+:-(map_pred([_A|_B],_C),,(!,,(&(copy_pointer(_C),@(_A)),map_pred(_B,_C)))).
+
+map_pred([]).
+
+->(s_member([_A|_B],_C),cond(:\==(_A,_C),s_member(_B,_C))).
+
+->(s_member([]),false).
+
+non_strict(set_func_arg)?
+
+:-(set_func_arg(_A,_B),,(=(_C,root_sort(_A)),,(retract(->(_C,@)),assert(->(_A,_B))))).
+
+->(feats(_A),feat_values2(features(_A,"accumulators"),_A)).
+
+->(feat_values2([_A|_B],_C),[.(_C,_A)|feat_values2(_B,_C)]).
+
+->(feat_values2([]),[]).
+
+->(point_virgule(_A,_B),cond(:=<(_A,fail),_B,cond(:=<(_B,fail),_A,;(_A,_B)))).
+
+->(flatten([_A|_B]),append(_A,flatten(_B))).
+
+->(flatten([]),[]).
+
+:-(part_sort([],_A,[],[],_A),!).
+
+:-(part_sort([_A|_B],_C,_D,_E,_F),cond(memberAndRest_sort(_A,_C,_G),,(part_sort(_B,_G,_H,_E,_F),=(_D,[_A|_H])),,(part_sort(_B,_C,_D,_I,_F),=(_E,[_A|_I])))).
+
+->(memberAndRest_sort(@,[],@),false).
+
+->(memberAndRest_sort(_A,[_B|_C],_D),cond(:==(_A,_B),|(true,=(_D,_C)),|(memberAndRest_sort(_A,_C,_E),=(_D,[_B|_E])))).
+
+->(sort_member(_A,[_B|_C]),cond(:==(_A,_B),true,sort_member(_A,_C))).
+
+->(sort_member(@,[]),false).
+
+->(sorts_list_diff([_A|_B],_C),cond(sort_member(_A,_C),sorts_list_diff(_B,_C),[_A|sorts_list_diff(_B,_C)])).
+
+->(sorts_list_diff([],@),[]).
+

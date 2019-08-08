@@ -1,0 +1,104 @@
+
+                               
+                              GAUSS
+
+          An  Incremental Solver for Linear Equations written in LIFE
+
+
+ 1 How to use the solver ?
+ -------------------------
+
+ First,needless to say, load it. You'll then have to start the solver.
+ In the most current case, at the moment when you start the solver, you
+ want to give hime immediately some equations to resolve. Here is the
+ way to do it :
+ starter([equation1,equation2...],Channel)?
+
+   The "Channel" must be an uninstantiated variable. It will play the
+ role of a constraint queue, the mandatory passage for sending new
+ equations to the solver.
+   The equations are of any of the form described below, in the
+ normalization module. But don't bother to look through all the code,
+ here is the authorized formulae :
+      => All formulaes contructed with LIFE variables, numbers, and the
+         "+", "*", "-" and "~" symbols. The three formers have their
+         natural syntax (i.e. binary, infix, left-associative and the
+         such) and meaning. Note that they can't be used as unary
+         operators, although it's a very common usage. The "~" sign is
+         a representation of the unary minus.
+      => Two such expressions, each on one side of an equal sign.
+
+ Note : The former are supposed to be equal to zero. The latter
+        behave in the obvious way.
+
+ At this point, the reader/user may be puzzled by the fact that a
+ linear equation solver accepts any type of polynomial equations as
+ input. To be honest, the program behave in the following way :
+  - Even if your equation doesn't look linear, it will try to expand,
+  reduce and simplify it, in case all high degree terms could be
+  eliminated.
+  - If, after all its try, the normalizer can't turn your work into sum
+  of couples (I mean product) number/variable, it will fail, with a
+  polite note saying that your entry wasn't linear.
+
+ I all has worked fine, the solver will treat your equations, and then
+ you'll be back to the usual LIFE environement, with strange values
+ assigned to your previously free variables. Note that (and, I know,
+ that's a pity) these values will be the only output of the solver.
+
+  - The "Channel" variable : You don't have to worry about is value. It
+  should be something like q(@~). The tlda, as any experimented life
+  user will know, means that a function has residuate on this variable.
+  Don't worry : It is our solver itself, quietly waiting for you to
+  give him more equations.
+  - On the opposite, the values of the variables that has occured in
+  your equation is of great interest :  There you'll find the value, in
+  the mathematical sense, of your variable. The psi-term that is
+  associated with each variable looks like the following :
+
+       X : vr(3,val=>[5*Y,-2*Z,765],wlist=>[]) 
+
+ The sort "vr" for "variable" is just here on programming purpose, as
+ is the identifier (the first field, with value 3 in our exemple).
+ The attribute wlist won't give you very interesting hints either,
+ unless you worry about the conception of th program. The more
+ significant field is, for the user, the "val" field. If the variable
+ has a definite numeric value (deduced from the equation system), it
+ will be stored here, in a one element list ([42], for exemple). Else,
+ it will provide you with a linear function of other variables, which
+ is, in our former example, f(Y,Z)= 5Y - 2Z + 765. This function will
+ automatically be replaced by a more precise one, or eventually a
+ numeric value, when you'll give further information to the solver.
+
+
+ 2 Feeding the Beast
+ -------------------
+
+ The "Channel" variable will allow you to give additional equations,
+ that will be solved in the context defined by previous equations (i.e,
+ the partial or definitive values your variables have now). You could
+ do that "by hand", of course, by directly modifying the content of the
+ channel variable, but we won't encourage such a practice. We've made
+ for you two cute functions which theoretically do this job properly.
+ Their syntax is :
+
+         feeder(equation,Channel)?
+         fast_feeder([eq1,eq2,...],Channel)?
+ They work exactly the same way, except that feeder wwill handle a
+ single equation while fast_feeder take a list of equation. Use
+ whichever you want.
+ By the way, you're perfectly free to put new variables in the
+ equations. The counter "varcount" will assure them to have different Id.
+
+ What else to say ? Well, I think I've told the main points, on the
+ user point of view I mean.  So... enjoy !
+
+
+ Author: Christophe Bonnet
+ (c) Copyright 1992 Digital Equipment Corporation
+ All Rights Reserved
+
+ I'll be glad to have any comments and feedback from those who may be
+ interested in  this small (but, I hope, interesting) program. Bug
+ reports will be -huh- useful, of course. And I'm alas pretty sure
+ there is plenty of those nasty animals in my code...

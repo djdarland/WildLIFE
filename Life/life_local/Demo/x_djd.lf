@@ -1,0 +1,37 @@
+% Simple PERT scheduler written in Life.
+% With graphical interface
+
+import("xtools")?
+
+djd_1 :-
+	square_size <- 40, 
+	unit_length <- 10, 
+	bar_height <- 20,
+	problem <<- @,
+	def_font(title_font,
+		 new_font("lucidasans-14")),
+	Problem_panel = panel(50, 50, border => 20,
+			      title => "PERT Scheduling"),
+	create_box(Problem_panel).
+%%% Settings
+
+def_color(hilight_colors, 1, blue) ?
+def_color(main_colors, 1, blue) ?
+def_color(shade_colors, 1, blue) ?
+def_color(hilight_colors, 2, red) ?
+def_color(main_colors, 2, red) ?
+def_color(shade_colors, 2, red) ?
+def_color(shade_colors,on_col, 'dim grey') ?
+def_color(highlight_colors,on_col, white) ?
+def_color(main_colors,on_col, 'navy blue') ?
+def_color(main_colors, blocked, 'dim grey')?
+def_color(shade_colors,blocked,'dim grey') ?
+def_color(highlight_colors,blocked,white) ?
+
+% Sample inputs for the PERT scheduler:
+
+
+
+nth(1, [H|@]) -> H.
+nth(N, [@|T]) -> nth(N-1, T).
+

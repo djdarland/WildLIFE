@@ -1,0 +1,37 @@
+		INSTALLATION OF THE DEMO
+		========================
+
+The demo will be automatically installed as part of the normal
+installation of wild_life. 
+
+Usage:
+------
+
+Start wild_life and then load the file "life_demo" and execute the query
+> demo?
+
+That's all; enjoy!
+
+Please let us know if you have any problems!
+Email to life-bugs@cs.sfu.ca
+
+A note on how to install the fonts:
+===================================
+
+Normally, the fonts are found automatically and are part of the
+Wild_life release; nothing needs to be done.
+
+  If you get a warning message telling you that the fonts were not
+found, you have to make sure that the fonts in the directory
++SETUPDIR+/Demo/Fonts are actually accessible by your Xserver and are in
+the right format. To do this, copy this directory to a location
+/this/is/the/new/path/Fonts, which is accessible by your Xserver, and
+then issue the command 
+
+xset +fp /this/is/the/new/path/Fonts
+
+before invoking wild_life. When asked if the demo fonts should be used
+anyhow, answer 'yes'.
+
+That's all! Good luck and let us know if you have any problems.
+Email to life-bugs@cs.sfu.ca

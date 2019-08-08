@@ -1,0 +1,75 @@
+check_fp.in:else xset fp+ +SETUPDIR+/Demo/Fonts 2>&1 | grep "bad font path" > \
+color_edit.lf:	   font => title_font,
+color_edit.lf:def_font(title_font,
+color_edit.lf:	 new_font(cond(life_demo#using_demo_fonts,
+crypt.lf:		  font_id => title_font).
+crypt.lf:time_box := s_box(font_id => z_font,
+crypt.lf:		  font_id => title_font).
+crypt.lf:p_button := push_button(font_id => z_font).
+crypt.lf:				      font => title_font,
+crypt.lf:				 font_id => z_font)
+crypt.lf:% Colors and fonts
+crypt.lf:def_font(z_font,
+crypt.lf:	 new_font(cond(life_demo#using_demo_fonts,
+crypt.lf:def_font(title_font,
+crypt.lf:	 new_font(cond(life_demo#using_demo_fonts,
+INSTALL.in:A note on how to install the fonts:
+INSTALL.in:Normally, the fonts are found automatically and are part of the
+INSTALL.in:  If you get a warning message telling you that the fonts were not
+INSTALL.in:found, you have to make sure that the fonts in the directory
+INSTALL.in:before invoking wild_life. When asked if the demo fonts should be used
+life_demo.lf.in:public(demo, using_demo_fonts) ?
+life_demo.lf.in:%%% Make sure the Demo fonts are known by the Xserver
+life_demo.lf.in:persistent(using_demo_fonts) ?
+life_demo.lf.in:check_font_path :-
+life_demo.lf.in:	write("\nDemo fonts not found. Using standard fonts.\nSee the file +SETUPDIR+/Demo/INSTALL on a possible fix to this problem.\n"),
+life_demo.lf.in:	write("\nShould I try to use the demo fonts anyway? (yes/no) "),
+life_demo.lf.in:	using_demo_fonts <<- (Answer :== y or Answer :== yes)
+life_demo.lf.in:	using_demo_fonts <<- true.
+life_demo.lf.in:%%% Checking font availability
+life_demo.lf.in:check_font_path?
+life_demo.lf.in::: demo_button(font_id => button_font,
+life_demo.lf.in:def_font(button_font,
+life_demo.lf.in:	 new_font(cond(using_demo_fonts,
+life_demo.lf.in:			 font_id => button_font,
+slides.ps:CharBuilder}N /Encoding IE N end dup{/foo setfont}2 array copy cvx N load 0 nn
+slides.ps:0 sf neg 0 0]N df-tail}B /E{pop nn dup definefont setfont}B /ch-width{ch-data
+slides.ps:div add def /Helvetica findfont b scalefont setfont /b b .95 mul CLW 2
+slides.ps:TeXDict begin /rf{findfont dup length 1 add dict begin{1 index /FID ne 2 index
+slides.ps:currentdict end def[2 index currentdict end definefont 3 -1 roll makefont
+slides.ps:/setfont load]cvx def}def /ObliqueSlant{dup sin S cos div neg}B /SlantFont{4
+x_mathwiz.lf:slot_box := s_box(font_id => z_font,
+x_mathwiz.lf:time_box := s_box(font_id => z_font,
+x_mathwiz.lf:		  font_id => title_font).
+x_mathwiz.lf:p_button := push_button(font_id => z_font).
+x_mathwiz.lf:			   font_id => title_font,
+x_mathwiz.lf:% Colors and fonts
+x_mathwiz.lf:def_font(z_font,
+x_mathwiz.lf:	 new_font(cond(life_demo#using_demo_fonts,
+x_mathwiz.lf:def_font(title_font,
+x_mathwiz.lf:	 new_font(cond(life_demo#using_demo_fonts,
+x_mathwiz.lf:				      font => title_font,
+x_mathwiz.lf:				 font_id => z_font),
+x_mathwiz.lf:				 font_id => z_font),
+x_schedule.lf:tx_box := text_box(font_id => title_font).
+x_schedule.lf:tx_field_button := text_field_button(font_id => title_font).
+x_schedule.lf:ps_button := push_button(font_id => title_font).
+x_schedule.lf:	def_font(title_font,
+x_schedule.lf:		 new_font(cond(life_demo#using_demo_fonts,
+x_schedule.lf:	def_font(title_font,
+x_schedule.lf:		 new_font(cond(life_demo#using_demo_fonts,
+xtools_utils.lf:	       font => F,
+xtools_utils.lf:	map2wrap(make_box(font=>F),str2list(Text),Colors).
+xtools_utils.lf:make_box(Char,Color,font=>F) -> text_box(text=>Char,
+xtools_utils.lf:					 font_id=>F,
+x_zebra.lf:	 font_id => z_font).
+x_zebra.lf:		  font_id => z_font).
+x_zebra.lf:p_button := push_button(font_id => z_font).
+x_zebra.lf:	Num = text_box(font_id => title_font, text => psi2str(N)),
+x_zebra.lf:				      font => title_font,
+x_zebra.lf:					font_id => z_font),
+x_zebra.lf:% Colors and fonts
+x_zebra.lf:def_font(z_font,
+x_zebra.lf:	 new_font(cond(life_demo#using_demo_fonts,
+x_zebra.lf:def_font(title_font,
+x_zebra.lf:	 new_font(cond(life_demo#using_demo_fonts,

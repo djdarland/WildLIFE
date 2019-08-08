@@ -1,0 +1,214 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%	$Id: xtools.lf,v 1.2 1994/12/09 00:28:30 duchier Exp vorbeck $	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% XTOOLS: MAIN FILE - OBJECT TYPES
+%
+%
+% Author: Bruno Dumant                                                      
+% (c) Copyright 1993 -  Digital Equipment Corporation 
+% All Rights Reserved 
+%                                                        
+% xtools is a simple toolkit to build X applications in Life. It provides the
+% user with some basic functionalities of bigger toolkits, in short the ability
+% to build interactive window-based applications with buttons, editable text
+% fields, menus, and sliders.
+%
+% See the Wild_LIFE User Manual for a description of the X toolkit.
+% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% interface
+
+module("xtools") ?
+
+
+public(on_off_button,push_button,menu_button,text_field_button,
+	panel,menu_panel,menu_item,
+	slide_bar,v_slide_bar,h_slide_bar,
+	h_slider,v_slider,
+
+	change_on_off,change_push,change_menu_item,
+	change_menu_button,change_text_field
+       )?
+
+load("xtools_init","xtools_b","xtools_c","xtools_l","xtools_constants") ?
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%  Standard object types
+
+%%% panel
+
+panel <| panel_c.
+panel <| frame.
+
+%%% Added the following; otherwise only panels with border 5 were
+%%% allowed.
+%%% Old code:
+%%% :: panel(border => 5).
+%%% MJV 01-02-96
+
+:: panel(border => Border) | Border = {5;real}, !.
+
+
+%%% on_off_button
+
+on_off_button <| frame.
+on_off_button <| text_box.
+on_off_button <| led.
+on_off_button <| on_off_c.
+:: B:on_off_button( offset => Offset,
+	            h_space => d_led_offset + d_h_space/2,
+		    depth => 2,
+		    active => A,on => On,
+		    change_state => change_on_off(A,On,B))
+	| Offset = {d_led_offset; real}, !.
+
+change_on_off(Active,On,B) :-
+	cond( On,
+	    State = not(Active and enabled),
+	    State = Active and enabled
+	),
+	B.led_state <<- root_sort(State),
+	B.frame_state <<- root_sort(State),
+	B.text_state <<- root_sort(State).
+
+
+%%% push_button
+
+push_button <| push_c.
+push_button <| text_box.
+push_button <| frame.
+:: B:push_button(active => A,
+	         depth => 2,
+	         change_state => change_push(A,B)).
+
+change_push(Active,B) :-
+	State = Active and enabled,
+	B.frame_state <<- root_sort(State),
+	B.text_state <<- root_sort(State).
+
+
+%%% menu_button
+
+menu_button <| menu_button_c.
+menu_button <| frame.
+menu_button <| text_box.
+:: B:menu_button(on => On,
+	         depth => 2,
+		 change_state => change_menu_button(On,B)).
+
+change_menu_button(On,B) :-
+	cond( On,
+	    (
+		B.frame_state <<- true,
+		B.text_state <<- true
+	    ),
+	    (
+		B.frame_state <<- false,
+		B.text_state <<- false
+	    )
+	). 
+
+
+%%% text_field_button
+
+text_field_button <| frame.
+text_field_button <| text_box.
+text_field_button <| field.
+text_field_button <| text_field_c.
+:: B:text_field_button(on => On,
+	               change_state => change_text_field(On,B),
+		       offset => Offset,
+		       frame_state => State) |
+	Offset = {d_text_field_offset;@},!,
+	State <<- true.
+
+change_text_field(On,B) :-
+	cond( On,
+	    (
+		B.text_state <<- true,
+	        B.field_state <<- true
+	    ),
+	    (
+		B.field_state <<- false,
+		B.text_state <<- false
+	    )
+	). 
+
+
+%%% menu_panel
+
+menu_panel <| menu_panel_c.
+menu_panel <| frame.
+:: menu_panel(border => 1).
+
+
+%%% menu_item
+
+menu_item <| frame.
+menu_item <| text_box.
+menu_item <| item_c.
+:: B:menu_item(on => On,
+	       change_state => change_menu_item(On,B),
+	       offset => Offset,v_space => Space,
+	       flat => true) |
+	   Offset = {d_item_offset;@},
+	   Space = {d_item_v_space;@},
+	   !.
+
+change_menu_item(On,B) :-
+	cond( On,
+	    (
+		B.frame_state <<- true,
+		B.text_state <<- true
+	    ),
+	    (
+		B.frame_state <<- false,
+		B.text_state <<- false
+	    )
+	). 
+
+
+%%% sliders
+
+v_slider <| frame.
+v_slider <| v_slider_c.
+:: v_slider(width => W,
+	    height => H,
+	    depth => 2) |
+	W = {d_v_slider_width;@},
+	H = {d_v_slider_height;@},!.
+
+h_slider <| frame.
+h_slider <| h_slider_c.
+:: h_slider(width => W,
+	    height => H,
+	    depth => 2) |
+	W = {num(d_h_slider_width);@},
+	H = {num(d_h_slider_height);@},!.
+
+
+%%% slide bars
+
+slide_bar1 <| sub_panel_c.
+:: slide_bar1(border => Border) |
+        Border = {num(d_slide_bar_border);@},!.
+
+slide_bar <| slide_bar1.
+slide_bar <| frame.
+:: slide_bar(frame_state => true).
+
+v_slide_bar <| slide_bar1.
+v_slide_bar <| v_slide_bar_l.
+
+h_slide_bar <| slide_bar1.
+h_slide_bar <| h_slide_bar_l.
+
+	  

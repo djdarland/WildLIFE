@@ -1,0 +1,666 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%                XTOOLS: BASIC BUTTONS AND ACTIONS
+%
+% This file contains all the basic predicates related to the X part of the
+% demo: definition of panels and button classes, events handler, utilities, and
+% definition of colors.
+%
+% This file is loaded automatically by the main file of the demo.
+%
+% Author: Bruno Dumant                                                      
+%
+% Copyright 1992 Digital Equipment Corporation                                
+% All Rights Reserved 
+%                                                        
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+module("xtools_flo") ?
+public( open_panel,close_panel,create_new_panel,update_panel,
+	add_button,refresh_button,find_chosen_button,choose_button,
+
+	on_off_button,toggle_button,textfield,rectangle_button,
+	rectangle_look,ledandtext,textfield_look,
+
+	action,color_block,choice,name,title,panel,shade,highlight,depth,text,
+        selected_text,on,buttons,
+
+	draw_static,draw_dynamic,draw_buttons,draw_basic_button,switch_off,
+ 
+        button_font,textfield_font,color_name_font,
+
+        shade_color,highlight_color,
+	button_color,text_color,on_off_color,toggle_color,
+	textfield_color,selected_textfield_color,color_name_textfield_color,
+	text_in_field_color,text_in_selected_field_color,
+        led_color,led_shade_color,led_highlight_color,
+	def_led_color,def_led_shade,def_led_highlight,
+	panel_color,panel_highlight,panel_shade,
+	
+        catch_panel_events,
+
+        default_display,default_window,
+
+	color,
+	aquamarine,black,blue,'blue violet',brown,'cadet blue',coral,
+        'cornflower blue',cyan,'dark green','dark olive green','dark orchid',
+        'dark slate blue', 'dark slate grey','dark turquoise','dim grey',
+        firebrick,'forest green',gold,goldenrod,green,'green yellow',grey,
+        'indian red',khaki,'light blue','light grey','light steel blue',
+        'lime green',magenta,maroon,'medium aquamarine','medium blue',
+        'medium orchid','medium sea green','medium slate blue',
+        'medium spring green','medium turquoise','medium violet red',
+        'midnight blue','navy blue',orange,'orange red','orchid','pale green',
+        pink,plum,red,salmon,'sea green',sienna,'sky blue','slate blue',
+        'spring green','steel blue','light brown',thistle,turquoise,
+        violet,'violet red',wheat,white,yellow,'yellow green') ?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% panel: window containing buttons
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+global(event_mask <- xExposureMask \/ xKeyPressMask \/ xButtonPressMask) ?
+
+create_new_panel( X0 ,Y0, DX, DY, choice => F, title => T, name => P) :- 
+	xCreateWindow (default_display, 
+	               X0, Y0, DX, DY,
+		       Window,
+		       windowtitle => T,
+		       eventmask => event_mask,
+		       color     => panel_color,
+		       show => false),
+	xSetWindowBorderWidth(Window,2),
+	Panel = panel( window  => Window,
+	               buttons => [],
+		       choice  => F ),
+	set_panel(P,Panel),
+	catch_panel_events(P).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% buttons
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%
+% generic button: ::button:@( on => bool).
+%
+% buttons are classified using:
+%         - their behaviour: toggle, on_off, text_field
+%         - their shape (choice predicate): rectangle
+%         - their look : with text and a led, ...
+%
+% In the present file, buttons belong to the followong hierarchy:
+%
+%                                button
+%                _________________________________
+%               /                   |             \
+%      (behaviour types)      (shape types)  (look types)
+%      /       |       \            |             |
+%   on_off  toggle text_field   rectangle        /
+%                      |            |           /
+%                      |            |          /
+%                      |          rectangle_look
+%                      \           /      \
+%                       \         /        \
+%                     textfield_look     ledandtext
+%
+
+% add a button to a panel
+
+add_button( B, panel => P) :-
+	Panel:@(window => PW, buttons => PB)&root_sort(P),
+	B = @( on => false, window  => PW),
+        PB <-[B|copy_pointer(PB)],
+	update_panel(Panel), !.
+
+%%%
+%%% Button types associated with an action
+%%%
+
+
+%
+% Note: draw_button(B) draws entirely the button B, while refresh_button(B)
+% only redraws the dynamic part of B, according to its state.
+%
+
+
+%%% on_off button
+
+:: A:on_off_button( associated_action => on_off_action(A), 
+	            color => on_off_color ).
+
+on_off_action(A:@(on => ON, action => RAct), panel => P) :-
+	(
+	    ON <- not(ON), 
+	    refresh_button(A),
+	    copy_pointer(RAct)&@(panel => P), ! 
+	; 
+	    write("error"),
+	    nl, 
+	    refresh_button(A)
+	).
+
+
+%%% toggle button
+
+:: A:toggle_button( associated_action => toggle_action(A),
+	            color => toggle_color ).
+
+toggle_action(A:@(on => ON, action => RAct), panel => P) :-
+	ON <- true, 
+	refresh_button(A),
+	copy_pointer(RAct)&@(panel => P),
+	ON <- false,
+	refresh_button(A).
+
+
+%%% text field
+
+:: A:textfield(  text => {"";@},
+	         associated_action => text_action(A))
+	     | !.
+
+text_action( A, panel => P:@(selected_text => Q)) :-
+	(
+	    Q :== true, !,
+	    PrevButton = Q.1,
+	    cond( B:(not( PrevButton ===  A)),
+	          ( 
+		      PrevButton.action,
+		      PrevButton.on <- false,
+		      refresh_button(PrevButton) 
+		  )
+		)
+	;
+	    succeed
+	),
+	cond( B, 
+	      (
+		  A.on <- true,
+		  P.clearable <- true,
+		  refresh_button(A),
+		  Q <- true(A)
+	      )).
+
+
+%%% very basic editor for a text-field
+
+
+handle_char( B, P, char  => C) :-
+	cond(   C =:= 13, %%% return
+	        (
+		    P.selected_text <- false,
+		    B.on <- false,
+		    refresh_button(B),
+		    AA = copy_pointer(B.action)&@(panel => P),
+		    AA
+		),
+		(
+		    cond( Q:(P.clearable),
+		          (   B.text <- "",
+			      refresh_button(B),
+			      Q <- false
+			  )),
+		    cond(   C >= 32 and C =< 126,
+		            add_new_char(B,C),
+	                    cond(   C =:= 8,
+		                    remove_last_char(B)
+				)
+			)
+		)
+	    ).
+
+add_new_char(B:@(text => T),K) :-
+	T <- strcon(T,chr(K)),
+	refresh_button(B).
+
+remove_last_char(B:@(text => T)) :-
+	cond( L:strlen(T) > 0,
+	      (   T <- substr(T,1,L-1),
+	          refresh_button(B))).
+
+
+%%% 
+%%% button types associated with a shape
+%%%
+
+
+%%% rectangle button                        
+
+:: X:rectangle_button ( X0, Y0, DX, DY, choice  => chosen(_,_,X0,Y0,DX,DY)).
+
+
+chosen(X,Y,X0,Y0,DX,DY) :- (X-X0)*(X-X0-DX) < 0 and
+		           (Y-Y0)*(Y-Y0-DY) <0 .
+%%%
+%%% button types associated with a look
+%%%
+%%% for each look type, two predicates are defined:
+%%%   - draw_static draws the static part of the button
+%%%   - draw_dynamic draws the dynamic part of the button,
+%%%     and therefore depends on the state of the button
+%%%
+
+dynamic(draw_static) ?
+dynamic(draw_dynamic) ?
+
+
+%%% rectangle_look
+
+rectangle_look <| rectangle_button.     % this means that rectangle_look will
+					% inherit the choice predicate of
+					% rectangle_button.
+
+draw_static( rectangle_look ( X0, Y0, DX, DY, color => C, window => W)) :-
+	xFillRectangle(W,X0+2,Y0+2,DX-4,DY-4,color => button_color(C)),
+	fail.
+
+
+draw_dynamic( rectangle_look ( X0, Y0, DX, DY, 
+	                       on => false, color => C, window => W)) :-
+	draw_shade(X0,Y0,DX,DY,depth => 2,
+	           shade => shade_color(C), 
+	           highlight => highlight_color(C),
+	           window => W),
+	fail.
+
+draw_dynamic( rectangle_button ( X0, Y0, DX, DY, 
+	                         on => true, color => C, window => W)) :-
+	draw_shade(X0,Y0,DX,DY,depth => 2,
+	           shade => highlight_color(C), 
+	           highlight => shade_color(C),
+	           window => W),
+	fail.
+
+%%% ledandtext
+					
+ledandtext <| rectangle_look.           % this means that ledandtext will
+					% inherit the choice predicate of
+					% rectangle_button, and the basic
+					% rectangle look .
+
+draw_static( ledandtext( X0, Y0, DX, DY, text => T,
+	                 color => C, window => W )) :-
+	draw_shade_rectangle( X0 + 9, Y0 + DY/2 - 5, 16, 9,
+	       	              shade => highlight_color(C), 
+			      highlight => shade_color(C),
+			      window => W),
+	xDrawString( W, X0 + 35, Y0 + DY/2 + 4, T, font => button_font,
+	             color => text_color(C) ),
+	fail.
+
+draw_dynamic( ledandtext( X0, Y0, DX, DY, 
+	                  color => C, on => true, window => W )) :-
+	draw_basic_led( X0+10, Y0 + DY/2 - 4, 14, 7,
+		        color => led_color(C),
+			shade => led_shade_color(C), 
+			highlight => led_highlight_color(C),
+			window => W),
+	fail.
+
+draw_dynamic( ledandtext( X0, Y0, DX, DY, on => false, window => W)) :-
+	draw_basic_led( X0+10, Y0 + DY/2 - 4, 14,7,
+	                color => def_led_color,
+			shade => def_led_shade, 
+			highlight => def_led_highlight,
+			window => W),
+	fail.
+	    
+
+%%% textfield_look
+
+textfield_look <| textfield.
+textfield_look <| rectangle_button.
+
+draw_static( textfield_look( X0, Y0, DX, DY, window => W)) :-
+	draw_shade_rectangle( X0, Y0, DX, DY,
+	                      shade => panel_highlight, 
+			      highlight => panel_shade,
+			      window => W),
+	fail.
+
+draw_dynamic( textfield_look( X0, Y0, DX, DY,
+	                      on => true, text => T , window => W)) :-
+	xFillRectangle( W, X0+1, Y0+1, DX -1, DY-1, 
+	                color => selected_textfield_color),
+	xDrawString( W, X0 + 5, Y0 + DY/2 + 4, T, font => textfield_font,
+	             color => text_in_selected_field_color),
+	fail.
+
+draw_dynamic( textfield_look( X0, Y0, DX, DY,
+	                      on => false, text => T , window => W)) :-
+	xFillRectangle( W, X0+1, Y0+1, DX -1, DY-1, 
+	                color => textfield_color),
+	xDrawString( W, X0 + 5, Y0 + DY/2 + 4, T, font => textfield_font,
+	             color => text_in_field_color ),
+	fail.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% events
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% keyboard and mouse events: 5 is xKeyPressMask \/ xButtonPress
+
+
+catch_panel_events(P) :-
+	Panel:@(window => PW)&root_sort(P),
+	handle_panel_event (xGetEvent ( PW, eventmask => 5),
+			    PW, P).
+
+
+handle_panel_event ( button_event (x => X, y => Y), PW, P) ->      
+	true 
+    | 
+        handle_panel_mouse_event(X,Y,PW,P).
+
+handle_panel_event(keyboard_event (char => C), PW, P) ->
+	true
+    |
+        handle_panel_keyboard_event(C,PW,P).
+
+
+handle_panel_mouse_event( X, Y, PW, P) :-
+	(
+	    Panel:@( choice => C, busy => B)&root_sort(P),
+	    ( 
+		B :== true,!,
+                handle_panel_event (xGetEvent ( PW, eventmask => 5),
+		                       PW, P)
+	    ;
+                B <- true,
+		update_panel(Panel),
+		handle_panel_event (xGetEvent ( PW, eventmask => 5),
+			                        PW, P),
+		copy_pointer(C)&@(X,Y,Panel),!,
+		B <- false,
+		update_panel(Panel)
+	    )
+	;
+	    succeed
+	).
+
+handle_panel_keyboard_event(C,PW,P) :-
+	Panel:@(selected_text => S, busy => B)&root_sort(P),
+	(
+	    B :== true,!,
+	    handle_panel_event (xGetEvent ( PW, eventmask => 5),
+				            PW, P)
+	;
+	    B <- true,
+	    update_panel(Panel),
+	    handle_panel_event (xGetEvent ( PW, eventmask => 5),
+				PW, P),
+	    (
+		cond(   S,
+		        handle_char(project(1,S), Panel, char => C)
+		    ),
+		B <- false,
+		update_panel(Panel),
+		fail
+	    ;
+	        succeed
+	    )
+	). 
+
+%%% refresh event: 32768 is xExposureMask
+
+catch_refresh_event(P) :-
+	root_sort(P)&@(window => PW),
+	handle_refresh_event (xGetEvent ( PW, eventmask =>  32768),
+			      PW).
+
+handle_refresh_event ( expose_event, PW) ->
+	true 
+    |
+        xRefreshWindow(PW),
+	handle_refresh_event (xGetEvent ( PW, eventmask =>  32768),
+			      PW).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Toolkit Utilities
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%
+%%% define a panel
+%%%
+
+set_panel(P,Panel) :-
+	RS1 = root_sort(P),
+	RS2 = root_sort(P),
+	retract(( RS1 :- @)),!,
+	Q = RS2&strip(Panel),
+	assert(Q).
+set_panel(P,Panel) :-
+	dynamic(P),
+	RS = root_sort(P),
+	Q = RS&strip(Panel),
+	assert(Q).
+update_panel(Panel) :-
+	P = root_sort(Panel),
+	retract(( P :- @)),
+	assert(Panel).
+
+%%%
+%%% open and close a panel. 32768 is xExposureMask
+%%%
+
+open_panel(P) :-
+	root_sort(P)&@(window => PW),
+	handle_refresh_event (xGetEvent ( PW, eventmask =>  32768),
+			      PW),
+	xShowWindow(PW).
+
+close_panel(P) :-
+	root_sort(P)&@(window => PW),
+	xFlushEvents( PW, eventmask => 32768),
+	xHideWindow(PW).
+
+%%%
+%%% drawing utilities
+%%%
+
+%%% refresh a button (redraw its dynamic part)
+
+refresh_button(A) :- 
+	implies(draw_dynamic(A))
+    ;
+	succeed.
+
+
+%%% switching off a button
+
+switch_off(B:@(on => ON)) :-
+	ON <- false,
+	(
+	    refresh_button(B),
+	    fail
+	;
+	    succeed
+	).
+
+%%% draw a list of buttons
+
+draw_buttons(L) :- maprel(draw_button,L) .
+
+
+%%% draw one button
+
+draw_button(A) :-
+        implies(draw_static(A))
+    ;
+	implies(draw_dynamic(A))
+    ;
+	succeed.
+
+
+%%% draw something that looks like a simple button
+
+draw_basic_button( X0,Y0,DX,DY,
+	           depth => D,
+		   color => BC,
+		   shade => SC, 
+		   highlight => HC,
+		   window => W) :-
+	draw_shade(X0,Y0,DX,DY,depth => D,
+	           shade => SC, 
+	           highlight => HC,
+	           window => W),
+	xFillRectangle(W,X0+D,Y0+D,DX-2*D,DY-2*D,color => BC),!.
+
+draw_shade(X0,Y0,DX,DY,depth => D,
+	    shade => SC, 
+	    highlight => HC,
+	    window => W) :-
+	xFillPolygon(W,[(X0,Y0),(XB1:(X0+DX),Y0),(XB2:(X0+DX-D),YB2:(Y0+D)),
+	                (XB3:(X0+D),YB2),(XB3,YB3:(Y0+DY-D)),(X0,YB4:(Y0+DY))],
+	             color => HC),
+	xFillPolygon(W,[(XB1,Y0),(XB2,YB2),(XB2,YB3),(XB3,YB3),(X0,YB4),
+	                (XB1,YB4)],color => SC),!.
+
+%%% draw something that looks like a led.
+
+draw_basic_led( X0, Y0, DX, DY, 
+	        color => BC, shade => SC, highlight => HC,
+		window => W) :-
+	draw_shade_rectangle( X0, Y0, DX, DY,
+	                      shade => SC, highlight => HC,
+			      window => W),
+	xFillRectangle(W,X0+1,Y0+1,DX-1,DY-1,color => BC),!.
+
+draw_shade_rectangle( X1, Y1, DX, DY,
+	              shade => SC, highlight => HC,
+	              window => W ) :-
+	xDrawLine( W, X1,Y1,X2:(X1+DX),Y1,
+	           color => HC),
+	xDrawLine( W, X1,Y1,X1,Y2:(Y1+DY),
+	           color => HC),
+	xDrawLine( W, X2,Y2,X1,Y2,
+	           color => SC),
+	xDrawLine( W, X2,Y2,X2,Y1,
+	           color => SC),!.
+
+%%%
+%%% Basic choice predicate for a button 
+%%%
+
+find_chosen_button([A:@(associated_action => Act, choice => C)|B],X,Y,Panel) :-
+	!,
+	cond( copy_term(C)&@(X,Y),
+	      copy_pointer(Act)&@(panel => Panel),
+	      find_chosen_button(B,X,Y,Panel)).
+find_chosen_button([]).
+
+
+%%% Find a button in a panel
+
+choose_button(X,Y,Panel) :- find_chosen_button(Panel.buttons,X,Y,Panel).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% X Functions initialization
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+dynamic(default_display,default_window)?
+
+xOpenConnection(D), setq(default_display, D)?
+
+xDefaultRootWindow(D:default_display,Root), 
+Root = @(display => D), 
+setq(default_window, Root)?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% COLORS
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+non_strict(named_color)?
+dynamic(number_of_colors)?
+
+number_of_colors -> 0.
+
+named_color( Reference, String) :- 
+	String = { psi2str(Reference); string },!,
+	setq( number_of_colors, N:(number_of_colors+1)),
+	asserta(color(Reference,N)),
+	xRequestNamedColor( default_window, String, C),
+	assert((Reference -> C:int(name => String))).
+
+named_color(aquamarine),
+named_color(black),
+named_color(blue),
+named_color('blue violet'),
+named_color(brown),
+named_color('cadet blue'),
+named_color(coral),
+named_color('cornflower blue'),
+named_color(cyan),
+named_color('dark green'),
+named_color('dark olive green'),
+named_color('dark orchid'),
+named_color('dark slate blue'),
+named_color('dark slate grey'),
+named_color('dark turquoise'),
+named_color('dim grey'),
+named_color(firebrick),
+named_color('forest green'),
+named_color(gold),
+named_color(goldenrod),
+named_color(green),
+named_color('green yellow'),
+named_color(grey),
+named_color('indian red'),
+named_color(khaki),
+named_color('light blue'),
+named_color('light grey'),
+named_color('light steel blue'),
+named_color('lime green'),
+named_color(magenta),
+named_color(maroon),
+named_color('medium aquamarine'),
+named_color('medium blue'),
+named_color('medium orchid'),
+named_color('medium sea green'),
+named_color('medium slate blue'),
+named_color('medium spring green'),
+named_color('medium turquoise'),
+named_color('medium violet red'),
+named_color('midnight blue'),
+named_color('navy blue'),
+named_color(orange),
+named_color('orange red'),
+named_color('orchid'),
+named_color('pale green'),
+named_color(pink),
+named_color(plum),
+named_color(red),
+named_color(salmon),
+named_color('sea green'),
+named_color(sienna),
+named_color('sky blue'),
+named_color('slate blue'),
+named_color('spring green'),
+named_color('steel blue'),
+named_color('light brown',"tan"),
+named_color(thistle),
+named_color(turquoise),
+named_color(violet),
+named_color('violet red'),
+named_color(wheat),
+named_color(white),
+named_color(yellow),
+named_color('yellow green') ?

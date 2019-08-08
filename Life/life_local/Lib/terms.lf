@@ -1,0 +1,112 @@
+%	$Id: terms.lf,v 1.2 1994/12/09 00:25:37 duchier Exp $	
+module("terms") ?
+
+
+import("expanders") ?
+
+add_man(terms,
+	" module(""terms"")
+
+  utilities for term manipulation:
+
+  feature_values,add_features,share_features") ?
+
+
+
+
+%%%add_man(feature_values,
+%%%	"feature_values(Term) -> List.
+
+%%%  input : Term: a psi-term;
+%%%  output: List: the list of its arguments.")?
+
+%%%public(feature_values) ?
+%%%feature_values(Term) -> feature_values2(features(Term),Term).
+%%%feature_values2(F1,Term) ->& Term.F1 ?
+
+%%% made a C built-in: BD 3.3.94
+  
+add_man(add_features,
+	"add_features(List,Term)?
+
+  input : Term: a psi-term;
+          List: a list of feature names
+  output: Term
+
+  The features in List are added to Term")?
+
+public(add_features) ?
+add_features(F,Term) :-& Term.F = @ ?
+
+
+
+add_man(share_features,
+	"share_features(List,Term1,Term2)?
+
+  input : Term1,Term2: psi-terms;
+          List: a list of feature names
+  output: Term1,Term2
+
+  After execution, the features in List are shared by Term1 and Term2")?
+
+public(share_features) ?
+share_features(F,Term1,Term2) :-& Term1.F = Term2.F ?
+
+
+
+
+add_man(remove_feature,
+	"remove_feature(Term,Feature)?
+
+  input : Term,Feature
+  output: Term
+
+  Removes 'Feature' from 'Term' if present.")?
+
+public(remove_feature)?
+
+
+remove_feature(F,T) :-
+	remove_feature_loop(features(T),F,T,V),
+	T<-root_sort(T)&V.
+
+remove_feature_loop(X,F,T,V) :-& (X:==F,!;V.X=T.X) ?
+
+
+
+
+
+add_man(term_size,
+	"N=term_size(Term)?
+
+  input : Term
+  output: N
+
+  Counts the number of nodes in a given psi-term.")?
+
+public(term_size)?
+
+sum([V|Vs]) -> V+sum(Vs).
+sum([]) -> 0.
+
+
+term_size(X) -> N |
+	V<<-@, 	                          % Create a persistent term for the
+					  % result.
+	
+	(	V<<-count_and_explore(X), % Calculate the size.
+		fail			  % Remove all the calculation.
+	;
+		N=copy_term(V)		  % Copy the result back to a normal
+	).				  % logical term.
+
+
+count_and_explore(X) -> V |
+	(	X:==already_seen,	  % Don't loop over cyclic terms.
+		!,
+		V=0
+	;
+		FV=feature_values(X),	  % Get the features of X.
+		X<-already_seen,	  % Mark X as having been counted.
+		V=1+sum(map(count_and_explore,FV))
+	).

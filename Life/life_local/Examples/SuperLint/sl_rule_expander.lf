@@ -1,0 +1,769 @@
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%
+%                         SUPERLINT's RULE EXPANDER
+%                         -------------------------
+%
+%  
+%
+%
+%  AUTHOR : Arnaud Venet                     CREATION : September 8th 1993
+%  ------                                    --------
+%
+%
+%                             ---------------                        
+%
+%                    
+%                   Last modification : October 29th 1993 
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%
+%  (C) Digital Equipment Corporation 1993
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+
+
+
+module("sl_rule_expander") ?
+
+
+public(compile_rules) ?
+
+
+public(:->, ==, <>, &&, ||, if, then, else, switch, case, default,
+       entry_test, rule, function, procedure, return,
+       donothing, display_rules, error_msg, main) ?
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+load("sl_io_utils") ?
+
+
+load("slc_file_names") ?
+
+
+import("accumulators") ?
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+op(1200, xfy, :->)?
+
+non_strict(:->) ?
+
+
+op(670, xfx, ==) ?
+
+non_strict(==) ?
+
+
+op(670, xfx, <>) ?
+
+non_strict(<>) ?
+
+
+op(680, yfx, &&) ?
+
+non_strict(&&) ?
+
+
+op(690, yfx, ||) ?
+
+non_strict(||) ?
+
+
+op(900, yfx, else) ?
+
+non_strict(else) ?
+
+
+op(890, xfy, then) ?
+
+non_strict(then) ?
+
+
+op(880, fy, if) ?
+
+non_strict(if) ?
+
+
+op(500, fy, return) ?
+
+non_strict(return) ?
+
+
+op(1200, fx, function) ?
+
+non_strict(function) ?
+
+
+op(1200, fx, procedure) ?
+
+non_strict(procedure) ?
+
+
+op(1200, fx, rule) ?
+
+non_strict(rule) ?
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+acc_info(rules, X, In, Out, acc_pred => (In = [X | Out])) ?
+
+
+acc_info(local, X, In, Out, acc_pred => (In = [X | Out])) ?
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+pred_info([compile_the_rules,
+           compile_rules_in,
+           expand_declaration],
+          [rules, local]) ?
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+is_reserved(Name) -> Bool
+  | (
+      Name :== {"main"; "*rule*"; 
+                "syntactic_tree"; "sl_parse"; "sl_init";
+                "*protected_project*"; "*protected_has_feature*"},
+      !,
+      Bool = true
+    ;
+      Bool = false
+    ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+compile_rules(from => FilesList, in => ExpandedFile) :-
+  open_out(ExpandedFile, OutStream),
+  write_prelude(ExpandedFile),
+  (
+    compile_the_rules(FilesList, in_rules => Rules, out_rules => []),
+    !
+  ;
+    write_err("slc : abort"),
+    nl_err,
+    remove_file(ExpandedFile),
+    halt
+  ),
+  check_entry_point(Rules),
+  write_rules_list(Rules),
+  close(OutStream).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+write_prelude(ModuleName) :-
+  write("module(""superlint"") ?"),
+  nl,
+  nl,
+  write("public(main) ?"),
+  nl,
+  nl,
+  write("D = getenv(""SLDIR""), chdir(D) ?"),
+  nl,
+  nl,
+  CPT = c_public_terms_file,
+  writeq(load(CPT), '?'),
+  nl,
+  SLPT = sl_public_terms_file,
+  writeq(load(SLPT), '?'),
+  nl,
+  SLU = sl_utils_file,
+  writeq(load(SLU), '?'),
+  nl,
+  SLP = sl_parser_file,
+  writeq(load(SLP), '?'),
+  nl,
+  nl,
+  writeq(open("c_public_terms"), '?'),
+  nl,
+  writeq(open("sl_public_terms"), '?'),
+  nl,
+  writeq(open("sl_parser"), '?'),
+  nl,
+  writeq(open("sl_utils"), '?'),
+  nl,  
+  RLO = rl_overload_file,
+  writeq(load(RLO), '?'),
+  nl,
+  nl.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+check_entry_point(Rules) :-
+  (
+    member(main, Rules),
+    !
+  ;
+    pretty_write('M : main :- 
+                    sl_parse(strip(M)),',
+                    scan_tree, '.'),
+    nl,
+    nl
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+compile_the_rules([File | Files]) :--
+  !,
+  { safe_open_in(File, InStream) },
+  compile_rules_in(InStream),
+  { close(InStream) },
+  compile_the_rules(Files).
+
+
+compile_the_rules([]) :--
+  { succeed }.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+compile_rules_in(InStream) :--
+  { get_next_rule(Expression, Type, EOF) },
+  cond(EOF :== false,
+    (
+      cond(Type :== declaration,
+        expand_declaration(InStream, Expression),
+        cond(Type :== query,
+          { write_query(Expression) },
+          {
+            write_err("slc : syntax error in file ", 
+                      InStream.input_file_name),
+            nl_err,
+            halt
+          }
+        ) 
+      ),
+      compile_rules_in(InStream)
+    )
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+write_rules_list(Rules) :-
+  RulesList = map(psi2str, Rules),
+  write("'*superlint_rules*' <<- "), 
+  pretty_writeq(RulesList), 
+  write(" ?"),
+  nl,
+  nl.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+get_next_rule(Expression, Type, EOF) :-
+  read(Expression, Type),
+  EOF = (Expression :=< end_of_file).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict(write_query) ?
+
+
+write_query(Expression) :-
+  pretty_writeq(Expression, '?'),
+  nl,
+  nl.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+is_member(Name, List) -> Bool
+  | (
+      is_a_member(Name, List),
+      !,
+      Bool = true
+    ;
+      Bool = false
+    ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+is_a_member(Name, Top) :-
+  Top :== @,
+  !,
+  fail.
+
+
+is_a_member(Name, [Name | @]) :- !.
+
+
+is_a_member(Name, [@ | LNames]) :-
+  !,
+  is_a_member(Name, LNames).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict(expand_declaration) ?
+
+
+expand_declaration(InStream, Expression) :--
+  {
+    Type = root_sort(Expression),
+    (
+      Type :== {:-; ->; :->},
+      !,
+      Head = root_sort(Expression.1),
+      (
+        Type :== (:->),
+        !,
+        (
+          Head :== {(function); (procedure); (rule)},
+          !,
+          Name = Head.1,
+          Interpretation = root_sort(Head)
+        ;
+          Name = Head,
+          Interpretation = (rule)
+        )
+      ;
+        Name = root_sort(Expression)
+      )
+    ;
+      Name = root_sort(Expression)
+    )
+  },
+  Rules is rules,
+  Local is local,
+  cond(Type :== (:->),
+    cond(Interpretation :== (rule),
+      cond(is_member(Name, Rules),
+        {
+          write_err("slc : error in file ", 
+                    InStream.input_file_name,
+                    " -- duplicate definition of ", Name),
+          nl_err
+        },
+        (
+          Name + rules,
+          { write_rule(InStream, Expression) }
+        )
+      ),
+      cond(is_member(Name, Local),
+        {
+          write_err("slc : error in file ", 
+                    InStream.input_file_name,
+                    " -- duplicate definition of ", Name),
+          nl_err
+        },
+        (
+          Name + local,
+          { write_local(InStream, Expression) }
+        )
+      )
+    ),
+    cond(is_reserved(psi2str(Name)),
+      { 
+        write_err("slc : error in file ", 
+                  InStream.input_file_name,
+                  " -- ", Name, " is a reserved name"),
+        nl_err
+      },
+      { write_declaration(Name, Expression) }
+    )
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict(write_declaration) ?
+
+
+write_declaration(Name, Expression) :-
+  pretty_writeq(Expression),
+  cond(root_sort(Expression) :== display_rules,
+    writeq('?'),
+    writeq('.')
+  ),
+  nl,
+  nl.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict(write_rule) ?
+
+
+write_rule(InStream, (main :-> { MainBody })) :-
+  !,
+  pretty_write('M : main :- 
+                  sl_parse(strip(M)),'),
+  pretty_writeq(MainBody, '.'),
+  nl,
+  nl.
+
+
+write_rule(InStream, (RuleHead :-> { entry_test(Test), RuleBody })) :-
+  !,
+  RuleName = psi2str(root_sort(RuleHead)),
+  Features = features(RuleHead),
+  (
+    Features = [1, 2]
+  ;
+    Features = [1]
+  ;
+    write_err("slc : error in file ", 
+              InStream.input_file_name,
+              " -- syntax error in rule ", RuleName),
+    nl_err,
+    halt
+  ),
+  RuleHead = @(Node, Domain),
+  cond(Domain :== @,
+    DomainName = "common",
+    DomainName = psi2str(Domain)
+  ),
+  rewrite_expression(Test, EntryTest),
+  RewrittenBody = 
+    rewrite_body(RuleBody, in => (rule), return_var => @),
+  !,
+  SetRule = `('*rule_name*' <<- ref(RuleName)),
+  ClauseBody = (
+    is_list_member(DomainName, RequestedDomain),
+    EntryTest,
+    !,
+    SetRule,
+    RewrittenBody
+  ;
+    succeed
+  ),
+  pretty_writeq(
+    '*rule*'(RuleName, Node, RequestedDomain) :-
+      ClauseBody, '.'
+  ),
+  nl,
+  nl.
+
+
+write_rule(InStream, (RuleHead :-> @)) :-
+  write_err("slc : error in file ", 
+            InStream.input_file_name,
+            " -- syntax error in rule ", root_sort(RuleHead)),
+  nl_err,
+  halt.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict(write_local) ?
+
+
+write_local(InStream, ((procedure Head) :-> { Body })) :-
+  ProcedureBody = rewrite_body(Body, @, in => (procedure), return_var => @),
+  !,
+  pretty_writeq(Head :- ProcedureBody, '.'),
+  nl,
+  nl.
+
+
+
+write_local(InStream, ((function Head) :-> { Body })) :-
+  FunctionBody = rewrite_body(Body, @, in => (function), return_var => Var),
+  !,
+  pretty_writeq(
+    Head -> `(Var 
+    | (FunctionBody,
+       cond(Var :== @,
+         Var = unknown
+       ))
+    ), '.'
+  ),
+  nl,
+  nl.
+
+
+write_local(InStream, (Head :-> @)) :-
+  write_err("slc : error in file ", InStream.input_file_name),
+  write_err(" -- syntax error in ", root_sort(Head), " '", Head.1, "'"),
+  nl_err,
+  halt.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+
+non_strict(rewrite_expression) ?
+
+
+
+rewrite_expression(A, A) :-
+  A :== @,
+  !.
+
+
+rewrite_expression((A && B), (RewrittenA, RewrittenB)) :-
+  !,
+  rewrite_expression(A, RewrittenA),
+  rewrite_expression(B, RewrittenB).
+
+
+rewrite_expression((A || B), 
+  (
+    RewrittenA,
+    !
+  ;
+    RewrittenB
+  )) :-
+  !,
+  rewrite_expression(A, RewrittenA),
+  rewrite_expression(B, RewrittenB).
+
+
+rewrite_expression((A == B), (RewrittenA :== RewrittenB)) :-
+  !,
+  rewrite_expression(A, RewrittenA),
+  rewrite_expression(B, RewrittenB).
+
+
+rewrite_expression((A <> B), (RewrittenA :\== RewrittenB)) :-
+  !,
+  rewrite_expression(A, RewrittenA),
+  rewrite_expression(B, RewrittenB).
+
+
+rewrite_expression(A, A).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict(rewrite_body) ?
+
+
+rewrite_body((A, B), in => What, return_var => Var) ->
+  (rewrite_body(A, in => What, return_var => Var), 
+   rewrite_body(B, in => What, return_var => Var)).
+
+
+rewrite_body(else(then(if(Condition), Then), Else), 
+             in => What, return_var => Var) ->
+  (
+    RewrittenCondition,
+    !,
+    rewrite_body(Then, in => What, return_var => Var)
+  ;
+    rewrite_body(Else, in => What, return_var => Var)
+  )
+  | rewrite_expression(Condition, RewrittenCondition).
+
+
+rewrite_body(then(if(Condition), Then), 
+             in => What, return_var => Var) ->
+  (
+    RewrittenCondition,
+    !,
+    rewrite_body(Then, in => What, return_var => Var)
+  ;
+    succeed
+  )
+  | rewrite_expression(Condition, RewrittenCondition).
+
+
+rewrite_body(switch(Expression, { Body }), 
+             in => What, return_var => Var) -> 
+  (Test = RewrittenExpression, Switch)
+  | rewrite_expression(Expression, RewrittenExpression),
+    Switch = rewrite_switch(Body, Test,
+                            in => What, return_var => Var).
+
+
+rewrite_body(donothing, in => What, return_var => Var) ->
+  succeed.
+
+
+rewrite_body({A}, in => What, return_var => Var) -> 
+  rewrite_body(A, in => What, return_var => Var).
+
+
+rewrite_body((return Value), in => (function), return_var => Var) ->
+  (Var = Value).
+
+
+rewrite_body(A, in => @, return_var => @) -> A.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict(rewrite_switch) ?
+
+
+rewrite_switch((Case : case, Rest), Test,
+               in => What, return_var => Var) ->
+  (
+    RewrittenCase
+  ;
+    RewrittenRest
+  )
+  | RewrittenCase = rewrite_case(Case, Test,
+                                 in => What, return_var => Var),
+    RewrittenRest = rewrite_switch(Rest, Test,
+                                   in => What, return_var => Var).
+
+
+rewrite_switch(Case, Test,
+               in => What, return_var => Var) ->
+  (
+    RewrittenCase
+  ;
+    succeed
+  )
+  | RewrittenCase = rewrite_case(Case, Test,
+                                 in => What, return_var => Var).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict(rewrite_case) ?
+
+
+rewrite_case(case(Choice, Body), Test,
+             in => What, return_var => Var) ->
+  (
+    `(Test :== RewrittenChoice),
+    !,
+    RewrittenBody
+  )
+  | RewrittenChoice = rewrite_choice(Choice),
+    RewrittenBody = rewrite_body(Body, 
+                                 in => What, return_var => Var).
+
+
+rewrite_case(default(Body), Test,
+             in => What, return_var => Var) -> RewrittenBody
+  |  RewrittenBody = rewrite_body(Body,
+                                  in => What, return_var => Var).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict(rewrite_choice) ?
+
+
+rewrite_choice({ Choices }) -> rewrite_choices(Choices).
+
+
+rewrite_choice(Choice) -> RewrittenChoice
+  | rewrite_expression(Choice, RewrittenChoice).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict(rewrite_choices) ?
+
+
+rewrite_choices((Choice, Choices)) -> `{RewrittenChoice ; OtherChoices}
+  | rewrite_expression(Choice, RewrittenChoice),
+    OtherChoices = rewrite_choices(Choices).
+
+
+rewrite_choices(Choice) -> RewrittenChoice
+  | rewrite_expression(Choice, RewrittenChoice).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+
+
+
+
+
+
+
+
+
+

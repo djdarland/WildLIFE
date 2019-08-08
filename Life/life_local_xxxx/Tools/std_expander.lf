@@ -1,0 +1,409 @@
+%	$Id: std_expander.lf,v 1.2 1994/12/08 23:54:02 duchier Exp $	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
+%                   STANDARD EXPANDER 
+% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+module("std_expander") ?
+
+
+import("acc_declarations") ?
+
+public(std_expander,comma,
+       clauses,context,code,define,macro) ?
+
+associate_expanders(std_expander,make_expander) ?
+op(1000,xfy,comma)?
+
+global(init_method,head_method,traverse_method,leaf_method,
+       split_method,save_method,restore_method,merge_method,
+       terminate_method) ?
+
+X:std_expander :-
+	make_expander(X,in_clauses => In,out_clauses => []),
+	maprel(assert,In),
+	fail.
+
+make_expander(S:std_expander(Name,
+			     init => init_method,
+			     head => head_method,
+			     leaf => leaf_method,
+			     split => split_method,
+			     save => save_method,
+			     restore => restore_method,
+			     merge => merge_method,
+			     terminate   => terminate_method),
+	      in_clauses => In,out_clauses => Out) :-
+	( head_method = std,!
+	;
+	  pred_info(head_method,[context,clauses,code])
+	),
+	( save_method = std,!
+	;
+	  pred_info(save_method,[context,code])
+	),	  
+	( restore_method = std,!
+	;
+	  pred_info(restore_method,[context,code])
+	),
+	( leaf_method = std,!
+	;
+	  pred_info(leaf_method,[clauses,context,code])
+	),
+	( init_method = std,!
+	;
+	  pred_info(init_method,[clauses])
+	),
+	( terminate_method = std,!
+	;
+	  pred_info(terminate_method,[code,clauses])
+	),
+	split_method = {std;@},!, 
+	merge_method = {std;@},!,
+	
+	traverse_method = str2psi(strcon(psi2str(Name),"_traverse"),
+				  current_module),
+	
+	pred_info(Name,clauses),
+	pred_info(traverse_method,[context,clauses,code]),
+	
+	first_clause(Name,First),
+	conj_clause(Conj),
+	disj_clause(Disj), 
+	cond_clause(Cond),
+	macro_clause(Macro),
+	leaf_clause(Leaf),
+	In = [First,Conj,Disj,Cond,Macro,Leaf|Out].
+
+first_clause(Name,First) :-
+	First =
+	(Name & @(Head :- Body,
+		  in_clauses => Cl1,out_clauses => Cl6,
+		  file => File, line => Line) :-
+	   initialize(context => Co1,
+		      in_clauses => Cl1,out_clauses => Cl2,
+		      file => File,line => Line) comma
+	   head(Head,NewHead,
+		in_code => Code1,out_code => Code2,
+		in_context => Co1,out_context => Co2,
+		in_clauses => Cl2,out_clauses => Cl3) comma
+	   traverse(Body,
+		    in_code => Code2,out_code => Code3,
+		    in_context => Co1,out_context => Co2,
+		    in_clauses => Cl3,out_clauses => Cl4) comma
+	   terminate(in_code => Code3,out_code => succeed,
+		     context => Co2,
+		     in_clauses => Cl4,out_clauses => Cl5),
+	 Cl5 = [`(NewHead :- Code1)|Cl6]
+	).
+
+
+conj_clause(Conj) :-
+	Conj = 
+	(traverse(S1:@(A,B),
+		  in_code => Code1,out_code => Code3,
+		  in_context => Co1,out_context => Co3,
+		  in_clauses => Cl1,out_clauses => Cl3):-
+	 `(S1 :== ,),
+	 !,
+	 traverse(A,
+		  in_code => Code1,out_code => Code2, 
+		  in_context => Co1,out_context => Co2,
+		  in_clauses => Cl1,out_clauses => Cl2),
+	 traverse(B,
+		  in_code => Code2,out_code => Code3,
+		  in_context => Co2,out_context => Co3,
+		  in_clauses => Cl2,out_clauses => Cl3)
+	).
+
+
+disj_clause(Disj) :- 
+  	Disj = 
+	(traverse(S2:@(A,B),
+		  in_code => Code1,out_code => Code4,
+		  in_context => Co1,out_context => Co2,
+		  in_clauses => Cl1,out_clauses => Cl3) :-
+	 `(S2 :== ;),
+	 !,
+	 split(in_code => Code1,out_code => Code2,
+	       in => Co1,out1 => Co1A,out2 => Co1B) comma
+	 (
+	     save(in_code => CodeA,out_code => CodeA2,
+		  in_context => Co1A,out_context => Co2A) comma
+	     traverse(A,
+		      in_code => CodeA2,out_code => CodeA3,
+		      in_context => Co2A,out_context => Co3A,
+		      in_clauses => Cl1,out_clauses => Cl2) comma
+	     restore(in_code => CodeA3,out_code => succeed,
+		     in_context => Co3A,out_context => Co4A)	     	     
+	 ),
+	     
+	 (
+	     save(in_code => CodeB,out_code => CodeB2,
+		  in_context => Co1B,out_context => Co2B) comma
+	     traverse(B,
+		      in_code => CodeB2,out_code => CodeB3,
+		      in_context => Co2B,out_context => Co3B,
+		      in_clauses => Cl2,out_clauses => Cl3) comma
+	     restore(in_code => CodeB3,out_code => succeed,
+		     in_context => Co3B,out_context => Co4B)
+	 ),
+	 merge(in_code => Code3,out_code => Code4,
+	       in1 => Co4A,in2 => Co4B,out => Co2),
+	 Code2 = `((CodeA;CodeB) comma Code3)
+	).
+
+cond_clause(Cond) :-
+	Cond =
+	(traverse(S3,
+		  in_code => Code1,out_code => Code4,
+		  in_context => Co1,out_context => Co2,
+		  in_clauses => Cl1,out_clauses => Cl3) :-
+	 `(S3 :== `cond),
+	 !,
+	 (
+	     `has_feature(1,S3,Condition),!
+	 ;
+	     Condition = "missing condition in the code!"  %% should not 
+							   %  be silent !!
+	 ),
+	 split(in_code => Code1,out_code => Code2,
+	       in => Co1,out1 => Co1A,out2 => Co1B) comma
+	 (
+	     `has_feature(2,S3,Alt1),!,
+	     save(in_code => CodeA,out_code => CodeA2,
+		  in_context => Co1A,out_context => Co2A) comma
+	     traverse(Alt1,
+		      in_code => CodeA2,out_code => CodeA3,
+		      in_context => Co2A,out_context => Co3A,
+		      in_clauses => Cl1,out_clauses => Cl2) comma 
+	     restore(in_code => CodeA3,out_code => succeed,
+		     in_context => Co3A,out_context => Co4A)
+	 ;
+	     save(in_code => CodeA6,out_code => CodeA5,
+		  in_context => Co1A,out_context => Co5A) comma
+	     restore(in_code => CodeA5,out_code => succeed,
+		     in_context => Co5A,out_context => Co4A) comma
+	     Cl1 = Cl2,
+	     CodeA = CodeA6
+	 ),
+	 (
+	     `has_feature(3,S3,Alt2),!,
+	     save(in_code => CodeB,out_code => CodeB2,
+		  in_context => Co1B,out_context => Co2B) comma 
+	     traverse(Alt2,
+		      in_code => CodeB2,out_code => CodeB3,
+		      in_context => Co2B,out_context => Co3B,
+		      in_clauses => Cl2,out_clauses => Cl3) comma
+	     restore(in_code => CodeB3,out_code => succeed,
+		     in_context => Co3B,out_context => Co4B)
+	     
+	 ;
+	     save(in_code => CodeB6,out_code => CodeB5,
+		  in_context => Co1B,out_context => Co5B) comma
+	     restore(in_code => CodeB5,out_code => succeed,
+		     in_context => Co5B,out_context => Co4B) comma
+	     Cl2 = Cl3,
+	     CodeB = CodeB6
+	 ),
+	 merge(in_code => Code3,out_code => Code4,
+	       in1 => Co4A,in2 => Co4B,out => Co2),
+	 Code2 = `(`cond(Condition,
+			 CodeA,
+			 CodeB
+			) comma Code3)
+	).
+
+
+macro_clause(MacroClause) :-
+	MacroClause = 
+	(traverse(Leaf,
+		  in_code => Code1,out_code => Code2,
+		  in_context => Co1,out_context => Co2,
+		  in_clauses => Cl1,out_clauses => Cl2) :-
+	 `macro(Leaf,Def),!,
+	 traverse(Def,
+		  in_code => Code1,out_code => Code2,
+		  in_context => Co1,out_context => Co2,
+		  in_clauses => Cl1,out_clauses => Cl2)
+	).
+
+
+leaf_clause(LeafClause) :-
+	LeafClause = 
+	(traverse(Leaf,
+		  in_code => Code1,out_code => Code2,
+		  in_context => Co1,out_context => Co2,
+		  in_clauses => Cl1,out_clauses => Cl2) :-
+	 leaf(Leaf,
+	      in_code => Code1,out_code => Code2,
+	      in_context => Co1,out_context => Co2,
+	      in_clauses => Cl1,out_clauses => Cl2)
+	).
+
+
+initialize(context => Co1,
+	   in_clauses => Cl1,out_clauses => Cl2,
+	   file => File,line => Line) ->	
+	cond( init_method :== std,
+	      ( succeed | Cl1 = Cl2),
+	      root_sort(init_method)
+	      & @(context => Co1,
+		  in_clauses => Cl1,out_clauses => Cl2,
+		  file => File,line => Line)
+	    ).
+
+terminate(context => Co1,
+	  in_code => Code1,out_code => Code2,
+	  in_clauses => Cl1,out_clauses => Cl2) ->	
+	cond( terminate_method :== std,
+	      ( succeed | Cl1 = Cl2, Code1 = Code2),
+	      root_sort(terminate_method)
+		& @(context => Co1,
+		    in_code => Code1,out_code => Code2,
+		    in_clauses => Cl1,out_clauses => Cl2)
+	    ).
+
+
+head(Head,NewHead,
+     in_code => Code1,out_code => Code2,
+     in_context => Co1,out_context => Co2,
+     in_clauses => Cl1,out_clauses => Cl2) ->
+	cond( head_method :== std,
+	      ( succeed | Cl1 = Cl2, NewHead = Head, Code1 = Code2),
+	      root_sort(head_method)
+	      & @(Head,NewHead,
+		  in_code => Code1,out_code => Code2,
+		  in_context => Co1,out_context => Co2,
+		  in_clauses => Cl1,out_clauses => Cl2)
+	    ).
+		  
+
+traverse(Body,
+	 in_code => Code1,out_code => Code2,
+	 in_context => Co1,out_context => Co2,
+	 in_clauses => Cl3,out_clauses => Cl4) ->
+	root_sort(traverse_method)
+	& @(Body,
+	    in_code => Code1,out_code => Code2,
+	    in_context => Co1,out_context => Co2,
+	    in_clauses => Cl3,out_clauses => Cl4).
+
+
+split(in_code => Code1,out_code => Code2,
+      in => Co,out1 => Co1,out2 => Co2) ->
+	cond( split_method :== std,
+	      (succeed | Co = Co1, Co1 = Co2, Code1 = Code2),
+	      root_sort(split_method)
+	      & @(in_code => Code1,out_code => Code2,
+		  in => Co,out1 => Co1,out2 => Co2)
+	    ).
+save(in_code => Code1,out_code => Code2,
+     in_context => Co1,out_context => Co2) ->
+	cond( save_method :== std,
+	      (succeed | Co1 = Co2, Code1 = Code2),
+	      root_sort(save_method)
+	      & @(in_code => Code1,out_code => Code2,
+		  in_context => Co1,out_context => Co2)
+	    ).
+
+restore(in_code => Code1,out_code => Code2,
+	in_context => Co1,out_context => Co2) ->
+	cond( restore_method :== std,
+	      (succeed | Co1 = Co2, Code1 = Code2),
+	      root_sort(restore_method)
+	      & @(in_code => Code1,out_code => Code2,
+		  in_context => Co1,out_context => Co2)
+	    ).
+
+merge(in_code => Code1,out_code => Code2,
+      in1 => Co1,in2 => Co2,out => Co) ->
+	cond( merge_method :== std,
+	      (succeed | Co = Co1, Co1 = Co2, Code1 = Code2),
+	      root_sort(merge_method)
+	      & @(in_code => Code1,out_code => Code2,
+		  in1 => Co1,in2 => Co2,out => Co)
+	    ).
+	
+leaf(Leaf,
+     in_code => Code1,out_code => Code2,
+     in_context => Co1,out_context => Co2,
+     in_clauses => Cl1,out_clauses => Cl2) ->
+	cond( leaf_method :== std,
+	      (succeed | Co1 = Co2, Cl1 = Cl2, Code1 = (Leaf comma Code2)),
+	      root_sort(leaf_method)
+	      & @(Leaf,
+		  in_code => Code1,out_code => Code2,
+		  in_context => Co1,out_context => Co2,
+		  in_clauses => Cl1,out_clauses => Cl2)
+	    ).
+
+
+X comma Y -> cond( X :== succeed,
+		   Y,
+		   cond( Y :== succeed,
+			 X,
+			 (X,Y))).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Macros
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% macro definition
+
+persistent(macros_table) ?
+
+non_strict(define) ?
+
+define(A,B) :-
+	macros_table.current_module.A <<- @(A,B).
+
+
+associate_expanders(define,define_expander) ?
+define_expander(define(A,B),in_clauses => In,out_clauses => In) :-
+	define(A,B).
+
+macro(X,Def) ->
+	cond( X :< string,
+	      submacro(features(macros_table.current_module),
+		       X,Def),
+	      macro2(X,Def)
+	    ).
+
+
+macro2(X,Def) ->
+	cond( has_feature(X,macros_table.current_module,Def1),
+	      ( true |
+		@(X,Def) = copy_term(Def1)
+	      ),
+	      cond( is_sort(X),
+		    submacro(features(macros_table,current_module),
+			     X,Def),
+		    false
+		  )
+	    ).
+
+submacro([A|B],X,Def) ->
+	cond( X :< A,
+	      ( true |
+		@(X,Def) = copy_term(macros_table.current_module.A)
+	      ),
+	      submacro(B,X,Def)
+	    ).
+submacro([],_,_) -> false.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Info for accumulation
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+acc_info(clauses,X,In,Out,acc_pred => In = [X|Out]).
+acc_info(context).
+acc_info(code,X,In,Out,acc_pred => In = (X comma Out)).
+

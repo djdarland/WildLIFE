@@ -1,0 +1,148 @@
+                                                     wild_life(1)
+
+NAME
+    wild_life - interpreter for the LIFE language
+
+SYNTAX
+    wild_life [ options ] [ arguments ]
+
+DESCRIPTION
+    LIFE (Logic, Inheritance, Functions, Equations) is an experimental
+    programming language with a powerful facility for structured type
+    inheritance.  LIFE reconciles styles from Functional Programming
+    and Logic Programming by implicitly delegating control to an
+    automatic suspension mechanism.  This allows interleaving
+    interpretation of relational and functional expressions which
+    specify structural dependencies on objects.
+
+    The Wild_Life interpreter is a fully functional implementation of
+    the LIFE language.  It has a comfortable user interface with
+    incremental query extension ability.  It contains an extensive set
+    of built-in operations as well as an X Windows interface.
+
+    The Wild_Life interpreter is especially suited for rapid prototyping
+    of applications dealing with complex data.  It contains a tool for
+    rapid building of interactive window-based interfaces and a powerful
+    preprocessor.  The Wild_Life interpreter was originally developed as
+    part of the Paradise project at the DEC Paris Research Laboratory.
+    Its development is continuing in the Proteus project.
+
+OPTIONS
+
+    -q   Quiet mode.  Forces completely silent operation, i.e., no user
+	 interface information (prompts, variable values, Yes/No
+	 messages, startup banner, exit banner) will be printed.  This
+	 allows Wild_Life to be used as an element of a Unix pipe with
+	 minimal hassle.  Errors, warnings, trace messages, program
+	 output (with the write statement etc.), and file I/O are still
+	 output.  As always, errors and warnings are output to stderr,
+	 trace information to stdout.  In 'verbose' mode the quiet mode
+	 is disabled, which allows the user to inspect a misbehaving
+	 Wild_Life when it is being used as a pipe element.
+
+    -memoryN
+    -memory=N
+	 Start up the system with N words of available memory.  This
+	 memory is shared between data and programs.  Virtual memory
+	 usage is close to 2*N because of the half-space garbage
+	 collection algorithm used.  The default value of N is 2000000.
+
+    arguments
+	 All command line arguments are available to the LIFE program.
+	 The function argv returns a list of strings, where each string
+	 is one command line argument.  For example, if the system is
+	 started with "wild_life -q foo" then argv returns the list
+	 ["wild_life", "-q", "foo"].
+
+FILES
+    Life1.0/Doc       (documentation)
+    Life1.0/Examples  (example programs)
+    Life1.0/Lib       (libraries)
+    Life1.0/Tools     (programming tools)
+    Life1.0/CLife     (wild_life as C library)
+    Life1.0/Tests     (test suite)
+    Life1.0/Source    (source code)
+
+EXAMPLES
+    The directory Life1.0/Examples contains a set of example programs.
+    Each of these programs is in its own module and can be loaded
+    directly into the interpreter with the 'import' command.
+
+    The following example shows how to run a program that solves the
+    SEND+MORE=MONEY puzzle:
+
+      % wild_life
+      Wild_Life Interpreter Version 1.0
+      Copyright (C) 1991-93 DEC Paris Research Laboratory
+      No customizing file loaded.
+      > import("solve")?
+      *** File "/udir/rmeyer/LIFE/PUBLIC/Examples/solve.lf" loaded
+      
+      *** Yes
+      > solve?
+      
+       SEND     9567
+      +MORE    +1085
+      -----    -----
+      MONEY    10652
+      
+      
+      *** No
+      > listing(solve#solve)? % In module "solve", list predicate 'solve'.
+      
+      solve :-
+              _A = 1,
+              _B + _C + _A = _D + 10 * _A,
+              _E + _F + _D = _G + 10 * _B,
+              _H + _G + _I = _F + 10 * _E,
+              _J + _F = _K + 10 * _H,
+              diff_list([_C,_F,_G,_J,_A,_D,_I,_K]),
+              _H = carry,
+              _E = carry,
+              _B = carry,
+              _C = decimal,
+              _F = decimal,
+              _G = decimal,
+              _J = decimal,
+              _D = decimal,
+              _I = decimal,
+              _K = decimal,
+              nl,
+              write(" SEND     ",_C,_F,_G,_J),
+              nl,
+              write("+MORE    +",_A,_D,_I,_F),
+              nl,
+              write("-----    -----"),
+              nl,
+              write("MONEY    ",_A,_D,_G,_F,_K),
+              nl,
+              nl,
+              fail.
+      
+      *** Yes
+      > halt?
+      
+      *** Exiting Wild_Life  [1.850s cpu, 0.000s gc (0.0%)]
+      %
+      
+
+BUGS
+    See the installation's README file for a list of known bugs.
+
+CURRENT OWNERS
+    rmeyer@prl.dec.com (Richard Meyer)
+    vanroy@prl.dec.com (Peter Van Roy)
+
+AUTHORS OF OBJECT
+    Richard Meyer
+    Peter Van Roy
+    Bruno Dumant (grammar preprocessor, graphical interface toolkit)
+    Jean-Claude Herve (X Windows interface)
+    Hassan Ait-Kaci, Seth Copen Goldstein, Abder Aggoun (contributions)
+
+AUTHORS OF DOCUMENTATION
+    Hassan Ait-Kaci
+    Bruno Dumant
+    Richard Meyer
+    Andreas Podelski
+    Peter Van Roy
