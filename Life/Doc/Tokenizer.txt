@@ -1,0 +1,92 @@
+
+                          TOKENIZER FOR LIFE
+
+
+ NAME
+
+ tokenizer: a complete tokenizer for Life programs.
+
+
+ USAGE 
+
+      tokenize(filename) ? 
+
+ reads in  the file filename and writes the obtained tokens in the file
+ filename_toks. 
+ 
+ 
+ FILES
+
+ The file tokenizer.lf contains the tokenizer.
+
+ The other files are:
+ - accumulators.lf, std_expander.lf and acc_declarations.lf 
+
+ All these files are automatically loaded if they are in the same directory. 
+ 
+ They must be loaded with expand_load(true).
+
+ DESCRIPTION 
+
+ Characters belong to one of the following categories:
+ - void characters: space, nl, tab
+ - syntactic characters: {}[]()?
+ - atom characters: any uppercase or lowcase letter, underscore
+ - operator characters: ~ ` ! # $ ^ & * - + = : | > < / \ 
+ - delimiters: " '
+ - special characters: @ , ; . 
+
+ The tokens are of the following types:
+    - variable(X) where X is the name of the variable (an atom); 
+      A variable is any sequence of atom characters, beginning with an
+      uppercase letter or with underscore (in the latter case, the sequence
+      must contain at least two characters), possibly terminated by primes;
+    - construct(X) represents a constructor X. 
+      The type of a constructor is a subsort of construct: numb, chaine, or
+      atom. X is the "value" of the atom (string, number, or unevaluated atom)
+      - a number is of the form 123 or 123.56 or 123.56e12 or 123.56e-12 
+      - a string is any sequence of characters delimited by " . Any " occurring
+        inside a string have to be doubled;
+      - an atom is any sequence of characters delimited by ' ( any ' occurring
+        inside such an atom have to be doubled), or any sequence of atom
+        characters starting with a lowcase letter, or @, or _, or any sequence
+        of operator characters, or in some cases the dot (returned as
+        atom(".")).   
+    - any syntactic object (returned as the string "[" or "}") or in some cases
+      the dot (returned as ".") or "[|", "|]", "[|]".
+ 
+ The dot may be tokenized in three different ways, depending on the context in
+ which it appears:
+   - It is not returned as a token if it occurs inside a floating point
+     number;
+   - It is returned as a syntactic object "." if it is followed by a void
+     character (tab, nl, space, or end_of_file)
+   - it is returned as atom(".") otherwise.
+
+ This tokenizer allows the user to define his own syntactic objects, using the
+ query syntact_object(X), where X is an atom, but not a string, nor a number.
+ In this case, the tokenizer returns the string "X", and not atom(X).
+
+ Comments:
+ - All the characters between % and the end of the line where it appears are
+   ignored.
+ - This tokenizer also recognises nested comments (using /* and */ as
+   delimiters). * and / can still be freely used inside sequences of operator
+   characters. 
+
+ Extensions w.r.t. wild_Life: 
+ - primes at the end of atoms and variables.
+ - nested comments
+ - syntact_object declaration
+ - dots tokenizing
+ - special tokens for lists
+                           
+ AUTHOR 
+
+ Bruno Dumant
+
+ Copyright 1992 Digital Equipment Corporation
+ All Rights Reserved
+
+
+
