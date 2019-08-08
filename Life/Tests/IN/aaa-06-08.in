@@ -1,0 +1,3 @@
+g(@(eggs => X, bacon => Y, toast => Z)) -> [X, Y, Z].
+A = g(B:@(eggs => a, bacon => b)), write(A)?
+B = @(toast => c) , write(A)?

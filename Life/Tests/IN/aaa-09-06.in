@@ -1,0 +1,9 @@
+persistent(this)?
+this <<- q(a,b,c),write(this)?
+this.2 = B?
+
+this.new = B, write(this)?
+
+write(this)?
+
+

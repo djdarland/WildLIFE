@@ -1,0 +1,6 @@
+persistent(that)?
+that <<- thing(int),that = thing(5),listing(that,thing)?
+that = thing(X),listing(that,thing,X)?
+X=5,listing(that,thing,X)?
+
+listing(that,thing,X,5)?

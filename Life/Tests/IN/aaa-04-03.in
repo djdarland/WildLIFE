@@ -1,0 +1,13 @@
+bike <| two_wheels.
+bike <| vehicle.
+truck <| four_wheels.
+truck <| vehicle.
+car <| four_wheels.
+car <| vehicle.
+glb(two_wheels,vehicle)=bike?
+glb(four_wheels,vehicle)={car;truck}?
+glb(two_wheels,four_wheels)={}?
+
+glb(bike,vehicle)=bike?
+glb(bike,@)=bike?
+.

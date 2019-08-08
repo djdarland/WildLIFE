@@ -1,0 +1,27 @@
+bike <| two_wheels.
+bike <| vehicle.
+truck <| four_wheels.
+truck <| vehicle.
+car <| four_wheels.
+car <| vehicle.
+glb(two_wheels,vehicle)=A,write(A)?
+;
+;
+
+glb(four_wheels,vehicle)=B,write(B)?
+;
+;
+
+glb(two_wheels,four_wheels)=C,Write(C)?
+;
+;
+
+glb(bike,vehicle)=D,write(D)?
+;
+;
+
+glb(bike,@)=E,write(E)?
+;
+;
+
+.

@@ -1,0 +1,4 @@
+father(name => N:string, son =>boy(name =>N).
+[A,A].
+L:[int,int,int|L].
+write(A),happy(A:person)?

@@ -1,0 +1,8 @@
+%% i think mine correct 
+%%
+
+op(500,xfy,--)?
+diffappend(A1--A2,B1--B2) -> A1 -- B2 | A2=B1.
+
+A=[1,2|X] -- X, B=[3,4|Y] -- Y?
+C=diffappend(A,B)?

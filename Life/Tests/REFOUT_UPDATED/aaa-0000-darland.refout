@@ -1,0 +1,250 @@
+
+*** Yes
+> > 
+*** Yes
+Name = cicero, Object = cicero, Subject = tom, When = now.
+--1> 
+*** Yes
+Name = cataline, Object = cataline, Subject = tom, When = now.
+--1> 
+*** Yes
+Name = tully, Object = tully, Subject = tom, When = now.
+--1> 
+*** Yes
+Name = cicero, Object = cicero, Subject = tom, When = now.
+--1> 
+*** Yes
+Name = cataline, Object = cataline, Subject = tom, When = now.
+--1> 
+*** Yes
+Name = tully, Object = brutus, Subject = tom, When = now.
+--1> 
+*** Yes
+Name = tom, Object = tom, Subject = tom, When = now.
+--1> 
+*** Yes
+Name = tom_n, Object = tom, Subject = tom, When = now.
+--1> 
+*** No
+> 
+*** Yes
+Predicate = denounced, Subject = tom, Verb = denounced, When = now.
+--1> 
+*** Yes
+Predicate = not_denounced, Subject = tom, Verb = not_denounced, When = now.
+--1> 
+*** Yes
+Predicate = human, Subject = tom, Verb = human, When = now.
+--1> 
+*** Yes
+Predicate = featherless_biped, 
+Subject = tom, 
+Verb = featherless_biped, 
+When = now.
+
+--1> 
+*** Yes
+Predicate = american, Subject = tom, Verb = american, When = now.
+--1> 
+*** Yes
+Predicate = roman, Subject = tom, Verb = roman, When = now.
+--1> 
+*** Yes
+Predicate = symbol0_r, Subject = tom, Verb = symbol0_r, When = now.
+--1> 
+*** Yes
+Predicate = symbol1_r, Subject = tom, Verb = symbol1_r, When = now.
+--1> 
+*** Yes
+Predicate = member_of, Subject = tom, Verb = member_of, When = now.
+--1> 
+*** Yes
+Predicate = tom_believes_now, 
+Subject = tom, 
+Verb = tom_believes_now, 
+When = now.
+
+--1> 
+*** Yes
+Predicate = belief_r, Subject = tom, Verb = belief_r, When = now.
+--1> 
+*** No
+> > 
+*** Yes
+S = tom, Sense_data = toms_sense_data, When = now.
+--1> 
+*** Yes
+S = harry, Sense_data = harrys_sense_data, When = now.
+--1> 
+*** No
+> > 
+*** Yes
+Sense_data = toms_sense_data, Sub_sense_data = toms_sns_circle.
+--1> 
+*** Yes
+Sense_data = toms_sense_data, Sub_sense_data = toms_sns_square.
+--1> 
+*** Yes
+Sense_data = harrys_sense_data, Sub_sense_data = harrys_sns_circle.
+--1> 
+*** Yes
+Sense_data = harrys_sense_data, Sub_sense_data = harrys_sns_triangle.
+--1> 
+*** No
+> 
+*** Yes
+Perc_obj_relation = circularity, Sub_sense_data = toms_sns_circle.
+--1> 
+*** Yes
+Perc_obj_relation = squareness, Sub_sense_data = toms_sns_square.
+--1> 
+*** Yes
+Perc_obj_relation = circularity, Sub_sense_data = harrys_sns_circle.
+--1> 
+*** Yes
+Perc_obj_relation = triangularity, Sub_sense_data = harrys_sns_triangle.
+--1> 
+*** No
+> > > 
+*** Yes
+Sence_property = red, Sense_pred = toms_sns_red.
+--1> 
+*** Yes
+Sence_property = blue, Sense_pred = toms_sns_blue.
+--1> 
+*** Yes
+Sence_property = red, Sense_pred = harrys_sns_red.
+--1> 
+*** Yes
+Sence_property = green, Sense_pred = harrys_sns_green.
+--1> 
+*** No
+> > 
+*** Yes
+Object = circular_object, Property = circularity.
+--1> 
+*** No
+> > > > 
+*** Yes
+Predicate = red, Property = redness.
+--1> 
+*** No
+> > > > > 
+*** Yes
+X = toms_sns_circle.
+--1> 
+*** No
+> 
+*** Yes
+X = toms_sns_square.
+--1> 
+*** No
+> 
+*** Yes
+X = harrys_sns_circle.
+--1> 
+*** No
+> 
+*** Yes
+X = harrys_sns_triangle.
+--1> 
+*** No
+> 
+*** Yes
+Property = circularity.
+--1> 
+*** No
+> 
+*** Yes
+Predicate = redness.
+--1> 
+*** No
+> 
+*** Yes
+Object = circular_object.
+--1> 
+*** No
+> 
+*** Yes
+Predicate = denounced, Verb = denounced.
+--1> 
+*** Yes
+Predicate = not_denounced, Verb = not_denounced.
+--1> 
+*** Yes
+Predicate = human, Verb = human.
+--1> 
+*** Yes
+Predicate = featherless_biped, Verb = featherless_biped.
+--1> 
+*** Yes
+Predicate = american, Verb = american.
+--1> 
+*** Yes
+Predicate = roman, Verb = roman.
+--1> 
+*** Yes
+Predicate = symbol0_r, Verb = symbol0_r.
+--1> 
+*** Yes
+Predicate = symbol1_r, Verb = symbol1_r.
+--1> 
+*** Yes
+Predicate = tom_pred, Verb = tom_pred.
+--1> 
+*** Yes
+Predicate = tom_pred2, Verb = tom_pred2.
+--1> 
+*** No
+> > 
+*** Yes
+S = s, T = t, U = u, W = w, X = x, Y = y, Z = z.
+--1> 
+*** No
+> > 
+*** Yes
+S = tom, 
+Verb = symbol1_r, 
+Verb2 = denounced_n, 
+Verb3 = denounced, 
+When = now, 
+Who = tom.
+
+--1> 
+*** No
+> 
+*** Yes
+Object = cataline, Suject = cicero, When = then.
+--1> 
+*** Yes
+Object = cataline, Suject = cicero, When = then.
+----2> 
+*** Yes
+Object = cataline, Suject = cicero, When = then.
+------3> 
+*** No
+Object = cataline, Suject = cicero, When = then.
+------3> 
+*** Yes
+Object = cataline, Suject = cicero, When = then.
+--------4> 
+*** Yes
+Object = cataline, Predicate = human, Suject = cicero, When = then, Who = tom.
+----------5> 
+*** No
+Object = cataline, Predicate = human, Suject = cicero, When = then, Who = tom.
+----------5> 
+*** No
+Object = cataline, Suject = cicero, When = then.
+--------4> 
+*** No
+Object = cataline, Suject = cicero, When = then.
+------3> 
+*** No
+Object = cataline, Suject = cicero, When = then.
+----2> 
+*** No
+Object = cataline, Suject = cicero, When = then.
+--1> 
+*** No
+> > 

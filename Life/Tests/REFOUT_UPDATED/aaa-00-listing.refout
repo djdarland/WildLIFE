@@ -1,0 +1,21 @@
+
+% '23' is a value of sort 'int'.
+
+% '+' is a built-in function.
+
+q(_A,_A,_B,_B) -> _A * _B.
+
+p(@,@,@,@) :-
+        succeed.
+
+% '23' is a value of sort 'int'.
+
+% '+' is a built-in function.
+
+% '-' is a built-in function.
+
+w(a,b,c) :-
+        succeed.
+
+*** Yes
+> > > > 

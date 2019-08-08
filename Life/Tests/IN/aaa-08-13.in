@@ -1,0 +1,2 @@
+A=strip(siren(noise => loud,
+	      sound => unpleasant, db =>120))?

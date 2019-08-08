@@ -1,0 +1,59 @@
+
+*** Yes
+> > 
+*** Yes
+X = (f1(a) -> Y), Y = a.
+--1> 
+*** Yes
+X = (f1(b) -> Y), Y = b.
+--1> 
+*** No
+> 
+*** Yes
+X = (f2 -> Y), Y = c.
+--1> 
+*** Yes
+X = (f2(a,s,d) -> Y), Y = (s, d).
+--1> 
+*** No
+> 
+*** Yes
+X = (f3(a,s,d) -> Y), Y = (s, d).
+--1> 
+*** Yes
+X = (f3 -> Y), Y = c.
+--1> 
+*** No
+> 
+*** Yes
+X = (g -> Y), Y = a.
+--1> 
+*** Yes
+X = (g(a) -> Y), Y = b.
+--1> 
+*** No
+> 
+*** Yes
+X = (h -> Y), Y = a.
+--1> 
+*** Yes
+X = (h -> Y), Y = b.
+--1> 
+*** No
+> 
+*** Yes
+A = [_A|_B], B = list, C = [_A|append(_B,B)], X = (append(A,B) -> C).
+--1> 
+*** Yes
+A = [], B = list, C = B, X = (append(A,B) -> B).
+--1> 
+*** No
+> 
+*** Yes
+X = (append([_A|_B],_C: list) -> [_A|append(_B,_C)]).
+--1> 
+*** Yes
+X = (append([],_A: list) -> _A).
+--1> 
+*** No
+> > 
