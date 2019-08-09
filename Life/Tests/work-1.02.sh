@@ -9,12 +9,12 @@ do
     then
 	echo "2 IN-1.02/$1.in"
     fi
-    if test -f REFDIFF/$1.refdiff2.tmp
+    if test -f REFDIFF/$1.refdiff.tmp
     then
 	echo "3 REFDIFF/$1.refdiff.tmp"
 	echo "4 REFOUT/$1.refout OUT/$1.out.tmp"
     fi
-    if test -f ERRDIFF/$1.errdiff2.tmp 
+    if test -f ERRDIFF/$1.errdiff.tmp 
     then
 	echo "5 ERRDIFF/$1.errdiff.tmp"
 	echo "6 REFERR/$1.referr ERR/$1.err.tmp"
