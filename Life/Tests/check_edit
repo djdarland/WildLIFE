@@ -29,7 +29,7 @@ umask 000
 
 
 # Version of Wild-LIFE to use:
-set WLIFE = "~/bin/wild_life_102"
+set WLIFE = "~/bin/wild_life"
 
 
 # clear

@@ -1294,3 +1294,16 @@ echo 1 Total Tests err differ
 
 ONLY remaining preparser
 -------------------------------------------------------------
+------------------------------------------------------------
+Starting on ts.sh -- after getting "END Abort" correct
+
+
+echo 414 Total Tests completed
+echo 403 Total Tests match
+echo 11 Total Tests differ
+echo 9 Total Tests out differ
+echo 6 Total Tests err differ
+
+---------------------------------------------------------------
+
+

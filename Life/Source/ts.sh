@@ -1,3 +1,7 @@
+rm ../Tests/REFDIFF/*.tmp
+rm ../Tests/ERRDIFF/*.tmp
+rm ../Tests/OUT/*.tmp
+rm ../Tests/ERR/*.tmp
 cd ../Tests
 ./check_edit_all 1
 echo "enter 1 to edit the temporary results script." 

@@ -2154,7 +2154,7 @@ int nlflag;
 #ifndef REVBACK102
   // REV102back added next 2 lines to match Reference in 4.+ comment for 1.02
     if(NOTQUIET) fprintf(stderr,"\n*** END Abort"); /*  RM: Feb 17 1993  */
-    if(NOTQUIET && nlflag) fprintf(stderr,"\n");/*  RM: Feb 17 1993  */
+    //    if(NOTQUIET && nlflag) fprintf(stderr,"\n");/*  RM: Feb 17 1993  */
 #endif
   return TRUE;
 }

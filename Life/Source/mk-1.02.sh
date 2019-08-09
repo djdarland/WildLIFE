@@ -1,6 +1,7 @@
 # 1.02 compatible version
 # no "END Abort" in built_ins.c
 #
+rm c_life.a
 rm info2.c
 rm lib2.c
 rm life2.c

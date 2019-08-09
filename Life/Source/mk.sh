@@ -1,3 +1,4 @@
+rm c_life.a
 rm info2.c
 rm lib2.c
 rm life2.c
