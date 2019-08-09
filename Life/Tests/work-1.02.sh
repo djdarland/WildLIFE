@@ -25,7 +25,7 @@ do
     echo "12 Restore $1 Original 1.02 Output Reference"
     echo "13 Cannot expect match - move LF-1.02/$1.lf to LFSAV-1.02/$1.lf"
     echo "14 Run wild_life interactively"
-    echo "16 edit NOTES_DJD"
+    echo "16 edit Port.txt"
 
     echo "888 NEXT FILE SET"
     echo "ctrl-c QUIT"
