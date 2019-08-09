@@ -11,12 +11,12 @@ do
     fi
     if test -f REFDIFF/$1.refdiff2.tmp
     then
-	echo "3 REFDIFF/$1.refdiff2.tmp"
+	echo "3 REFDIFF/$1.refdiff.tmp"
 	echo "4 REFOUT/$1.refout OUT/$1.out.tmp"
     fi
     if test -f ERRDIFF/$1.errdiff2.tmp 
     then
-	echo "5 ERRDIFF/$1.errdiff2.tmp"
+	echo "5 ERRDIFF/$1.errdiff.tmp"
 	echo "6 REFERR/$1.referr ERR/$1.err.tmp"
     fi
     echo "10 Rerun wild_life on $1"
@@ -34,9 +34,9 @@ do
     case $select in
 	1) $EDITOR LF-1.02/$1.lf;;
 	2) $EDITOR IN-1.02/$1.in;;
-	3) $EDITOR REFDIFF/$1.refdiff REFDIFF/$1.refdiff2.tmp;;
+	3) $EDITOR REFDIFF/$1.refdiff;;
 	4) $EDITOR REFOUT/$1.refout OUT/$1.out.tmp;;
-	5) $EDITOR ERRDIFF/$1.errdiff ERRDIFF/$1.errdiff2.tmp;;
+	5) $EDITOR ERRDIFF/$1.errdiff;;
 	6) $EDITOR REFERR/$1.referr ERR/$1.err.tmp;;
 	10) ./check_edit_all-1.02 "2" $1;;
 	11) ./approve_out-1.02.sh $1;;
