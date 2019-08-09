@@ -12,18 +12,18 @@ do
     if test -f REFDIFF/$1.refdiff2.tmp
     then
 	echo "3 REFDIFF/$1.refdiff2.tmp"
-	echo "4 REFOUT_UPDATED/$1.refout OUT/$1.out.tmp"
+	echo "4 REFOUT/$1.refout OUT/$1.out.tmp"
     fi
     if test -f ERRDIFF/$1.errdiff2.tmp 
     then
 	echo "5 ERRDIFF/$1.errdiff2.tmp"
-	echo "6 REFERR_UPDATED/$1.referr ERR/$1.err.tmp"
+	echo "6 REFERR/$1.referr ERR/$1.err.tmp"
     fi
     echo "10 Rerun wild_life on $1"
 
     echo "11 Approve New $1 Output To Reference"
     echo "12 Restore $1 Original 1.02 Output Reference"
-    echo "13 Cannot expect match - move LF-1.02/$1.lf to LFSAV/$1.lf"
+    echo "13 Cannot expect match - move LF-1.02/$1.lf to LFSAV-1.02/$1.lf"
     echo "14 Run wild_life interactively"
     echo "16 edit NOTES_DJD"
 
