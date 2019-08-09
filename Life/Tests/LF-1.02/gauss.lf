@@ -1,0 +1,361 @@
+op(500,xfy,\\)?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% This file is a program written by Christophe Bonnet for his DEA.
+% It is an incremental equation solver using Gaussian elimination.
+
+cpu_timehook -> 0.
+% cpu_timehook -> cpu_time.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% FILE. . . . . /_/udir4/_/hassan/life/ok/quicksort
+% EDIT BY . . . Hassan Ait-Kaci
+% ON MACHINE. . Prlp22
+% STARTED ON. . Wed Jun 27 15:02:17 1990
+
+q_sort(L,order => O) -> undlist(dqsort(L,order => O)).
+
+undlist(X\\Y) -> X | Y=[].
+
+dqsort([H|T],order => O) ->
+       (L1\\L2) & where((Less,More)  & split(H,T,([],[]),order => O),
+                       (L1 \\ [H|L3])& dqsort(Less,order => O),
+                       (L3 \\ L2)    & dqsort(More,order => O)).
+dqsort([]) -> L\\L.
+
+split(X,[H|T],(Less,More),order => O) ->
+        cond(O(H,X),
+             split(X,T,([H|Less],More),order => O),
+             split(X,T,(Less,[H|More]),order => O)).
+split(@,[],P) -> P.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% FILE. . . . . /_/udir4/_/bonnet/life/front.lf
+% EDIT BY . . . Christophe Bonnet
+% ON MACHINE. . Prl303
+% STARTED ON. . Wed Jul 22 18:54:33 1992
+
+collector_starter(Q:q(@)) :- @=constraint_collector(Q).
+collector_starter(Q) :- failure_handler(Q).
+
+constraint_collector(Q:q([E|S]))-> Cont
+				      | solve_constraint(E),
+					Q <- q(S),
+					Cont = constraint_collector(Q).
+
+failure_handler(@) :- nl, write("=} I'm sorry, but I'm dying !"),nl,fail.
+
+solve_constraint(gauss(L)) :- solve_eq(L),
+		   write("==} solve          ",cpu_timehook),nl.
+
+
+
+non_strict(feeder,fast_feeder,fast_starter)?
+
+feeder(Eq,Q) :- Cstr=gauss(normalize(Eq)),Q=q([Cstr|@]).
+
+fast_feeder([],@).
+fast_feeder([E|Tl],Q) :- feeder(E,Q), fast_feeder(Tl,Q).
+
+fast_starter(EqList,Queue) :- Queue :== @,
+			collector_starter(Queue),
+			fast_feeder(EqList,Queue).
+
+dynamic(varcount)?
+varcount -> 0.
+nvar -> vr(X,val=>none,wlist=>[])|X=varcount+1,setq(varcount,X).
+
+create_vars([X|Tl]) :- X:==@,!,X=nvar,create_vars(Tl).
+create_vars([]).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% FILE. . . . . /_/udir4/_/bonnet/life/norm.lf
+% EDIT BY . . . Christophe Bonnet
+% ON MACHINE. . Prl303
+% STARTED ON. . Wed Jul 15 17:58:51 1992
+
+op(500,fx, ~ )?  % replace the unary minus
+
+del(L:[@|Tl]) :- L <- Tl.
+
+non_strict(nonstrict_id)?
+nonstrict_id(X,X).
+
+normalize(E) -> N|expand(E,R),write("==} expand         ",cpu_timehook),nl,
+                  sort_and_reduce(R,N),
+                  write("==} reduce         ",cpu_timehook),nl.
+
+% Non-verbose:
+% normalize(E) -> N|expand(E,R),sort_and_reduce(R,N).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% FILE. . . . . /_/udir4/_/bonnet/life/expand.lf
+% EDIT BY . . . Christophe Bonnet
+% ON MACHINE. . Prl303
+% STARTED ON. . Wed Jul 15 17:57:49 1992
+
+expand(W,R) :-  write("===} begin         ",cpu_timehook),nl,
+                exp_no_minus(W,X),
+                write("===} no_minus      ",cpu_timehook),nl,
+                exp_dist(X,Y),
+                write("===} dist          ",cpu_timehook),nl,
+                exp_add_ac(Y,[],Z),
+                write("===} add_ac        ",cpu_timehook),nl,
+                exp_red_mult(Z,R),
+                write("===} red_mult      ",cpu_timehook),nl.
+% Non-verbose:
+% expand(W,R) :-	exp_no_minus(W,X),
+% 		exp_dist(X,Y),
+% 		exp_add_ac(Y,[],Z),
+% 		exp_red_mult(Z,R).
+
+non_strict(exp_no_minus,exp_dist,exp_dist_do_add,exp_dist_do_mult)?
+
+exp_no_minus(X) :- X :== @,
+	write("=} Variables must be created by the 'nvar' function."),!,fail.
+exp_no_minus(V:vr,V) :- !.
+exp_no_minus(A:real,A) :- !.
+exp_no_minus(~X,Z*X2) :- !,Z= -1,exp_no_minus(X,X2).
+exp_no_minus(X+Y,X2+Y2) :- !,exp_no_minus(X,X2),exp_no_minus(Y,Y2).
+exp_no_minus(X*Y,X2*Y2) :- !,exp_no_minus(X,X2),exp_no_minus(Y,Y2).
+exp_no_minus(X-Y,X2+Z*Y2) :- !,Z= -1,exp_no_minus(X,X2),exp_no_minus(Y,Y2).
+
+
+exp_dist(A:real,A):- !.
+exp_dist(V:vr,V) :- !.
+exp_dist(A+B,Z) :- !,exp_dist(A,X),exp_dist(B,Y),exp_dist_do_add(X+Y,Z).
+exp_dist((A+B)*C,Z) :- !,exp_dist(A*C+B*C,Z).
+exp_dist(A*(B+C),Z) :- !,exp_dist(A*B+A*C,Z).
+exp_dist(A*B,Z) :- exp_dist(A,X),exp_dist(B,Y),exp_dist_do_mult(X*Y,Z).
+
+exp_dist_do_add(A:real + B:real,X) :- !, X= A+B.
+exp_dist_do_add(X,X).
+
+exp_dist_do_mult(X:((A+B)*@),Y) :- !,exp_dist(X,Y).
+exp_dist_do_mult(X:(@*(A+B)),Y) :- !,exp_dist(X,Y).
+exp_dist_do_mult(A:real * B:real,X) :- !,X= A*B.
+exp_dist_do_mult(X,X).
+
+non_strict(exp_add_ac,exp_red_mult,exp_red_mult_term,exp_red_mult_vars)?
+
+%exp_add_ac(V:vr,V) :- !.
+%exp_add_ac(A:real,A) :- !.
+%exp_add_ac(X:@*@,X) :- !.
+%exp_add_ac(A:(@+@)+(B+C),Z) :- !,exp_add_ac(A+B+C,Z).
+%exp_add_ac(A+B,B+Z) :- exp_add_ac(A,Z).
+
+exp_add_ac(A:(@+@)+B:(@+@),S,R) :- !,exp_add_ac(B,[A|S],R).
+exp_add_ac(A:(@+@)+B,S,B+R) :- !,exp_add_ac(A,S,R).
+exp_add_ac(A+B,[C|S],A+(B+R)) :- !,exp_add_ac(C,S,R).
+exp_add_ac(X,[],X).
+
+exp_red_mult(A+B,K*V+S) :- !,exp_red_mult_term(A,K,V),exp_red_mult(B,S).
+exp_red_mult(A,K*V) :- exp_red_mult_term(A,K,V).
+
+exp_red_mult_term(V:vr,1,V) :- !.
+exp_red_mult_term(K:real,K,1) :- !.
+exp_red_mult_term(A*B,K,V) :-
+	exp_red_mult_term(A,K1,V1),
+	exp_red_mult_term(B,K2,V2),
+	K=K1*K2,exp_red_mult_vars(V1,V2,V).
+
+exp_red_mult_vars(1,V,V) :- !.
+exp_red_mult_vars(V,1,V) :- !.
+exp_red_mult_vars(V1,V2,V1*V2).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% FILE. . . . . /_/udir4/_/bonnet/life/reduce.lf
+% EDIT BY . . . Christophe Bonnet
+% ON MACHINE. . Prl303
+% STARTED ON. . Thu Jul 16 14:32:16 1992
+
+sort_and_reduce(X,R) :-
+	sum2slist(X,Y),
+	Z=var_q_sort(Y),
+	slist_reduce(Z,R),
+	deg_chk(R).
+
+non_strict(varless,varless_pred,var_q_sort) ?
+
+varless_pred(@*vr,@*real) :- !.
+varless_pred(@*vr,real) :- !.
+varless_pred(@*vr(X),@*vr(Y)) :- !,X<Y.
+varless_pred(@*(@*@),@).
+
+varless(X,Y) -> call_once(varless_pred(X,Y)).
+
+non_strict(sum2slist,deg_chk,slist_reduce)?
+
+
+sum2slist(T+S,[T|R]) :- !,sum2slist(S,R).
+sum2slist(P:(@*@),[P]) :- !.
+sum2slist(A:real,[A]) :- !.
+sum2slist(V:vr,[V]).
+
+deg_chk([]) :- !.
+deg_chk([real|T]) :- !,deg_chk(T).
+deg_chk([real*vr|T]) :- !,deg_chk(T).
+deg_chk(@) :- fail.
+
+% load(quicksort)?
+
+var_q_sort(E) -> q_sort(E,order=>varless).
+
+slist_reduce([0*@|T],R) :- !,slist_reduce(T,R).
+slist_reduce([A*(X:vr(N)),B*vr(N)|T],R) :- C= A+B,!,slist_reduce([C*X|T],R).
+slist_reduce([A*1],[A]) :- !.
+slist_reduce([H|T],[H|R]) :- !,slist_reduce(T,R).
+slist_reduce([],[0]).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% FILE. . . . . /_/udir4/_/bonnet/life/solver.lf
+% EDIT BY . . . Christophe Bonnet
+% ON MACHINE. . Prl303
+% STARTED ON. . Mon Jul 20 18:02:01 1992
+
+non_strict(solve_eq,mult_eq,div_eq,do_subst,wake_up)?
+
+solve_eq([0]) :- !.						%succes
+solve_eq([real]) :- !,fail.					%failure
+solve_eq([A*X:vr(val=>none)|L]) :- !,inst_var(X,L,A),	        %"pivot"
+                write("===} inst_var      ",cpu_timehook),nl.
+solve_eq([A*vr(val=>V)|L]) :- ML=mult_eq(V,A),			%substit
+			      slist_merge(ML,L,NL), 
+                write("===} slist_merge   ",cpu_timehook),nl,
+			      solve_eq(NL).
+% Non-verbose:
+% solve_eq([A*X:vr(val=>none)|L]) :- !,inst_var(X,L,A).	        %"pivot"
+% solve_eq([A*vr(val=>V)|L]) :- ML=mult_eq(V,A),		%substit
+% 			      slist_merge(ML,L,NL), 
+% 			      solve_eq(NL).
+
+div_eq([A:real],B) -> [-A/B].
+div_eq([A*X|Tl],B) -> [(`(Z*X))|div_eq(Tl,B)] | Z= -A/B.
+
+mult_eq([A:real],B) -> [A*B].
+mult_eq([A*X|Tl],B) -> [(`(Z*X))|mult_eq(Tl,B)] | Z=A*B.
+
+inst_var(X:vr(val=>V,wlist=>W),Eq,A) :- do_subst(Eq,NewEq),
+                write("====} do_subst     ",cpu_timehook),nl,
+					V <- div_eq(NewEq,A),
+					wake_up(W,V),
+                write("====} wake_up      ",cpu_timehook),nl,
+					update_vars(X,V),
+					W <- [].
+% Non-verbose:
+% inst_var(X:vr(val=>V,wlist=>W),Eq,A) :- do_subst(Eq,NewEq),
+% 					V <- div_eq(NewEq,A),
+% 					wake_up(W,V),
+% 					update_vars(X,V),
+% 					W <- [].
+
+do_subst(X:[real],X) :- !.
+do_subst([T:(A*vr(val=>none))|L],[T|NL]) :- do_subst(L,NL).
+do_subst([T:(A*vr(val=>V))|Tl],NV) :- ML=mult_eq(V,A),
+				      slist_merge(ML,Tl,NL),
+				      do_subst(NL,NV).
+
+wake_up([],@) :- !.
+wake_up([gauss_wup(lhs_var=>X,term_ptr=>P:[A*@|@])|WL],Val) :-
+	del(P),
+	recompute(X,A,Val),
+	wake_up(WL,Val).
+
+recompute(X:vr(Id,val=>Oldval),Coef,Sval) :-
+		ML=mult_eq(Sval,Coef),
+		s_merge(ML,Oldval,Newval,PtL),
+		update_newvars(X,PtL),
+		X <- vr(Id,val=>Newval,wlist=>[]).
+
+
+non_strict(update_vars,update_newvars,upd_vars)?
+
+update_vars(@,[A:real]) :- !.
+update_vars(X,Ptr:[@*Y|Tl]) :-
+	upd_var(Y,X,Ptr),
+	update_vars(X,Tl).
+
+update_newvars(@,[]) :- !.
+update_newvars(X,[Ptr:[@*Y|@]|Tail]) :-
+	upd_var(Y,X,Ptr),
+	update_newvars(X,Tail).
+
+upd_var(Y:vr(Id,wlist=>WL),X,Ptr) :- Y <- vr(Id,
+					     val=>none,
+					     wlist=>[gauss_wup(lhs_var=>X,
+							       term_ptr=>Ptr)
+						     |WL]).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% FILE. . . . . /_/udir4/_/bonnet/life/merge.lf
+% EDIT BY . . . Christophe Bonnet
+% ON MACHINE. . Prl303
+% STARTED ON. . Wed Jul 22 15:31:15 1992
+
+non_strict(slist_merge)? % 23.9
+
+slist_merge([],L,L) :- !.
+slist_merge(L,[],L) :- !.
+slist_merge([A:real],[B:real],[C]) :-  !,C=A+B.
+slist_merge([A|L1],L2:[B|@],[A|L3]) :-
+	varless_pred(A,B), !,
+	slist_merge(L1,L2,L3).
+slist_merge(L1:[A|@],[B|L2],[B|L3]) :-
+	varless_pred(B,A),!,
+	slist_merge(L1,L2,L3).
+slist_merge([(A:real)*(V:vr(Id))|L1],[(B:real)*vr(Id)|L2],Z) :-
+	C= A+B,
+	nonstrict_id(T,C*V),
+	Z=cond(null(C),L3,[T|L3]),
+	slist_merge(L1,L2,L3).
+
+null(0)->true.
+null -> false.
+
+% les deux premiers arguments de s_merge sont les slists a combiner,
+% le troisieme est le resultat, le 4eme la liste des sous_listes du resultat
+% dont le premier element vient de la premiere liste. En d'autres termes, c'est
+% la liste des cellules de listes que l'on a creees.
+
+s_merge([A|L1],L2:[B|@],L3:[A|L2],[L3|PtL]) :-
+	varless_pred(A,B), !,
+	s_merge2(L1,L3,PtL).
+s_merge(L1,L2,L2,PtL) :- s_merge2(L1,[@|L2],PtL).
+
+s_merge2([],@,[]) :- !.	
+s_merge2(L,[@|X:[]],L) :- !,X <- L.
+s_merge2([A:real],[@,B:real],[]) :- !,B <- A+B.
+s_merge2([A|L1],LP:[U|L2:[B|@]],[L3|PtL]) :-
+	varless_pred(A,B), !,
+	LP <- [U|L3:[A|L2]],
+	s_merge2(L1,L3,PtL).
+
+non_strict(s_merge2)?
+
+s_merge2(L1:[A|@],[@|L2:[B|@]],PtL) :-
+	varless_pred(B,A), !,
+	s_merge2(L1,L2,PtL).
+s_merge2([(A:real)*vr(Id,wlist=>WL)|L1],LP:[@|L2:[(B:real)*vr(Id)|@]],PtL) :-
+	A+B = 0, !,
+	clean_wlist(WL,L2),
+	del(L2),
+	s_merge2(L1,LP,PtL).
+s_merge2([(A:real)*vr(Id)|L1],[@|L2:[(B:real)*vr(Id)|@]],PtL) :-
+	B <- A+B,
+	s_merge2(L1,L2,PtL).
+
+clean_wlist([],@).
+clean_wlist(WL:[gauss_wup(term_ptr=>L1)|@],L2) :- L1===L2,!,del(WL).
+clean_wlist([@|WL],L) :- clean_wlist(WL,L).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+where->@.

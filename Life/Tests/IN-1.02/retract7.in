@@ -1,0 +1,11 @@
+inc :- X=count+1, X<1000, setq(count,X).
+
+assert(X:(p :- retbool,inc,assert(X),fail))?
+
+listing(p)?
+retbool :- retract(p:-Q).
+p :- fail.
+listing(p)?
+setq(count,0)?
+p?
+listing(p,count)?

@@ -1,0 +1,7 @@
+int_list <| list.
+int_cons <| cons.
+int_nil  <| nil.
+
+:: int_cons(int,int_list).
+int_cons <| int_list.
+int_nil  <| int_list.

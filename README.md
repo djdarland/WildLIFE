@@ -15,7 +15,12 @@ Plans and Goals
     * The Test Suite gives slightly different results from 4.01
     * I did not overwrite 1.02 files in IN or LF directories.
     * I have not investigated differeces yet.
-  * Plan to add separate Makefile to make x version
+    * Going to create version of test suite - using original 1.02 data.
+    * It will still use my (revised) scripts.
+
+
+
+* Plan to add separate Makefile to make x version
   - and create different executable
   * Eventually work on x version
 

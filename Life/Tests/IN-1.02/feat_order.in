@@ -1,0 +1,13 @@
+X:test?
+Y:test?
+X=Y?
+
+
+
+
+big(50,X)?
+big(50,Y)?
+X=Y?
+
+
+

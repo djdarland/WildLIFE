@@ -1,0 +1,25 @@
+
+::typ(nom=>N:name) | constraint(inst(N)).
+
+inst_name <| name.
+inst_name := {alfred;amedee;rouin;gertrude}.
+
+ursule <| name.
+
+
+main :- create_CP(X),
+        X=typ,
+        pick_name(X.nom),
+        fail.
+
+pick_name({alfred;amedee;toto;rouin;gertrude}).
+
+
+constraint(N).
+inst(N:inst_name) -> N | write(N),nl.
+
+
+
+create_CP({@;typ;typ(nom=>ursule);@(nom=>amedee)}).
+
+(main;succeed)?

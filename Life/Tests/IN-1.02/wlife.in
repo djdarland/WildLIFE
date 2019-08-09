@@ -1,0 +1,17 @@
+what(X)?
+;
+;
+eat(A,B)?
+;
+;
+lives_in(X,Y),aquatic(X)?
+;
+;
+;
+lives_in(X,ice),aquatic(X)?
+;
+;
+condor=bird_of_prey?
+penguin=bird_of_prey?
+eagle=mammal?
+eagle=animal?

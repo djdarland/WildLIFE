@@ -253,3 +253,15 @@ I see little reason to study error.c - I worked it over a lot before.
 
 Not really using arity.c or raw.x or xpred.c or xdisplaylist.c currently.
 
+-------------------------------------------------------------------------
+Using githup version 4.03 with ts-1.02.sh - to go back to
+original 1.02 test Suite. Result summary:
+
+echo 325 Total Tests completed
+echo 305 Total Tests match
+echo 20 Total Tests differ
+echo 13 Total Tests out differ
+echo 9 Total Tests err differ
+
+I will work on it after adding & commiting test suite (1.02).
+-------------------------------------------------------------------------

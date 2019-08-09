@@ -1,0 +1,10 @@
+
+% Nice test of nesting
+
+f(s(A)) -> A*A.
+
+B=f(s(f(s({1;2;3})))),write(B),nl,fail?
+
+% B=f(s(f(s({1;W;3}))))?
+% Give W a value too.
+

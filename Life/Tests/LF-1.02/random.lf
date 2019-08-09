@@ -1,0 +1,10 @@
+ranlist(0) -> [].
+ranlist(N) -> [random(1000)|ranlist(N-1)].
+
+testeq(S,N) :-
+	initrandom(S),
+	X=ranlist(N),
+	initrandom(S),
+	Y=ranlist(N), 
+	write(length(X)," ",length(Y)), nl,
+	X=Y.
