@@ -1,4 +1,4 @@
-A=system("ls REFERR")?
+A=system("ls LF")?
 
 .
 A=system("core")?

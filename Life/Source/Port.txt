@@ -1031,3 +1031,10 @@ echo 394 Total Tests match
 echo 20 Total Tests differ
 echo 10 Total Tests out differ
 echo 14 Total Tests err differ
+
+---------------------------------------------------------
+Working with current test suite.
+Approved aaa-08-29
+Difference was caused by script creating .tmp suffix
+Note: had to fix approve also relating to .tmp output
+----------------------------------------------------------
