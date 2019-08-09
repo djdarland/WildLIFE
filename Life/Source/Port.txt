@@ -1038,3 +1038,19 @@ Approved aaa-08-29
 Difference was caused by script creating .tmp suffix
 Note: had to fix approve also relating to .tmp output
 ----------------------------------------------------------
+Went back to ./ts-1.02.sh
+
+aborthook has error output:
+
+*** Abort
+
+*** END Abort
+
+Reference has no output.
+---------------------------------------------------------
+babcode
+
+387 sorts instead of 381 sorts
+----------------------------------------------------------
+
+

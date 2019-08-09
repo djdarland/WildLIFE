@@ -34,7 +34,7 @@ do
     case $select in
 	1) $EDITOR LF-1.02/$1.lf;;
 	2) $EDITOR IN-1.02/$1.in;;
-	3) $EDITOR REFDIFF/$1.refdiff;;
+	3) $EDITOR REFDIFF/$1.refdiff.tmp;;
 	4) $EDITOR REFOUT/$1.refout OUT/$1.out.tmp;;
 	5) $EDITOR ERRDIFF/$1.errdiff;;
 	6) $EDITOR REFERR/$1.referr ERR/$1.err.tmp;;
