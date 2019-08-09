@@ -38,12 +38,12 @@ do
 	4) $EDITOR REFOUT/$1.refout OUT/$1.out.tmp;;
 	5) $EDITOR ERRDIFF/$1.errdiff ERRDIFF/$1.errdiff2.tmp;;
 	6) $EDITOR REFERR/$1.referr ERR/$1.err.tmp;;
-	10) ./check_edit_all "2" $1;;
-	11) ./approve_out.sh $1;;
-	12) ./rest_out.sh $1;;
-	13) mv LF-1.02/$1.lf LFSAV/$1.lf ;;
+	10) ./check_edit_all-1.02 "2" $1;;
+	11) ./approve_out-1.02.sh $1;;
+	12) ./rest_out-1.02.sh $1;;
+	13) mv LF-1.02/$1.lf LFSAV-1.02/$1.lf ;;
 	14) wild_life;;
-	16) $EDITOR ../Source/NOTES_DJD.txt;;
+	16) $EDITOR ../Source/Port.txt;;
 	888) exit 2;;
     esac
 done

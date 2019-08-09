@@ -1,0 +1,16 @@
+LF - life program tested (-1.02 for originals)
+IN - input read by life program (-1.02 for originals)
+OUT - output of life program
+ERR - error output of program
+
+REFOUT - output expected (suffix _UPDATED for 4. PLUS)
+REFERR - error expected (suffix _UPDATED for 4. PLUS)
+
+Mainly I added more test from handbook in LF, IN, & _UPDATED directories.
+
+There is a capability to approve output.
+Very original REFOUT-1.02 and REFERR-1.02 not changed.
+
+FILES contains files used by some programs.
+
+

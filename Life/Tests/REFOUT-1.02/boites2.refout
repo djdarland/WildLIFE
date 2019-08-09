@@ -1,0 +1,63 @@
+
+*** Yes
+> > 
+*** Yes
+> 
+*** Yes
+> 
+
+====} premiere methode
+[bxa,box(1,4),box(3,5),box(5,1)]
+[bxa,box(1,-3),box(2,5),box(3,-2)]
+[bxa,box(1,1),box(2,5),box(3,3),box(5,1)]
+
+[bxa,box(2,5),box(3,3),box(5,1)]
+[bxa,box(2,5),box(5,1)]
+[bxa,box(2,5)]
+
+[bxa,box(1,4),box(3,5),box(5,1)]
+[bxa,box(0,4),box(1,1)]
+[bxa,box(0,4),box(1,5),box(3,5),box(5,1)]
+
+[bxa,box(0,4),box(3,5),box(5,1)]
+[bxa,box(0,4),box(5,1)]
+[bxa,box(0,4)]
+
+[bxa,box(1,4),box(3,5),box(5,1)]
+[bxa,box(3,2),box(6,2)]
+[bxa,box(1,4),box(3,7),box(5,1),box(6,2)]
+
+[bxa,box(3,7),box(5,1),box(6,2)]
+[bxa,box(5,1),box(6,2)]
+[bxa,box(6,2)]
+
+
+
+====} deuxieme methode
+[box(1,4),box(3,5),box(5,1)]
+[box(1,-3),box(2,5),box(3,-2)]
+[box(1,1),box(2,5),box(3,3),box(5,1)]
+
+[box(2,5),box(3,3),box(5,1)]
+[box(2,5),box(5,1)]
+[box(2,5)]
+
+[box(1,4),box(3,5),box(5,1)]
+[box(0,4),box(1,1)]
+[box(0,4),box(1,5),box(3,5),box(5,1)]
+
+[box(0,4),box(3,5),box(5,1)]
+[box(0,4),box(5,1)]
+[box(0,4)]
+
+[box(1,4),box(3,5),box(5,1)]
+[box(3,2),box(6,2)]
+[box(1,4),box(3,7),box(5,1),box(6,2)]
+
+[box(3,7),box(5,1),box(6,2)]
+[box(5,1),box(6,2)]
+[box(6,2)]
+
+
+*** No
+> 

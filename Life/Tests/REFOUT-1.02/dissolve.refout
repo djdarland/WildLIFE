@@ -1,0 +1,44 @@
+
+*** Yes
+> > U1:s, U1.1=U2, U2=U1, 
+*** Yes
+X = s(X).
+--1> U1:s, U1.1=U2, U2=U1, 
+*** Yes
+X = s(X), Y = s(Y).
+----2> U1:s, 
+*** Yes
+X = s(X), Y = s(Y).
+----2> U1:s, U1.1=U2, U2:a, U1.2=U3, U3=U2, 
+*** Yes
+X = s(X), Y = s(Y), Z = a.
+------3> U1:s, U1.1=U2, U2:a, U1.2=U3, U3:b, 
+*** Yes
+Q = b, W = a, X = s(X), Y = s(Y), Z = a.
+--------4> U1:cons~, U1.hd=U2, U2:@, U1.tl=U3, U3:[], 
+*** Yes
+Q = b, W = a, X = s(X), Y = s(Y), Z = a.
+--------4> U1:,, U1.1=U2, U2:=, U2.1=U3, U3:=A,writeq(A),write(A)?, U2.2=U4, U4:@, U1.2=U5, U5:,, U5.1=U6, U6:writeq, U6.1=U7, U7=U4, U5.2=U8, U8:write, U8.1=U9, U9=U4, 
+*** Yes
+A = @, Q = b, W = a, X = s(X), Y = s(Y), Z = a.
+----------5> U1:cons~, U1.hd=U2, U2:1, U1.tl=U3, U3:cons~, U3.hd=U4, U4:2, U3.tl=U5, U5:cons~, U5.hd=U6, U6:3, U5.tl=U7, U7:cons~, U7.hd=U8, U8:4, U7.tl=U9, U9:[], 
+*** Yes
+A = @, Q = b, W = a, X = s(X), Y = s(Y), Z = a.
+----------5> U1:s, U1.1=U2, U2:t, U2.1=U3, U3:u, U3.1=U4, U4:v, U4.1=U5, U5:w, U5.1=U6, U6:x, U6.1=U7, U7:y, 
+*** Yes
+A = @, Q = b, W = a, X = s(X), Y = s(Y), Z = a.
+----------5> 
+*** No
+Q = b, W = a, X = s(X), Y = s(Y), Z = a.
+--------4> 
+*** No
+X = s(X), Y = s(Y), Z = a.
+------3> 
+*** No
+X = s(X), Y = s(Y).
+----2> 
+*** No
+X = s(X).
+--1> 
+*** No
+> 
