@@ -2,25 +2,27 @@
 *** Yes
 > > 
 *** Yes
-> > persistent(a)?
+> 
+> persistent(a)?
 
 *** Yes
-> ersistent(b)?
+> persistent(b)?
 
 *** Yes
-> ersistent(c)?
+> persistent(c)?
 
 *** Yes
-> ersistent(d)?
+> persistent(d)?
 
 *** Yes
-> ersistent(e)?
+> persistent(e)?
 
 *** Yes
-> ersistent(f)?
+> persistent(f)?
 
 *** Yes
-> > 
+> 
+> 
 > 
 > check :-
 |    	write("
@@ -59,6 +61,7 @@
 
 *** Yes
 --1> 
+
 *** No
 > 
 > a = @(feet => S), write(S),nl ?
@@ -67,6 +70,7 @@ smelly
 *** Yes
 S = smelly.
 --1> 
+
 *** No
 > a = @(hair => H, arms => A, teeth => T), write(H,A,T),nl ?
 knotslongyellow
@@ -74,6 +78,7 @@ knotslongyellow
 *** Yes
 A = long, H = knots, T = yellow.
 --1> 
+
 *** No
 > a = @(hair => H, arms => A, joke => bad, teeth => T) ?
 
@@ -98,6 +103,7 @@ f=@
 
 *** Yes
 --1> 
+
 *** No
 > 
 > b <<- 5, check ?
@@ -111,6 +117,7 @@ f=@
 
 *** Yes
 --1> 
+
 *** No
 > c <<- letters(a,b,c), check ?
 
@@ -123,6 +130,7 @@ f=@
 
 *** Yes
 --1> 
+
 *** No
 > a <<- q(a,b,c), check?
 
@@ -135,6 +143,7 @@ f=@
 
 *** Yes
 --1> 
+
 *** No
 > d <<- exam(b,a,c), check ?
 
@@ -147,6 +156,7 @@ f=@
 
 *** Yes
 --1> 
+
 *** No
 > e = a, check ?
 > 
@@ -161,5 +171,5 @@ f=@
 
 *** Yes
 A = 5, B = q(B,A,C), C = letters(B,A,C).
---1> alt?
+--1> halt?
 

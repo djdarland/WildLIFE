@@ -13,4 +13,5 @@ rm REFERR_UPDATED/$1.referr
 touch REFERR_UPDATED/$1.referr
 fi
 echo "$1 approved" >APPROVED/$1.approved
+echo "$1 approved"
 

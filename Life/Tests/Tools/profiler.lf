@@ -1,0 +1,1959 @@
+%	$Id: profiler.lf,v 1.2 1994/12/08 23:52:18 duchier Exp $	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%
+%
+%  Profiler for predicates by source code transformation
+%  -----------------------------------------------------
+%
+%
+%  Author : Arnaud Venet.
+%
+%  Last modification : February 19th 1994
+%
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  
+%  USE : see "small presentation for the user" below.
+%
+%  PRECAUTIONS : _ dynamic predicates and functions will be corrupted
+%                _ profiling is only possible, when using modules, for public 
+%                  functions and predicates
+%
+%
+%  Read section 5 of document 'profiler.doc': "What the profiler does", to 
+%  get detailed description of the rewriting rules.
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% (C) Digital Equipment Corporation 1993 - 1994
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+
+
+
+
+module("profiler")?
+
+public(profile, unprofile, clear_stats, profile_stats, profile_help,
+       write_stats, profile_backtracking, profile_fail_occured, 
+       goal, call, normal, titles_for_predicates, titles_for_functions)?
+
+
+
+%
+% --------------------------------------------------------------------------
+% -
+% -  Persistent and global variables
+% -
+% --------------------------------------------------------------------------
+%
+
+
+
+persistent(profile_old_clauses)?
+
+profile_old_clauses <<- store? 
+
+persistent(profile_stats)?
+
+profile_stats <<- data?
+
+persistent(profile_backtracking)?
+
+profile_backtracking <<- false?
+
+persistent(profile_fail_occured)?
+
+profile_fail_occured <<- false?
+
+persistent(column_width)?
+
+column_width <<- 1?
+
+persistent(columns_number)?
+
+columns_number <<- 5?
+
+persistent(titles_for_predicates)?
+
+titles_for_predicates <<- ["Tries", "Entries", "Success", 
+                           "%Tot.fail", "%Expl.fail"]?
+
+persistent(titles_for_functions)?
+
+titles_for_functions <<-  ["Tries", "Match", "%Eval", 
+                           "Successes", "%Tot.fail"]?
+
+global(string_storage)?
+
+string_storage <- cache?
+
+
+
+%
+% --------------------------------------------------------------------------
+% -
+% -  Output parameters : they are used for the display of the statistics,
+% -  -----------------   feel free to change them at your convenience.
+% -
+% --------------------------------------------------------------------------
+%
+
+
+
+no_value -> "---".
+
+extension_for_log_files -> "log".
+
+big_separation :- iter_string("*", 50).
+
+small_separation :- iter_string("-", 40).
+
+minimal_column_width -> 11.
+
+maximal_column_width -> 23.
+
+
+
+%
+% --------------------------------------------------------------------------
+% -
+% -  A small presentation for the user
+% -
+% --------------------------------------------------------------------------
+%
+
+
+
+write("
+Type 'profile_help ?' to get some help about the profiler
+
+")?
+
+
+profile_help :-
+  write("
+PROFILER: source transformation to provide information about predicates and
+          functions use.
+
+Use:
+      > import(""profiler"")?
+
+      > profile(Name1, Name2, ... , NameN, level => Level)?
+
+          Name1, ... NameN are names of functions or predicates to profile
+          Level := {call; clause; goal}
+
+      > write_stats(Name1, Name2, ... , NameN, verbosity => Verbosity, 
+                    file => Where)?
+
+          --> Display the statistics for Name1, ..., NameN.
+
+          Name1, ... NameN are names of functions or predicates registered
+          for profiling.
+          Verbosity := {normal; verbose}
+          Where = . a string specifying the name of the file where to put
+                    the statistics. The extension '", extension_for_log_files,
+                    "' will be added to it.
+                  . @ (displays statistics on the standard output)
+
+      > clear_stats(Name1, Name2, ... , NameN)?
+
+          --> Resets the statistics for Name1, ..., NameN.
+
+        If no name is specified, the statistics of all the predicates 
+        and functions registered for profiling are cleared.
+
+      > unprofile(Name1, Name2, ... , NameN)?
+
+          --> Restores the original clauses of Name1, ..., NameN.
+
+          If no name is specified, all the predicates and functions 
+          registered for profiling are restored.
+
+
+WARNING : 'profile_stats', 'profile_backtracking' and 'profile_fail_occured' 
+-------   are reserved names of persistent variables exported by the module. 
+          DO NOT try to modify them.
+
+<MORE>"), 
+  get(X),
+  write("
+
+CUSTOMIZATION :
+---------------
+You can customize the column titles which are displayed when you choose the 
+'normal' verbosity for 'write_stats'. For this purpose you are provided with 
+two persistent variables : 'titles_for_predicates' and 'titles_for_functions'
+in which you can store a list of strings representing the titles of the
+corresponding columns. It's useful when you want the display to fit a given
+format. Each list must contain exactly FIVE strings.
+Default is :
+
+titles_for_predicates : ", titles_for_predicates, "
+
+titles_for_functions  : ", titles_for_functions, "
+
+
+Read: '~venet/LIFE/PROFILER/profiler.doc' for more information.
+
+").
+
+
+
+%
+% --------------------------------------------------------------------------
+% -
+% -  Interface predicates & related code
+% -
+% --------------------------------------------------------------------------
+%
+
+
+P : profile :-
+  F = features(P),
+  retrieve_profile_features(P, F, Level, LNames),
+  private_profile(LNames, Level).
+
+
+%
+% --------------------------------------------------------------------------
+%
+
+
+retrieve_profile_features(Term, [level | LFeatures], Level : Term.level, 
+                          LNames) :-
+  !,
+  retrieve_profile_features(Term, LFeatures, Level, LNames).
+
+
+retrieve_profile_features(Term, [Feature | LFeatures], Level,
+                          [Term.Feature | LNames]) :-
+  !,
+  retrieve_profile_features(Term, LFeatures, Level, LNames).
+
+
+retrieve_profile_features(Term, [], Level, []).
+
+
+%
+% --------------------------------------------------------------------------
+%
+
+
+private_profile([], Level) :- !.
+
+
+private_profile([Name | LNames], Level) :-
+  !,
+  (
+    private_profile(Name, Level)
+  ;
+    succeed
+  ),
+  private_profile(LNames, Level).
+
+
+
+private_profile(What, Level) :-
+  Level = {call; clause; goal},
+  !,
+  cond(is_function(What),
+    (
+      Type = function,
+      RW = rewrite_function
+    ),
+    cond(is_predicate(What),
+      (
+        Type = predicate,
+        RW = rewrite_predicate
+      ),
+      (
+        write_err("*** Profile : ", What, " is not a predicate or a function"),
+        nl_err,
+        fail
+      )
+    )
+  ),
+  dynamic(What),
+  retrieve_old_clauses_of(What, Type, OldClauses),
+  cond(OldClauses :== [],
+    (
+      extract_clauses_of(What, Type, Clauses),
+      cond(Clauses :== [],
+        (
+          write_err("*** Profile : ", Type, " '", What, "' has no clauses"), 
+          nl_err
+        ),
+        (
+          save_clauses(What, Type, Level, Clauses),
+          add_stats_for(What, Clauses, Level),
+          RW=@(What, Clauses, Level),
+          RW,
+          write("Profile : Added profiling code to ", Type, " '", What, "' at ",
+                Level, " level"),
+          nl
+        )
+      )
+    ),    
+    (
+      cond(Level :== profile_old_clauses.What.level,
+        (
+          write_err("*** Profile : ", Type, " '", What,  
+                    "' already modified at this level"),
+          nl_err,
+          save_clauses(What, Type, Level, OldClauses)
+        ),
+        (      
+          extract_clauses_of(What, Type, ModifiedClauses),
+          remove_stats_for(What),
+          assert_list(OldClauses),
+          private_profile(What, Level)
+        )
+      )
+    )
+  ).
+
+
+%
+% --------------------------------------------------------------------------
+%
+
+
+U : unprofile :-
+  F = features(U),
+  cond(F :== [],
+    private_unprofile,
+    (
+      retrieve_name_features(U, F, LNames),
+      private_unprofile(LNames)
+    )
+  ).
+  
+
+%
+% --------------------------------------------------------------------------
+%
+
+
+retrieve_name_features(Term, [Feature | LFeatures], 
+                        [Term.Feature | LNames]) :-
+  !,
+  retrieve_name_features(Term, LFeatures, LNames).
+
+
+retrieve_name_features(@, [], []).
+
+
+%
+% --------------------------------------------------------------------------
+%
+
+
+private_unprofile(Top) :-
+  Top :== @,
+  !,
+  ListOfNames = features(profile_old_clauses, current_module),
+  private_unprofile(ListOfNames).
+
+private_unprofile([]) :- !.
+
+private_unprofile([Name | LNames]) :-
+  !,
+  private_unprofile(Name),
+  private_unprofile(LNames).
+
+private_unprofile(What) :-
+  retrieve_old_clauses_of(What, Type, OldClauses),
+  cond(OldClauses :\== [],
+    (
+      extract_clauses_of(What, Type, ModifiedClauses),
+      remove_stats_for(What),
+      assert_list(OldClauses),
+      write("Profile : restored original clauses for ", Type, " '", What,"'"),
+      nl
+    )
+  ).
+
+
+%
+% --------------------------------------------------------------------------
+%
+
+
+extract_clauses_of(What, Type, [Cl | LCl]) :- 
+  Cl = sort_of(Type),
+  R = root_sort(What),
+  Cl.1 = R,
+  Cl.2 = @,
+  clause(Cl),
+  !,
+  retract(Cl),
+  extract_clauses_of(What, Type, LCl).
+
+extract_clauses_of(What, Type, []).
+
+
+%
+% --------------------------------------------------------------------------
+%
+
+
+sort_of(function) -> root_sort(->).
+
+sort_of(predicate) -> root_sort(:-).
+
+
+%
+% --------------------------------------------------------------------------
+%
+
+
+save_clauses(What, Type, Level, Clauses) :-
+  profile_old_clauses.What <<- 
+    pack_of_clauses(level => Level, type => Type, clauses => Clauses).
+
+
+%
+% --------------------------------------------------------------------------
+%
+
+
+retrieve_old_clauses_of(What, Type, Clauses) :-
+  (
+    has_feature(What,profile_old_clauses, Pack),
+    !,
+    Type = Pack.type,
+    Cl = Pack.clauses,
+    Clauses = copy_term(Cl),
+    Cl <<- []
+  ;
+    Clauses = []
+  ).
+
+
+%
+% --------------------------------------------------------------------------
+%
+
+
+assert_list([C | LC]) :-
+  !,
+  assert(C),
+  assert_list(LC).
+
+assert_list([]).
+
+
+
+%
+% --------------------------------------------------------------------------
+% -
+% -  Predicates for the display of the profiling statistics
+% -
+% --------------------------------------------------------------------------
+%
+
+
+
+W : write_stats :-
+  F = features(W),
+  retrieve_write_features(W, F, Verbosity, FileName, LNames, false),
+  private_write_stats(LNames, Verbosity, FileName).
+
+
+%
+% --------------------------------------------------------------------------
+%
+
+
+retrieve_write_features(Term, [verbosity | LFeatures],
+                        Verbosity : (Term.verbosity),
+                        FileName, LNames, ThereWasAName) :-
+  !,
+  retrieve_write_features(Term, LFeatures, Verbosity, FileName, LNames,
+                          ThereWasAName).
+
+retrieve_write_features(Term, [file | LFeatures], Verbosity,
+                        FileName : (Term.file), LNames, ThereWasAName) :-
+  !,
+  retrieve_write_features(Term, LFeatures, Verbosity, FileName, LNames,
+                          ThereWasAName).
+
+retrieve_write_features(Term, [Feature | LFeatures], Verbosity, FileName,
+                        [Term.Feature | LNames]) :-
+  !,
+  retrieve_write_features(Term, LFeatures, Verbosity, FileName, LNames,
+                          true).
+
+retrieve_write_features(Term, [], Verbosity, FileName, LNames, 
+                        ThereWasAName) :-
+  cond(ThereWasAName,
+    LNames = []
+  ).
+
+
+%
+% --------------------------------------------------------------------------
+%
+
+
+private_write_stats(Top, Verbosity, FileName) :-
+  Top :== @,
+  !,
+  private_write_stats(features(profile_stats), Verbosity, FileName).  
+
+
+private_write_stats(ListOfNames:list, Verbosity:{normal; verbose}, 
+                    FileName:string) :-
+  !,
+  (
+    FileName :\== string,
+    !,
+    CompleteFileName = strcon(strcon(FileName, "."),
+                              extension_for_log_files),
+    open_out(CompleteFileName, Stream)
+  ;
+    succeed
+  ),
+  separate(ListOfNames, ListOfFunctionsNames, ListOfFunctionsStats,
+           ListOfPredicatesNames, ListOfPredicatesStats),
+
+  sort_by(tries, ListOfFunctionsNames, ListOfFunctionsStats, 
+          ListOfFunctionsNamesSortedByTry, ListOfFunctionsStatsSortedByTry),
+
+  sort_by(tries, ListOfPredicatesNames, ListOfPredicatesStats, 
+          ListOfPredicatesNamesSortedByTry, ListOfPredicatesStatsSortedByTry),
+  nl,
+  cond(ListOfPredicatesNamesSortedByTry :\== [],
+    (
+      write("Profiling statistics for predicates :"), nl,
+      write("-----------------------------------"), nl,
+      nl,
+      cond(Verbosity :== normal,
+        (
+          display_titles_for(predicates, 1),
+          write_stats_list(normal, ListOfPredicatesNamesSortedByTry,
+                           ListOfPredicatesStatsSortedByTry), 
+          nl,
+          display_titles_for(predicates, 1),
+          write_clauses_stats_list(tries, ListOfPredicatesNames, 
+                                   ListOfPredicatesStats), 
+          nl,
+          display_titles_for(predicates, 2),
+          write_clauses_stats_list(head_unifications, ListOfPredicatesNames, 
+                                   ListOfPredicatesStats), 
+          nl,
+          display_titles_for(predicates, 3),
+          write_clauses_stats_list(successes, ListOfPredicatesNames, 
+                                   ListOfPredicatesStats), 
+          nl
+        ),
+        (
+          write_stats_list(verbose, ListOfPredicatesNamesSortedByTry,
+                           ListOfPredicatesStatsSortedByTry), 
+          nl,
+          nl
+        )
+      )
+    )
+  ),
+  cond(ListOfFunctionsNamesSortedByTry :\== [],
+    (
+      write("Profiling statistics for functions :"), nl,
+      write("----------------------------------"), nl,
+      nl,
+      cond(Verbosity :== normal,
+        (
+          display_titles_for(functions, 1),
+          write_stats_list(normal, ListOfFunctionsNamesSortedByTry,
+                           ListOfFunctionsStatsSortedByTry), 
+          nl,
+          display_titles_for(functions, 2),
+          write_clauses_stats_list(pattern_matchings, ListOfFunctionsNames, 
+                                   ListOfFunctionsStats), 
+          nl
+        ),
+        (
+          write_stats_list(verbose, ListOfFunctionsNamesSortedByTry,
+                           ListOfFunctionsStatsSortedByTry),
+          nl
+        )
+      )
+    )
+  ),
+  cond(FileName :\== string, 
+    close(Stream)
+  ).
+
+
+private_write_stats(Name, Verbosity, FileName) :-
+  private_write_stats([Name], Verbosity, FileName).
+
+
+%
+% --------------------------------------------------------------------------
+%
+
+
+separate([Name | LNames], [Name | LFunctionsNames], [Stats | LFunctionsStats], 
+         LPredicatesNames, LPredicatesStats) :-
+  has_feature(Name, profile_stats, Stats),
+  profile_old_clauses.Name.type :== function,
+  !,
+  separate(LNames, LFunctionsNames, LFunctionsStats, LPredicatesNames, 
+           LPredicatesStats).
+
+separate([Name | LNames], LFunctionsNames, LFunctionsStats, 
+         [Name | LPredicatesNames], [Stats | LPredicatesStats]) :-
+  has_feature(Name, profile_stats, Stats),
+  profile_old_clauses.Name.type :== predicate,
+  !,
+  separate(LNames, LFunctionsNames, LFunctionsStats, LPredicatesNames, 
+           LPredicatesStats).
+
+separate([], [], [], [], []) :- !.
+
+separate([Name | LNames], LFunctionsNames, LFunctionsStats, 
+         LPredicatesNames, LPredicatesStats) :-
+  write_err("*** Profile : '", Name, "' not registered for profiling"),
+  nl_err,
+  separate(LNames, LFunctionsNames, LFunctionsStats, LPredicatesNames, 
+           LPredicatesStats).
+
+
+%
+% --------------------------------------------------------------------------
+%
+
+
+sort_by(Criterion, [Name | LNames], [Stats | LStats], SortedNames, 
+        SortedStats) :-
+  !,
+  sort_by(Criterion, LNames, LStats, SortedLNames, SortedLStats),
+  insert_by(Criterion, Name, Stats, SortedLNames, SortedNames, SortedLStats,
+            SortedStats).
+
+sort_by(Criterion, [], [], [], []).
+
+
+%
+% --------------------------------------------------------------------------
+%
+
+
+insert_by(Criterion, What, StatsForWhat, [Name | LNames], SortedNames, 
+          [Stats | LStats], SortedStats) :-
+  !,
+  cond(StatsForWhat.Criterion >= Stats.Criterion,
+    (
+      SortedNames = [What, Name | LNames],
+      SortedStats = [StatsForWhat, Stats | LStats]
+    ),
+    (
+      SortedNames = [Name | LNamesWithWhat],
+      SortedStats = [Stats | LStatsWithStatsForWhat],
+      insert_by(Criterion, What, StatsForWhat, LNames, LNamesWithWhat,
+                LStats, LStatsWithStatsForWhat)
+    )
+  ).
+
+insert_by(Criterion, What, StatsForWhat, [], [What], [], [StatsForWhat]).
+
+
+%
+% --------------------------------------------------------------------------
+%
+
+
+write_stats_list(Verbosity, [Name | LNames], [Stats | LStats]) :-
+  !,
+  cond(Verbosity :== verbose,
+    verbose_write_stats_for(Name, Stats),
+    write_the_stats_in(Stats, Name)
+  ),
+  write_stats_list(Verbosity, LNames, LStats).
+
+write_stats_list(Verbosity, [], []).
+
+
+
+%
+% --------------------------------------------------------------------------
+% -
+% -  Normal display of the profiling statistics
+% -
+% --------------------------------------------------------------------------
+%
+
+
+
+write_the_stats_in(Clauses:clauses(tries => Tries,
+                          total_failures => TotalFailures,
+                          explicit_failures => ExplicitFailures,
+                          successes => Successes), 
+                          Name) :-
+  !,
+  format([Tries, @, Successes,
+         rate(TotalFailures, Tries), rate(ExplicitFailures, Tries)]),
+  write(Name),
+  nl.
+
+
+write_the_stats_in(Clauses:rules(tries => Tries,
+                          total_failures => TotalFailures, 
+                          successes => Successes), Name) :-
+  format([Tries, @, @, Successes, rate(TotalFailures, Tries)]),
+  write(Name),
+  nl.
+
+
+%
+% --------------------------------------------------------------------------
+%
+
+
+write_clauses_stats_list(Criterion, [Name | LNames], [Stats | LStats]) :-
+  !,
+  cond(profile_old_clauses.Name.level :\== call,
+    (
+      generate_clauses_names(Name, L:length(profile_old_clauses.Name.clauses),
+                             ClausesNames, 1),
+      generate_stats_list(Stats, L, StatsList, 1),
+      sort_by(Criterion, ClausesNames, StatsList, SortedNames, SortedStats),
+      cond(profile_old_clauses.Name.type :== predicate,
+        write_clauses_stats(SortedStats, SortedNames),
+        write_rules_stats(SortedStats, SortedNames)
+      )
+    )
+  ),
+  write_clauses_stats_list(Criterion, LNames, LStats).
+
+write_clauses_stats_list(Criterion, [], []).
+
+
+%
+% --------------------------------------------------------------------------
+%
+
+
+generate_clauses_names(Name, NumberOfClauses, [NameOfClause | LNames],
+                       ClauseNumber) :-
+  ClauseNumber =< NumberOfClauses,
+  !,
+  NameOfClause = strcon(strcon(psi2str(Name), "#"), int2str(ClauseNumber)),
+  generate_clauses_names(Name, NumberOfClauses, LNames, ClauseNumber + 1).
+
+
+generate_clauses_names(Name, NumberOfClauses, [], ClauseNumber).
+
+
+%
+% --------------------------------------------------------------------------
+%
+
+
+generate_stats_list(StatsForClauses, NumberOfClauses, [Stats | LStats],
+                    ClauseNumber) :-
+  ClauseNumber =< NumberOfClauses,
+  !,  
+  Stats = StatsForClauses.ClauseNumber,
+  generate_stats_list(StatsForClauses, NumberOfClauses, LStats, 
+                      ClauseNumber + 1).
+
+
+generate_stats_list(StatsForClauses, NumberOfClauses, [], ClauseNumber).
+
+
+%
+% --------------------------------------------------------------------------
+%
+
+
+write_clauses_stats([Stats | LStats], [Name | LNames]) :-
+  !,
+  format([Stats.tries, Unify:(Stats.head_unifications), 
+          Stats.successes, rate(Stats.total_failures, Unify),
+          rate(Stats.explicit_failures, Unify)]),
+  write(Name), nl,
+  write_clauses_stats(LStats, LNames).
+
+
+write_clauses_stats([], []).
+
+
+%
+% --------------------------------------------------------------------------
+%
+
+
+write_rules_stats([Stats | LStats], [Name | LNames]) :-
+  !,
+  format([@, PatternMatchings:(Stats.pattern_matchings), 
+          rate(Stats.evaluations, PatternMatchings), Stats.successes,
+          rate(Stats.total_failures, PatternMatchings)]),
+  write(Name), nl,
+  write_rules_stats(LStats, LNames).
+
+
+write_rules_stats([], []).
+
+
+%
+% --------------------------------------------------------------------------
+%
+
+
+display_titles_for(What, ColumnNumber) :-
+  TitlesForWhat = cond(What :== functions,
+    titles_for_functions,
+    titles_for_predicates
+  ),
+  cond(length(TitlesForWhat) =\= columns_number,
+    (
+      write_err("*** Profile : ",
+                "Incorrect specifications for titles_for_", psi2str(What)),
+      nl_err,
+      fail
+    )
+  ),
+  make_quotation(TitlesForWhat, OldTitle, ColumnNumber, 1),
+  column_width <<- adjust(max_size_of_names_in(TitlesForWhat)),
+  format(TitlesForWhat),
+  write(psi2str(What)),
+  nl,
+  restore_quotation(TitlesForWhat, OldTitle, ColumnNumber, 1).
+
+
+%
+% --------------------------------------------------------------------------
+%
+
+
+make_quotation(L:[Title | LTitles], OldTitle, ColumnNumber, ColumnNumber) :-
+  !,
+  OldTitle = copy_term(Title),
+  L.1 <<- strcon("*", strcon(Title, "*")).
+
+make_quotation([Title | LTitles], OldTitle, ColumnNumber, CurrentColumn) :-
+  make_quotation(LTitles , OldTitle, ColumnNumber, CurrentColumn + 1).
+
+
+%
+% --------------------------------------------------------------------------
+%
+
+
+restore_quotation(L:[Title | LTitles], OldTitle, ColumnNumber, ColumnNumber) :-
+  !,
+  L.1 <<- OldTitle.
+
+restore_quotation([Title | LTitles], OldTitle, ColumnNumber, CurrentColumn) :-
+  restore_quotation(LTitles , OldTitle, ColumnNumber, CurrentColumn + 1).
+
+
+%
+% --------------------------------------------------------------------------
+%
+
+
+max_size_of_names_in([Name]) -> strlen(Name).
+
+max_size_of_names_in([Name | LNames]) -> 
+  max(strlen(Name), max_size_of_names_in(LNames)).
+
+
+%
+% --------------------------------------------------------------------------
+%
+
+
+adjust(0) -> minimal_column_width.
+
+adjust(N) -> AdjustedN
+  | AdjustedN = cond(N < minimal_column_width,
+      minimal_column_width,
+      cond(N > maximal_column_width,
+        @  | (
+               write_err("*** Profile : Column title too long"),
+               nl_err,
+               fail
+        ),
+        cond((N - 2 * (N / 2)) =:= 0,
+          N + 1,
+          N
+        )
+      )
+    ).
+
+
+
+%
+% --------------------------------------------------------------------------
+% -
+% -  Verbose display of the profiling statistics
+% -
+% --------------------------------------------------------------------------
+%
+
+
+verbose_write_stats_for(Name, Stats) :-
+  write("Profile statistics for ", profile_old_clauses.Name.type, 
+        " '", Name, "' :"),
+  nl,
+  small_separation, nl,
+  Level = profile_old_clauses.Name.level,
+  verbose_write_the_stats_in(Stats, Level),
+  nl,
+  big_separation,
+  nl,
+  nl.
+
+
+%
+% --------------------------------------------------------------------------
+%
+
+
+verbose_write_the_stats_in(Clauses:clauses(tries => Tries, 
+                           total_failures => TotalFailures,
+                           explicit_failures => ExplicitFailures,
+                           successes => Successes),
+                           Level) :-
+  !,
+  write("+ Number of tries : ", Tries), nl,
+  write("+ Number of explicit failures : ", ExplicitFailures), nl,
+  write("+ Total number of failures : ", TotalFailures), nl, 
+  write("+ Number of successes : ", Successes), nl,
+  write("+ Success rate : ", rate(Successes, Tries), " %"), nl,
+  nl,
+  cond(Level :\== call,
+    verbose_write_stats_for_clauses(Clauses, 1, Level)).
+
+
+verbose_write_the_stats_in(Rules:rules(tries => Tries,
+                           total_failures => TotalFailures,
+                           successes => Successes), Level) :-
+  write("+ Number of tries : ", Tries), nl, 
+  write("+ Number of failures : ", TotalFailures), nl, 
+  write("+ Number of successes : ", Successes), nl,
+  write("+ Success rate : ", rate(Successes, Tries), " %"), nl,
+  nl,
+  cond(Level :\== call,
+    verbose_write_stats_for_clauses(Rules, 1, Level)).
+  
+
+%
+% --------------------------------------------------------------------------
+%
+
+
+verbose_write_stats_for_clauses(Clauses, ClauseNumber, Level) :-
+  root_sort(Clauses) :== clauses,
+  !,
+  write("CLAUSE #", ClauseNumber, " :"), nl,
+  small_separation, nl,
+  Clause = Clauses.ClauseNumber,
+  write("+ Number of tries : ", Clause.tries), nl,
+  write("+ Number of explicit failures : ", Clause.explicit_failures), nl,
+  write("+ Total number of failures : ", Clause.total_failures), nl, 
+  write("+ Number of head unifications : ", Unify:(Clause.head_unifications)), nl,
+  write("+ Number of successes : ", Successes:(Clause.successes)), nl,
+  write("+ Success rate : ", rate(Successes, Unify), " %"), nl,
+  cond(Level :== goal,
+    (
+      Goals = Clause.goals,
+      nl,
+      write("Statistics for the goals :"), nl,
+      small_separation, nl,
+      verbose_write_stats_for_goals(Goals, 1, 1),
+      nl
+    )
+  ),
+  nl,
+  cond(has_feature(ClauseNumber + 1, Clauses),
+    verbose_write_stats_for_clauses(Clauses, ClauseNumber + 1, Level)
+  ).
+
+
+verbose_write_stats_for_clauses(Rules, RuleNumber, Level) :-
+  root_sort(Rules) :== rules,
+  !,
+  write("RULE #", RuleNumber, " :"), nl,
+  small_separation, nl,
+  Rule = Rules.RuleNumber,  
+  write("+ Number of pattern matchings : ", PatternMatchings:(Rule.pattern_matchings)), nl,
+  write("+ Number of failures : ", Rule.total_failures), nl,
+  write("+ Number of successful evaluations : ", Rule.evaluations), nl,
+  write("+ Number of successes : ", Successes:(Rule.successes)), nl,
+  write("+ Success rate : ", rate(Successes, PatternMatchings), " %"), nl,
+  (  
+    Level :== goal,
+    has_feature(body, Rule, Body),
+    !,
+    nl,
+    write("Statistics for the body :"), nl,
+    small_separation, nl,
+    write("+ Number of tries : ", BodyTries:(Body.tries)), nl,
+    write("+ Number of successes : ", BodySuccesses:(Body.successes)), nl,
+    write("+ Number of failures : ", Body.total_failures), nl,
+    write("+ Success rate : ", rate(BodySuccesses, BodyTries), "%"), nl,
+    nl,   
+    verbose_write_stats_for_goals(Body, 1, 1)
+  ;
+    succeed
+  ),
+  nl,
+  cond(has_feature(RuleNumber + 1, Rules),
+    verbose_write_stats_for_clauses(Rules, RuleNumber + 1, Level)
+  ).  
+ 
+
+%
+% --------------------------------------------------------------------------
+%
+
+
+verbose_write_stats_for_goals(Goals, GoalNumber, Indentation) :-
+  indent(Indentation),
+  Goal = Goals.GoalNumber,
+  verbose_write_stats_for_the_goal(Goal, GoalNumber, Indentation),
+  cond(has_feature(GoalNumber + 1, Goals),
+    verbose_write_stats_for_goals(Goals, GoalNumber + 1, Indentation)).
+
+
+%
+% --------------------------------------------------------------------------
+%
+
+
+verbose_write_stats_for_the_goal(call(tries => Tries, successes => Successes),
+                         GoalNumber, Indentation) :-
+  !,
+  write("G#", GoalNumber, " <CALL> ", 
+        "Tries: ", Tries, ", Successes: ", Successes), nl.
+
+
+verbose_write_stats_for_the_goal(disjunction(tries => Tries, successes => Successes,
+                                 1 => First, 2 => Second),
+                                 GoalNumber, Indentation) :-
+  !,
+  write("G#", GoalNumber, " <DISJUNCTION> " ,
+        "Tries: ", Tries, ", Successes: ", Successes), nl,
+  indent(Indentation),
+  write("<FIRST TERM> "), 
+  write("Tries: ", First.tries, ", Successes: ", First.successes),
+  nl,
+  verbose_write_stats_for_goals(First, 1, Indentation + 1),
+  indent(Indentation),
+  write("<SECOND TERM> "), 
+  write("Tries: ", Second.tries, ", Successes: ", Second.successes),
+  nl,
+  verbose_write_stats_for_goals(Second, 1, Indentation + 1).
+
+
+verbose_write_stats_for_the_goal(C:condition(tries => Tries, successes => Successes),
+                         GoalNumber, Indentation) :-
+  !,
+  write("G#", GoalNumber, " <CONDITION> " ,
+        "Tries: ", Tries, ", Successes: ", Successes), nl,
+  cond(has_feature(true, C, True),
+    (
+      indent(Indentation),
+      write("<CONDITION SATISFIED> "), 
+      write("Tries: ", True.tries, ", Successes: ", True.successes),
+      nl,
+      verbose_write_stats_for_goals(True, 1, Indentation + 1)
+    )
+  ),
+  cond(has_feature(false, C, False),
+    (
+      indent(Indentation),
+      write("<CONDITION NOT SATISFIED> "), 
+      write("Tries: ", False.tries, ", Successes: ", False.successes),
+      nl,
+      verbose_write_stats_for_goals(False, 1, Indentation + 1)
+    )
+  ).
+
+
+verbose_write_stats_for_the_goal(cut(tries => Tries), GoalNumber, Indentation) :- 
+  write("G#", GoalNumber, " <CUT> Tries: ", Tries),
+  nl. 
+
+
+
+%
+% --------------------------------------------------------------------------
+% -
+% -  Miscellaneous predicates used for the display of the profiling 
+% -  statistics
+% -
+% --------------------------------------------------------------------------
+%
+
+
+rate(Value, Tries) -> Result
+  | Result = cond(Tries =\= 0,
+      ((Value / Tries) * 100),
+      no_value
+    ).
+
+
+%
+% --------------------------------------------------------------------------
+%
+
+
+format([What | LThings]) :-
+  !,
+  DisplayValueOfWhat = cond(What :== @,
+    no_value,
+    What
+  ),
+  write_centered(DisplayValueOfWhat),
+  format(LThings).
+
+format([]) :-
+  write_space(2).
+
+
+%
+% --------------------------------------------------------------------------
+%
+
+
+write_centered(String:string) :-
+  !,
+  Length = strlen(String),
+  NumberOfSpaces = floor(Difference:((column_width - Length) / 2)),
+  write_space(NumberOfSpaces),
+  write(String), 
+  write_space(NumberOfSpaces),
+  cond((Difference - NumberOfSpaces) =\= 0,
+    write(" ")
+  ).
+
+write_centered(N:int) :- 
+  !,
+  Difference = (column_width - 1) / 2,
+  StringOfN = int2str(N),
+  write_space(Difference - strlen(StringOfN) + 1),
+  write(StringOfN),
+  write_space(Difference).
+
+write_centered(X:real) :-
+  IntOfX = int2str(Int:floor(X)),
+  FractOfX = int2str(Fract:floor((X - Int) * 100)),
+  cond(Fract =:= 0,
+    write_centered(Int),
+    (
+      Difference = (column_width - 1) / 2,
+      write_space(Difference - strlen(IntOfX)),
+      write(IntOfX),
+      write("."),
+      write(FractOfX),
+      write_space(Difference - strlen(FractOfX))
+    )
+  ).
+
+
+%
+% --------------------------------------------------------------------------
+%
+
+
+iter_string(S, 0) :- !.
+
+iter_string(S, N) :-
+  StringStorageForS = string_storage.S,
+  (
+    has_feature(N, StringStorageForS, NStrings),
+    !,
+    write(NStrings)
+  ;
+    StringStorageForS.N = Str:(get_mult_string(N, S)),
+    write(Str)
+  ).
+
+get_mult_string(0, S) -> "".
+
+get_mult_string(N, S) -> strcon(S, get_mult_string(N - 1, S)).
+
+
+%
+% --------------------------------------------------------------------------
+%
+
+write_space(N) :- iter_string(" ", N).
+
+indent(N) :- iter_string("| ", N).
+
+
+
+%
+% --------------------------------------------------------------------------
+% -
+% -  Initialization and clearing of the profiling statistics
+% -
+% --------------------------------------------------------------------------
+%
+
+
+C : clear_stats :-
+  F = features(C),
+  cond(F :== [],
+    private_clear_stats,
+    (
+      retrieve_name_features(C, F, LNames),
+      private_clear_stats(LNames)
+    )
+  ).
+
+
+%
+% --------------------------------------------------------------------------
+%
+
+
+private_clear_stats(Top) :-
+  Top :== @,
+  !,
+  Names = features(profile_stats),
+  clear_stats_for_list_of(Names).
+
+private_clear_stats([Name | LNames]) :-
+  !,
+  private_clear_stats(Name),
+  private_clear_stats(LNames).
+
+private_clear_stats([]) :- !.
+
+private_clear_stats(What) :-
+  has_feature(What, profile_stats, Stats),
+  !,
+  cond(Stats :\== @,
+    (
+      Store = profile_old_clauses.What,
+      cond(profile_old_clauses.What.type :== predicate,
+        Stats.explicit_failures <<- 0
+      ),
+      Stats.tries <<- 0,
+      Stats.successes <<- 0,
+      Stats.total_failures <<- 0,
+      cond(Level:(profile_old_clauses.What.level) :\== call,
+        (
+          Clauses = Store.clauses,
+          empty_references_of_clauses(Stats, Clauses, Level, 1)
+        )
+      )
+    )
+  ).
+
+private_clear_stats(What) :-
+  write_err("*** Profile : '", What, "' not registered for profiling"),
+  nl_err.
+
+
+%
+% --------------------------------------------------------------------------
+%
+
+
+clear_stats_for_list_of([Name | LNames]) :-
+  !,
+  clear_stats(Name),
+  clear_stats_for_list_of(LNames).
+
+clear_stats_for_list_of([]).
+
+
+%
+% --------------------------------------------------------------------------
+%
+    
+
+remove_stats_for(What) :-
+  AllNames = features(profile_stats, current_module),
+  NewStats = data,
+  copy_stats_and_remove(AllNames, What, NewStats),
+  profile_stats <<- NewStats.
+
+
+%
+% --------------------------------------------------------------------------
+%
+
+
+copy_stats_and_remove([Name | LNames], What, NewStats) :-
+  Name :== What,
+  !,
+  copy_stats_and_remove(LNames, What, NewStats).
+
+copy_stats_and_remove([Name | LNames], What, NewStats) :-
+  !,
+  NewStats.Name = profile_stats.Name,
+  copy_stats_and_remove(LNames, What, NewStats).
+
+copy_stats_and_remove([], What).
+
+
+%
+% --------------------------------------------------------------------------
+%
+
+
+add_stats_for(What, Clauses, Level) :-
+  Stats = @(successes => 0, tries => 0, total_failures => 0),
+  cond(profile_old_clauses.What.type :== function,
+    NameOfStats = rules,
+    (
+      NameOfStats = clauses,
+      Stats.tries <<- 0,
+      Stats.explicit_failures <<- 0
+    )
+  ),
+  StatsForWhat:(profile_stats.What) <<- (Stats & NameOfStats),
+  cond(Level :\== call,
+    empty_references_of_clauses(StatsForWhat, Clauses, Level, 1)).
+
+
+%
+% --------------------------------------------------------------------------
+%
+
+
+empty_references_of_clauses(Stats, [Cl | LCl], Level, ClauseNumber) :-
+  !,
+  StatsForClause = Stats.ClauseNumber,
+  StatsForClause <<- stats(successes => 0, total_failures => 0),
+  cond(root_sort(Stats) :== rules,
+    (
+      StatsForClause.pattern_matchings <<- 0,
+      StatsForClause.evaluations <<- 0
+    ),
+    (
+      StatsForClause.head_unifications <<- 0,
+      StatsForClause.tries <<- 0,
+      StatsForClause.explicit_failures <<- 0
+    )
+  ),
+  cond(Level :== goal,
+    empty_goals_for(StatsForClause, Cl)),
+  empty_references_of_clauses(Stats, LCl, Level, ClauseNumber + 1).
+
+empty_references_of_clauses(StatsForClauses, [], Level, ClauseNumber).
+
+
+%
+% --------------------------------------------------------------------------
+%
+
+
+non_strict(empty_goals_for)?
+
+
+empty_goals_for(StatsForClause, (Head :- Body)) :-
+  !,
+  StatsForGoals = StatsForClause.goals,
+  StatsForGoals <<- sequence,
+  empty_goals(StatsForGoals, Body, 1, NumberOfGoals).
+
+
+empty_goals_for(StatsForRule, (Pattern -> Result)) :-
+  (
+    Result :== `(|),
+    !,
+    Body = Result.2,
+    StatsForGoals = StatsForRule.body,
+    StatsForGoals <<- 
+      sequence(tries => 0, successes => 0, total_failures => 0),
+    empty_goals(StatsForGoals, Body, 1, NumberOfGoals)
+  ;
+    succeed
+  ).
+
+
+non_strict(empty_goals)?
+
+
+empty_goals(StatsForGoals, Top, GoalNumber, GoalNumber) :-
+  Top :== @,
+  !.
+
+
+empty_goals(StatsForGoals, (A, B), GoalNumber, NewGoalNumber) :-
+  !,
+  empty_goals(StatsForGoals, A, GoalNumber, NumberOfGoalsOfA),
+  GoalNumberAfterA = NumberOfGoalsOfA + 1,
+  empty_goals(StatsForGoals, B, GoalNumberAfterA, NewGoalNumber).
+
+
+empty_goals(StatsForGoals, (A ; B), GoalNumber, GoalNumber) :-
+  !,
+  FirstTerm <<- sequence(tries => 0, successes => 0),
+  SecondTerm <<- sequence(tries => 0, successes => 0),
+  empty_goals(FirstTerm, A, 1, NumberOfGoalsOfA),
+  empty_goals(SecondTerm, B, 1, NumberOfGoalsOfB),
+  Disjunction = StatsForGoals.GoalNumber,
+  Disjunction <<-
+    disjunction(tries => 0, successes => 0,
+                1 => FirstTerm, 2 => SecondTerm).
+
+
+empty_goals(StatsForGoals, C:cond(Test), GoalNumber, GoalNumber) :-
+  !,
+  Cond = StatsForGoals.GoalNumber,
+  Cond <<- condition(tries => 0, successes => 0),
+  cond(has_feature(2, C, TermWhenTrue),
+    (
+      True = Cond.true,
+      True <<- sequence(tries => 0, successes => 0),
+      empty_goals(True, TermWhenTrue, 1, NumberOfGoalsWhenTrue)
+    )
+  ),
+  cond(has_feature(3, C, TermWhenFalse),
+    (
+      False = Cond.false,
+      False <<- sequence(tries => 0, successes => 0),
+      empty_goals(False, TermWhenFalse, 1, NumberOfGoalsWhenFalse)
+    )
+  ).
+
+
+empty_goals(StatsForGoals, !, GoalNumber, GoalNumber) :- 
+  !,
+  StatsForGoals.GoalNumber <<- cut(tries => 0).
+
+
+empty_goals(StatsForGoals, A, GoalNumber, GoalNumber) :-
+  !,
+  StatsForGoals.GoalNumber <<- call(tries => 0, successes => 0).
+
+
+ 
+%
+% --------------------------------------------------------------------------
+% -
+% -  Rewriting rules for predicates
+% -
+% --------------------------------------------------------------------------
+%
+
+
+
+rewrite_predicate(Predicate, Clauses, Level) :-
+  TryBody = ( 
+    T:`(profile_stats.Predicate.tries) <<- `(+) & @(T, 1),
+    fail
+  ),
+  assert(Predicate :- TryBody),
+  rewrite_clauses(Predicate, Clauses, Level, 1),
+  !,
+  CondForFailure = `cond(profile_backtracking :== false),
+  CondForFailure.2 = (
+    EF1:(StatsForPred.explicit_failures) <<- `(+) & @(EF1, 1)
+  ),
+  CondForFailure.3 = CondForFailOccurence & `cond(profile_fail_occured),
+  CondForFailOccurence.2 = (
+    EF2:(StatsForPred.explicit_failures) <<- `(+) & @(EF2, 1)
+  ),
+  BodyFail = (
+    StatsForPred = `(profile_stats.Predicate),
+    CondForFailure,
+    TF:(StatsForPred.total_failures) <<- `(+) & @(TF, 1),
+    `profile_backtracking <<- false,
+    `profile_fail_occured <<- false,
+    fail
+  ),
+  assert(Predicate :- BodyFail).
+
+rewrite_predicate(Predicate, Clauses, Level) :-
+  write_err("*** Profile : Unable to add profiling code for predicate ", 
+            Predicate, ": program corrupted"),
+  nl_err,
+  fail.
+
+
+%
+% --------------------------------------------------------------------------
+%
+
+
+non_strict(clean_body)?
+
+
+clean_body((succeed, B), CleanedB) :-
+  !,
+  clean_body(B, CleanedB).
+
+clean_body((A, succeed), CleanedA) :-
+  !,
+  clean_body(A, CleanedA).
+
+clean_body((A, B), (CleanedA, CleanedB)) :-
+  !,
+  clean_body(A, CleanedA),
+  clean_body(B, CleanedB).
+
+clean_body((A ; B), (CleanedA ; CleanedB)) :-
+  !,
+  clean_body(A, CleanedA),
+  clean_body(B, CleanedB).
+
+clean_body(cond(Test, Term), cond(Test, CleanedTerm)) :-
+  !,
+  clean_body(Term, CleanedTerm).
+
+clean_body(cond(Test, Term1, Term2), cond(Test, CleanedTerm1, CleanedTerm2)) :-
+  !,
+  clean_body(Term1, CleanedTerm1),
+  clean_body(Term2, CleanedTerm2).
+
+clean_body(A, A).
+
+
+%
+% --------------------------------------------------------------------------
+%
+
+
+rewrite_clauses(Predicate, [(Head :- Body) | LCl], Level, ClauseNumber) :-
+  !,
+  TryBody = (
+    T:`(profile_stats.Predicate.ClauseNumber.tries) <<- `(+) & @(T, 1),
+    fail      
+  ),
+  cond(Level :\== call,
+    assert(Predicate :- TryBody)
+  ),
+  Stats = cond(Level :== goal,
+    StatsForClause.goals
+  ),
+  rewrite_body(Predicate, Body, RewrittenBody, Stats,
+               Backtrack, Fail, Level, ClauseNumber, 1),
+  HeadUnify = cond(Level :\== call,
+    (
+      StatsForClause = StatsForPredicate.ClauseNumber,
+      HU:(StatsForClause.head_unifications) <<- `(+) & @(HU, 1)
+    ),
+    succeed
+  ),
+  cond(Level :\== call,
+    (
+      CondForFailure = `cond(Backtrack :== false),
+      CondForFailure.2 = (
+        EF1:(StatsForClause.explicit_failures) <<- `(+) & @(EF1, 1)
+      ),   
+      CondForFailure.3 = CondForFailOccurence & `cond(Fail),
+      CondForFailOccurence.2 = (
+        EF2:(StatsForClause.explicit_failures) <<- `(+) & @(EF2, 1)
+      ),
+      Failure = (
+        succeed
+      ;
+        CondForFailure,
+        TF:(StatsForClause.total_failures) <<- `(+) & @(TF, 1),
+        `profile_backtracking <<- Backtrack,
+        `profile_fail_occured <<- Fail,
+        fail
+      )
+    ),
+    Failure = (
+      succeed
+    ;
+      `profile_backtracking <<- Backtrack,
+      `profile_fail_occured <<- Fail,
+       fail
+    )
+  ),
+  Success =
+    cond(Level :\== call,
+      (
+        CS:(StatsForClause.successes) <<- `(+) & @(CS, 1)
+      ),
+      succeed
+  ),
+  ModifiedBody = (
+    StatsForPredicate = `(profile_stats.Predicate),
+    Fail <<- false,
+    Backtrack <<- false,
+    HeadUnify,
+    Failure,
+    RewrittenBody,
+    (
+      Success,
+      PS:(StatsForPredicate.successes) <<- `(+) & @(PS, 1),
+      `profile_backtracking <<- false,
+      `profile_fail_occured <<- false
+    ;
+      Backtrack <<- true,
+      fail
+    )
+  ),
+  clean_body(ModifiedBody, CleanedModifiedBody),
+  assert(Head :- CleanedModifiedBody),
+  rewrite_clauses(Predicate, LCl, Level, ClauseNumber + 1).           
+
+rewrite_clauses(Pred, [], Level, ClauseNumber).         
+
+
+%
+% --------------------------------------------------------------------------
+%
+
+
+non_strict(rewrite_body)?
+
+
+rewrite_body(Predicate, Top, Top, Stats, Backtrack, Fail, Level, ClauseNumber, 
+             GoalNumber, GoalNumber) :-
+  Top :== @,
+  !.
+
+
+rewrite_body(Predicate, (A, B), (NewA, NewB), Stats, Backtrack, Fail, Level, 
+             ClauseNumber, GoalNumber, NewGoalNumber) :-
+  !,
+  rewrite_body(Predicate, A, NewA, Stats, Backtrack, Fail, Level, 
+               ClauseNumber, GoalNumber, NumberOfGoalsOfA),
+  GoalsAfterA = NumberOfGoalsOfA + 1,
+  rewrite_body(Predicate, B, NewB, Stats, Backtrack, Fail, Level, 
+               ClauseNumber, GoalsAfterA, NewGoalNumber).
+
+
+rewrite_body(Predicate, (A ; B), NewDisjunction, Stats, Backtrack, Fail, goal, 
+             ClauseNumber, GoalNumber, GoalNumber) :-
+  !,
+  rewrite_body(Predicate, A, NewA, Disjunction1, Backtrack, Fail, goal, 
+               ClauseNumber, 1, ANumber),
+  rewrite_body(Predicate, B, NewB, Disjunction2, Backtrack, Fail, goal, 
+               ClauseNumber, 1, BNumber),
+  NewDisjunction = (
+    DisjunctionStats = Stats.GoalNumber,
+    Disjunction1 = DisjunctionStats.1,
+    Disjunction2 = DisjunctionStats.2,
+    (
+      TA:(DisjunctionStats.tries) <<- `(+) & @(TA, 1),
+      T1:(Disjunction1.tries) <<- `(+) & @(T1, 1),
+      NewA,
+      SA:(DisjunctionStats.successes) <<- `(+) & @(SA, 1),
+      S1:(Disjunction1.successes) <<- `(+) & @(S1, 1)
+    ;
+      T2:(Disjunction2.tries) <<- `(+) & @(T2, 1),
+      NewB,
+      SB:(DisjunctionStats.successes) <<- `(+) & @(SB, 1),
+      S2:(Disjunction2.successes) <<- `(+) & @(S2, 1)
+    )
+  ).
+
+
+rewrite_body(Predicate, C:cond(Test), NewCond, Stats, Backtrack, Fail, goal, 
+             ClauseNumber, GoalNumber, GoalNumber) :-
+  !,
+  RewrittenCond = `cond(Test),
+  cond(has_feature(2, C, TermWhenTrue),
+    (
+      rewrite_body(Predicate, TermWhenTrue, RewrittenTermWhenTrue, 
+                   StatsForTrue, Backtrack, Fail, goal,
+                   ClauseNumber, 1, NumberOfGoalsWhenTrue),
+      RewrittenCond.2 = (
+        StatsForTrue = CondStats.true,
+        TT:(StatsForTrue.tries) <<- `(+) & @(TT, 1),
+        RewrittenTermWhenTrue,
+        ST:(StatsForTrue.successes) <<- `(+) & @(ST, 1)
+      )
+    )
+  ),
+  cond(has_feature(3, C, TermWhenFalse),
+    (
+      rewrite_body(Predicate, TermWhenFalse, RewrittenTermWhenFalse, 
+                   StatsForFalse, Backtrack, Fail, goal,
+                   ClauseNumber, 1, NumberOfGoalsWhenFalse),
+      RewrittenCond.3 = (
+        StatsForFalse = CondStats.false,
+        TF:(StatsForFalse.tries) <<- `(+) & @(TF, 1),
+        RewrittenTermWhenFalse,
+        SF:(StatsForFalse.successes) <<- `(+) & @(SF, 1)
+      )
+    )
+  ),
+  NewCond = (
+    CondStats = Stats.GoalNumber,
+    TC:(CondStats.tries) <<- `(+) & @(TC, 1),
+    RewrittenCond,
+    SC:(CondStats.successes) <<- `(+) & @(SC, 1)
+  ).
+
+
+rewrite_body(What, !, NewCut, Stats, Backtrack, Fail, call, ClauseNumber, 
+             GoalNumber, GoalNumber) :-
+  !,
+  cond(profile_old_clauses.What.type :== predicate,
+    (
+      CondForFailure = `cond(Backtrack :== false),
+      CondForFailure.2 = (
+        EF1:(StatsForWhat.explicit_failures) <<- `(+) & @(EF1, 1)
+      ),
+      CondForFailure.3 = CondForFailOccurence & `cond(Fail),
+      CondForFailOccurence.2 = (
+        EF2:(StatsForWhat.explicit_failures) <<- `(+) & @(EF2, 1)
+      ),
+      FailOnBacktrack = (
+        CondForFailure,
+        `profile_backtracking <<- false,
+        `profile_fail_occured <<- false
+      )
+    ),
+    FailOnBacktrack = succeed
+  ),   
+  NewCut = (
+    !,
+    StatsForWhat = `(profile_stats.What),
+    (
+      succeed
+    ;
+      FailOnBacktrack,
+      TF:(StatsForWhat.total_failures) <<- `(+) & @(TF, 1),
+      fail
+    )
+  ).
+
+
+rewrite_body(What, !, NewCut, Stats, Backtrack, Fail, Level, ClauseNumber,
+             GoalNumber, GoalNumber) :-
+  !,
+  (
+    profile_old_clauses.What.type :== function,
+    !,
+    BodyFail = cond(Level :== goal,
+      (BF:(StatsForRule.body.total_failures) <<- `(+) & @(BF, 1)),
+      succeed
+    ),
+    RewrittenCut = ( 
+      !,
+      StatsForFunction = `(profile_stats.`What),
+      StatsForRule = StatsForFunction.ClauseNumber,
+      (
+        succeed
+      ;
+        RTF:(StatsForRule.total_failures) <<- `(+) & @(RTF, 1),
+        FTF:(StatsForFunction.total_failures) <<- `(+) & @(FTF, 1),
+        BodyFail,
+        fail
+      )
+    )
+  ;
+    CondForFailure = `cond(Backtrack :== false),
+    CondForFailure.2 = (
+      CEF1:(StatsForClause.explicit_failures) <<- `(+) & @(CEF1, 1),
+      PEF1:(StatsForWhat.explicit_failures) <<- `(+) & @(PEF1, 1)
+    ),
+    CondForFailure.3 = CondForFailOccurence & `cond(Fail),
+    CondForFailOccurence.2 = (
+      CEF2:(StatsForClause.explicit_failures) <<- `(+) & @(CEF2, 1),
+      PEF2:(StatsForWhat.explicit_failures) <<- `(+) & @(PEF2, 1)    
+    ),
+    RewrittenCut = (   
+      !,
+      StatsForWhat = `(profile_stats.What),
+      StatsForClause = StatsForWhat.ClauseNumber,
+      (
+        succeed
+      ;
+        CondForFailure,
+        CTF:(StatsForClause.total_failures) <<- `(+) & @(CTF, 1),
+        CPF:(StatsForWhat.total_failures) <<- `(+) & @(CPF, 1),
+        `profile_backtracking <<- false,
+        `profile_fail_occured <<- false,
+        fail
+      )
+    )
+  ),
+  NewCut = cond(Level :== goal,
+    (
+      GT:(Stats.GoalNumber.tries) <<- `(+) & @(GT, 1),
+      RewrittenCut
+    ),
+    RewrittenCut
+  ).
+
+
+rewrite_body(What, Body, NewBody, Stats, Backtrack, Fail, Level,
+             ClauseNumber, GoalNumber, GoalNumber) :-
+  RewrittenBody = cond(Body :== fail,
+    cond(profile_old_clauses.What.type :== predicate,
+      (
+        Fail <<- true,
+        fail
+      ),
+      fail
+    ),
+    Body
+  ),  
+  NewBody = cond(Level :== goal,
+    (
+      GT:(Stats.GoalNumber.tries) <<- `(+) & @(GT, 1), 
+      RewrittenBody,
+      GS:(Stats.GoalNumber.successes) <<- `(+) & @(GS, 1)
+    ),
+    RewrittenBody
+  ).
+
+
+%
+% --------------------------------------------------------------------------
+% -
+% -  Rewriting rules for functions
+% -
+% --------------------------------------------------------------------------
+%
+
+
+non_strict(rewrite_function)?
+
+
+rewrite_function(Function, Rules, Level) :-
+  rewrite_rules(Function, Rules, Level, 1),
+  !,
+  BodyFail = (
+    FunctionStats = `(profile_stats.Function),
+    F:(FunctionStats.total_failures) <<- `(+) & @(F, 1),
+    T:(FunctionStats.tries) <<- `(+) & @(T, 1),
+    fail
+  ),
+  assert((Function -> @ | BodyFail)).
+
+  
+rewrite_function(Function, Rules, Level) :-
+  write_err("*** Profile : Unable to add profiling code for function ", 
+            Function, ": program corrupted"),
+  nl_err.
+
+
+%
+% --------------------------------------------------------------------------
+%
+
+
+non_strict(rewrite_rules)?
+
+
+rewrite_rules(Function, [(Pattern -> ExpressionResult) | LRules], Level, 
+              RuleNumber) :-
+  !,
+  cond(ExpressionResult :== `(|),
+    true | (ExpressionResult = `(Value | Body)),
+    true | (Value = ExpressionResult)
+  ),
+  PatternMatchesForRule = cond(Level :\== call,
+    (
+      StatsForRule = StatsForFunction.RuleNumber,
+      PMR:(StatsForRule.pattern_matchings) <<- `(+) & @(PMR, 1)
+    ),
+    succeed
+  ),
+  FailureForRule = cond(Level :\== call,
+    (FR:(StatsForRule.total_failures) <<- `(+) & @(FR, 1)),
+    succeed
+  ),
+  EvaluationFailedForRule = cond(Level :\== call,
+    (EF1:(StatsForRule.total_failures) <<- `(+) & @(EF1, 1)),
+    succeed
+  ),
+  EvaluationSucceededForRule = cond(Level :\== call,
+    (
+      EF2:(StatsForRule.total_failures) <<- `(-) & @(EF2, 1),
+      EV:(StatsForRule.evaluations) <<- `(+) & @(EV, 1)
+    ),
+    succeed
+  ),
+  SuccessForRule = cond(Level :\== call,
+    (SR:(StatsForRule.successes) <<- `(+) & @(SR, 1)),
+    succeed
+  ),
+  CommonCodeForBodyTry = (
+    succeed
+  ;
+    F1:(StatsForFunction.total_failures) <<- `(+) & @(F1, 1),
+    FailureForRule,
+    fail          
+  ),
+  cond(Body :== @,
+    (
+      BodyTry = CommonCodeForBodyTry,
+      RewrittenBody = succeed,
+      BodySuccess = succeed
+    ),
+    (
+      rewrite_body(Function, Body, RewrittenBody, StatsForBody, @, @,
+                   Level, RuleNumber, 1, NumberOfGoalsOfBody),
+      BodyTry = cond(Level :== goal,
+        (
+          StatsForBody = StatsForRule.body,
+          (
+            BT:(StatsForBody.tries) <<- `(+) & @(BT, 1)
+          ;
+            BF:(StatsForBody.total_failures) <<- `(+) & @(BF, 1),
+            F2:(StatsForFunction.total_failures) <<- `(+) & @(F2, 1),
+            FailureForRule,
+            fail
+          )
+        ),
+        CommonCodeForBodyTry
+      ),
+      BodySuccess = cond(Level :== goal,
+        (BS:(StatsForBody.successes) <<- `(+) & @(BS, 1)),
+        succeed
+      )
+    )
+  ),
+  NewBody = (
+    StatsForFunction = `(profile_stats.(`Function)),
+    T:(StatsForFunction.tries) <<- `(+) & @(T, 1),
+    PatternMatchesForRule,
+    %%% We suppose that the evaluation fails
+    SEF:(StatsForFunction.total_failures) <<- `(+) & @(SEF, 1),
+    EvaluationFailedForRule,
+    Result = Value,
+    %%% The evaluation succeeded, we restore the previous number of failures
+    ES:(StatsForFunction.total_failures) <<- `(-) & @(ES, 1),
+    EvaluationSucceededForRule,
+    BodyTry,
+    RewrittenBody,
+    BodySuccess,
+    SuccessForRule,
+    SF:(StatsForFunction.successes) <<- `(+) & @(SF, 1)
+  ),
+  clean_body(NewBody, CleanedNewBody),
+  assert((Pattern -> Result | CleanedNewBody)),
+  NewRuleNumber = RuleNumber + 1,
+  rewrite_rules(Function, LRules, Level, NewRuleNumber).
+  
+
+rewrite_rules(Function, [], Level, RuleNumber).
+
+
+
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%
+
+
+
+
+
+
+
+
+
+
+
+

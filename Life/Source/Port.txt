@@ -1052,5 +1052,245 @@ babcode
 
 387 sorts instead of 381 sorts
 ----------------------------------------------------------
+children
+
+differences - mainly is seems from x windows not included.
+--------------------------------------------------------------
+clause
+
+differeces are:
+
+45c45
+< A = [_A|_B], B = list, C = [_A|append(_B,B)], X = (append(A,B) -> C).
+---
+> A = [], B = list, C = B, X = (append(A,B) -> B).
+48c48
+< A = [], B = list, C = B, X = (append(A,B) -> B).
+---
+> A = [_A|_B], B = list, C = [_A|append(_B,B)], X = (append(A,B) -> C).
+53c53
+< X = (append([_A|_B],_C: list) -> [_A|append(_B,_C)]).
+---
+> X = (append([],_A: list) -> _A).
+56c56
+< X = (append([],_A: list) -> _A).
+---
+> X = (append([_A|_B],_C: list) -> [_A|append(_B,_C)]).
+------------------------------------------------------------------
+condpred
+
+reference seems missing
+---------------------------------------------------------------------
+debug
+
+copied Life/Tools to Life/Tests/Tools
+
+Then clause numbers seemed different
+--------------------------------------------------------------------
+glob_test2
+
+in output 'p' missing from persistent
+
+in error output -- "END Abort added"
+-----------------------------------------------------------------
+libtest
+
+many manual entries missing + more.
+-------------------------------------------------------------------
+listing1
+
+don't see the difference
+------------------------------------------------------------------
+manual4
+
+END Abort added
+--------------------------------------------------------------------
+module_test2
+
+END Abort added
+---------------------------------------------------------------------
+pers2
+
+END Abort added
+--------------------------------------------------------------------
+preparser
+
+syntax error in new version
+-------------------------------------------------------------------
+t8101
+
+END Abort added
+--------------------------------------------------------------------
+t8104
+
+get Infinity instead of inf
+get NaN instead of nan
+----------------------------------------------------------------------
+t8105
+
+END Abort added
+----------------------------------------------------------------------
+test03
+
+lots undefinded - probably for x-windows
+---------------------------------------------------------------------
+testslc
+
+superlint?
+--------------------------------------------------------------------
+testsl
+
+superlint - don't see difference
+--------------------------------------------------------------------
+t
+
+I'm confused
+--------------------------------------------------------------------
+At this point ts-1.02.sh gives:
+
+325 Total Tests completed
+305 Total Tests match
+20 Total Tests differ
+13 Total Tests out differ
+9 Total Tests err differ
+----------------------------------------------------------------------
+
+commented printf of "END Abort" in built_ins.c
+I must have added it in debugging in past. (It's in newer references.
+I had re-added it above.
+---------------------------------------------------------------------
+After
+
+echo 325 Total Tests completed
+echo 310 Total Tests match
+echo 15 Total Tests differ
+echo 13 Total Tests out differ
+echo 3 Total Tests err differ
+---------------------------------------------------------------------
+
+aborthook
+
+get Abort message new version - nothing reference
+APPROVED new output
+----------------------------------------------------------------------
 
 
+babcode
+APPROVED new output
+----------------------------------------------------------------------
+children
+
+differences seem to relate to X Windows
+APPROVED new output
+----------------------------------------------------------------------
+
+clause
+
+Just order of output is different
+APPROVED new output
+
+-----------------------------------------------------------------------
+condpred
+
+reference missing
+
+APPROVED new output
+-------------------------------------------------------------------
+debug
+
+just clause numbers seem different
+
+APPROVED new output
+
+---------------------------------------------------------------------
+glob_test2
+
+'p' missing in persistant in new output
+
+------------------------------------------------------------------
+libtest
+
+not finding files to import
+
+------------------------------------------------------------------
+listing
+
+see no difference (whitespace?)
+
+APPROVED new output
+
+---------------------------------------------------------------------
+test03
+
+differences seem related to X windows
+
+APPROVED new output
+
+-----------------------------------------------------------------------
+testslc
+
+think there are files missing
+
+removed from testing
+
+----------------------------------------------------------------------
+testsl
+
+see no difference (whitespace?)
+
+APPROVED new output
+
+---------------------------------------------------------------------
+t
+
+there are more sorts in new version
+
+APPROVED new output
+
+
+---------------------------------------------------------------------
+
+t8104
+
+Approved
+difference only Infinity for inf
+and NaN for nan
+--------------------------------------------------------------------
+
+
+glob_test2
+
+'p' missing from persistent
+
+(out)
+
+---------------------------------
+
+libtest
+
+seems files missing
+
+removed from testing
+
+------------------------------------
+
+-------------------------------------------
+only discrepancy glob_test2
+
+'p' missing from persistent
+
+BUT examining carefuly -- 'p' missing from reference - new correct!!
+
+APPROVED new output
+
+----------------------------------------------
+NOW for ts-1.02.sh
+
+echo 323 Total Tests completed
+echo 322 Total Tests match
+echo 1 Total Tests differ
+echo 1 Total Tests out differ
+echo 1 Total Tests err differ
+
+ONLY remaining preparser
+-------------------------------------------------------------

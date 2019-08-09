@@ -115,10 +115,10 @@ R = [4,5,6].
 *** Yes
 --1> 
 *** No
-> > <EVAL> append([],[d,e,f]): clause #1, result=[d,e,f]
-<EVAL> append([c],[d,e,f]): clause #2, result=[c,d,e,f]
-<EVAL> append([b,c],[d,e,f]): clause #2, result=[b,c,d,e,f]
-<EVAL> append([a,b,c],[d,e,f]): clause #2, result=[a,b,c,d,e,f]
+> > <EVAL> append([],[d,e,f]): clause #2, result=[d,e,f]
+<EVAL> append([c],[d,e,f]): clause #1, result=[c,d,e,f]
+<EVAL> append([b,c],[d,e,f]): clause #1, result=[b,c,d,e,f]
+<EVAL> append([a,b,c],[d,e,f]): clause #1, result=[a,b,c,d,e,f]
 
 *** Yes
 A = [a,b,c,d,e,f].
@@ -130,14 +130,14 @@ A = @, G = @~, H = @~.
 --1> 
 *** Yes
 A = @, C = @, G = [a,b|C], H = @~.
-----2> <EVAL> append([b|@~],[hello]): clause #2, result=[b|@]
-<EVAL> append([a,b|@~],[hello]): clause #2, result=[a,b|@]
+----2> <EVAL> append([b|@~],[hello]): clause #1, result=[b|@]
+<EVAL> append([a,b|@~],[hello]): clause #1, result=[a,b|@]
 
 *** Yes
 A = [_A: a,_B: b|@], C = @~, G = [_A,_B|C], H = [hello].
-------3> <EVAL> append([],[hello]): clause #1, result=[hello]
-<EVAL> append([e],[hello]): clause #2, result=[e,hello]
-<EVAL> append([d,e],[hello]): clause #2, result=[d,e,hello]
+------3> <EVAL> append([],[hello]): clause #2, result=[hello]
+<EVAL> append([e],[hello]): clause #1, result=[e,hello]
+<EVAL> append([d,e],[hello]): clause #1, result=[d,e,hello]
 
 *** Yes
 A = [_A: a,_B: b,_C: d,_D: e|H], C = [_C,_D], G = [_A,_B|C], H = [hello].
@@ -156,14 +156,14 @@ A = @, G = @~, H = @~.
 Added debugging code to function 'append': level=goal, verbose=true, clauses=2
 
 *** Yes
-> > > <PATT> append([a,b,c],[d,e,f]): pattern matches clause #2
-<PATT> append([b,c],[d,e,f]): pattern matches clause #2
-<PATT> append([c],[d,e,f]): pattern matches clause #2
-<PATT> append([],[d,e,f]): pattern matches clause #1
-<EVAL> append([],[d,e,f]): clause #1, result=[d,e,f]
-<EVAL> append([c],[d,e,f]): clause #2, result=[c,d,e,f]
-<EVAL> append([b,c],[d,e,f]): clause #2, result=[b,c,d,e,f]
-<EVAL> append([a,b,c],[d,e,f]): clause #2, result=[a,b,c,d,e,f]
+> > > <PATT> append([a,b,c],[d,e,f]): pattern matches clause #1
+<PATT> append([b,c],[d,e,f]): pattern matches clause #1
+<PATT> append([c],[d,e,f]): pattern matches clause #1
+<PATT> append([],[d,e,f]): pattern matches clause #2
+<EVAL> append([],[d,e,f]): clause #2, result=[d,e,f]
+<EVAL> append([c],[d,e,f]): clause #1, result=[c,d,e,f]
+<EVAL> append([b,c],[d,e,f]): clause #1, result=[b,c,d,e,f]
+<EVAL> append([a,b,c],[d,e,f]): clause #1, result=[a,b,c,d,e,f]
 
 *** Yes
 A = [a,b,c,d,e,f].
@@ -175,19 +175,19 @@ A = @, G = @~, H = @~.
 --1> 
 *** Yes
 A = @, C = @, G = [a,b|C], H = @~.
-----2> <PATT> append([a,b|@],[hello]): pattern matches clause #2
-<PATT> append([b|@],[hello]): pattern matches clause #2
-<EVAL> append([b|@~],[hello]): clause #2, result=[b|@]
-<EVAL> append([a,b|@~],[hello]): clause #2, result=[a,b|@]
+----2> <PATT> append([a,b|@],[hello]): pattern matches clause #1
+<PATT> append([b|@],[hello]): pattern matches clause #1
+<EVAL> append([b|@~],[hello]): clause #1, result=[b|@]
+<EVAL> append([a,b|@~],[hello]): clause #1, result=[a,b|@]
 
 *** Yes
 A = [_A: a,_B: b|@], C = @~, G = [_A,_B|C], H = [hello].
-------3> <PATT> append([d,e],[hello]): pattern matches clause #2
-<PATT> append([e],[hello]): pattern matches clause #2
-<PATT> append([],[hello]): pattern matches clause #1
-<EVAL> append([],[hello]): clause #1, result=[hello]
-<EVAL> append([e],[hello]): clause #2, result=[e,hello]
-<EVAL> append([d,e],[hello]): clause #2, result=[d,e,hello]
+------3> <PATT> append([d,e],[hello]): pattern matches clause #1
+<PATT> append([e],[hello]): pattern matches clause #1
+<PATT> append([],[hello]): pattern matches clause #2
+<EVAL> append([],[hello]): clause #2, result=[hello]
+<EVAL> append([e],[hello]): clause #1, result=[e,hello]
+<EVAL> append([d,e],[hello]): clause #1, result=[d,e,hello]
 
 *** Yes
 A = [_A: a,_B: b,_C: d,_D: e|H], C = [_C,_D], G = [_A,_B|C], H = [hello].

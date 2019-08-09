@@ -8,4 +8,6 @@ Loading...*** Warning: overriding previous declaration of accumulator dcg
 done
 *** Warning: benign module name clash: c_parser#error and built_ins#error
 *** Warning: local definition of '.' overrides 'syntax#.'
+<command-line>:0:0: warning: "__STDC__" redefined
+<built-in>: note: this is the location of the previous definition
 ..................

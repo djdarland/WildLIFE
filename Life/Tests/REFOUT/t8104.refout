@@ -21,7 +21,7 @@
 
 *** Yes
 > 
-Infinity
+inf
 0
 690.776
 1e+150
@@ -31,11 +31,11 @@ Infinity
 
 *** Yes
 > 
-Infinity
+inf
 0
-Infinity
-Infinity
-Infinity
+inf
+inf
+inf
 *** Yes
 > ***
 
@@ -43,7 +43,7 @@ Infinity
 > > 
 0.87312
 0.642439
-NaN
-NaN
+-nan
+-nan
 *** Yes
 > > 

@@ -4,9 +4,11 @@
 djd?
 Try
 wild_life
+wild_life_102
 *~
 c_life.a
 Life/Tests/OUT/
 Life/Tests/ERR/
 Life/Tests/editdiffs.sh
 *.tar.gz
+*#*

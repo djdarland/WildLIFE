@@ -110,8 +110,8 @@ bagof(_A,
 reduce(_A,_B,[_C|_D]) -> apply(_C,reduce(_A,_B,_D),functor => _A).
 reduce(@,_A,[]) -> _A.
 
-map(@,[]) -> [].
 map(_A,[_B|_C]) -> [apply(_B,functor => _A)|map(_A,_C)].
+map(@,[]) -> [].
 
 maprel(_A,[_B|_C]) :-
         !,
@@ -120,11 +120,11 @@ maprel(_A,[_B|_C]) :-
 maprel(@,[]) :-
         succeed.
 
-append([],_A: list) -> _A.
 append([_A|_B],_C: list) -> [_A|append(_B,_C)].
+append([],_A: list) -> _A.
 
-length([]) -> 0.
 length([@|_A]) -> 1 + length(_A).
+length([]) -> 0.
 
 [] <| list.
 

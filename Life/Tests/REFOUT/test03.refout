@@ -32,6 +32,7 @@ list <| built_in.
 string <| built_in.
 real <| built_in.
 bool <| built_in.
+bytedata <| built_in.
 
 % 'stream' is undefined.
 
@@ -77,37 +78,15 @@ bool <| built_in.
 
 % 'aborthook' is undefined.
 
-% 'event' is undefined.
+% 'process_no_children' is undefined.
 
-% 'keyboard_event' is undefined.
+% 'process_exited' is undefined.
 
-% 'button_event' is undefined.
+% 'process_signaled' is undefined.
 
-% 'expose_event' is undefined.
+% 'process_stopped' is undefined.
 
-% 'destroy_event' is undefined.
-
-% 'configure_event' is undefined.
-
-% 'motion_event' is undefined.
-
-% 'enter_event' is undefined.
-
-% 'leave_event' is undefined.
-
-% 'misc_event' is undefined.
-
-% 'display' is undefined.
-
-% 'drawable' is undefined.
-
-% 'window' is undefined.
-
-% 'pixmap' is undefined.
-
-% 'graphic_context' is undefined.
-
-% 'display_list' is undefined.
+% 'process_continued' is undefined.
 
 % '(' is undefined.
 
@@ -127,7 +106,15 @@ bool <| built_in.
 
 % 'error' is undefined.
 
+% 'begin_raw' is undefined.
+
 % 'copy_rules' is undefined.
+
+% 'end_raw' is undefined.
+
+% 'get_raw' is undefined.
+
+% 'in_raw' is undefined.
 
 % 'load_module' is undefined.
 
@@ -136,6 +123,18 @@ bool <| built_in.
 % 'load_suffixes' is undefined.
 
 % 'loaded_file' is undefined.
+
+% 'put_raw' is undefined.
+
+% 'reset_window_flag' is undefined.
+
+% 'window_flag' is undefined.
+
+% '(' is undefined.
+
+% ')' is undefined.
+
+% 'ftruncate' is undefined.
 
 % 'precedence' is undefined.
 

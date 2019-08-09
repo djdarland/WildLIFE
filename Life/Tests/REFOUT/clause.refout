@@ -42,18 +42,18 @@ X = (h -> Y), Y = b.
 *** No
 > 
 *** Yes
-A = [], B = list, C = B, X = (append(A,B) -> B).
+A = [_A|_B], B = list, C = [_A|append(_B,B)], X = (append(A,B) -> C).
 --1> 
 *** Yes
-A = [_A|_B], B = list, C = [_A|append(_B,B)], X = (append(A,B) -> C).
+A = [], B = list, C = B, X = (append(A,B) -> B).
 --1> 
 *** No
 > 
 *** Yes
-X = (append([],_A: list) -> _A).
+X = (append([_A|_B],_C: list) -> [_A|append(_B,_C)]).
 --1> 
 *** Yes
-X = (append([_A|_B],_C: list) -> [_A|append(_B,_C)]).
+X = (append([],_A: list) -> _A).
 --1> 
 *** No
 > > 
