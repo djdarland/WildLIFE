@@ -18,7 +18,7 @@
 
 built_ins#set_module("built_ins")?
 
-#  trace_input?  % Uncommented DJD 2.13
+%%  trace_input?  % Uncommented DJD 2.13
 
 non_strict(public) ? %% BD June 10 1993
 

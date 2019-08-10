@@ -1390,4 +1390,16 @@ eoftest2
 eoftest
 preparser
 -----------------------------------------------------------------------
+After life_local_redo (with ts.sh)
 
+413 Total Tests completed
+409 Total Tests match
+4 Total Tests differ
+4 Total Tests out differ
+4 Total Tests err differ
+
+1 more error:
+
+testsl
+
+------------------------------------------------------------------------
