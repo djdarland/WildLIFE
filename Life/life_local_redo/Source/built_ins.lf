@@ -119,7 +119,7 @@ built_ins#public
 %% 	 @DBM_LF@  Commented 2.13 DJD
 )?
 
-% built_ins#non_strict(wait_on_feature)?
+%%% built_ins#non_strict(wait_on_feature)?
 
 bytedata  <| built_ins#built_in. % DENYS: BYTEDATA
 bitvector <| bytedata.
@@ -192,10 +192,10 @@ listing_3(F, X) :- P=X.F, c_listing(P), listing_4(P).
 
 listing_4(P) :- var(P), !,
         write("% '@' is the top sort."), nl.
-%% listing_4(P:int)    :- !, listing_4a(int).
-%% listing_4(P:real)   :- !, listing_4a(real).
-%% listing_4(P:string) :- !, listing_4a(string).
-listing_4(P) :- listing_4a(P).
+%% listing_4(P:int)    :- !, listing_4a(int).      
+%% listing_4(P:real)   :- !, listing_4a(real).     
+%% listing_4(P:string) :- !, listing_4a(string).   
+listing_4(P) :- listing_4a(P).                 
 
 listing_4a(P) :- is_sort(P), is_value(P)=false, !, 
 	listing_5(parents(P), P),
