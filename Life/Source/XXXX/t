@@ -1,1 +1,1 @@
-emacs -fn "-adobe-courier-bold-o-normal--0-0-75-75-m-0-iso8859-1" $1 $2
+emacs -fn "-misc-fixed-medium-o-semicondensed--13-120-75-75-c-60-iso10646-1" $1 $2

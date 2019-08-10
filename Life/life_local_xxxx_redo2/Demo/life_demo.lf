@@ -1,27 +1,25 @@
-trace?
-
 %%% This is the file demo.lf.in which generates demo.lf through the
 %%% configure command.
+%% I think all configure does is change +SETUPDIR+
 
 module("life_demo")?
-
-public(life_demo, using_demo_fonts) ?
+public(demo, using_demo_fonts) ?
 
 %%% Make sure the Demo fonts are known by the Xserver
 
 persistent(using_demo_fonts) ?
 
-% check_font_path :-
-%	X = system("~/life_local_xxxx_redo2/Demo/check_fp"),
-%	X =:= 0, !,
-%	write("\nDemo fonts not found. Using standard fonts.\nSee the file ~/life_local_xxxx_redo2/Demo/INSTALL on a possible fix to this problem.\n"),
-%	write("\nShould I try to use the demo fonts anyway? (yes/no) "),
-%	read_token(Answer),
-%	using_demo_fonts <<- (Answer :== y or Answer :== yes)
- %   ;
-%	using_demo_fonts <<- true.
 check_font_path :-
-      using_demo_fonts <<- false.
+%	X = system("~/life_local_xxxx_redo2/Demo/check_fp"),
+	X = -1,
+%	X =:= 0, !,
+	write("\nDemo fonts not found. Using standard fonts.\nSee the file ~/life_local_xxxx_redo2/Demo/INSTALL on a possible fix to this problem.\n"),
+	write("\nShould I try to use the demo fonts anyway? (yes/no) "),
+	read_token(Answer),
+	using_demo_fonts <<- (Answer :== y or Answer :== yes)
+    ;
+	using_demo_fonts <<- true.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % This is a control panel to drive the Wild_LIFE demos using the X toolkit.
@@ -47,13 +45,15 @@ demo_button <| push_button.
 :: demo_button(font_id => button_font,
 	       true_text_color_id => d_led_on).
 
-%%def_font(button_font,
-%%	 new_font(cond(using_demo_fonts,
-%%		       "terminal_bold_narrow18",
-%%		       "-adobe-helvetica-bold-r-narrow--17-120-100-100-p-72-*")))?
+% def_font(button_font,
+%	 new_font(cond(using_demo_fonts,
+%		       "terminal_bold_narrow18",
+%		       "-adobe-helvetica-bold-r-narrow--17-120-100-100-p-72-*")))?
 
 def_font(button_font,
-	 new_font("9x15"))?
+	 new_font(cond(using_demo_fonts,
+		       "-misc-fixed-medium-o-semicondensed--13-120-75-75-c-60-iso10646-1",
+		       "-misc-fixed-medium-o-semicondensed--13-120-75-75-c-60-iso10646-1")))?
 
 led_button(B:@(light=>L)) -> hc_list [L, h_box(55), B].
 
@@ -163,7 +163,7 @@ C:writeln :- write&strip(C), nl.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% compose the interface at load time
 
-life_demo :-
+demo :-
 	control_panel, !,
 	   (
 	       begin_demo = get_choice,
@@ -174,3 +174,4 @@ life_demo :-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+demo?

@@ -1,2 +1,1 @@
-load("demo")?
-demo?
+load("life_demo")?
