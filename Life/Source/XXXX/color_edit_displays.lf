@@ -156,8 +156,15 @@ set_color_box(R,G,B) :-
 	xFillRectangle(color_window,X+1,Y+1,W-2,H-2,color => Color),
 	xFreeColor(color_window,Color).
 
-def_font(title_font,
-	 new_font("9x15"))?
+def_font(title_font,new_font("-bitstream-bitstream charter-bold-i-normal--0-0-0-0-p-0-adobe-standard")) ?
+
+
+
+
+% def_font(title_font,
+%	 new_font(cond(life_demo#using_demo_fonts,
+%		       "terminal_bold_narrow28",
+%		       "-adobe-helvetica-bold-r-narrow--25-180-100-100-p-116-*")))?
 
 def_color(main_colors,red_color,red)?
 def_color(main_colors,green_color,'lime green')?
@@ -186,11 +193,17 @@ init_panel(P) :-
 	set_color_box(R,G,B).
 
 color_edit :-
+%    write("before set_up"),nl,
 	set_up,
+%    write("after set_up"),nl,
 	( quit = get_choice,
+%    write("after get_choice"),nl,
+%    write("DJD 10091951 main panel = ",main_panel),nl,
 	  create_box(P:copy_term(main_panel)),
+%   write("after create_box"),nl,
 	  init_panel(P)
 	;
 	  succeed
 	).
 
+    
