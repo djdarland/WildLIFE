@@ -275,7 +275,7 @@ typedef void *			Ref;
 typedef struct wl_ListLinks *	RefListLinks;
 typedef struct wl_ListHeader *	RefListHeader;
 typedef RefListLinks		(*RefListGetLinksProc)	( );
-typedef int			(*RefListEnumProc)	( );
+typedef long			(*RefListEnumProc)	( ); // REV401PLUS
 
 /*
   "First", "Last" are pointers to the first and last element of the list

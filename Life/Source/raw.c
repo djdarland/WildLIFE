@@ -11,13 +11,13 @@ static char vcid[] = "$Id: raw.c,v 1.3 1995/07/27 19:21:19 duchier Exp $";
     Added "NORAW" compile flag which removes most of this file.
     */
 
-#ifdef REV401PLUS
-#include "defs.h"
-#else
-
-
 #ifndef NORAW
 
+#ifdef REV401PLUS
+#include "defs.h"
+#endif
+
+#ifdef REV102
 #include <stdio.h>
 #include <ctype.h>
 #include <sgtty.h>
@@ -31,12 +31,24 @@ static char vcid[] = "$Id: raw.c,v 1.3 1995/07/27 19:21:19 duchier Exp $";
 #include <sys/time.h>
 #include <sys/ioctl.h>
 
-#endif
 
-
+#include "extern.h"
+#include "print.h"
+#include "built_ins.h"
+#include "types.h"
+#include "trees.h"
+#include "lefun.h"
+#include "login.h"
+#include "error.h"
+#include "templates.h"
+#include "modules.h"
 
 #ifdef X11
 #include "xpred.h"
+#endif
+
+#endif
+
 #endif
 
 #ifndef NORAW
@@ -369,6 +381,3 @@ void raw_setup_builtins ()
     new_built_in(bi_module,"reset_window_flag", predicate, c_reset_window_flag);
 #endif
 }
-
-
-#endif

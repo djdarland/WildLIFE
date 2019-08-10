@@ -659,19 +659,19 @@ void undo(limit)
       /* Window operation on backtracking */
       switch(undo_stack->type) { /*** RM 8/12/92 ***/
       case destroy_window:
-        x_destroy_window((unsigned long)undo_stack->a,(unsigned long)undo_stack->b);
+        x_destroy_window((Display *)undo_stack->aaaa_3,(unsigned long)undo_stack->bbbb_3); // REV401PLUS chg 1st cast
 	break;
       case show_window:
-        x_show_window((unsigned long)undo_stack->a,(unsigned long)undo_stack->b);
+        x_show_window((Display *)undo_stack->aaaa_3,(unsigned long)undo_stack->bbbb_3);  // REV401PLUS chg 1st cast
 	break;
       case hide_window:
-        x_hide_window((unsigned long)undo_stack->a,(unsigned long)undo_stack->b);
+        x_hide_window((Display *)undo_stack->aaaa_3,(unsigned long)undo_stack->bbbb_3);  // REV401PLUS chg 1st cast
 	break;
       case show_subwindow:
-        x_show_subwindow((unsigned long)undo_stack->a,(unsigned long)undo_stack->b);
+        x_show_subwindow((Display *)undo_stack->aaaa_3,(unsigned long)undo_stack->bbbb_3);  // REV401PLUS chg 1st cast
 	break;
       case hide_subwindow:
-        x_hide_subwindow((unsigned long)undo_stack->a,(unsigned long)undo_stack->b);
+        x_hide_subwindow((Display *)undo_stack->aaaa_3,(unsigned long)undo_stack->bbbb_3);  // REV401PLUS chg 1st cast
 	break;
       }
     }
@@ -804,7 +804,7 @@ void clean_undo_window(disp,wind)
   prev = &undo_stack;
   while (u) {
     if ((u->type & undo_action) &&
-        ((unsigned long)u->a==disp) && ((unsigned long)u->b==wind)) {
+        ((unsigned long)u->aaaa_3==disp) && ((unsigned long)u->bbbb_3==wind)) {
       *prev = u->next;
     }
     prev = &(u->next);
@@ -820,7 +820,7 @@ void clean_undo_window(disp,wind)
     u = c->undo_point;
     prev = &(c->undo_point);
     while (u && (u->type & undo_action) &&
-           ((unsigned long)u->a==disp) && ((unsigned long)u->b==wind)) {
+           ((unsigned long)u->aaaa_3==disp) && ((unsigned long)u->bbbb_3==wind)) {
       *prev = u->next;
       prev = &(u->next);
       u = u->next;
@@ -2014,7 +2014,7 @@ long what_next_aim()
   c=x_read_stdin_or_event(&eventflag);
   if (eventflag) {
     /* Include eventflag info in var_occurred field. */
-    push_goal(what_next,TRUE,FALSE+2*TRUE,level /* +1 RM: Jun 22 1993 */);
+    push_goal(what_next,(ptr_psi_term) TRUE,(ptr_psi_term)(FALSE+2*TRUE),(GENERIC)level /* +1 RM: Jun 22 1993 */); // REV401PLUS added cast
     release_resid(xevent_existing);
     result=TRUE;
   }

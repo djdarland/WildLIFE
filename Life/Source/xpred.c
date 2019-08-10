@@ -15,8 +15,14 @@ static char vcid[] = "$Id: xpred.c,v 1.4 1997/07/18 14:50:52 duchier Exp $";
 
 #ifdef X11
 
+// Added next define due to error
+#define __alpha 1
 
+#ifdef REV401PLUS
+#include "defs.h"
+#endif
 
+#ifdef REV102
 #include <stdio.h>
 #include <ctype.h>
 #include <malloc.h>
@@ -52,14 +58,16 @@ static char vcid[] = "$Id: xpred.c,v 1.4 1997/07/18 14:50:52 duchier Exp $";
 
 #include "life_icon"
 
-
 /*****************************************/
 
 
+
+/*****************************************/
+
+#endif
 #define stdin_fileno fileno(stdin)
 #define CR 0x0d
 #define BS 0x08
-
 
 /* a closure for enum xevents_list */
 typedef struct wl_EventClosure
@@ -71,11 +79,7 @@ typedef struct wl_EventClosure
 } EventClosure;
 
 
-/*****************************************/
 
-
-ptr_psi_term xevent_existing = NULL;
-ptr_psi_term xevent_list = NULL;
 
 ptr_definition xevent,xkeyboard_event,xbutton_event,/* RM: 7/12/92 */
   xexpose_event,xdestroy_event,xmotion_event,
@@ -86,6 +90,8 @@ ptr_definition xevent,xkeyboard_event,xbutton_event,/* RM: 7/12/92 */
   xgc,xdisplaylist;
 
 
+ptr_psi_term xevent_existing = NULL;
+ptr_psi_term xevent_list = NULL;
 long x_window_creation = FALSE;
 
 /*****************************************/
@@ -234,22 +240,22 @@ void bk_stack_add_int_attr(t,attrname,value)
   
 
   perm=heap_copy_string(attrname);
-  n=find(featcmp,perm,t->attr_list);
+  n=find(FEATCMP,perm,t->attr_list);
   if(n) {
     t1=(ptr_psi_term)n->data;
     deref_ptr(t1);
-    if(!t1->value) {
-      push_ptr_value(int_ptr,&(t1->value));
-      t1->value=heap_alloc(sizeof(REAL));
+    if(!t1->value_3) {
+      push_ptr_value(int_ptr,&(t1->value_3));
+      t1->value_3=heap_alloc(sizeof(REAL));
     }
-    *(REAL *)t1->value =(REAL) value;
+    *(REAL *)t1->value_3 =(REAL) value;
   }
   else {
     t1=stack_psi_term(4);
     t1->type=integer;
-    t1->value=heap_alloc(sizeof(REAL));
-    *(REAL *)t1->value =(REAL) value;
-    bk_stack_insert(featcmp,perm,&(t->attr_list),t1);
+    t1->value_3=heap_alloc(sizeof(REAL));
+    *(REAL *)t1->value_3 =(REAL) value;
+    bk_stack_insert(FEATCMP,perm,&(t->attr_list),(GENERIC)t1);
   }
 }
 
@@ -265,7 +271,7 @@ void bk_change_psi_attr(t,attrname,value)
   
 
   perm=heap_copy_string(attrname);
-  n=find(featcmp,perm,t->attr_list);
+  n=find(FEATCMP,perm,t->attr_list);
   if(n) {
     t1=(ptr_psi_term)n->data;
     deref_ptr(t1);
@@ -275,7 +281,7 @@ void bk_change_psi_attr(t,attrname,value)
       value->coref=t1;
   }
   else
-    bk_stack_insert(featcmp,perm,&(t->attr_list),value);
+    bk_stack_insert(FEATCMP,perm,&(t->attr_list),(GENERIC)value); // REV401PLUS cast
 }
 
 
@@ -296,15 +302,15 @@ long unify_int_result(t,v)
   
   
   deref_ptr(t);
-  push_ptr_value(int_ptr,&(t->value));
-  t->value = heap_alloc(sizeof(REAL));
-  *(REAL *) t->value = v;
+  push_ptr_value(int_ptr,&(t->value_3));
+  t->value_3 = heap_alloc(sizeof(REAL));
+  *(REAL *) t->value_3 = v;
   
   matches(t->type,integer,&smaller);
   
   if(!smaller) 
     {
-      push_ptr_value(def_ptr,&(t->type));
+      push_ptr_value(def_ptr,(GENERIC *)&(t->type));
       t->type = integer;
       t->status = 0;
     }
@@ -354,7 +360,7 @@ long GetIntAttr(psiTerm,attributeName)
   
   
   deref_ptr(psiTerm);
-  nodeAttr=find(featcmp,attributeName,psiTerm->attr_list);
+  nodeAttr=find(FEATCMP,attributeName,psiTerm->attr_list);
   if(!nodeAttr) {
     Errorline("in GetIntAttr: didn't find %s on %P\n",
 	       attributeName,
@@ -364,8 +370,8 @@ long GetIntAttr(psiTerm,attributeName)
   
   psiValue=(ptr_psi_term)nodeAttr->data;
   deref_ptr(psiValue);
-  if(psiValue->value)
-    return *(REAL *) psiValue->value;
+  if(psiValue->value_3)
+    return *(REAL *) psiValue->value_3;
   else {
     /* Errorline("in GetIntAttr: no value!\n"); */
     return -34466; /* Real nasty hack for now  RM: Apr 23 1993  */
@@ -387,7 +393,7 @@ ptr_psi_term GetPsiAttr(psiTerm,attributeName)
   ptr_psi_term psiValue;
   
   
-  if((nodeAttr = find(featcmp,attributeName,psiTerm->attr_list)) == NULL)
+  if((nodeAttr = find(FEATCMP,attributeName,psiTerm->attr_list)) == NULL)
     {
       Errorline("in GetPsiAttr: no attribute name on psi-term ?\n");
       exit_life(TRUE);
@@ -438,8 +444,8 @@ static void ResizePixmap(psi_window,display,window,width,height)
       if(pixmapGC)
 	XFreeGC(display,pixmapGC);
       
-      bk_stack_add_int_attr(psiPixmap,"id",NULL);
-      bk_stack_add_int_attr(psiPixmapGC,"id",NULL);
+      bk_stack_add_int_attr(psiPixmap,"id",(long)NULL); // REV401PLUS cast
+      bk_stack_add_int_attr(psiPixmapGC,"id",(long)NULL); // REV401PLUS cast
     }
   
   /* init a new pixmap on the window */
@@ -456,7 +462,7 @@ static void ResizePixmap(psi_window,display,window,width,height)
 
       /*  RM: Jun 24 1993  */
       if(psiPixmapGC)
-	bk_stack_add_int_attr(psiPixmapGC,"id",pixmapGC);
+	bk_stack_add_int_attr(psiPixmapGC,"id",(long)pixmapGC);
       else
 	psiPixmapGC=NewPsi(xgc,"id",pixmapGC);
       bk_change_psi_attr(psiPixmap,"graphic_context",psiPixmapGC);
@@ -479,7 +485,7 @@ static void FreeWindow(display,psi_window)
   
   
   XFreeGC(display,DrawableGC(psi_window));
-  x_free_display_list(WindowDisplayList(psi_window));
+  x_free_display_list((ListHeader *)WindowDisplayList(psi_window)); // REV401PLUS cast
   
   psiPixmap = GetPsiAttr(psi_window,"pixmap");
   XFreeGC(display,DrawableGC(psiPixmap));
@@ -928,12 +934,12 @@ long xcCreateSimpleWindow()
       
       if(!permanent)
 	{
-	  push_window(destroy_window,DISP(0),window);
+	  push_window(destroy_window,(long)DISP(0),window); // REV401PLUS cast
 	  x_window_creation = TRUE;
 	}
       else
 	if(show)
-	  push_window(show_window,DISP(0),window);
+	  push_window(show_window,(long)DISP(0),window);  // REV401PLUS cast
       
 #if 0
       /* map window is made in xCreateWindow(see xpred.lf) */
@@ -1561,7 +1567,7 @@ long xcMapWindow()
   XMapWindow(DISP(0),WIND(1));
   XSync(DISP(0),0);
   
-  push_window(hide_window,DISP(0),val[1]);
+  push_window(hide_window,(long)DISP(0),val[1]);
   success = TRUE;
   
   end_builtin();
@@ -1593,7 +1599,7 @@ long xcRaiseWindow()
   XRaiseWindow(DISP(0),WIND(1));
   XSync(DISP(0),0);
   
-  push_window(hide_window,DISP(0),WIND(1));
+  push_window(hide_window,(long)DISP(0),WIND(1));
   success = TRUE;
   
   end_builtin();
@@ -1625,7 +1631,7 @@ long xcUnmapWindow()
   XUnmapWindow(DISP(0),WIND(1));
   XSync(DISP(0),0);
   
-  push_window(show_window,DISP(0),WIND(1));
+  push_window(show_window,(long)DISP(0),WIND(1));
   success = TRUE;
   
   end_builtin();
@@ -1663,7 +1669,7 @@ long xcMapSubwindows()
   XMapSubwindows(DISP(0),WIND(1));
   XSync(DISP(0),0);
   
-  push_window(hide_subwindow,DISP(0),WIND(1));
+  push_window(hide_subwindow,(long)DISP(0),WIND(1));
   success = TRUE;
   
   end_builtin();
@@ -1695,7 +1701,7 @@ long xcUnmapSubwindows()
   XUnmapSubwindows(DISP(0),WIND(1));
   XSync(DISP(0),0);
   
-  push_window(show_subwindow,DISP(0),WIND(1));
+  push_window(show_subwindow,(long)DISP(0),WIND(1));
   success = TRUE;
   
   end_builtin();
@@ -1732,7 +1738,7 @@ long xcClearWindow()
   XClearWindow(DISP(0),WIND(1));
 XSync(DISP(0),0);
   
-  x_free_display_list(WindowDisplayList(args[1]));
+ x_free_display_list((ListHeader *)WindowDisplayList(args[1]));
   success = TRUE;
   
   end_builtin();
@@ -1830,13 +1836,13 @@ long xcRefreshWindow()
   
   psiPixmap = GetPsiAttr(args[1],"pixmap");
   if((pixmap =(Pixmap) GetIntAttr(psiPixmap,"id")) != 0)
-    x_refresh_window(val[0],val[1],pixmap,
+    x_refresh_window((Display *)val[0],val[1],pixmap,
 		      DrawableGC(psiPixmap),
-		      WindowDisplayList(args[1]));
+		      (ListHeader *) WindowDisplayList(args[1]));
   else
-    x_refresh_window(val[0],val[1],val[1],
+    x_refresh_window((Display *)val[0],val[1],val[1],
 		      DrawableGC(args[1]),
-		      WindowDisplayList(args[1]));
+		      (ListHeader *)WindowDisplayList(args[1]));
   
   success = TRUE;
   
@@ -1868,10 +1874,10 @@ long xcPostScriptWindow()
   
   begin_builtin(xcPostScriptWindow,3,3,types);
   
-  success = x_postscript_window(val[0],val[1],
-				 GetIntAttr(GetPsiAttr(args[1],"display_list"),
+  success = x_postscript_window((Display *)val[0],val[1],
+				 (ListHeader *)GetIntAttr(GetPsiAttr(args[1],"display_list"),
 					     "id"),
-				 val[2]);
+				(char *)val[2]);
   
   end_builtin();
 }
@@ -1912,7 +1918,7 @@ long xcDestroyWindow()
       FreeWindow(val[0],args[1]);
       XDestroyWindow(DISP(0),WIND(1));
 XSync(DISP(0),0);
-      clean_undo_window(DISP(0),WIND(1));
+      clean_undo_window((long)DISP(0),WIND(1));
       success = TRUE;
     }
   
@@ -2080,7 +2086,7 @@ long xcGetGCAttribute()
   
   begin_builtin(xcGetGCAttribute,3,2,types);
   
-  if(GetGCAttribute(DISP(0),GCVAL(1),&attr))
+  if(GetGCAttribute((long)DISP(0),GCVAL(1),&attr))
     {
       unify_real_result(args[2],(REAL) attr);
       success = TRUE;
@@ -2237,7 +2243,7 @@ long xcSetGCAttribute()
   
   begin_builtin(xcSetGCAttribute,4,4,types);
   
-  if(SetGCAttribute(DISP(0),GCVAL(1),val[2],val[3]))
+  if(SetGCAttribute((long)DISP(0),GCVAL(1),val[2],val[3]))
     success = TRUE;
   else
     {
@@ -2416,12 +2422,12 @@ long xcDrawLine()
   begin_builtin(xcDrawLine,9,9,types);
   
   gc = DrawableGC(args[1]);
-  x_set_gc(val[0],gc,val[6],val[7],val[8],xDefaultFont);
+  x_set_gc((Display *)val[0],gc,val[6],val[7],val[8],xDefaultFont);
   
   XDrawLine(DISP(0),(Window) val[1],gc,/* Display,Window,GC */
 	     val[2],val[3],val[4],val[5]);         /* X0,Y0,X1,Y1 */
   
-  x_record_line(WindowDisplayList(args[1]),DRAW_LINE,
+  x_record_line((ListHeader *)WindowDisplayList(args[1]),DRAW_LINE,
 		 val[2],val[3],val[4],val[5],
 		 val[6],val[7],val[8]);
   
@@ -2457,13 +2463,13 @@ long xcDrawArc()
   begin_builtin(xcDrawArc,11,11,types);
   
   gc = DrawableGC(args[1]);
-  x_set_gc(val[0],gc,val[8],val[9],val[10],xDefaultFont);
+  x_set_gc((Display *)val[0],gc,val[8],val[9],val[10],xDefaultFont);
   
   XDrawArc(DISP(0),(Window) val[1],gc,/* Display,Window,GC */
 	    val[2],val[3],val[4],val[5],         /* X,Y,Width,Height */
 	    val[6],val[7]);                         /* StartAngle,ArcAngle */
   
-  x_record_arc(WindowDisplayList(args[1]),DRAW_ARC,
+  x_record_arc((ListHeader *)WindowDisplayList(args[1]),DRAW_ARC,
 		val[2],val[3],val[4],val[5],
 		val[6],val[7],val[8],val[9],val[10]);
   
@@ -2500,12 +2506,12 @@ long xcDrawRectangle()
   begin_builtin(xcDrawRectangle,9,9,types);
   
   gc = DrawableGC(args[1]);
-  x_set_gc(val[0],gc,val[6],val[7],val[8],xDefaultFont);
+  x_set_gc((Display *)val[0],gc,val[6],val[7],val[8],xDefaultFont);
   
   XDrawRectangle(DISP(0),(Window) val[1],gc,/* Display,Window,GC */
 		  val[2],val[3],val[4],val[5]);         /* X,Y,Width,Height */
   
-  x_record_rectangle(WindowDisplayList(args[1]),DRAW_RECTANGLE,
+  x_record_rectangle((ListHeader *)WindowDisplayList(args[1]),DRAW_RECTANGLE,
 		      val[2],val[3],val[4],val[5],
 		      val[6],val[7],val[8]);
   
@@ -2542,12 +2548,12 @@ long xcFillRectangle()
   begin_builtin(xcFillRectangle,8,8,types);
   
   gc = DrawableGC(args[1]);
-  x_set_gc(val[0],gc,val[6],val[7],xDefaultLineWidth,xDefaultFont); 
+  x_set_gc((Display *)val[0],gc,val[6],val[7],xDefaultLineWidth,xDefaultFont); 
   
   XFillRectangle(DISP(0),(Window) val[1],gc,/* Display,Window,GC */
 		  val[2],val[3],val[4],val[5]);         /* X,Y,Width,Height */
   
-  x_record_rectangle(WindowDisplayList(args[1]),FILL_RECTANGLE,
+  x_record_rectangle((ListHeader *)WindowDisplayList(args[1]),FILL_RECTANGLE,
 		      val[2],val[3],val[4],val[5],
 		      val[6],val[7],
 		      xDefaultLineWidth);
@@ -2584,13 +2590,13 @@ long xcFillArc()
   begin_builtin(xcFillArc,10,10,types);
   
   gc = DrawableGC(args[1]);
-  x_set_gc(val[0],gc,val[8],val[9],xDefaultLineWidth,xDefaultFont);
+  x_set_gc((Display *)val[0],gc,val[8],val[9],xDefaultLineWidth,xDefaultFont);
   
   XFillArc(DISP(0),(Window) val[1],gc,/* Display,Window,GC */
 	    val[2],val[3],val[4],val[5],         /* X,Y,Width,Height */
 	    val[6],val[7]);                         /* StartAngle,ArcAngle */
   
-  x_record_arc(WindowDisplayList(args[1]),FILL_ARC,
+  x_record_arc((ListHeader *)WindowDisplayList(args[1]),FILL_ARC,
 		val[2],val[3],val[4],val[5],
 		val[6],val[7],val[8],val[9],
 		xDefaultLineWidth);
@@ -2713,13 +2719,13 @@ long xcDrawPolygon()
   begin_builtin(xcDrawPolygon,7,7,types);
   
   gc = DrawableGC(args[1]);
-  x_set_gc(val[0],gc,val[4],val[5],val[6],xDefaultFont); 
+  x_set_gc((Display *)val[0],gc,val[4],val[5],val[6],xDefaultFont); 
   
   XDrawLines(DISP(0),(Window) val[1],gc,/* Display,Window,GC */
 	     (XPoint *)val[2],val[3],CoordModeOrigin);        /* Points,NbPoints,mode */
   
-  x_record_polygon(WindowDisplayList(args[1]),DRAW_POLYGON,
-		    val[2],val[3],val[4],val[5],val[6]);
+  x_record_polygon((ListHeader *)WindowDisplayList(args[1]),DRAW_POLYGON,
+		    (XPoint *)val[2],val[3],val[4],val[5],val[6]);
   
 XSync(DISP(0),0);
   success = TRUE;
@@ -2753,14 +2759,14 @@ long xcFillPolygon()
   begin_builtin(xcFillPolygon,6,6,types);
   
   gc = DrawableGC(args[1]);
-  x_set_gc(val[0],gc,val[4],val[5],xDefaultLineWidth,xDefaultFont); 
+  x_set_gc((Display *)val[0],gc,val[4],val[5],xDefaultLineWidth,xDefaultFont); 
   
   XFillPolygon(DISP(0),(Window) val[1],gc,/* Display,Window,GC */
 	       (XPoint *)val[2],val[3],   /* Points,NbPoints */
 	       Complex,CoordModeOrigin);  /* shape,mode */
   
-  x_record_polygon(WindowDisplayList(args[1]),FILL_POLYGON,
-		    val[2],val[3],val[4],val[5],
+  x_record_polygon((ListHeader *)WindowDisplayList(args[1]),FILL_POLYGON,
+		    (XPoint *)val[2],val[3],val[4],val[5],
 		    xDefaultLineWidth);
   
   XSync(DISP(0),0);
@@ -2866,13 +2872,13 @@ long xcDrawString()
   begin_builtin(xcDrawString,8,8,types);
   
   gc = DrawableGC(args[1]);
-  x_set_gc(val[0],gc,val[6],val[7],xDefaultLineWidth,val[5]);
+  x_set_gc((Display *)val[0],gc,val[6],val[7],xDefaultLineWidth,val[5]);
   
   XDrawString(DISP(0),(Window) val[1],gc, /* Display,Window,GC */
 	       val[2],val[3],STRG(4),                  /* X,Y *//* String */
 	       strlen(STRG(4)));                /* Length */
   
-  x_record_string(WindowDisplayList(args[1]),DRAW_STRING,
+  x_record_string((ListHeader *)WindowDisplayList(args[1]),DRAW_STRING,
 		   val[2],val[3],      /* X,Y */
 		  STRG(4),     /* String */
 		   val[5],              /* Font */
@@ -2911,14 +2917,14 @@ long xcDrawImageString()
   begin_builtin(xcDrawImageString,8,8,types);
   
   gc = DrawableGC(args[1]);
-  x_set_gc(val[0],gc,val[6],val[7],xDefaultLineWidth,val[5]);
+  x_set_gc((Display *)val[0],gc,val[6],val[7],xDefaultLineWidth,val[5]);
   
   XDrawImageString(DISP(0),WIND(1),gc,          /* Display,Window,GC */
 		    val[2],val[3],              /* X,Y */
 		    STRG(4),                      /* String */
 		    strlen(STRG(4)));    /* Length */
   
-  x_record_string(WindowDisplayList(args[1]),DRAW_IMAGE_STRING,
+  x_record_string((ListHeader *)WindowDisplayList(args[1]),DRAW_IMAGE_STRING,
 		   val[2],val[3],               /* X,Y */
 		  STRG(4),              /* String */
 		   val[5],                       /* Font */
@@ -2959,7 +2965,7 @@ long xcStringWidth()
 		       STRG(2),strlen(STRG(2)),/* string,nbchars */
 		       &direction,&ascent,&descent,&overall))
     {
-      unify_real_result(aim->b,(REAL) overall.width);
+      unify_real_result(aim->bbbb_1,(REAL) overall.width);
       success = TRUE;
     }
   else
@@ -3018,8 +3024,8 @@ static ptr_psi_term xcEventToPsiTerm(event)
   tstr[1]=0;
   
   psiEvent = stack_psi_term(4);
-  bk_stack_add_int_attr(psiEvent,"display",event->xany.display);
-  bk_stack_add_int_attr(psiEvent,"window",event->xany.window);
+  bk_stack_add_int_attr(psiEvent,"display",(long)event->xany.display);
+  bk_stack_add_int_attr(psiEvent,"window",(long)event->xany.window);
   
   switch(event->type) {
   case KeyPress:
@@ -3194,7 +3200,7 @@ void list_set_car(lst,value)
      ptr_psi_term value;
 {
   deref_ptr(lst);
-  stack_insert(featcmp,one,&(lst->attr_list),value);
+  stack_insert(FEATCMP,one,&(lst->attr_list),(GENERIC)value);
 }
 
 
@@ -3205,7 +3211,7 @@ void list_set_cdr(lst,value)
      ptr_psi_term value;
 {
   deref_ptr(lst);
-  stack_insert(featcmp,two,&(lst->attr_list),value);
+  stack_insert(FEATCMP,two,&(lst->attr_list),(GENERIC)value);
 }
 
 
@@ -3231,7 +3237,7 @@ ptr_psi_term append_to_list(lst,value)
   ptr_psi_term end;
   
   end=list_last_cdr(lst);
-  push_ptr_value_global(psi_term_ptr,&(end->coref));
+  push_ptr_value_global(psi_term_ptr,(GENERIC *)&(end->coref));
   end->coref=stack_cons(value,stack_nil());
   return end->coref;
 }
@@ -3294,7 +3300,7 @@ void list_remove_value(lst,value)
     cdr=list_cdr(lst);
     if(car==value) {
       still_there=FALSE;
-      push_ptr_value_global(psi_term_ptr,&(lst->coref));
+      push_ptr_value_global(psi_term_ptr,(GENERIC *)&(lst->coref));
       lst->coref=cdr;
     }
     lst=cdr;
@@ -3348,17 +3354,17 @@ long xcGetEvent()
   types[1] = xwindow;
   types[2] = real;
 
-  result=aim->b;
+  result=aim->bbbb_1;
   
   begin_builtin(xcGetEvent,3,3,types);
   
   if(!xevent_existing) {
         
     /* warning if a same event is already waiting */
-    eventClosure.display =DISP(0);
+    eventClosure.display = DISP(0);
     eventClosure.window  =WIND(1);
     eventClosure.mask    = val[2];
-    if(!map_funct_over_cars(xevent_list,x_union_event,&eventClosure))
+    if(!map_funct_over_cars(xevent_list,x_union_event,(long *)&eventClosure))
       Warningline("you have coinciding event handlers on the same window");
     
     /* transform the request into a psi-term */
@@ -3367,7 +3373,7 @@ long xcGetEvent()
     bk_stack_add_int_attr(eventElt,"window",val[1]);
     bk_stack_add_int_attr(eventElt,"mask",val[2]);
 
-    /* stack_insert(featcmp,"event",&(eventElt->attr_list),result); */
+    /* stack_insert(FEATCMP,"event",&(eventElt->attr_list),result); */
 		   
     /* add the request in the list of waiting events */
     append_to_list(xevent_list,eventElt); /*  RM: Dec 15 1992  */
@@ -3382,9 +3388,9 @@ long xcGetEvent()
   else {
     /* get the event built by x_exist_event */
     psiEvent = GetPsiAttr(xevent_existing,"event");
-    push_ptr_value_global(psi_term_ptr,&xevent_existing);
+    push_ptr_value_global(psi_term_ptr,(GENERIC *)&xevent_existing);
     xevent_existing = NULL;
-    push_goal(unify,psiEvent,aim->b,NULL); /*  RM: May  5 1993  */
+    push_goal(unify,psiEvent,aim->bbbb_1,NULL); /*  RM: May  5 1993  */
   }
   
   /* push_goal(unify,psiEvent,aim->b,NULL);   RM: May  5 1993  */
@@ -3446,10 +3452,10 @@ long xcFlushEvents()
   
   begin_builtin(xcFlushEvents,3,3,types);
   
-  eventClosure.display =DISP(0);
+  eventClosure.display = DISP(0);
   eventClosure.window  = val[1];
   eventClosure.mask    = val[2];
-  map_funct_over_list(xevent_list,x_flush_event,&eventClosure);
+  map_funct_over_list(xevent_list,x_flush_event,(long *)&eventClosure);
   
   success = TRUE;
   
@@ -3486,7 +3492,7 @@ long xcSendEvent()
   
   if(xcPsiEventToEvent(val[2],&event))
     {
-      XSendEvent(DISP(0),WIND(1),False,?,&event);
+      XSendEvent((long)DISP(0),WIND(1),False,?,&event);
       success = TRUE;
     }
   else
@@ -3613,81 +3619,81 @@ void x_setup_builtins()
   xgc = update_symbol(x_module,"graphic_context");
   xdisplaylist = update_symbol(x_module,"display_list");
   
-  new_built_in(x_module,"xcOpenConnection",       predicate,xcOpenConnection);
-  new_built_in(x_module,"xcDefaultRootWindow",    predicate,xcDefaultRootWindow);
-  new_built_in(x_module,"xcGetScreenAttribute",   predicate,xcGetScreenAttribute);
-  new_built_in(x_module,"xcGetConnectionAttribute",predicate,xcGetConnectionAttribute);
-  new_built_in(x_module,"xcCloseConnection",      predicate,xcCloseConnection);
+  new_built_in(x_module,"xcOpenConnection",       (def_type)predicate_it,xcOpenConnection);
+  new_built_in(x_module,"xcDefaultRootWindow",    (def_type)predicate_it,xcDefaultRootWindow);
+  new_built_in(x_module,"xcGetScreenAttribute",   (def_type)predicate_it,xcGetScreenAttribute);
+  new_built_in(x_module,"xcGetConnectionAttribute",(def_type)predicate_it,xcGetConnectionAttribute);
+  new_built_in(x_module,"xcCloseConnection",      (def_type)predicate_it,xcCloseConnection);
   
-  new_built_in(x_module,"xcCreateSimpleWindow", predicate,xcCreateSimpleWindow);
+  new_built_in(x_module,"xcCreateSimpleWindow", (def_type)predicate_it,xcCreateSimpleWindow);
 #if 0
-  new_built_in(x_module,"xcCreateWindow",       predicate,xcCreateWindow);
+  new_built_in(x_module,"xcCreateWindow",       (def_type)predicate_it,xcCreateWindow);
 #endif
   
-  new_built_in(x_module,"xcSetStandardProperties", predicate,xcSetStandardProperties);
-  new_built_in(x_module,"xcGetWindowGeometry",  predicate,xcGetWindowGeometry);
-  new_built_in(x_module,"xcSetWindowGeometry",  predicate,xcSetWindowGeometry);
-  new_built_in(x_module,"xcGetWindowAttribute", predicate,xcGetWindowAttribute);
-  new_built_in(x_module,"xcSetWindowAttribute", predicate,xcSetWindowAttribute);
-  new_built_in(x_module,"xcMapWindow",          predicate,xcMapWindow);
+  new_built_in(x_module,"xcSetStandardProperties", (def_type)predicate_it,xcSetStandardProperties);
+  new_built_in(x_module,"xcGetWindowGeometry",  (def_type)predicate_it,xcGetWindowGeometry);
+  new_built_in(x_module,"xcSetWindowGeometry",  (def_type)predicate_it,xcSetWindowGeometry);
+  new_built_in(x_module,"xcGetWindowAttribute", (def_type)predicate_it,xcGetWindowAttribute);
+  new_built_in(x_module,"xcSetWindowAttribute", (def_type)predicate_it,xcSetWindowAttribute);
+  new_built_in(x_module,"xcMapWindow",          (def_type)predicate_it,xcMapWindow);
   
   /*  RM: May  6 1993  */
-  new_built_in(x_module,"xcRaiseWindow",          predicate,xcRaiseWindow);
+  new_built_in(x_module,"xcRaiseWindow",          (def_type)predicate_it,xcRaiseWindow);
   
-  new_built_in(x_module,"xcUnmapWindow",        predicate,xcUnmapWindow);
+  new_built_in(x_module,"xcUnmapWindow",        (def_type)predicate_it,xcUnmapWindow);
   
   /*** RM 8/12/92 ***/
-  new_built_in(x_module,"xcMapSubwindows",          predicate,xcMapSubwindows);
-  new_built_in(x_module,"xcUnmapSubwindows",        predicate,xcUnmapSubwindows);
+  new_built_in(x_module,"xcMapSubwindows",          (def_type)predicate_it,xcMapSubwindows);
+  new_built_in(x_module,"xcUnmapSubwindows",        (def_type)predicate_it,xcUnmapSubwindows);
   /*** RM 8/12/92 ***/
   
-  new_built_in(x_module,"xcClearWindow",        predicate,xcClearWindow);
-  new_built_in(x_module,"xcResizeWindowPixmap", predicate,xcResizeWindowPixmap);
+  new_built_in(x_module,"xcClearWindow",        (def_type)predicate_it,xcClearWindow);
+  new_built_in(x_module,"xcResizeWindowPixmap", (def_type)predicate_it,xcResizeWindowPixmap);
   
-  new_built_in(x_module,"xcSelectInput",        predicate,xcSelectInput);
-  new_built_in(x_module,"xcRefreshWindow",      predicate,xcRefreshWindow);
-  new_built_in(x_module,"xcPostScriptWindow",   predicate,xcPostScriptWindow);
-  new_built_in(x_module,"xcDestroyWindow",      predicate,xcDestroyWindow);
+  new_built_in(x_module,"xcSelectInput",        (def_type)predicate_it,xcSelectInput);
+  new_built_in(x_module,"xcRefreshWindow",      (def_type)predicate_it,xcRefreshWindow);
+  new_built_in(x_module,"xcPostScriptWindow",   (def_type)predicate_it,xcPostScriptWindow);
+  new_built_in(x_module,"xcDestroyWindow",      (def_type)predicate_it,xcDestroyWindow);
   
-  new_built_in(x_module,"xcCreateGC",           predicate,xcCreateGC);
-  new_built_in(x_module,"xcGetGCAttribute",     predicate,xcGetGCAttribute);
-  new_built_in(x_module,"xcSetGCAttribute",     predicate,xcSetGCAttribute);
-  new_built_in(x_module,"xcDestroyGC",          predicate,xcDestroyGC);
+  new_built_in(x_module,"xcCreateGC",           (def_type)predicate_it,xcCreateGC);
+  new_built_in(x_module,"xcGetGCAttribute",     (def_type)predicate_it,xcGetGCAttribute);
+  new_built_in(x_module,"xcSetGCAttribute",     (def_type)predicate_it,xcSetGCAttribute);
+  new_built_in(x_module,"xcDestroyGC",          (def_type)predicate_it,xcDestroyGC);
   
-  new_built_in(x_module,"xcDrawLine",           predicate,xcDrawLine);
-  new_built_in(x_module,"xcMoveWindow",         predicate,xcMoveWindow);
-  new_built_in(x_module,"xcDrawArc",            predicate,xcDrawArc);
-  new_built_in(x_module,"xcDrawRectangle",      predicate,xcDrawRectangle);
-  new_built_in(x_module,"xcDrawPolygon",        predicate,xcDrawPolygon);
+  new_built_in(x_module,"xcDrawLine",           (def_type)predicate_it,xcDrawLine);
+  new_built_in(x_module,"xcMoveWindow",         (def_type)predicate_it,xcMoveWindow);
+  new_built_in(x_module,"xcDrawArc",            (def_type)predicate_it,xcDrawArc);
+  new_built_in(x_module,"xcDrawRectangle",      (def_type)predicate_it,xcDrawRectangle);
+  new_built_in(x_module,"xcDrawPolygon",        (def_type)predicate_it,xcDrawPolygon);
   
-  new_built_in(x_module,"xcLoadFont",           predicate,xcLoadFont);
-  new_built_in(x_module,"xcUnloadFont",         predicate,xcUnloadFont);
-  new_built_in(x_module,"xcDrawString",         predicate,xcDrawString);
-  new_built_in(x_module,"xcDrawImageString",    predicate,xcDrawImageString);
-  new_built_in(x_module,"xcStringWidth",        function, xcStringWidth);
+  new_built_in(x_module,"xcLoadFont",           (def_type)predicate_it,xcLoadFont);
+  new_built_in(x_module,"xcUnloadFont",         (def_type)predicate_it,xcUnloadFont);
+  new_built_in(x_module,"xcDrawString",         (def_type)predicate_it,xcDrawString);
+  new_built_in(x_module,"xcDrawImageString",    (def_type)predicate_it,xcDrawImageString);
+  new_built_in(x_module,"xcStringWidth",        (def_type)function_it, xcStringWidth);
   
-  new_built_in(x_module,"xcRequestColor",       predicate,xcRequestColor);
-  new_built_in(x_module,"xcRequestNamedColor",  predicate,xcRequestNamedColor);
-  new_built_in(x_module,"xcFreeColor",          predicate,xcFreeColor);
+  new_built_in(x_module,"xcRequestColor",       (def_type)predicate_it,xcRequestColor);
+  new_built_in(x_module,"xcRequestNamedColor",  (def_type)predicate_it,xcRequestNamedColor);
+  new_built_in(x_module,"xcFreeColor",          (def_type)predicate_it,xcFreeColor);
   
-  new_built_in(x_module,"xcFillRectangle",      predicate,xcFillRectangle);
-  new_built_in(x_module,"xcFillArc",            predicate,xcFillArc);
-  new_built_in(x_module,"xcFillPolygon",        predicate,xcFillPolygon);
+  new_built_in(x_module,"xcFillRectangle",      (def_type)predicate_it,xcFillRectangle);
+  new_built_in(x_module,"xcFillArc",            (def_type)predicate_it,xcFillArc);
+  new_built_in(x_module,"xcFillPolygon",        (def_type)predicate_it,xcFillPolygon);
   
-  new_built_in(x_module,"xcPointsAlloc",        predicate,xcPointsAlloc);
-  new_built_in(x_module,"xcCoordPut",           predicate,xcCoordPut);
-  new_built_in(x_module,"xcPointsFree",         predicate,xcPointsFree);
+  new_built_in(x_module,"xcPointsAlloc",        (def_type)predicate_it,xcPointsAlloc);
+  new_built_in(x_module,"xcCoordPut",           (def_type)predicate_it,xcCoordPut);
+  new_built_in(x_module,"xcPointsFree",         (def_type)predicate_it,xcPointsFree);
   
-  new_built_in(x_module,"xcSync",               predicate,xcSync);
-  new_built_in(x_module,"xcGetEvent",           function, xcGetEvent);
-  new_built_in(x_module,"xcFlushEvents",        predicate,xcFlushEvents);
+  new_built_in(x_module,"xcSync",               (def_type)predicate_it,xcSync);
+  new_built_in(x_module,"xcGetEvent",           (def_type)function_it, xcGetEvent);
+  new_built_in(x_module,"xcFlushEvents",        (def_type)predicate_it,xcFlushEvents);
   
   /*** RM: 7/12/92 ***/
-  new_built_in(x_module,"xcQueryPointer",       predicate,xcQueryPointer);
+  new_built_in(x_module,"xcQueryPointer",       (def_type)predicate_it,xcQueryPointer);
   /*** RM: 7/12/92 ***/
   
   /*  RM: Apr 20 1993  */
-  new_built_in(x_module,"xcQueryTextExtents",predicate,xcQueryTextExtents);
+  new_built_in(x_module,"xcQueryTextExtents",(def_type)predicate_it,xcQueryTextExtents);
 }
 
 
@@ -3888,7 +3894,7 @@ static void x_build_existing_event(event,beginSpan,endSpan,eventType)
   /* set the global */
   if(xevent_existing)
     Warningline("xevent_existing is non-null in x_build_existing_event");
-  push_ptr_value_global(psi_term_ptr,&xevent_existing);
+  push_ptr_value_global(psi_term_ptr,(GENERIC *)&xevent_existing);
   xevent_existing = psiEvent;
   
   /* remove the event from the list */
@@ -4000,7 +4006,7 @@ long x_exist_event()
   
   /* traverse the list of waiting events */
   eventClosure.display = NULL;
-  if(!map_funct_over_list(xevent_list,x_next_event_span,&eventClosure))
+  if(!map_funct_over_list(xevent_list,x_next_event_span,(long *)&eventClosure))
     return TRUE;
 
   /* printf("display=%d,window=%d,mask=%d\n",

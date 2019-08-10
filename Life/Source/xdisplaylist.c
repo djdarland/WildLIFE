@@ -10,6 +10,11 @@ static char vcid[] = "$Id: xdisplaylist.c,v 1.2 1994/12/08 23:37:00 duchier Exp 
 
 #ifdef X11
 
+#ifdef REV401PLUS
+#include "defs.h"
+#endif
+
+#ifdef REV102
 #include <stdio.h>
 /* #include <malloc.h> 11.9 */
 #include <sys/types.h>
@@ -25,6 +30,7 @@ static char vcid[] = "$Id: xdisplaylist.c,v 1.2 1994/12/08 23:37:00 duchier Exp 
 
 
 /*****************************************/
+#endif
 
 typedef struct wl_Line
 {
@@ -290,7 +296,8 @@ void x_record_string (displaylist, action, x, y, str, font,
 
 ListHeader *displaylist;
 Action action;
-long x, y, font;
+long x, y;
+Font font;  // REV401PLUS changed from long
 char *str;
 unsigned long function, color;
 
