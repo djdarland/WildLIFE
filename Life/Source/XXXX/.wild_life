@@ -1,0 +1,4 @@
+trace?
+import("color_edit")?
+write("Hello World!!!!"), nl?
+color_edit?

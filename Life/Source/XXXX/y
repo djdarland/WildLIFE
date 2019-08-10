@@ -1,0 +1,3 @@
+  // Next 2 Lines added DJD
+  val[0] = (long) the_connection;
+  display = DISP(0);

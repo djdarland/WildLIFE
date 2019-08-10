@@ -1,0 +1,57 @@
+%%% This is the file demo.lf.in which generates demo.lf through the
+%%% configure command.
+
+module("demo2")?
+public(demo2)?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% This is a control panel to drive the Wild_LIFE demos using the X toolkit.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% load the toolkit, open the xtools module
+
+import("xtools") ?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% the demo_panel design
+
+persistent(demo_panel)?
+global(begin_demo) ?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% compose the interface at load time
+def_font(button_font,
+	 new_font("-bitstream-bitstream charter-medium-i-normal--0-0-0-0-p-0-adobe-standard"))?
+
+QT = push_button(text => "Quit",
+		 font_id => button_font,
+		 action => get_out)?
+demo_panel = panel(title => "LIFE DEMO")
+				  containing
+				  vc_list
+				  [ 
+				      v_box(35),
+				      ht_list [h_box(35),
+			     vl_list
+				 [ QT,
+				   QT
+				 ],
+			     h_box(35)],
+				      v_box(40),
+				      QT,
+				      v_box(35)]?
+get_out :-
+    writeln("Bye, bye!..."),
+    set_choice(begin_demo),
+    fail.
+% trace,
+demo2 :-
+    write("In Demo 2 Pred"),
+    create_box(copy_term(demo_panel))
+;
+    succeed.
+
+%%1%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

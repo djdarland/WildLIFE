@@ -1,0 +1,20 @@
+module("demo")?
+public(demo) ?
+%% import("xtools") ?
+import("x") ?
+% load_x?
+
+writeln(Str) :-
+    write(Str),nl.
+
+demo :-
+
+xOpenConnection(D,""),
+writeln("Hello!!!"),
+% writeln("Display =",D),
+xCreateWindow(D,20,20,100,100,Window),
+writeln("Window = ",Window),
+% xShowWindow(Window),
+xCloseConnection(Display).
+%% writeln(Display).
+demo?
