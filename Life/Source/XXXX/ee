@@ -21,6 +21,7 @@ echo "17 edit demo2.lf"
 echo "18 edit def_macro.h"
 echo "19 edit xtools.lf"
 echo "20 edit color_edit.lf"
+echo "21 ./cp_local.sh"
 echo "-----------"
 
 echo "777 NOTES_DJD.txt"
@@ -40,20 +41,21 @@ case $select in
 7) cd .. ; ./ee;;
 8) $EDITOR ../xdisplaylist.c ;;
 9) $EDITOR ../xpred.c ;;
-10) $EDITOR ~/life_local_xxxx/Lib/x_pred.lf ;;
-11) $EDITOR ~/life_local_xxxx/Lib/x_getset.lf ;;
-12) $EDITOR ~/life_local_xxxx/Lib/xtools_init.lf ;;
-13) $EDITOR ~/life_local_xxxx/Lib/xtools_constants.lf ;;
-14) $EDITOR ~/life_local_xxxx/Lib/xtools_l.lf ;;
-15) $EDITOR ~/life_local_xxxx/Lib/xtools_b.lf ;;
-16) $EDITOR ~/life_local_xxxx/Lib/ex_tools.lf ;;
+10) $EDITOR ../../life_local_xxxx_redo2/Lib/x_pred.lf ;;
+11) $EDITOR ../../life_local_xxxx_redo2/Lib/x_getset.lf ;;
+12) $EDITOR ../../life_local_xxxx_redo2/Lib/xtools_init.lf ;;
+13) $EDITOR ../../life_local_xxxx_redo2/Lib/xtools_constants.lf ;;
+14) $EDITOR ../../life_local_xxxx_redo2/Lib/xtools_l.lf ;;
+15) $EDITOR ..//life_local_xxxx_redo2/Lib/xtools_b.lf ;;
+16) $EDITOR ..//life_local_xxxx_redo2/Lib/ex_tools.lf ;;
 17) $EDITOR demo2.lf ;;
 18) $EDITOR ../def_macro.h ;;
-19) $EDITOR ~/life_local_xxxx/Lib/xtools.lf ;;
+19) $EDITOR ..//life_local_xxxx_redo2/Lib/xtools.lf ;;
 20) $EDITOR color_edit.lf ;;
+21) ./cp_local.sh ;;
 11117) $EDITOR demo2.lf ;;
 
-777) $EDITOR ../NOTES_DJD.txt & ;;
+777) $EDITOR ../Port.txt & ;;
 
 esac
 echo "-----------"
@@ -77,6 +79,7 @@ echo "17 edit demo2.lf"
 echo "18 edit def_macro.h"
 echo "19 edit xtools.lf"
 echo "20 edit color_edit.lf"
+echo "21 ./cp_local.sh"
 echo "-----------"
 
 echo "777 NOTES_DJD.txt"

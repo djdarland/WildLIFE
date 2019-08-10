@@ -73,11 +73,15 @@ def_color(shade_colors,d_slider,'dim grey') ?
 def_color(highlight_colors,d_slider,white) ?
 def_color(main_colors,d_slider, grey) ?
 
-%%% Default Fonts
+%%% Default Fonts "9x15"
 
-def_font(bold,new_font("-*-helvetica-bold-r-*-*-14-*-*-*-*-*-*-*")) ?
+%%  def_font(bold,new_font("-*-helvetica-bold-r-*-*-14-*-*-*-*-*-*-*")) ?
 
-def_font(medium,new_font("-*-helvetica-medium-r-*-*-14-*-*-*-*-*-*-*")) ?
+%% def_font(medium,new_font("-*-helvetica-medium-r-*-*-14-*-*-*-*-*-*-*")) ?
+
+def_font(bold,new_font("9x15")) ?
+
+def_font(medium,new_font("9x15")) ?
 
 
 %%% Dimensions

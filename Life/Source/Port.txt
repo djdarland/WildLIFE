@@ -1403,3 +1403,10 @@ After life_local_redo (with ts.sh)
 testsl
 
 ------------------------------------------------------------------------
+After life_local_xxxx_redo2
+
+echo 413 Total Tests completed
+echo 405 Total Tests match
+echo 8 Total Tests differ
+echo 8 Total Tests out differ
+echo 4 Total Tests err differ

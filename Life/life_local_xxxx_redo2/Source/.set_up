@@ -192,16 +192,16 @@ open_module("syntax")? % This module contains symbols init. in built_ins.c
 % open_module("x")?
 
 %% BD June 11 1993
-global(tools_dir<-"+SETUPDIR+/Tools/") ?
+global(tools_dir<-"~/life_local_xxxx_redo2/Tools/") ?
 
-global(examples_dir<-"+SETUPDIR+/Examples/") ?
-global(superlint_dir<-"+SETUPDIR+/Examples/SuperLint/") ?
-global(demo_dir<-"+SETUPDIR+/Demo/") ? %% MJV January 16 1996
-global(lib_dir<-"+SETUPDIR+/Lib/") ?
+global(examples_dir<-"~/life_local_xxxx_redo2/Examples/") ?
+global(superlint_dir<-"~/life_local_xxxx_redo2/Examples/SuperLint/") ?
+global(demo_dir<-"~/life_local_xxxx_redo2/Demo/") ? %% MJV January 16 1996
+global(lib_dir<-"~/life_local_xxxx_redo2/Lib/") ?
 
-simple_load("+SETUPDIR+/Source/built_ins.lf") ?       %% BD June 10 1993
-simple_load("+SETUPDIR+/Source/term_expansion.lf") ?
-simple_load("+SETUPDIR+/Source/onlinedoc.lf")?
+simple_load("~/life_local_xxxx_redo2/Source/built_ins.lf") ?       %% BD June 10 1993
+simple_load("~/life_local_xxxx_redo2/Source/term_expansion.lf") ?
+simple_load("~/life_local_xxxx_redo2/Source/onlinedoc.lf")?
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % X start up.
@@ -223,13 +223,13 @@ simple_load("+SETUPDIR+/Source/onlinedoc.lf")?
 % 	retract(load_x :- G),
 % 	assert((load_x :- write_err("*** X library already loaded."),nl)),
 % 	quiet_write("Loading X library..."),
-% 	simple_load("+SETUPDIR+/xpublic.lf"),      % RM: Jan 13 1993 
-% 	simple_load("+SETUPDIR+/xconstants.lf"),
-% 	simple_load("+SETUPDIR+/xtables.lf"),
-% 	simple_load("+SETUPDIR+/xgetset.lf"),
-% 	simple_load("+SETUPDIR+/xpred.lf").
+% 	simple_load("~/life_local_xxxx_redo2/xpublic.lf"),      % RM: Jan 13 1993 
+% 	simple_load("~/life_local_xxxx_redo2/xconstants.lf"),
+% 	simple_load("~/life_local_xxxx_redo2/xtables.lf"),
+% 	simple_load("~/life_local_xxxx_redo2/xgetset.lf"),
+% 	simple_load("~/life_local_xxxx_redo2/xpred.lf").
 % 
-%%  simple_load("+SETUPDIR+/xfunctions.lf"),  % RM: Mar 11 1993 
+%%  simple_load("~/life_local_xxxx_redo2/xfunctions.lf"),  % RM: Mar 11 1993 
 % 
   
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
