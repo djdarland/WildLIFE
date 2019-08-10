@@ -18,7 +18,7 @@
 
 built_ins#set_module("built_ins")?
 
-%% trace_input?  % Uncommented DJD 2.13
+#  trace_input?  % Uncommented DJD 2.13
 
 non_strict(public) ? %% BD June 10 1993
 
@@ -190,16 +190,16 @@ open_module("syntax")? % This module contains symbols init. in built_ins.c
 % open_module("x")?
 
 %% BD June 11 1993
-global(tools_dir<-"../life_local/Tools/") ?
+global(tools_dir<-"~/life_local_redo/Tools/") ?
 
-global(examples_dir<-"~/life_local/Examples/") ?
-global(superlint_dir<-"~/life_local/Examples/SuperLint/") ?
-global(demo_dir<-"~/life_local/Demo/") ? %% MJV January 16 1996
-global(lib_dir<-"~/life_local/Lib/") ?
+global(examples_dir<-"~/life_local_redo/Examples/") ?
+global(superlint_dir<-"~/life_local_redo/Examples/SuperLint/") ?
+global(demo_dir<-"~/life_local_redo/Demo/") ? %% MJV January 16 1996
+global(lib_dir<-"~/life_local_redo/Lib/") ?
 
-simple_load("~/life_local/Source/built_ins.lf") ?       %% BD June 10 1993
-simple_load("~/life_local/Source/term_expansion.lf") ?
-simple_load("~/life_local/Source/onlinedoc.lf")?
+simple_load("~/life_local_redo/Source/built_ins.lf") ?       %% BD June 10 1993
+simple_load("~/life_local_redo/Source/term_expansion.lf") ?
+simple_load("~/life_local_redo/Source/onlinedoc.lf")?
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % X start up.
@@ -221,13 +221,13 @@ simple_load("~/life_local/Source/onlinedoc.lf")?
 % 	retract(load_x :- G),
 % 	assert((load_x :- write_err("*** X library already loaded."),nl)),
 % 	quiet_write("Loading X library..."),
-% 	simple_load("~/life_local/xpublic.lf"),      % RM: Jan 13 1993 
-% 	simple_load("~/life_local/xconstants.lf"),
-% 	simple_load("~/life_local/xtables.lf"),
-% 	simple_load("~/life_local/xgetset.lf"),
-% 	simple_load("~/life_local/xpred.lf").
+% 	simple_load("~/life_local_redo/xpublic.lf"),      % RM: Jan 13 1993 
+% 	simple_load("~/life_local_redo/xconstants.lf"),
+% 	simple_load("~/life_local_redo/xtables.lf"),
+% 	simple_load("~/life_local_redo/xgetset.lf"),
+% 	simple_load("~/life_local_redo/xpred.lf").
 % 
-%  simple_load("~/life_local/xfunctions.lf"),  % RM: Mar 11 1993 
+%  simple_load("~/life_local_redo/xfunctions.lf"),  % RM: Mar 11 1993 
 % 
   
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
