@@ -116,7 +116,7 @@ built_ins#public
 	 fork,wait,waitpid,kill,int2stream,stdin,stdout,stderr,
 	 cuserid,gethostname,lazy_project,wait_on_feature,my_wait_on_feature,
 	 apply1,getpid,ftruncate,stream2sys_stream,sys_stream2stream
-	 @DBM_LF@
+%% 	 @DBM_LF@  Commented 2.13 DJD
 )?
 
 % built_ins#non_strict(wait_on_feature)?

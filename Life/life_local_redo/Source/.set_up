@@ -192,16 +192,16 @@ open_module("syntax")? % This module contains symbols init. in built_ins.c
 % open_module("x")?
 
 %% BD June 11 1993
-global(tools_dir<-"+SETUPDIR+/Tools/") ?
+global(tools_dir<-"~/life_local_redo/Tools/") ?
 
-global(examples_dir<-"+SETUPDIR+/Examples/") ?
-global(superlint_dir<-"+SETUPDIR+/Examples/SuperLint/") ?
-global(demo_dir<-"+SETUPDIR+/Demo/") ? %% MJV January 16 1996
-global(lib_dir<-"+SETUPDIR+/Lib/") ?
+global(examples_dir<-"~/life_local_redo/Examples/") ?
+global(superlint_dir<-"~/life_local_redo/Examples/SuperLint/") ?
+global(demo_dir<-"~/life_local_redo/Demo/") ? %% MJV January 16 1996
+global(lib_dir<-"~/life_local_redo/Lib/") ?
 
-simple_load("+SETUPDIR+/Source/built_ins.lf") ?       %% BD June 10 1993
-simple_load("+SETUPDIR+/Source/term_expansion.lf") ?
-simple_load("+SETUPDIR+/Source/onlinedoc.lf")?
+simple_load("~/life_local_redo/Source/built_ins.lf") ?       %% BD June 10 1993
+simple_load("~/life_local_redo/Source/term_expansion.lf") ?
+simple_load("~/life_local_redo/Source/onlinedoc.lf")?
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % X start up.
@@ -223,13 +223,13 @@ simple_load("+SETUPDIR+/Source/onlinedoc.lf")?
 % 	retract(load_x :- G),
 % 	assert((load_x :- write_err("*** X library already loaded."),nl)),
 % 	quiet_write("Loading X library..."),
-% 	simple_load("+SETUPDIR+/xpublic.lf"),      % RM: Jan 13 1993 
-% 	simple_load("+SETUPDIR+/xconstants.lf"),
-% 	simple_load("+SETUPDIR+/xtables.lf"),
-% 	simple_load("+SETUPDIR+/xgetset.lf"),
-% 	simple_load("+SETUPDIR+/xpred.lf").
+% 	simple_load("~/life_local_redo/xpublic.lf"),      % RM: Jan 13 1993 
+% 	simple_load("~/life_local_redo/xconstants.lf"),
+% 	simple_load("~/life_local_redo/xtables.lf"),
+% 	simple_load("~/life_local_redo/xgetset.lf"),
+% 	simple_load("~/life_local_redo/xpred.lf").
 % 
-%%  simple_load("+SETUPDIR+/xfunctions.lf"),  % RM: Mar 11 1993 
+%%  simple_load("~/life_local_redo/xfunctions.lf"),  % RM: Mar 11 1993 
 % 
   
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
