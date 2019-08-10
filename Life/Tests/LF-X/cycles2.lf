@@ -1,0 +1,18 @@
+
+f(A) -> 1.
+
+g(A) -> 2.
+
+A=X:a(X), writeq(A,' ',X), nl?
+A=eval(X:a(X)), writeq(A,' ',X), nl?
+A=`(X:a(X)), writeq(A,' ',X), nl?
+A=g(X:a(X)), writeq(A,' ',X), nl?
+nl?
+A=X:f(X), writeq(A,' ',X), nl?
+A=eval(X:f(X)), writeq(A,' ',X), nl?
+A=`(X:f(X)), writeq(A,' ',X), nl?
+A=g(X:f(X)), writeq(A,' ',X), nl?
+nl?
+A=f(X:f(X)), writeq(A,' ',X), nl?
+A=g(X:f(X)), writeq(A,' ',X), nl?
+

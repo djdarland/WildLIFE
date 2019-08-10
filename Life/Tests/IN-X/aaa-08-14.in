@@ -1,0 +1,2 @@
+Y=strip(X:foo(2=>bar))?
+

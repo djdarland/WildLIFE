@@ -1,0 +1,233 @@
+% Copyright 1991 Digital Equipment Corporation
+% Written by Peter Van Roy
+% Written in LIFE
+
+main(Z) :- a1(A), force(A,Z).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Utilities.
+
+% Subset
+subsetp([], _) :- !.
+subsetp([A|S1], [B|S2]) :- A=:=B, !, subsetp(S1,     S2).
+subsetp([A|S1], [B|S2]) :- A>B,   !, subsetp([A|S1], S2).
+
+% Difference
+% Does this not work because matching is done on the head only?
+% Therefore the second rule always matches & the following ones are never used.
+diff(S, [],  S) :- !.
+diff([], _, []) :- !.
+diff([A|S1], [B|S2], [A|S]) :- A<B,   !, diff(S1, [B|S2], S).
+diff([A|S1], [B|S2],     S) :- A=:=B, !, diff(S1,     S2, S).
+diff([A|S1], [B|S2],     S) :- A>B,   !, diff([A|S1], S2, S).
+
+% Last element of a list
+last([X]) -> X.
+last([_|L]) -> last(L).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Generator utilities.
+
+% These are written in Prolog-like style since they must give solutions
+% on backtracking.
+
+% Subsets of an interval.
+% subset(L, S, H) is true if S is a subset of [L..H].
+% The smallest subsets are given first.
+subset(L, Subset, H) :-
+	range(0, N, H-L+1),
+	comb(N, L, Subset, H).
+
+% Combinations of elements from an interval.
+% comb(N, L, Comb, H) is true if Comb is a combination in sorted order of
+% N elements of [L..H].
+% The combinations with smallest elements are given first.
+comb(0, _, [], _) :- !.
+comb(N, L, [I|Rest], H) :- N>0,
+	range(L, I, H),
+	comb(N-1, I+1, Rest, H).
+
+% Membership in an interval.
+% range(L, I, H) is true if I is an integer in the interval [L..H].
+% The smallest integer is given first.
+range(L, I, H) :-
+	L<H+1,
+	(I=L ; range(L+1, I, H)).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% *** So far, don't need type b ***
+% Extension to type boolean for correct collapse:
+% Need a unification of true and false that is different from failure.
+% Define new types x (don't care), t (true), f (false), b (boolean).
+% Note: can't redefine 'true' and 'false' themselves because that changes
+% the meaning of any part of the program that relies on them.
+% Sometimes want to unify t and f to get x, other times want it to fail.
+% x <| t.
+% x <| f.
+t <| b.
+f <| b.
+
+% Collapse a list into a single element by unifying all its members:
+% Fails for the empty list.
+collapse(A, [X|L], Z) :-
+	Z=root_sort(X),
+	collapse_loop(A, L, X, Z).
+	
+collapse_loop(A, [],    Z, Z) :- !.
+collapse_loop(A, [X|L], Y, Z) :-
+	combine(A, X, Y, Z1),
+	collapse_loop(A, L, Z1, Z).
+
+% This "cdring down the arguments" style is *not* satisfactory.
+combine(0, _, _, _) :- !.
+combine(N, X, Y, Z) :- N>0,
+	Z.N = combine_one(X.N,Y.N),
+	combine(N-1, X, Y, Z).
+
+% Create don't cares 'x'.
+combine_one(f, f) -> f.
+combine_one(f, t) -> x.
+combine_one(t, f) -> x.
+combine_one(t, t) -> t.
+combine_one(f, x) -> x.
+combine_one(t, x) -> x.
+combine_one(x, f) -> x.
+combine_one(x, t) -> x.
+combine_one(x, x) -> x.
+
+% Instantiate a functor to true or false for each member of a given subset:
+instantiate([], _).
+instantiate([I|S], F) :-
+	boolean(B),
+	B = F.I,
+	% F=_(I => B),	% This is not legal in LIFE.  Attributes must be const.
+	instantiate(S, F).
+
+% true or false.
+boolean(f).
+boolean(t).
+
+% true or false or dontcare.
+anybool(x) :- !.  % Don't care must come first.
+anybool(f) :- !.
+anybool(t) :- !.
+
+make_dontcare(0, _) :- !.
+make_dontcare(N, X) :- N>0,
+	anybool(X.N),
+	% (x = X.N; succeed), !,
+	make_dontcare(N-1, X).
+
+% Order of checking is ok because input is in order from largest to smallest
+% subset.
+% A kluge: using n.a.f. as a filter.
+% Remove forcings that are trivially implied by other forcings.
+% I.e.: Find the minimum number of inputs that forces a given output.
+filter_redundant_1([], []) :- !.
+filter_redundant_1([F|InF], OutF) :-
+	F=force(S1,_,F1),
+	member(force(S2,_,F2), InF),
+	F1=F2,
+	subsetp(S2, S1),  % S2 is more powerful than S1, so keep only S2.
+	!,
+	filter_redundant_1(InF, OutF).
+filter_redundant_1([F|InF], [F|OutF]) :-
+	!,
+	filter_redundant_1(InF, OutF).
+
+% A kluge: using n.a.f. as a filter.
+% Remove forcings that are less trivially implied by other forcings.
+% I.e.: Find the minimum number of inputs that forces a given output.
+% In this case, disregard for two forcings those inputs that are not used
+% in both.
+% Filter 2 has a weaker condition than filter 1 and subsumes it.
+filter_redundant_2(_, [], []) :- !.
+filter_redundant_2(A, [F|InF], OutF) :-
+	F=force(S1,_,F1),
+	member(force(S2,_,F2), InF),
+	subsetp(S2, S1),
+	diff(S1, S2, Diff),
+	% check_condition(A, S1, F1, F2),
+	check_condition(A, Diff, F1, F2),
+	!,
+	filter_redundant_2(A, InF, OutF).
+filter_redundant_2(A, [F|InF], [F|OutF]) :-
+	!,
+	filter_redundant_2(A, InF, OutF).
+
+% Check that all arguments are identical except maybe for those in Diff:
+check_condition(0, _, _, _) :- !.
+check_condition(N, Diff, F1, F2) :- N>0,
+	F1.N=F2.N,
+	!,
+	check_condition(N-1, Diff, F1, F2).
+check_condition(N, Diff, F1, F2) :- N>0,
+	member(N, Diff),
+	!,
+	check_condition(N-1, Diff, F1, F2).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+a1(A) :- A=names(['860GAT(334)','847GAT(335)','834GAT(336)','[85]','[84]'],[_(f,b,b,t),_(t,f,f,b)]).
+
+a2(A) :- A=names(['1GAT(0)','[73]','602GAT(240)'],[_(t,t),_(f,f)]).
+
+% Term is F(A1, A2, ..., An) where F is some boolean predicate.
+% It is not at all important for calculating the forcings, but
+% elsewhere we assume by convention that arguments A1, ..., An-1
+% are inputs and argument An is the output.
+
+% This algorithm is exponential; it's fine for boolean predicates with
+% bounded (small) number of arguments.  Note that in general the number
+% of constraints can grow exponentially with the number of arguments,
+% so that the problem is inherently exponential (is this really true?).
+
+% Since (2) subsumes (1), it may be faster just to do (2):
+force(Def, F) :-
+	Def = names(Names,DefTerms),  % A unification.
+	A = length(Names),            % A function call.
+	Term = last(Names),	      % A function call.
+        % write(a),
+	filter_redundant_1(forcings(A,Term,DefTerms), F1),
+        % write(b),
+	filter_redundant_2(A, F1, F).
+
+% Generate the forcings.
+forcings(A, Term, DefTerms) ->
+	bagof(X, a_forcing(A, Term, DefTerms, X)).
+
+% The only asymmetry between the inputs and the outputs is that *all*
+% combinations of the inputs exist in the definition of the function,
+% whereas this is not necessarily true of the output.  The method of finding
+% forcings works independently of this condition.
+a_forcing(A, Term, DT, force(Subset,Term,Forcing)) :-
+	subset(1, Subset, A),
+        % write(c),
+	instantiate(Subset, Term), % Instantiate output and arguments.
+        % write(d),
+        % trace,
+	collapse(A, bagof(Term,(all_tf(A,Term),general(A,Term,DT))), Forcing),
+        % write(e),
+	make_dontcare(A, Term),
+        % write(f),
+	\+ Term=Forcing,
+        % write(g),
+	nl,write(Forcing),nl.
+
+general(A, Term, DefTerms) :-
+	member(Term, DefTerms),
+	!,
+	t = Term.A.
+general(A, Term, _) :-
+	f = Term.A.
+
+all_tf(0, _) :- !.
+all_tf(N, T) :- N>0,
+	B = T.N,
+	boolean(B),
+	all_tf(N-1, T).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

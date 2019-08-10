@@ -1,0 +1,3 @@
+non_strict(p)?
+p(X) :- write(X).
+p(1+2)?

@@ -1,0 +1,4 @@
+write('f o o')?
+writeq('f o o')?
+write("f o o")?
+writeq("f o o")?

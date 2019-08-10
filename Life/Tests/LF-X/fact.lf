@@ -1,0 +1,131 @@
+
+% Very large factorials
+
+% Numbers are stored as lists with four decimal digits per element.
+
+% Fact: bigmul is pred, mem.recovery with failure.
+% Fact2: bigmul is pred, mem recovery only with GC.
+
+% Fact3: bigmul is simplest function, mem recovery only with GC.
+% Fact4: bigmul is function w/ such_that, mem recover only with GC.
+
+% Bigmul as a predicate recovers all mem on GC.
+% Bigmul as a function recovers all memory ONLY if it's written with
+% such_that: fact3 has a memory leak, but fact4 does not!
+
+main :-
+	write('Enter N: '),
+	read(N:int),
+	reverse( factorial(N), [Head|Tail]),
+	write('Factorial = '),
+	write(Head),
+	write_fact(Tail),
+	nl.
+
+main2 :-
+	write('Enter N: '),
+	read(N:int),
+	reverse( factorial2(N), [Head|Tail]),
+	write('Factorial = '),
+	write(Head),
+	write_fact(Tail),
+	nl.
+
+main3 :-
+	write('Enter N: '),
+	read(N:int),
+	reverse( factorial3(N), [Head|Tail]),
+	write('Factorial = '),
+	write(Head),
+	write_fact(Tail),
+	nl.
+
+main4 :-
+	write('Enter N: '),
+	read(N:int),
+	reverse( factorial4(N), [Head|Tail]),
+	write('Factorial = '),
+	write(Head),
+	write_fact(Tail),
+	nl.
+
+% Factorial function:
+
+factorial(N) -> F | N>=0, F = fact_loop(N).
+
+fact_loop(0)  -> [1].
+fact_loop(N) -> 
+	F
+    |   ( bigmul(fact_loop(N-1),0,N,F2), setEco(inter,F2), fail ; succeed),
+	F = inter .
+
+
+factorial2(N) -> F | N>=0, F = fact_loop2(N).
+
+fact_loop2(0) -> [1].
+fact_loop2(N) -> F | bigmul2(fact_loop2(N-1),0,N,F).
+
+
+factorial3(N) -> F | N>=0, F = fact_loop3(N).
+
+fact_loop3(0) -> [1].
+fact_loop3(N) -> bigmul3(fact_loop3(N-1),0,N).
+
+
+factorial4(N) -> F | N>=0, F = fact_loop4(N).
+
+fact_loop4(0) -> [1].
+fact_loop4(N) -> bigmul4(fact_loop4(N-1),0,N).
+
+% Multiply and add: (integer*bignum)+integer -> bignum
+
+bigmul([], 0, Mul,[]) :- !.
+bigmul([], Add, Mul,[Add]) :- !.
+bigmul([L|BigIn], Add, Mul,[X:(L*Mul+ Add) mod 10000 |BigOut]) :- 
+	bigmul(BigIn,floor(X/10000),Mul,BigOut).
+
+bigmul2([], 0, Mul,[]) :- !.
+bigmul2([], Add, Mul,[Add]) :- !.
+bigmul2([L|BigIn], Add, Mul,[X:(L*Mul+ Add) mod 10000 |BigOut]) :- 
+	bigmul2(BigIn,floor(X/10000),Mul,BigOut).
+
+bigmul3([], 0,   _) -> [].
+bigmul3([], Add, _) -> [Add].
+bigmul3([L|BigIn], Add, Mul) ->
+	[X:(L*Mul+ Add) mod 10000 | bigmul3(BigIn,floor(X/10000),Mul)].
+
+bigmul4([], 0,   _) -> [].
+bigmul4([], Add, _) -> [Add].
+bigmul4([L|BigIn], Add, Mul) ->
+	[X:(L*Mul+ Add) mod 10000 | F]
+	| F=bigmul4(BigIn,floor(X/10000),Mul).
+
+
+write_fact([]) :- !.
+write_fact([N|L]) :-
+	write_four(N),
+	write_fact(L).
+
+write_four(N) :- 
+	cond( N<10,
+	      (write('000'), write(N)),
+	      cond(N<100,
+	           (write('00'), write(N)),
+		   cond( N<1000,
+		         (write('0'), write(N)),
+			  write(N)))).
+
+reverse(A, B) :- reverse_3(A, [], B).
+
+reverse_3([X|A], L, B) :- !, reverse_3(A, [X|L], B).
+reverse_3([], B, B).
+
+dynamic(inter)?
+inter->0.
+
+non_strict(setEco)?
+setEco(_A,_B) :-
+	retract((_A -> @)),
+	assert((_A -> _B)).
+
+

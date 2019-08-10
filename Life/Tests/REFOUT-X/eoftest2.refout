@@ -1,0 +1,14 @@
+
+*** Yes
+> > 
+*** Yes
+A = end_of_file.
+--1> 
+*** No
+> Just read 'end_of_file'
+
+*** Yes
+X = end_of_file.
+--1> 
+*** No
+> 

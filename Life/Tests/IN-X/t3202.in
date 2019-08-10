@@ -1,0 +1,13 @@
+%
+%		Wild Life Tests Programs 
+%		3200 : user defined predicates
+%
+%		3202 : number and order of solutions on backtracking.
+%
+plus(X,Y,s(s(s(s(s(0))))))?
+;
+;
+;
+;
+;
+;

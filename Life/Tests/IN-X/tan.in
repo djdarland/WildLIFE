@@ -1,0 +1,15 @@
+A=sin(1),0.5=sin(B),C=sin(D)?
+A=C?
+
+D=B?
+.
+A=cos(1),0.5=cos(B),C=cos(D)?
+A=C?
+
+D=B?
+.
+A=tan(1),0.5=tan(B),C=tan(D)?
+A=C?
+
+D=B?
+.

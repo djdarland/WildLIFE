@@ -1,0 +1,3 @@
+fact2(0) -> 1.
+fact2(N) -> N * fact2(N-1) | write(N, "  ").
+7=fact2(3)? 

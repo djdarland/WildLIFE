@@ -1,0 +1,10 @@
+writeq(((a;b),c) ) ?
+X = (a;b)?
+writeq((X,c)) ?
+
+writeq((c,X))?
+
+writeq((X,X))?
+
+writeq((X,copy_term(X)))?
+

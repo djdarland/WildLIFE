@@ -1,0 +1,82 @@
+
+*** Yes
+> > > > 
+*** Yes
+abc> abc> 
+*** Yes
+abc> abc> 
+*** Yes
+abc> abc> |    |    
+*** Yes
+abc> abc> 
+*** Yes
+abc> abc> 
+*** Yes
+abc> |    |    |    
+*** Yes
+abc> abc> abc> abc> abc> 
+*** Yes
+def> def> 
+*** Yes
+def> def> 
+*** Yes
+def> 
+*** Yes
+def> 
+*** Yes
+def> def> |    |    
+*** Yes
+def> def> def> def> def> def> 
+*** Yes
+> 
+*** Yes
+> 
+*** Yes
+> > 
+*** Yes
+> > |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    
+*** Yes
+> > > |    |    |    |    |    |    |    |    |    |    
+*** Yes
+> > > 
+
+X=abc#abc(abc#a => 1,b => 2,c => 3,g => 7,h => 8,i => 9)
+Y=def#def(def#d => 4,def#e => 5,f => 6)
+
+
+
+MOD=abc
+F=[abc#a,abc#b,abc#c,abc#g,abc#h,abc#i],   G=[abc#f]
+
+
+MOD=def
+F=[def#b,def#c,def#g,def#h,def#i],   G=[def#d,def#e,def#f]
+
+
+MOD=user
+F=[user#b,user#c,user#g,user#h,user#i],   G=[user#f]
+
+*** No
+> 
+
+
+Y=def#def(abc#a => 1,b => 2,c => 3,def#d => 4,def#e => 5,f => 6)
+abc#a => 1
+abc#b => 2
+abc#c => 3
+abc#d => syntax#@
+abc#e => syntax#@
+abc#f => 6
+abc#g => syntax#@
+Y syntax#= def#def(abc#a => 1,
+                   b => 2,
+                   c => 3,
+                   d => syntax#@,
+                   def#d => 4,
+                   def#e => 5,
+                   e => syntax#@,
+                   f => 6,
+                   g => syntax#@)
+
+*** Yes
+--1> 

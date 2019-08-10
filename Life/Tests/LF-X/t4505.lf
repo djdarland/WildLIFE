@@ -1,0 +1,7 @@
+curry(V) :- V = G(2=>1), G = F(X), valid(F), pick(X), p(sq(V)).
+sq(X) -> X*X.
+twice(F,X) -> F(F(X)).
+valid(twice).
+p(1).
+id(X) -> X.
+pick(id).

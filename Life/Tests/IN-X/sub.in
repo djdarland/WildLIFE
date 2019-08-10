@@ -1,0 +1,25 @@
+term(p(a,b,c,1,2,3)).
+term(p(X:a,X,c,4,5,6)).
+term(P:p(a(7),b(8),P)).
+term(ouch(int,real,string,cons,nil)).
+term(ouch(1,2.4,"abc",[a,b],[])).
+term(p(a=>1,b=>2,c=>3)).
+term(p(a=>a,b=>b,c=>c)).
+term(p([1,2,3])).
+
+
+test(A,B) :-
+	nl,nl,nl,
+	write("*** Substituting: ",A," with ",B," ***"),
+	nl,
+	term(X),write(X),nl,
+        (substitute(A,B,X),write(X),nl;
+	 write(X),nl,nl),
+	fail.
+
+test(a,b)?
+test(int,real)?
+test(int,string)?
+test(cons,joke)?
+test(nil,cons)?
+test(1,blah)?

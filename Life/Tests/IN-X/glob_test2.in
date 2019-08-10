@@ -1,0 +1,69 @@
+trace_input?
+
+persistent(a)?
+persistent(b)?
+persistent(c)?
+persistent(d)?
+persistent(e)?
+persistent(f)?
+
+
+
+check :-
+	write("
+a=",a,"
+b=",b,"
+c=",c,"
+d=",d,"
+e=",e,"
+f=",f,"
+").
+
+
+
+a <<- billy_the_hilly(hair => knots,
+			arms => long,
+			teeth => yellow,
+			eyes => red,
+			voice => cracked,
+			nails => {black;broken},
+			nose => pimples,
+			breath => bad,
+			vehicle => truck(paint => gone,
+					 gun_rack => full,
+					 fuel_consumption => enormous,
+					 size => much_too_big,
+					 speed => really_slow,
+					 location => in_front_of_you),
+			feet => smelly,
+			armpits => worse,
+			belly => hangs_out,
+			fingers => gnarled,
+			mouth => full_of_beer,
+			hand => down_his_pants) ?
+
+
+a = @(feet => S), write(S),nl ?
+
+a = @(hair => H, arms => A, teeth => T), write(H,A,T),nl ?
+
+a = @(hair => H, arms => A, joke => bad, teeth => T) ?
+
+a = @(hair => H, arms => A, aardvark => bad, teeth => T) ?
+
+a = @(hair => H, arms => A, zebra => bad, teeth => T) ?
+
+a <<- p(b,c), check?
+
+
+b <<- 5, check ?
+
+c <<- letters(a,b,c), check ?
+
+a <<- q(a,b,c), check?
+
+d <<- exam(b,a,c), check ?
+
+e = a, check ?
+
+d = exam(A,B,C), write(A,B,C), check ?

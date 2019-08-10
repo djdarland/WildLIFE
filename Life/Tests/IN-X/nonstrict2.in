@@ -1,0 +1,12 @@
+A=s(a(X),b(X:(1+2)))?
+
+B=s(b(X),a(X:(1+2)))?
+
+C=s(a(X:(1+2)),b(X))?
+
+D=s(b(X:(1+2)),a(X))?
+
+non_strict(foo)?
+foo(X).
+cond(true,foo(X:(1+2)))?
+

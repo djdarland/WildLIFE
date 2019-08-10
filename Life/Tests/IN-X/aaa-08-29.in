@@ -1,0 +1,4 @@
+A=system("ls LF-1.02")?
+
+.
+A=system("core")?

@@ -1,0 +1,32 @@
+
+*** Yes
+> > > > > > > > 
+*** Yes
+> 
+*** Yes
+> 
+*** Yes
+> 
+*** Yes
+> 
+*** Yes
+A = john, B = michael.
+--1> 
+*** Yes
+A = john, B = michael, C = harry.
+----2> 
+*** Yes
+A = john, B = michael, C = charles.
+----2> 
+*** No
+A = john, B = michael.
+--1> 
+*** Yes
+A = john, B = michael, C = harry.
+----2> 
+*** Yes
+A = john, B = michael, C = harry.
+------3> 
+*** No
+A = john, B = michael, C = harry.
+----2> > > > 

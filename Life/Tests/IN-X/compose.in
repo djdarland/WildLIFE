@@ -1,0 +1,6 @@
+X=add3?
+Y=X(23)?
+.
+X=(add3 o add3 o succ)?
+Y=X(0)?
+.

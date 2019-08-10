@@ -1,0 +1,32 @@
+
+*** Yes
+> > 
+*** Yes
+> 
+*** No
+> 
+% 'that' is a user-defined global variable worth thing(int).
+
+% 'thing' is undefined.
+
+int <| real.
+
+*** Yes
+X = int.
+--1> 
+*** No
+X = int.
+--1> 
+*** No
+> 
+% 'that' is a user-defined global variable worth thing(int).
+
+% 'thing' is undefined.
+
+% '@' is the top sort.
+
+% '5' is a value of sort 'int'.
+
+*** Yes
+X = @.
+--1> 

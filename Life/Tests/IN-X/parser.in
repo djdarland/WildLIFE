@@ -1,0 +1,9 @@
+expand_load(true)?
+import("parser")?
+syntax("FILES/parser.1", "FILES/parser.2")?
+syntax("FILES/parser.2", "FILES/parser.3")?
+global(teststream)?
+p :- open_in("FILES/parser.3",S), teststream=S.
+p,read(X1),read(X2),read(X3),read(X4),read(X5),read(X6),read(X7)?
+close(S:teststream)?
+.

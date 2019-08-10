@@ -1,0 +1,57 @@
+% FILE. . . . . /_/udir4/_/bonnet/life/boites.lf
+% EDIT BY . . . Christophe Bonnet
+% ON MACHINE. . Prl303
+% STARTED ON. . Tue Jul 21 19:00:36 1992
+
+
+::box(int,int).
+
+%box represente une boite, le premier argument etant le numero de la boite, et 
+%le deuxieme le nombre de billes contenues dans la boite.
+%
+%L'ordre sur les boites correspond a l'ordre de leur numero.
+
+box_less(box(A,@),box(B,@)) :- A  < B.
+
+%On a une configuration de depart :
+
+init_bx([box(3,2),box(6,1)|L1:[box(7,9),box(11,4)|L2:[box(18,6),box(34,65)]]],
+	[L1,L2]).
+
+%Le deuxieme argument est une liste de "pointeurs" vers la place de certaines
+%boites, que je veux pouvoir supprimer de la configuration en un temps
+%constant, quelques soient les operations effectuees entre temps. Pour cela, on
+%utilisera le predicat "del" :
+
+del(L:[@|Tl]) :- L <- Tl.
+
+%Les operations que l'on s'autorise a effectuer sur la configuration de depart
+%sont des ajouts ou retraits de billes dans les boites, operations que l'on
+%represente par des listes (triees) de boites.
+
+exemple -> [box(3,-1),box(4,5),box(11,-2),box(18,3)].
+
+%le "merge" de deux listes de boites correspond a la combinaison de deux
+%operations, ou (ce qui revient au meme, ou presque) a l'application d'une
+%operation a la combinaison initiale. Il va de soit que l'on souhaite preserver
+%la validite' des coreferences crees par init_bx...
+
+
+%solution actuelle :
+
+merge(L1,L2) :- merge2(L1,[@|L2]).  % Helas !
+
+merge2([],@).
+merge2(L1,[@|L2:[]]) :- L2 <- L1.
+merge2([A|L1],LP:[U|L2:[B|@]]) :- box_less(A,B),
+				LP <- [U|L3:[A|L2]],
+				merge2(L1,L3).
+merge2(L1:[A|@],[@|L2:[B|@]]) :- box_less(B,A),
+				merge2(L1,L2).
+merge2([box(Id,A)|L1],[@|L2:[box(Id,B)|@]]) :- B <- A+B,
+						merge2(L1,L2).
+
+
+
+
+%voir fichier boites.sample

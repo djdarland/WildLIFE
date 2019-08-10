@@ -1,0 +1,157 @@
+op(600,xfx,<:)?
+
+op(525,xfy,**)?
+
+op(500,xfy,\\)?
+
+%%%%%%%%%%%
+% variables
+
+% ::vr(int).
+
+dynamic(varcount,elim)?
+
+varcount -> 0.
+
+nvar -> vr(X:(varcount+1)) | setq(varcount,X).
+% vr(0) n'est jamais utilisee. Le terme en vr(0) d'une equation correspond
+% au terme constant.
+vr(0) <: _ :- !,fail.
+_ <: vr(0) :- !.  
+vr(X) <: vr(Y) :- elim(X),elim(Y),X<Y.
+vr(X) <: vr(Y) :- \+(elim(X)),\+(elim(Y)),X<Y.
+vr(X) <: vr(Y) :- elim(X),\+(elim(Y)).
+
+
+%%%%%%%%%%%
+% normalize
+
+normalize(E) -> N | expand(E,R),regroup(sort_vars(R),S),kill_zeroes(S,N),!.
+
+kill_zeroes([],[]).
+kill_zeroes([0**_|M],N) :- !, kill_zeroes(M,N).
+kill_zeroes([T:(A**X)|M],[T|N]) :- kill_zeroes(M,N).
+
+regroup([],[]).
+regroup([A**X,B**X|M],R) :- !, regroup([A+B**X|M],R).
+regroup([T|M],[T|N]) :- regroup(M,N).
+
+sort_vars(E) -> q_sort(E,order=>varless).
+
+varless(_**V1,_**V2) ->  call_once(V1 <: V2).
+
+expand([],[]).
+expand([A**[B**X|M]|N],R) :- expand([A*B**X,A**M|N],R).
+expand([A**[]|M],R) :- expand(M,R).
+expand([A**V:vr|M],[A**V|N]) :- expand(M,N).
+
+%%%%%%%%%
+% ordonne
+
+sysless(V1=_,V2=_) -> call_once(V1 <: V2).
+
+ordonne(Syst)  -> q_sort(Syst,order=>sysless).
+
+
+remet([],L) -> L.
+remet([A|L1],L2) -> remet(L1,[A|L2]).
+
+normsys([]) -> [].
+normsys([A|T]) -> [normalize(A) | normsys(T)].
+
+%%%%%%%%%%%%%%%%%%
+% le principal ...
+
+% la structure de  travail est :
+% @(res1=>[...]      	(listes d'eqs resolues deja utilisees)
+%   res2=>[...]		(listes d'eqs resolues non utilisees)
+%   nonres=>[...])	(eqs a resoudres)
+
+  % echec
+reduit(@(nonres=>[[_**vr(0)]|_]),_) :- !, fail.
+
+  % entails
+reduit(@(res1=>R1,res2=>R2,nonres=>[[] | Tail]),R) :- !,
+	reduit(@(res1=>[],res2=>remet(R1,R2),nonres=>Tail),R).
+
+  % fin
+reduit(@(res1=>R1,res2=>R2,nonres=>[]), remet(R1,R2)).
+
+  % elimination
+reduit(@(res1=>R1,res2=>[E:(X=M) | R2],nonres=>[[A**X | M2]|Tail]),R) :- !,
+	Eq=normalize([A**M | M2]),
+	reduit(@(res1=>[E | R1],res2=>R2,nonres=>[Eq | Tail]),R).
+
+
+  % skip
+reduit(@(res1=>R1,res2=>[E:(X=M) | R2],nonres=>S:[[A**Y | M2]|Tail]),R) :- !,
+	Y<:X,
+	reduit(@(res1=>[E | R1],res2=>R2,nonres=>S),R).
+
+  % pivot
+reduit(@(res1=>R1,res2=>[],nonres=>[[A**X | M]|Tail]),R) :- !,
+	\+(X=vr(0)),!,
+	assert(elim(X)),
+	reduit(@(res1=>R1,res2=>[X=normalize([(-1/A)**M])],nonres=>Tail),R).
+
+
+
+gauss(Sys,Nonres) -> R | 
+	Nres=normsys(Nonres),
+	reduit(@(res1=>[],res2=>Sys,nonres=>Nres),R).
+
+
+
+%%%%%%%%%%%
+% exemples
+
+e -> [2**Z , 3**[2**X , 5**[4**X , 2**Z] , (-2)**Y] , 2**[3**Y]]
+   | X = nvar, Y = nvar, Z = nvar.
+
+i -> vr(0).
+s ->[[2**X,3**i],[2**X]]| X=nvar.
+s3 ->[[3**X,3**i],[1**X,1**i]]| X=nvar.
+
+matrice_to_sys(M:[V|_]) -> 
+	aux_make_sys(mat=>M,
+		     vars=>create_vvars(N-1))
+		| N:length(V)>0.
+
+create_vvars(0)->[i].
+create_vvars(N)->[nvar|create_vvars(N-1)].
+
+aux_make_sys(mat=>[]) -> [].
+aux_make_sys(mat=>[L|T],vars=>V) -> 
+	[aux_make_eq(line=>L,vars=>V)|aux_make_sys(mat=>T,vars=>V)].
+
+aux_make_eq(line=>[])-> [].
+aux_make_eq(vars=>[])-> @ | write("echec"),fail.
+aux_make_eq(line=>[A|T1],vars=>[V|T2]) ->
+	[A**V|aux_make_eq(line=>T1,vars=>T2)].
+
+matrice->[[1,3,4,0],[5,6,0,7]].
+
+
+test(gauss([],matrice_to_sys([ [2,5,2,1], [-1,3,0.5,2], [1,1,1,4] ]))).	
+
+
+%%%%%%%%%%%%
+% quicksort
+
+q_sort(L,order => O) -> undlist(dqsort(L,order => O)).
+
+undlist(X\\Y) -> X | Y=[].
+
+dqsort([H|T],order => O) ->
+       (L1\\L2) & where((Less,More)  & split(H,T,([],[]),order => O),
+                       (L1 \\ [H|L3])& dqsort(Less,order => O),
+                       (L3 \\ L2)    & dqsort(More,order => O)).
+dqsort([]) -> L\\L.
+
+split(X,[H|T],(Less,More),order => O) ->
+        cond(O(H,X),
+             split(X,T,([H|Less],More),order => O),
+             split(X,T,(Less,[H|More]),order => O)).
+split(@,[],P) -> P.
+
+where -> @.

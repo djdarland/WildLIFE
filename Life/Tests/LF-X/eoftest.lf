@@ -1,0 +1,6 @@
+
+a :- read(X).
+
+b :- read(X),read(Y),write(X+Y).
+
+c :- read(X),read(Y),write([X,Y]).

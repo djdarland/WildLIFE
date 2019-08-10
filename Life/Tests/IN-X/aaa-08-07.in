@@ -1,0 +1,4 @@
+p(A) :- write(A), nl.
+residuate(A,p(A))?
+
+A=B?

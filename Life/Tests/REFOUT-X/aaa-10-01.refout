@@ -1,0 +1,26 @@
+
+*** Yes
+> > > 
+*** Yes
+secret> 
+*** Yes
+secret> 
+*** Yes
+secret> 
+*** Yes
+secret> secret> 
+*** Yes
+> 
+*** Yes
+> > > 
+*** Yes
+P = prison(door => guarded,entrance => tunnel).
+--1> 
+*** Yes
+P = secret#prison(door => user#guarded,secret#entrance => secret#tunnel).
+--1> 
+*** Yes
+F = [user#door], 
+P = secret#prison(door => user#guarded,secret#entrance => secret#tunnel).
+
+----2> 

@@ -1,0 +1,11 @@
+% global(pwd) ?
+
+% pwd = getenv("PWD") ?
+
+import("superlint") ?
+
+% chdir(pwd) ?
+
+main("FILES/testsl.c") ?
+
+% halt ?

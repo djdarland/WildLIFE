@@ -1,0 +1,149 @@
+
+*** Yes
+> > 
+*** Yes
+A = [].
+--1> 
+*** No
+> 
+*** Yes
+A = [list,string,real,bool,bytedata].
+--1> 
+*** No
+> 
+*** Yes
+A = [int].
+--1> 
+*** No
+> 
+*** Yes
+A = [].
+--1> 
+*** No
+> 
+*** Yes
+A = [].
+--1> 
+*** No
+> 
+*** Yes
+A = [].
+--1> 
+*** No
+> 
+*** Yes
+A = [].
+--1> 
+*** No
+> 
+*** Yes
+A = [cons,[]].
+--1> 
+*** No
+> 
+*** Yes
+A = [true,false].
+--1> 
+*** No
+> 
+*** Yes
+A = [].
+--1> 
+*** No
+> 
+*** Yes
+A = [].
+--1> 
+*** No
+> 
+*** Yes
+A = [].
+--1> 
+*** No
+> 
+*** Yes
+A = [].
+--1> 
+*** No
+> 
+*** Yes
+A = [[,
+     ],
+     (,
+     ),
+     {,
+     },
+     ?,
+     :,
+     end_of_file,
+     ::,
+     '< . >',
+     '< ? >',
+     '*** ERROR ***',
+     built_in,
+     stream,
+     time,
+     input_file,
+     xf,
+     yf,
+     fx,
+     fy,
+     xfx,
+     xfy,
+     yfx,
+     '<NULL PSI TERM>',
+     '1',
+     '2',
+     '3',
+     year,
+     month,
+     day,
+     hour,
+     minute,
+     second,
+     weekday,
+     aborthook,
+     process_no_children,
+     process_exited,
+     process_signaled,
+     process_stopped,
+     process_continued,
+     (,
+     ),
+     (,
+     ),
+     #,
+     =>,
+     query,
+     declaration,
+     error,
+     begin_raw,
+     copy_rules,
+     end_raw,
+     get_raw,
+     in_raw,
+     load_module,
+     load_path,
+     load_suffixes,
+     loaded_file,
+     put_raw,
+     reset_window_flag,
+     window_flag,
+     (,
+     ),
+     ftruncate,
+     precedence,
+     kind,
+     functions,
+     preds,
+     first_value,
+     for,
+     replacing,
+     file,
+     in_clauses,
+     out_clauses,
+     symbol].
+
+--1> 
+*** No
+> 

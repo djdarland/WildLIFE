@@ -1,0 +1,11 @@
+%% after conmenting out || level > 0 in line 2035 in login.c this works
+
+
+
+diff(X,X) -> fail.
+diff(X,Y) -> succeed.
+diff(X,Y)?
+X = 1, Y = 1?
+X = @(int, foo), Y = @(42, foo)?
+X = Y?
+X.1 = 23?
