@@ -278,13 +278,58 @@ X = @.
  No manual entry for deref_length
  No manual entry for argv
  No manual entry for public_symbols
- No manual entry for begin_raw
- No manual entry for get_raw
- No manual entry for put_raw
- No manual entry for end_raw
- No manual entry for in_raw
- No manual entry for window_flag
- No manual entry for reset_window_flag
+ No manual entry for bitvector
+ No manual entry for regexp
+ No manual entry for stream
+ No manual entry for file_stream
+ No manual entry for socket_stream
+ No manual entry for process_no_children
+ No manual entry for process_exited
+ No manual entry for process_signaled
+ No manual entry for process_stopped
+ No manual entry for process_continued
+ No manual entry for make_bitvector
+ No manual entry for bitvector_and
+ No manual entry for bitvector_or
+ No manual entry for bitvector_xor
+ No manual entry for bitvector_not
+ No manual entry for bitvector_count
+ No manual entry for bitvector_get
+ No manual entry for bitvector_set
+ No manual entry for bitvector_clear
+ No manual entry for regexp_compile
+ No manual entry for regexp_execute
+ No manual entry for int2stream
+ No manual entry for fopen
+ No manual entry for fclose
+ No manual entry for get_buffer
+ No manual entry for get_record
+ No manual entry for get_code
+ No manual entry for ftell
+ No manual entry for fseek
+ No manual entry for socket
+ No manual entry for bind
+ No manual entry for connect
+ No manual entry for fwrite
+ No manual entry for fflush
+ No manual entry for listen
+ No manual entry for accept
+ No manual entry for errno
+ No manual entry for errmsg
+ No manual entry for import_symbol
+ No manual entry for fork
+ No manual entry for wait
+ No manual entry for waitpid
+ No manual entry for kill
+ No manual entry for cuserid
+ No manual entry for gethostname
+ No manual entry for lazy_project
+ No manual entry for wait_on_feature
+ No manual entry for my_wait_on_feature
+ No manual entry for apply1
+ No manual entry for getpid
+ No manual entry for stream2sys_stream
+ No manual entry for sys_stream2stream
  No manual entry for #
  No manual entry for $<
  No manual entry for $>
@@ -302,10 +347,14 @@ X = @.
  No manual entry for append
  No manual entry for bagof
  No manual entry for beep
+ No manual entry for begin_raw
  No manual entry for bi_load_path
  No manual entry for copy_rules
  No manual entry for display_module_status
+ No manual entry for end_raw
  No manual entry for genint
+ No manual entry for get_raw
+ No manual entry for in_raw
  No manual entry for inherited_modules
  No manual entry for init
  No manual entry for length
@@ -328,12 +377,20 @@ X = @.
  No manual entry for open_modules
  No manual entry for pause
  No manual entry for project
+ No manual entry for put_raw
  No manual entry for reduce
+ No manual entry for reset_window_flag
  No manual entry for run
  No manual entry for str
  No manual entry for strval
+ No manual entry for window_flag
  No manual entry for import
  No manual entry for bestof
+ No manual entry for stdin
+ No manual entry for stdout
+ No manual entry for stderr
+ No manual entry for ftruncate
+ No manual entry for psi2string
 In module: built_ins,
 
  reconsult(File1,File2,...) ?
@@ -734,8 +791,8 @@ In module: sets,
           output: Inter,Rest1,Rest2: sets
 
           Inter is the intersection of Set1 and Set2;
-          Rest1 is Set1 \ Inter.
-          Rest2 is Set2 \ Inter.
+          Rest1 is Set1  Inter.
+          Rest2 is Set2  Inter.
 
 In module: sets,
 
@@ -868,8 +925,8 @@ In module: sets,
           output: Inter,Rest1,Rest2: sets
 
           Inter is the intersection of Set1 and Set2;
-          Rest1 is Set1 \ Inter.
-          Rest2 is Set2 \ Inter.
+          Rest1 is Set1  Inter.
+          Rest2 is Set2  Inter.
           The test that checks the identity of two elements is :== .
 
 In module: sets,
@@ -1003,8 +1060,8 @@ In module: sets,
           output: Inter,Rest1,Rest2: sets
 
           Inter is the intersection of Set1 and Set2;
-          Rest1 is Set1 \ Inter.
-          Rest2 is Set2 \ Inter.
+          Rest1 is Set1  Inter.
+          Rest2 is Set2  Inter.
 
           The test that checks the identity of two elements is === .
 
@@ -1055,7 +1112,7 @@ In module: structures,
 
  Structural Comparison Operators:
 
-  +>=,+=<,+>,+<,+><,==,+\>=,+\=<,+\>,+\<,+\><,\==
+  +>=,+=<,+>,+<,+><,==,+>=,+=<,+>,+<,+><,==
 
   All these operators are of type xfx, precedence 600.
   They are implemented as boolean functions.
@@ -1077,7 +1134,7 @@ In module: structures,
 
  Structural Comparison Operators:
 
-  +>=,+=<,+>,+<,+><,==,+\>=,+\=<,+\>,+\<,+\><,\==
+  +>=,+=<,+>,+<,+><,==,+>=,+=<,+>,+<,+><,==
 
   All these operators are of type xfx, precedence 600.
   They are implemented as boolean functions.
@@ -1099,7 +1156,7 @@ In module: structures,
 
  Structural Comparison Operators:
 
-  +>=,+=<,+>,+<,+><,==,+\>=,+\=<,+\>,+\<,+\><,\==
+  +>=,+=<,+>,+<,+><,==,+>=,+=<,+>,+<,+><,==
 
   All these operators are of type xfx, precedence 600.
   They are implemented as boolean functions.
@@ -1121,7 +1178,7 @@ In module: structures,
 
  Structural Comparison Operators:
 
-  +>=,+=<,+>,+<,+><,==,+\>=,+\=<,+\>,+\<,+\><,\==
+  +>=,+=<,+>,+<,+><,==,+>=,+=<,+>,+<,+><,==
 
   All these operators are of type xfx, precedence 600.
   They are implemented as boolean functions.
@@ -1143,7 +1200,7 @@ In module: structures,
 
  Structural Comparison Operators:
 
-  +>=,+=<,+>,+<,+><,==,+\>=,+\=<,+\>,+\<,+\><,\==
+  +>=,+=<,+>,+<,+><,==,+>=,+=<,+>,+<,+><,==
 
   All these operators are of type xfx, precedence 600.
   They are implemented as boolean functions.
@@ -1165,7 +1222,7 @@ In module: structures,
 
  Structural Comparison Operators:
 
-  +>=,+=<,+>,+<,+><,==,+\>=,+\=<,+\>,+\<,+\><,\==
+  +>=,+=<,+>,+<,+><,==,+>=,+=<,+>,+<,+><,==
 
   All these operators are of type xfx, precedence 600.
   They are implemented as boolean functions.
@@ -1187,7 +1244,7 @@ In module: structures,
 
  Structural Comparison Operators:
 
-  +>=,+=<,+>,+<,+><,==,+\>=,+\=<,+\>,+\<,+\><,\==
+  +>=,+=<,+>,+<,+><,==,+>=,+=<,+>,+<,+><,==
 
   All these operators are of type xfx, precedence 600.
   They are implemented as boolean functions.
@@ -1209,7 +1266,7 @@ In module: structures,
 
  Structural Comparison Operators:
 
-  +>=,+=<,+>,+<,+><,==,+\>=,+\=<,+\>,+\<,+\><,\==
+  +>=,+=<,+>,+<,+><,==,+>=,+=<,+>,+<,+><,==
 
   All these operators are of type xfx, precedence 600.
   They are implemented as boolean functions.
@@ -1231,7 +1288,7 @@ In module: structures,
 
  Structural Comparison Operators:
 
-  +>=,+=<,+>,+<,+><,==,+\>=,+\=<,+\>,+\<,+\><,\==
+  +>=,+=<,+>,+<,+><,==,+>=,+=<,+>,+<,+><,==
 
   All these operators are of type xfx, precedence 600.
   They are implemented as boolean functions.
@@ -1253,7 +1310,7 @@ In module: structures,
 
  Structural Comparison Operators:
 
-  +>=,+=<,+>,+<,+><,==,+\>=,+\=<,+\>,+\<,+\><,\==
+  +>=,+=<,+>,+<,+><,==,+>=,+=<,+>,+<,+><,==
 
   All these operators are of type xfx, precedence 600.
   They are implemented as boolean functions.
@@ -1275,7 +1332,7 @@ In module: structures,
 
  Structural Comparison Operators:
 
-  +>=,+=<,+>,+<,+><,==,+\>=,+\=<,+\>,+\<,+\><,\==
+  +>=,+=<,+>,+<,+><,==,+>=,+=<,+>,+<,+><,==
 
   All these operators are of type xfx, precedence 600.
   They are implemented as boolean functions.
@@ -1297,7 +1354,7 @@ In module: structures,
 
  Structural Comparison Operators:
 
-  +>=,+=<,+>,+<,+><,==,+\>=,+\=<,+\>,+\<,+\><,\==
+  +>=,+=<,+>,+<,+><,==,+>=,+=<,+>,+<,+><,==
 
   All these operators are of type xfx, precedence 600.
   They are implemented as boolean functions.

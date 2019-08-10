@@ -12,3 +12,5 @@ Life/Tests/ERR/
 Life/Tests/editdiffs.sh
 *.tar.gz
 *#*
+Life/Tests/APPROVED/
+Life/Tests/LFSAV/

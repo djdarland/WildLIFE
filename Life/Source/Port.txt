@@ -1305,5 +1305,89 @@ echo 9 Total Tests out differ
 echo 6 Total Tests err differ
 
 ---------------------------------------------------------------
+aaa-08-31
+added x.lf to FILES -- found in handbook
 
+fixed
+--------------------------------------------------------------
+condpred
+
+reference missing
+
+APPROVED new output
+--------------------------------------------------------------
+
+debug
+
+clauses numbered differently
+
+APPROVED new output
+
+----------------------------------------------------------------
+2 -- dupfeat  -- 4.01 gives line number error is near -- reference does not
+
+APPROVED new output
+
+-------------------------------------------------------------
+
+eoftest2
+
+study LATER
+
+-------------------------------------------------------------
+
+eoftest
+
+study LATER
+
+-----------------------------------------------------------
+libtest
+
+I think manual missing
+
+APPROVED new output
+
+-------------------------------------------------------------
+preparser
+
+study LATER
+
+---------------------------------------------------------------
+
+test03
+
+differences seem related to X windows
+
+APPROVED new output
+
+-----------------------------------------------------------------------
+testslc
+
+think there are files missing
+
+removed from testing
+
+-------------------------------------------------------------------
+testsl
+
+see minor difference re default
+
+APPROVED new output
+
+--------------------------------------------------------------------
+
+NOW:
+
+echo 413 Total Tests completed
+echo 410 Total Tests match
+echo 3 Total Tests differ
+echo 3 Total Tests out differ
+echo 3 Total Tests err differ
+
+Problems are:
+
+eoftest2
+eoftest
+preparser
+-----------------------------------------------------------------------
 

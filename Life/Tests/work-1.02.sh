@@ -42,7 +42,7 @@ do
 	11) ./approve_out-1.02.sh $1;;
 	12) ./rest_out-1.02.sh $1;;
 	13) mv LF-1.02/$1.lf LFSAV-1.02/$1.lf ;;
-	14) wild_life;;
+	14) wild_life_102;;
 	16) $EDITOR ../Source/Port.txt;;
 	888) exit 2;;
     esac
