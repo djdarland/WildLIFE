@@ -1,0 +1,1125 @@
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%
+%                          TOKENIZER FOR C CODE
+%                          --------------------
+%
+%  
+%
+%
+%  AUTHOR : Arnaud Venet                     CREATION : July 28th 1993
+%  ------                                    --------
+%
+%
+%                             ---------------                        
+%
+%                    
+%                   Last modification : October 22nd 1993 
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%
+%  (C) Digital Equipment Corporation 1993  
+%  
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+
+
+
+persistent(the_parse_mode) ?
+
+persistent(the_error_mode) ?
+
+persistent(the_error_log) ?
+
+persistent(error_number) ?
+
+persistent(parse_error) ?
+
+persistent(string_storage) ?
+
+persistent(token_number) ?
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+persistent(the_previous_token) ?
+
+persistent(the_current_token) ?
+
+persistent(the_next_token) ?
+
+persistent(the_token) ?
+
+persistent(the_current_char) ?
+
+persistent(the_current_file) ?
+
+persistent(the_current_line) ?
+
+persistent(the_current_column) ?
+
+persistent(the_first_token) ?
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+persistent(void_chars_table) ?
+
+persistent(separators_table) ?
+
+persistent(operators_table) ?
+
+persistent(duplicatable_operators_table) ?
+
+persistent(combinable_operators_table) ?
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+get_the_token -> the_token.1.
+
+token -> the_token.1.
+
+get_current_token -> the_current_token.1.
+
+current_token -> the_current_token.1.
+
+get_current_char -> root_sort(the_current_char).
+
+current_char -> the_current_char.
+
+get_current_file -> the_current_file.1.
+
+current_file -> the_current_file.1.
+
+get_current_line -> the_current_line.1.
+
+current_line -> the_current_line.1.
+
+get_current_column -> the_current_column.1.
+
+current_column -> the_current_column.1.
+
+next_token -> the_next_token.1.
+
+previous_token -> the_previous_token.1.
+
+get_first_token -> the_first_token.1.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+store(CharList) -> StoredString
+  | search(string_of(CharList), string_storage.hash_code(CharList), 
+           StoredString).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+read_char :-
+  (
+    current_char :\== end_of_file,
+    !,
+    cond(current_char :== 10,
+      the_current_column <<- ref(1),
+      cond(current_char :== 9,
+        the_current_column <<- ref(current_column + 8),
+        the_current_column <<- ref(current_column + 1)
+      )
+    ),
+    get(Char),
+    the_current_char <<- Char
+  ;
+    succeed
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+report_err(type => Type, message => Message, cause => Cause) :-
+  error_number <<- error_number + 1,
+  Error = the_error_log.error_number,
+  Error.type <<- Type, 
+  Error.message <<- Message, 
+  Error.cause <<- Cause, 
+  Error.file <<- get_current_file, 
+  Error.line <<- get_current_line,
+  cond(the_error_mode :== talkie,
+    (
+      write_err(">>> ", Type, " : ", current_file, ", line ", current_line),
+      cond(Cause :\== @,
+        write_err(" near '", Cause, "'")
+      ),
+      write_err(" : ", Message),
+      nl_err
+    )
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+store_keyword([KeyWord | LKeyWords]) :-
+  !,
+  (
+    CharList = str2list(KeyWord),
+    String = store(CharList),
+    String.keyword <<- str2psi(KeyWord),
+    fail
+  ;
+    succeed
+  ),
+  store_keyword(LKeyWords).   
+
+
+store_keyword([]).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+init_string_storage :-
+  store_keyword(key_words).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+init_void_chars :-
+  void_chars_table <<- @(9 => @, 10 => @, 32 => @).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+insert_in_table(What, Table) -> @
+  | Table.(asc(What)) <<- What.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+init_separators :-
+  separators_table.asc(";") <<- str2psi(";"),
+  separators_table.asc("(") <<- str2psi("("),
+  separators_table.asc(")") <<- str2psi(")"),
+  separators_table.asc("{") <<- str2psi("{"),
+  separators_table.asc("}") <<- str2psi("}"),
+  separators_table.asc("[") <<- str2psi("["),
+  separators_table.asc("]") <<- str2psi("]"),
+  separators_table.asc(":") <<- str2psi(":").
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+init_operators :-
+  map(insert_in_table(2 => operators_table), operator_symbols) = @,
+  map(insert_in_table(2 => duplicatable_operators_table), 
+      duplicatable_operators) = @,
+  map(insert_in_table(2 => combinable_operators_table), 
+      combinable_operators) = @.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+init_tables :-
+  (
+    init_void_chars,
+    init_separators,
+    init_operators,
+    fail
+  ;
+    succeed
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+tokenize(File) :-
+  the_current_file <<- ref(File),
+  the_current_line <<- ref(1),
+  the_current_column <<- ref(1),
+  token_number <<- 0,
+  init_string_storage,
+  init_tables,
+  get(Char),
+  the_current_char <<- Char,
+  the_token <<- ref(nothing(file => File, line => 1, column => 1,
+                            white_spaces => "")),
+  the_previous_token <<- ref(get_the_token),
+  cond(the_parse_mode :== heavy,
+    previous_token.previous <<- previous_token
+  ),
+  get_single_token,
+  the_current_token <<- ref(get_the_token),
+  get_single_token,
+  the_next_token <<- ref(get_the_token),
+  chain_tokens.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+chain_tokens :-
+  the_parse_mode :== heavy,
+  !,
+  cond(previous_token :== nothing,
+    the_first_token <<- ref(get_current_token),
+    previous_token.next <<- get_current_token
+  ),
+  current_token.previous <<- previous_token.
+
+
+chain_tokens.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+get_single_token :-
+  (
+    raw_get_single_token,
+    token_number <<- token_number + 1,
+    cond(token_number :== 20,
+      (
+        cond(the_error_mode :== talkie,
+          write_err(".")
+        ),
+        token_number <<- 0
+      )
+    ),
+    fail
+  ;
+    succeed
+  ).
+
+
+raw_get_single_token :-
+  collect_white_spaces(0 => WhiteSpaces, rest => []),
+  CurrentColumn = get_current_column,
+  (
+    get_token,
+    !,
+    token.line <<- get_current_line,
+    token.column <<- CurrentColumn,
+    token.file <<- get_current_file,
+    cond(the_parse_mode :== heavy,
+      token.white_spaces <<- store(WhiteSpaces)
+    )
+  ;
+    the_token <<- ref(nothing(line => get_current_line,
+                              column =>  get_current_column, 
+                              file => get_current_file,
+                              white_spaces => store(WhiteSpaces)))
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+get_next_token :-
+  current_token :== nothing,
+  !.
+
+
+get_next_token :-
+  next_token :== nothing,
+  !,
+  the_current_token <<- ref(next_token).
+
+
+get_next_token :-
+  the_previous_token <<- ref(current_token),
+  the_current_token <<- ref(next_token),
+  (
+    get_single_token,
+    fail
+  ;
+    succeed
+  ),
+  (
+    token :== nothing,
+    !,
+    the_next_token <<- ref(token),
+    cond(the_parse_mode :== heavy,
+      (
+        current_token.next <<- next_token,
+        next_token.previous <<- current_token,
+        next_token.next <<- next_token
+      )
+    )
+  ;
+    the_next_token <<- ref(get_the_token)   
+  ),
+  chain_tokens.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+get_token :-
+  alpha(current_char),
+  !,
+  (
+    current_char :== L : asc("L"),
+    !,
+    read_char,
+    (
+      current_char :== DoubleQuote : asc(""""),
+      !,
+      read_char,
+      collect_characters(0 => StringOfChars, DoubleQuote, rest => []),
+      the_token <<- 
+        ref(characters_string(store(StringOfChars), extended => true))
+    ;
+      current_char :== Quote : asc("'"),
+      !,
+      read_char,
+      collect_characters(0 => Characters, Quote, rest => []),
+      the_token <<- ref(character(store(Characters), extended => true))
+    ;
+      collect_identifier(0 => IdentifierTail, rest => []),
+      the_token <<- ref(identifier(store([L | IdentifierTail])))
+    )
+  ;
+    collect_identifier(0 => Identifier, rest => []),
+    TheIdentifier = store(Identifier),
+    cond(has_feature(keyword, TheIdentifier, KeyWord),
+      the_token <<- ref(root_sort(KeyWord)),
+      the_token <<- ref(identifier(TheIdentifier))
+    )
+  ).
+
+
+get_token :-
+  has_feature(current_char, separators_table, Separator),
+  !,
+  read_char,
+  the_token <<- ref(root_sort(Separator)).
+
+
+get_token :-
+  has_feature(current_char, operators_table),
+  !,
+  (
+    collect_operator(0 => Operator, rest => []),
+    the_token <<- ref(str2psi(string_of(Operator))),
+    fail
+  ;
+    succeed
+  ).
+
+
+get_token :-
+  current_char :== Period : asc("."),
+  !,
+  read_char,
+  (
+    current_char :== Period,
+    !,
+    read_char,
+    (
+      current_char :== Period,
+      !,
+      read_char,
+      the_token <<- ref(str2psi("..."))      
+    ;
+      the_token <<- ref('.'),
+      report_err(type => warning,
+                 message => "Bad operator, replaced by '.'", cause => "..")
+    )
+  ;
+    the_token <<- ref('.')
+  ).
+
+
+get_token :-
+  digit(decimal, current_char),
+  !,
+  get_numerical_constant.
+
+
+get_token :-
+  current_char :== DoubleQuote : asc(""""),
+  !,
+  read_char,
+  collect_characters(0 => StringOfChars, DoubleQuote, rest => []),
+  the_token <<- ref(characters_string(store(StringOfChars), extended => false)).
+
+
+get_token :-
+  current_char :== Quote : asc("'"),
+  !,
+  read_char,
+  collect_characters(0 => Characters, Quote, rest => []),
+  the_token <<- ref(character(store(Characters), extended => false)).
+
+
+get_token :-
+  current_char :== end_of_file,
+  !,
+  fail.
+
+
+get_token :-
+  report_err(type => error,
+             message => "Invalid character", 
+             cause => displayable_form_of(current_char)),
+  read_char,
+  get_token.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+collect_white_spaces -->
+  { void_char(current_char) },
+  !,
+  [get_current_char],
+  {
+    cond(newline(current_char),
+      the_current_line <<- ref(current_line + 1)
+    ),
+    read_char
+  },    
+  collect_white_spaces.
+
+
+collect_white_spaces -->
+  { current_char :== asc("#") },
+  !,
+  { get_cpp_info },
+  collect_white_spaces.
+
+
+collect_white_spaces --> [].
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+get_cpp_info :-
+  read_char,
+  skip_blanks, % current_char :== asc(" "), read_char,
+  collect_line_number(0 => LineNumber, rest => []),
+  the_current_line <<- ref(int_of_digits_list(LineNumber)),
+  skip_blanks, % current_char :== asc(" "), read_char,
+  current_char :== asc(""""),
+  read_char,
+  collect_file_name(0 => FileName, rest => []),
+  the_current_column <<- ref(1),
+  !,
+  the_current_file <<- ref(store(FileName)).
+
+
+get_cpp_info :-
+  report_err(type => error, message => "cpp informations corrupted"),
+  fail.  
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+collect_line_number -->
+  { digit(decimal, current_char) },
+  !,
+  [get_current_char],
+  { read_char },
+  collect_line_number.
+
+
+collect_line_number --> 
+  [].
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+collect_file_name -->
+  { 
+    current_char :== end_of_file,
+    !,
+    fail
+  }.
+
+
+collect_file_name -->
+  { current_char :== asc("""") },
+  !,
+  { read_char },
+  (
+    { skip_blanks },
+    { newline(current_char) },
+    !,
+    { read_char },
+    []
+  ;
+    [asc("""")],
+    collect_file_name
+  ).
+
+
+collect_file_name -->
+  [get_current_char],
+  { read_char },
+  collect_file_name.
+
+
+skip_blanks :- current_char :\== asc(" "), !.
+skip_blanks :- read_char, skip_blanks.
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+collect_identifier -->
+  { alphanum(current_char) },
+  !,
+  [get_current_char],
+  { read_char },
+  collect_identifier.
+
+
+collect_identifier -->
+  [].
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+collect_operator -->
+  { FirstChar = get_current_char },
+  { read_char },
+  [FirstChar],
+  { SecondChar = get_current_char },
+  (
+    { FirstChar :== SecondChar },
+    !,
+    (
+      { has_feature(FirstChar, duplicatable_operators_table) },
+      !,
+      [FirstChar],
+      { read_char },
+      (
+        { FirstChar :== {asc("<"); asc(">")} },
+        !,
+        { ThirdChar = get_current_char },
+        ( 
+          { ThirdChar :== asc("=") },
+          !,
+          [asc("=")],
+          { read_char }
+        ;
+          []
+        )
+      ;
+        []
+      )
+    ;
+      []
+    )
+  ;
+    (
+      { SecondChar :== asc("=") },
+      !,
+      (
+        { has_feature(FirstChar, combinable_operators_table) },
+        !,
+        [asc("=")],
+        { read_char }
+      ;
+        []
+      )
+    ;
+      (
+        { FirstChar :== asc("-") },
+        !,
+        (
+          { SecondChar :== asc(">") },
+          !,
+          [asc(">")],
+          { read_char }
+        ;
+          []
+        )
+      ;
+        []
+      )
+    )
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+collect_characters(TerminationChar) -->
+  { current_char :== asc("\") },
+  !,
+  { read_char },
+  cond(current_char :== end_of_file,
+    { 
+      report_err(type => error,
+                 message => "End of file found when parsing a character constant")
+    },
+    (
+      [escape_char(get_current_char)],
+      { read_char },
+      collect_characters(TerminationChar)
+    )
+  ).
+
+
+collect_characters(TerminationChar) -->
+  { current_char :== TerminationChar },
+  !,
+  { read_char }.
+
+
+collect_characters(TerminationChar) -->
+  { current_char :== end_of_file },
+  !,
+  {
+    report_err(type => error,
+               message => "End of file found when parsing a character constant")
+  }.
+
+
+collect_characters(TerminationChar) -->
+  { newline(current_char) },
+  !,
+  {
+    report_err(type => error, message => "Non terminated character constant")
+  }.
+
+
+collect_characters(TerminationChar) -->
+  [get_current_char],
+  { read_char },
+  collect_characters(TerminationChar).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+escape_char(110) -> 10.
+
+escape_char(116) -> 9.
+
+escape_char(118) -> 11.
+
+escape_char(98) -> 8.
+
+escape_char(114) -> 13.
+
+escape_char(102) -> 12.
+
+escape_char(97) -> 7.
+
+escape_char(92) -> asc("\").
+
+escape_char(63) -> asc("?").
+
+escape_char(39) -> asc("'").
+
+escape_char(34) -> asc("""").
+
+escape_char(120) -> ReturnedChar
+  | read_char,
+    First = get_current_char,
+    read_char,
+    Second = get_current_char,
+    (
+      digit(hexadecimal, First),
+      digit(hexadecimal, Second),
+      Char = hex2dec([First, Second]),
+      Char < 256,
+      !,
+      ReturnedChar = Char
+    ;
+      report_err(type => warning, message => "Bad escape sequence",
+                 cause => "x"),
+      ReturnedChar = 0
+    ).
+    
+
+escape_char(Digit1) -> ReturnedChar
+  | (
+      read_char,
+      Digit2 = get_current_char,
+      read_char,
+      Digit3 = get_current_char,
+      digit(octal, Digit1),
+      digit(octal, Digit2),
+      digit(octal, Digit3),
+      Char = oct2dec([Digit1, Digit2, Digit3]),
+      Char < 256,
+      !,
+      ReturnedChar = Char
+    ;
+      report_err(type => warning, message => "Bad escape sequence",
+                 cause => Char),
+      ReturnedChar = 0
+    ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+get_numerical_constant :-
+  (
+    current_char :== asc("0"),
+    !,
+    read_char,
+    (
+      current_char :== {asc("x"); asc("X")},
+      !,
+      read_char,
+      get_integer(hexadecimal)
+    ;
+      collect_integer(decimal, 0 => IntegerTail, rest => []),
+      Integer = [asc("0") | IntegerTail],
+      get_numerical_constant_tail(Integer)
+    )
+  ;
+    collect_integer(decimal, 0 => Integer, rest => []),
+    get_numerical_constant_tail(Integer)
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+get_numerical_constant_tail(Integer) :-
+  (
+    current_char :== {asc("."); asc("e"); asc("E")},
+    !,
+    (
+      current_char :== asc("."),
+      !,
+      read_char,
+      collect_integer(decimal, 0 => DecimalPart, rest => []),
+      cond(DecimalPart :== [],
+        (
+          report_err(type => error, 
+                     message => "No decimal part for float value"),
+          store([asc("0")]) = StoredDecimalPart
+        ),
+        store(DecimalPart) = StoredDecimalPart
+      ),
+      (
+        current_char :== {asc("e"); asc("E")},
+        !,
+        read_char,
+        collect_exponential_part(Sign, ExponentialPart),
+        cond(ExponentialPart :== [],
+          store([asc("0")]) = StoredExponentialPart,
+          store(ExponentialPart) =  StoredExponentialPart
+        )      
+      ;
+        store([asc("0")]) = StoredExponentialPart,
+        Sign = positive
+      )
+    ;
+      current_char :== {asc("e"); asc("E")},
+      !,
+      read_char,
+      store([asc("0")]) = StoredDecimalPart,
+      collect_exponential_part(Sign, ExponentialPart),
+      cond(ExponentialPart :== [],
+        store([asc("0")]) = StoredExponentialPart,
+        store(ExponentialPart) = StoredExponentialPart
+      )        
+    ),
+    store(Integer) = StoredInteger,
+    collect_suffix(0 => Suffix, rest => []),
+    scan_float_suffix(Suffix, Type),
+    the_token <<- ref(number(float(integer_part => StoredInteger,
+                                   decimal_part => StoredDecimalPart,
+                                   exponential_part => 
+                                     exponential_part(value => StoredExponentialPart,
+                                                      sign => Sign),
+                                   type => Type)))
+  ;
+    (
+      Integer = [asc("0")],
+      !,
+      TheInteger = Integer,
+      Base = decimal
+    ;
+      Integer = [asc("0") | OctalNumber],
+      !,
+      scan_octal_number(OctalNumber, NewOctalNumber),
+      TheInteger = NewOctalNumber,
+      Base = octal
+    ;
+      TheInteger = Integer,
+      Base = decimal
+    ),
+    store(TheInteger) = StoredInteger,
+    collect_suffix(0 => Suffix, rest => []),
+    scan_integer_suffix(Suffix, Long, Signed),    
+    the_token <<- ref(number(integer(StoredInteger, base => Base, 
+                                     signed => Signed, long => Long)))
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+scan_octal_number([], []) :- !.
+
+
+scan_octal_number([Digit | Digits], [Digit | NewDigits]) :-
+  digit(octal, Digit),
+  !,
+  scan_octal_number(Digits, NewDigits).
+
+
+scan_octal_number([Digit | Digits], NewDigits) :-
+  report_err(type => warning, message => strcon(chr(Digit), " is not octal")),
+  scan_octal_number(Digits, NewDigits).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+get_integer(Base) :-
+  collect_integer(Base, 0 => Integer, rest => []),
+  (
+    Integer :== [],
+    !,
+    report_err(type => error, message => "Bad integer value"),
+    store([asc("0")]) =  StoredInteger
+  ;
+    store(Integer) = StoredInteger
+  ),
+  collect_suffix(0 => Suffix, rest => []),
+  scan_integer_suffix(Suffix, Long, Signed),
+  the_token <<- ref(number(integer(StoredInteger, base => Base, signed => Signed, 
+                           long => Long))).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+collect_integer(Base) --> 
+  { digit(Base, current_char) },
+  !,
+  [get_current_char],
+  { read_char },
+  collect_integer(Base).
+
+
+collect_integer(Base) --> [].
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+collect_exponential_part(Sign, ExponentialPart) :-
+  (
+    current_char :== asc("+"),
+    !,
+    read_char,
+    ReadSign = positive
+  ;
+    current_char :== asc("-"),
+    !,
+    read_char,
+    ReadSign = negative
+  ;
+    ReadSign = positive
+  ),
+  collect_integer(decimal, 0 => ExponentialPart, rest => []),
+  cond(ExponentialPart :== [],
+    (
+      report_err(type => error,
+                 message => "No exponential part for float value"),
+      Sign = positive
+    ),
+    Sign = ReadSign
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+collect_suffix -->
+  { alphanum(current_char) },
+  !,
+  [get_current_char],
+  { read_char },
+  collect_suffix.
+
+
+collect_suffix --> [].
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+scan_integer_suffix([Suffix | LSuffixes], Long, Signed) :-
+  Suffix :== {asc("u"); asc("U")},
+  !,
+  cond(Signed :== @,
+    Signed = false,
+    report_err(type => warning, message => "Redundant suffix 'u'")
+  ),
+  scan_integer_suffix(LSuffixes, Long, Signed).
+
+
+scan_integer_suffix([Suffix | LSuffixes], Long, Signed) :-
+  Suffix :== {asc("l"); asc("L")},
+  !,
+  cond(Long :== @,
+    Long = true,
+    report_err(type => warning, message => "Redundant suffix 'l'")
+  ),
+  scan_integer_suffix(LSuffixes, Long, Signed).
+
+
+scan_integer_suffix([Suffix | LSuffixes], Long, Signed) :-
+  !,
+  report_err(type => warning, message => "Garbage suffix", cause => Suffix),
+  scan_integer_suffix(LSuffixes, Long, Signed).
+
+
+scan_integer_suffix([], Long, Signed) :-
+  cond(Long :== @,
+    Long = false
+  ),
+  cond(Signed :== @,
+    Signed = true
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+scan_float_suffix([Suffix | LSuffixes], Type) :-
+  Suffix :== {asc("l"); asc("L")},
+  !,
+  cond(Type :== @,
+    Type = long_double,
+    cond(Type :== float,
+      report_err(type => warning, message => "Incompatible suffix 'l'"),
+      report_err(type => warning, message => "Redundant suffix 'l'")
+    )
+  ),
+  scan_float_suffix(LSuffixes, Type).
+
+
+scan_float_suffix([Suffix | LSuffixes], Type) :-
+  Suffix :== {asc("f"); asc("F")},
+  !,
+  cond(Type :== @,
+    Type = float,
+    cond(Type :== long,
+      report_err(type => warning, message => "Incompatible suffix 'f'"),
+      report_err(type => warning, message => "Redundant suffix 'f'")
+    )
+  ),
+  scan_float_suffix(LSuffixes, Type).
+
+
+scan_float_suffix([Suffix | LSuffixes], Type) :-
+  !,
+  report_err(type => warning, message => "Garbage suffix", cause => Suffix),
+  scan_float_suffix(LSuffixes, Type).
+
+
+scan_float_suffix([], Type) :-
+  cond(Type :== @,
+    Type = double
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+
+

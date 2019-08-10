@@ -1,0 +1,1351 @@
+%	$Id: shell.lf,v 1.2 1994/12/09 00:23:39 duchier Exp $	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Copyright 1992 Digital Equipment Corporation
+% All Rights Reserved
+%
+% 			   The LIFE Shell
+%
+%
+% An interactive user interface for LIFE offering command line editing,
+%   a history mechanism, and user rebinding of keys.
+%
+% Notice: This is quite an 'old' Life program. It means that features have    
+%         been added to the language since it was written, especially global  
+%         and persistent variables: most constant functions (reset using setq)
+%         could be changed to persistent terms, saving memory and time.       
+%                                                                             
+% Author: Kathleen Milsted
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% This loads the parser, etc.
+
+module("shell") ?
+expand_load(true) ?
+load ("loader", "shell_interface") ?  
+
+public( shell,shell2,global_set_key,interrupt,quit)  ?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%			Main Routines
+%
+% shell: this is the main program.
+%   After printing a welcome message, it initializes global setq variables,
+%   loads the user keymap file (".life-keymap") if it exists,
+%   and reads the history file (by default, ".life-history") if it exists.
+%   It then calls the main read-eval loop with level 0 of the interface.
+%
+% main_loop: this loop is executed for each level of the interface.
+%   It first resets the line to be empty with the prompt for that level,
+%   and resets the history pointer to the current line.
+%   After writing the prompt, it invokes raw mode so as to read
+%   keyboard characters without intervention  by the terminal driver.
+%   It then calls "read_line" to get either: notification of an X event
+%   or a (possibly empty) line terminated by a carriage return.
+%   It exits raw mode then calls "eval_line" to evaluate the line.
+%   The loop is then repeated.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+shell :-
+    nl,
+    write
+    ("  Welcome to the LIFE Shell (Version 0 Thu Jan 28 1993)"),
+    nl, nl,
+    initialize_variables,
+    read_keymap_file,
+    read_history_file,
+    fail ;			%% to recover memory
+    shell2.
+
+shell2 :-
+    trace (false, false),
+    main_loop (@(level => 0, vars => @, cp_stack => [])).
+
+
+
+main_loop ( Level : @(level => N) ) :-
+    Line = @(left => [], right => [], prompt => Prompt:prompt(N)),
+    HistoryPtr = current_line_number,
+    write (Prompt),
+    cond (not(in_raw), begin_raw),
+    read_line (Line, HistoryPtr),
+    end_raw,
+    eval_line (Level),
+    main_loop (Level).
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%			Input Routines
+%
+% read_line: this loop reads keys and executes the function 
+%   bound to them. The loop terminates if either an X event occurs
+%   or a carriage return is read.
+%
+% get_key_or_xevent: this loop reads raw characters until a 
+%   an X event occurs or a complete key is made.
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+read_line (Line, HistoryPtr) :-
+    %%  get a key or X event  %%
+    get_key_or_xevent (Key, XEvent),
+    (
+      %%  if an X event, flag it and return  %%
+      XEvent, setq (xeventflag, true), nl
+    ;
+      %%  if carriage return, save the line and return
+      return_key (Key), setq (current_line, line2revchars(Line)), nl
+    ;
+      %%  else, get the function bound to the key,  %%
+      %%  execute the function,   		    %%
+      %%  then repeat the loop		            %%
+      get_function_bound_to_key (Key, global_map, Function),
+      Function & @(Line, HistoryPtr, self => Key),
+      setq (line, Line), setq (history_ptr, HistoryPtr),
+      fail			%% to recover memory
+    ;
+      read_line (line, history_ptr)
+    ), !.
+
+get_key_or_xevent (Key, XEvent) :-
+    %%  get a raw char or X event  %%
+    get_raw (Char, XEventFlag),
+    (
+      %%  if an X event, return  %%
+      XEventFlag, XEvent = true
+    ;
+      %%  if a prefix char, keep on reading %%
+      prefix_char (Char),
+      get_rest_of_key_or_xevent (Key, XEvent, prefix => [Char])
+    ;
+      %%  if a meta char, return ESC plus ordinary char
+      Char >= 128,
+      Key = [27, Char-128], XEvent = false
+    ;
+      %%  else, return the char
+      Key = Char, XEvent = false
+    ), !.
+
+
+get_rest_of_key_or_xevent (Key, XEvent, prefix => Prefix) :-
+    %%  get a raw char or X event  %%
+    get_raw (Char, XEventFlag),
+    (
+      %%  if an X event, return  %%
+      XEventFlag, XEvent = true
+    ;
+      %%  if the character plus the previous prefix  %%
+      %%  together form a prefix, keep on reading    %%
+      prefix_key (NewPrefix : [Char|Prefix]),
+      get_rest_of_key_or_xevent (Key, XEvent, prefix => NewPrefix)
+    ;
+      %%  else, return  %%
+      Key = reverse(NewPrefix), XEvent = false
+    ), !.
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%			Action Routines
+%
+% eval_line: 
+%
+% parse_line: 
+%
+% sh_query:
+%
+% declaration:
+%
+% error:
+%
+% goto_previous_level:
+%
+% goto_top_level:
+%
+% backtrack: 
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+eval_line (Level) :-
+    %%  if the line is empty, go to the previous level	      %%
+    %%  if the line is just a ".", go to the top level	      %%
+    %%  if the line is just a ";", backtrack		      %%
+    %%  otherwise, it's a proper line: add it to the history, %%
+    %%  increase the line number, and parse it. 	      %%
+    xeventflag :== false, !,
+    Line = current_line,
+    (
+      is_empty (Line), !,
+      goto_previous_level (Level)
+    ;
+      is_dot (Line), !,
+      goto_top_level (Level)
+    ;
+      is_semicolon (Line), !,
+      backtrack (Level)
+    ;
+      add_to_history (Line),
+      setq (current_line_number, current_line_number+1),
+      parse_line (Level, reverse(Line))
+    ).
+
+
+eval_line (Level : @(level => N)) :-
+    %%  an X event occurred: reset the X event flag,          %%
+    %%  reset the window flag if a new window was created,    %%
+    %%  increase the current level, and succeed.              %%
+    setq (xeventflag, false),
+    cond (window_flag, (reset_window_flag, N <- N + 1)),
+    nl, write("**** Yes"), nl,
+    print_vars (Level).
+
+
+
+
+parse_line (Level, Line) :-
+    CP1 = get_choice,
+    first_shell_parse (Line, NewVars, Exp, TypeOfExp, ExistVars),
+    TypeOfExp & @(Exp, CP1, NewVars, ExistVars, Level).	
+
+parse_line (Level) :-
+    print_vars (Level).
+
+
+
+sh_query (Query, CP1, NewVars, ExistVars,
+       Level : @(level => N, cp_stack => CPStack, vars => OldVars))
+    :-
+    retract ((shell_query :- @ )),
+    assert ((shell_query(NewVars, TraceStatus, StepStatus) :-
+                   trace (trace_status, step_status),
+	           Query,
+	           trace (TraceStatus, StepStatus),
+		   trace (false, false))),
+    ( 
+	CPTemp = get_choice,
+        shell_query (OldVars, NewTraceStatus, NewStepStatus),
+        setq (trace_status, NewTraceStatus),
+        setq (step_status, NewStepStatus),    
+        ExistsCP = exists_choice (CPTemp, CP2:get_choice),
+        cond (WindowCreated:window_flag, reset_window_flag),
+        CopyCPStack = copy_pointer(CPStack), %% this is to avoid a bug in cond
+        cond (ExistVars or ExistsCP or WindowCreated,
+    	       (N <- N + 1,
+	        CPStack <- [(CP1,CP2)|CopyCPStack]),
+	       (set_choice(CP1),nl, write("**** Yes"), nl, fail) ),
+        nl, write("**** Yes"), nl,
+        print_vars (Level)
+    ;
+	trace (NewTraceStatus, NewStepStatus),
+	trace(false,false), 
+	setq (trace_status, NewTraceStatus),
+        setq (step_status, NewStepStatus),
+	fail
+    ).
+
+sh_query (Query, CP1) :-
+    nl, write("**** No"), nl,
+    set_choice(CP1),
+    fail.
+
+
+declaration (Declaration, CP1) :-
+	(
+	    term_xpand(Declaration,NewDefs),!,
+	    (
+		cond( NewDefs :=< list,
+		      maprel(assert, NewDefs),
+		      assert(NewDefs)),
+		!, nl, write("**** Yes"), nl
+	    ;
+		succeed
+	    )
+        ;
+	    nl, write("**** Error in term expansion "),
+	    nl, write("**** No"), nl
+	),
+	set_choice(CP1),
+	fail.
+
+
+
+error (_, CP1) :-
+    write_parse_error,
+    set_choice(CP1),
+    fail.
+
+
+
+goto_previous_level (@(level => 0)) :- !.
+    %%  if at the top level, do nothing  %%
+
+goto_previous_level (@(cp_stack => [(CP1,_)|_])) :- 
+    %%  otherwise, abandon the current query and fail back  %%
+    %%  to the choice point before the query was parsed     %%
+    nl, write("**** No"), nl,
+    set_choice(CP1),
+    fail.
+
+
+
+goto_top_level (@(level => 0)) :- !.
+    %%  if already at the top level, do nothing %%
+
+goto_top_level (@(cp_stack => CPStack)) :-
+    %%  otherwise, fail back to the first choice point  %%
+    %%  in the user choice point stack		        %%
+    (CP1,_) = last(CPStack),
+    set_choice(CP1),
+    fail.
+
+
+
+backtrack (@(level => 0)) :- !.
+    %%  if at the top level, do nothing  %%
+
+backtrack (@(cp_stack => [(_,CP2)|_])) :-
+    %%  otherwise, fail back to the most recent choice point  %%
+    %%  in the user choice point stack, that is, the choice   %%
+    %%  point after the last query was executed		      %%
+    set_choice(CP2),
+    trace(trace_status,step_status),
+    fail.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%			Editing Routines
+%
+% Inserting text:
+%	self_insert_command
+%
+% Changing the location of point:
+%	beginning_of_line, end_of_line,
+%	forward_char, backward_char,
+%	forward_word, backward_word,
+%	next_line, previous_line,		
+%	beginning_of_history, end_of_history,
+%	transpose_chars
+%
+% Erasing text:
+%	delete_backward_char, delete_char,
+%	kill_line, kill_entire_line,
+%	kill_word, backward_kill_word
+%
+% Miscellaneous:
+%	rewrite_line,
+%	describe_key_briefly,
+%	interrupt, quit,
+%	undefined_key, ignore_key, bad_key
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%								%%
+%%		Insert character at the point			%%
+%%								%%
+
+self_insert_command ( @(left => Left, right => Right), self => Key ) :-
+    put_chars ([Char:last(Key) | Right]),
+    backspace_over (Right),
+    Left <- [Char | copy_pointer(Left)].
+
+
+
+
+%%								%%
+%%		Move to the beginning of the line		%%
+%% 								%%
+
+beginning_of_line ( @(left => []) ) :- !.
+
+beginning_of_line ( @(left => Left, right => Right, prompt => Prompt) ) :-
+    carriage_return,
+    write (Prompt),
+    Right <- join (Left, copy_pointer(Right)), 
+    Left  <- [].
+
+
+
+%%								%%
+%%		Move to the end of the line			%%
+%%								%%
+
+end_of_line ( @(right => []) ) :- !.
+
+end_of_line ( @(left  => Left, right => Right) ) :-
+    put_chars (Right),
+    Left  <- join (Right, copy_pointer(Left)),
+    Right <- [].
+
+
+
+%%								%%
+%%		Move forward one character			%%
+%%								%%
+
+forward_char ( @(right => []) ) :- !.
+
+forward_char ( @(left  => Left, right => Right:[Char|NewRight]) ) :-
+    put_chars (Char),
+    Left  <- [Char | copy_pointer(Left)],
+    Right <- NewRight.
+
+
+
+%%								%%
+%%		Move backward one character			%%
+%%								%%
+
+backward_char ( @(left => []) ) :- !.
+
+backward_char ( @(left  => Left:[Char|NewLeft], right => Right ) ) :-
+    backspace,
+    Left  <- NewLeft,
+    Right <- [Char | copy_pointer(Right)].
+
+
+
+%%								%%
+%%		Move forward one word				%%
+%%								%%
+
+forward_word ( @(right => []) ) :- !.
+
+forward_word ( Line : @(left => Left, right => Right) ) :-
+    find_word_right (copy_pointer(Right), copy_pointer(Left), Line).
+
+
+find_word_right ([], Left, Line) :-
+    !, find_end_of_word ([], Left, Line).
+
+find_word_right ([Char|Right], Left, Line) :-
+    alphanumeric (Char), !,
+    put_chars (Char),
+    find_end_of_word (Right, [Char|Left], Line). 
+
+find_word_right ([Char|Right], Left, Line) :-
+    put_chars (Char),
+    find_word_right (Right, [Char|Left], Line).
+
+
+find_end_of_word ([Char|Right], Left, Line) :-
+    alphanumeric (Char), !,
+    put_chars (Char),
+    find_end_of_word (Right, [Char|Left], Line).
+
+find_end_of_word (NewRight, NewLeft, @(left => Left, right => Right)) :-
+    Left  <- NewLeft,
+    Right <- NewRight.
+
+
+
+%%								%%
+%%		Move backward one word				%%
+%%								%%
+
+backward_word ( @(left => []) ) :- !.
+
+backward_word ( Line : @(left => Left, right => Right) ) :-
+    find_word_left (copy_pointer(Left), copy_pointer(Right), Line).
+
+
+find_word_left ([], Right, Line) :-
+    !, find_start_of_word ([], Right, Line).
+
+find_word_left ([Char|Left], Right, Line) :-
+    alphanumeric (Char), !,
+    backspace,
+    find_start_of_word (Left, [Char|Right], Line). 
+
+find_word_left ([Char|Left], Right, Line) :-
+    backspace,
+    find_word_left (Left, [Char|Right], Line).
+
+
+find_start_of_word ([Char|Left], Right, Line) :-
+    alphanumeric (Char), !,
+    backspace,
+    find_start_of_word (Left, [Char|Right], Line).
+
+find_start_of_word (NewLeft, NewRight, @(left => Left, right => Right)) :-
+    Left  <- NewLeft,
+    Right <- NewRight.
+
+
+
+%%								%%
+%%		Get the next line in the history list		%%
+%%								%%
+
+next_line (_, HistoryPtr) :-
+    HistoryPtr = current_line_number, !,
+    bell.
+
+next_line ( Line : @(left => Left, right => Right), HistoryPtr ) :-
+    HistoryPtr + 1 = NewHistoryPtr:current_line_number, !,
+    clear_line (Line),
+    Left  <- [],
+    Right <- [],
+    HistoryPtr <- NewHistoryPtr.
+
+next_line ( Line : @(left => Left, right => Right), HistoryPtr ) :-
+    NextLine = str2psi (strcon
+    	 ("line", int2str(NewHistoryPtr:(HistoryPtr+1)))),
+    ReversedChars = eval(NextLine),
+    clear_line (Line),
+    put_chars (reverse(ReversedChars)),
+    Left  <- ReversedChars,
+    Right <- [],
+    HistoryPtr <- NewHistoryPtr.
+
+
+
+%%								%%
+%%	Get the previous line in the history list		%%
+%%								%%
+
+previous_line (_, HistoryPtr) :-
+    HistoryPtr - 1  <  max (1, current_line_number - history_limit), !,
+    bell.
+
+previous_line ( Line : @(left => Left, right => Right), HistoryPtr ) :-
+    PreviousLine = str2psi (strcon
+    	  ("line", int2str(NewHistoryPtr:(HistoryPtr-1)))),
+    ReversedChars = eval(PreviousLine),
+    clear_line (Line),
+    put_chars (reverse(ReversedChars)),
+    Left  <- ReversedChars,
+    Right <- [],
+    HistoryPtr <- NewHistoryPtr.
+
+
+
+%%								%%
+%%	Get the first line in the history list			%%
+%%								%%
+
+beginning_of_history :-
+    current_line_number = 1, !,
+    bell.
+
+beginning_of_history ( Line : @(left => Left, right  => Right), HistoryPtr ) :-
+    NewHistoryPtr = max (1, current_line_number - history_limit), 
+    FirstLine = str2psi (strcon ("line", int2str(NewHistoryPtr))),
+    ReversedChars = eval(FirstLine),
+    clear_line (Line),
+    put_chars (reverse(ReversedChars)),
+    Left  <- ReversedChars,
+    Right <- [],
+    HistoryPtr <- NewHistoryPtr.
+
+
+
+%%								%%
+%%		Get the last line in the history list		%%
+%%								%%
+
+end_of_history :-
+    current_line_number = 1, !, bell.
+
+end_of_history ( Line : @(left => Left, right  => Right, HistoryPtr) ) :-
+    LastLine = str2psi (strcon
+    	  ("line", int2str(NewHistoryPtr:current_line_number-1))),
+    ReversedChars = eval(LastLine),
+    clear_line (Line),
+    put_chars (reverse(ReversedChars)),
+    Left  <- ReversedChars,
+    Right <- [],
+    HistoryPtr <- NewHistoryPtr.
+
+
+
+%%								%%
+%%	Transpose the two characters before and at the point	%%
+%%								%%
+
+transpose_chars ( @(left => []) ) :-
+    !.
+
+transpose_chars ( @(right => []) ) :-
+    !.
+
+transpose_chars ( @(left  => Left : [Char1|NewLeft],
+                    right => Right : [Char2|NewRight]) ) :-
+    backspace,
+    put_chars (Char2),
+    put_chars (Char1),
+    Left  <- [ Char1, Char2 | NewLeft ],
+    Right <- NewRight.
+
+
+
+%%								%%
+%%		Delete the character before the point		%%
+%%								%%
+
+delete_backward_char ( @(left => []) ) :- !.
+
+delete_backward_char ( @(left => Left:[_|NewLeft], right => Right) ) :-
+    backspace,
+    put_chars (Right),
+    space,
+    backspace,
+    backspace_over (Right),
+    Left  <- NewLeft.
+
+
+
+%%								%%
+%%		Delete the character at the point		%%
+%%								%%
+
+delete_char ( @(right => []) ) :- !.
+
+delete_char ( @(right => Right:[_|NewRight]) ) :-
+    put_chars (NewRight),
+    space,
+    backspace,
+    backspace_over (NewRight),
+    Right <- NewRight.
+
+
+
+%%								%%
+%%		Kill to the end of the line			%%
+%%								%%
+
+kill_line ( @(right => []) ) :- !.
+
+kill_line ( @(right => Right) ) :-
+    blank_out (Right),
+    backspace_over (Right),
+    Right <- [].
+
+
+
+%%								%%
+%%	Kill the entire line both before and after the point    %%
+%%								%%
+
+kill_entire_line ( @(left => [], right => []) ) :- !.
+
+kill_entire_line ( Line : @(left => Left, right  => Right) ) :-
+    clear_line (Line),
+    Left  <- [],
+    Right <- [].
+
+
+
+%%								%%
+%%	Kill forward to the end of the next word		%%
+%%								%%
+
+kill_word ( @(right => []) ) :- !.
+
+kill_word ( Line : @(right => Right) ) :-
+    kill_word_right (copy_pointer(Right), Line).
+
+
+kill_word_right ([], Line) :-
+    !, kill_to_end_of_word ([], Line).
+
+kill_word_right ([Char|Right], Line) :-
+    alphanumeric (Char), !,
+    kill_to_end_of_word (Right, Line). 
+
+kill_word_right ([_|Right], Line) :-
+    kill_word_right (Right, Line).
+
+
+kill_to_end_of_word ([Char|Right], Line) :-
+    alphanumeric (Char), !,
+    kill_to_end_of_word (Right, Line).
+
+kill_to_end_of_word (NewRight, Line : @(right => Right)) :-
+    overwrite (Right, NewRight),
+    backspace_over (NewRight),
+    Right <- NewRight.
+
+
+
+%%								%%
+%%	Kill back to the beginning of the previous word		%%
+%%								%%
+
+backward_kill_word ( @(left => []) ) :- !.
+
+backward_kill_word ( Line : @(left => Left, right => Right) ) :-
+    kill_word_left (copy_pointer(Left), copy_pointer(Right), Line).
+
+
+kill_word_left ([], OldRight, Line) :-
+    !, kill_to_start_of_word ([], OldRight, Line).
+
+kill_word_left ([Char|Left], OldRight, Line) :-
+    alphanumeric (Char), !,
+    backspace,
+    kill_to_start_of_word (Left, [Char|OldRight], Line). 
+
+kill_word_left ([Char|Left], OldRight, Line) :-
+    backspace,
+    kill_word_left (Left, [Char|OldRight], Line).
+
+
+kill_to_start_of_word ([Char|Left], OldRight, Line) :-
+    alphanumeric (Char), !,
+    backspace,
+    kill_to_start_of_word (Left, [Char|OldRight], Line).
+
+kill_to_start_of_word (NewLeft, OldRight, @(left => Left, right => Right)) :-
+    overwrite (OldRight, Right),
+    backspace_over (Right),
+    Left <- NewLeft.
+
+
+
+%%								%%
+%%	Rewrite the line					%%
+%%	(useful after unwelcome garbage collection messages!)	%%
+%%								%%
+
+rewrite_line ( @(left => Left, right => Right, prompt => Prompt) ) :-
+    carriage_return,
+    write (Prompt),
+    put_chars (join(Left,Right)),
+    backspace_over (Right).
+
+
+
+%%								%%
+%%	Give a brief description of the next key		%%
+%%								%%
+
+describe_key_briefly (Line) :-
+    get_key_or_xevent (Key, XEvent),
+    (
+      XEvent, nl, setq(xeventflag, true)
+    ;
+      get_function_bound_to_key (Key, global_map, Function),
+       (
+         Function = undefined_key,
+         undefined_key (Line, self => Key)
+       ;
+         Function = ignore_key,
+         nl, write (key2name(Key), " is ignored in line edit mode"), nl,
+         rewrite_line (Line)
+       ;
+         nl, write (key2name(Key), " runs the command ", Function), nl,
+         rewrite_line (Line)
+       )
+    ), !.
+
+
+
+%%								%%
+%%	Leave the shell and return to Wild_LIFE			%%
+%%								%%
+
+interrupt :- cond (in_raw, end_raw),
+    setq (aborthook, abort),
+    abort.
+
+
+
+%%								%%
+%%	Leave the shell and Wild_LIFE, after writing the history%%
+%%								%%
+
+quit :-	cond (in_raw, end_raw),
+    write_history,
+    halt.
+
+
+
+%%								%%
+%%	Output error message if undefined key has been typed	%%
+%%								%%
+
+undefined_key (Line, self => Key) :-
+        nl, write (key2name(Key), " is not defined"), nl, bell,
+        rewrite_line (Line).
+
+
+
+%%								%%
+%%	Ignore the character.					%%
+%%	Write an error message					%%
+%%								%%
+
+ignore_key.
+
+bad_key (self => Key) :-
+    nl, write("Oops! Got a bad key ", Key), nl.
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%			Keymaps and key bindings
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+read_keymap_file :-
+    keymap_flag = false,
+    exists_file (F:".life-keymap"), !,
+    load (F),
+    write ("**** Read keymap file .life-keymap"), nl,
+    setq (keymap_flag, true).
+
+read_keymap_file.
+
+
+
+is_keymap (global_map).
+is_keymap (esc_map).
+is_keymap (esclsb_map).
+is_keymap (help_map).
+
+
+
+global_set_key (Keyname, Function) :-
+    define_key (global_map, Keyname, Function).
+
+define_key (Keymap, Keyname, Function) :-
+    is_keymap (Keymap), !,
+    [Key | _] = name2asc (Keyname),
+    KeymapEntry = str2psi (strcon (psi2str(Keymap), int2str(Key))),
+    dynamic (KeymapEntry),
+    setq (KeymapEntry, Function).
+
+define_key (Keymap) :-
+    nl, write (Keymap," is not a known keymap"), nl.
+
+
+
+get_function_bound_to_key (Char:int, Map, Function) :-
+    KeymapEntry = str2psi (strcon (psi2str(Map), int2str(Char))),
+    Func = eval (KeymapEntry),
+    (
+      is_defined (Func), Function = Func
+    ;
+      Function = undefined_key 
+    ), !.
+
+get_function_bound_to_key ([], _, undefined_key) :- !.
+
+get_function_bound_to_key ([Char|Rest], Map, Function) :-
+    KeymapEntry = str2psi (strcon (psi2str(Map), int2str(Char))),
+    Func = eval (KeymapEntry),
+    (
+      is_keymap (Func), get_function_bound_to_key (Rest, Func, Function)
+    ;
+      is_defined (Func), Function = Func
+    ;
+      Function = undefined_key 
+    ), !.
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%		The history file
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+read_history_file :-
+    history_flag = false,
+    exists_file (File : history_file), !,
+    open_in (File, Stream),
+    read_history_lines,
+    close (Stream),
+    write ("**** Read history file ", File), nl,
+    setq (history_flag, true).
+
+read_history_file.
+
+
+read_history_lines :-
+    get_nonempty_line ([], ReversedChars), !,
+    add_to_history (ReversedChars),
+    setq (current_line_number, current_line_number+1),
+    read_history_lines.
+read_history_lines.
+
+get_nonempty_line (ReversedChars,L) :-
+    get (Char),
+    cond (is_eol_char (Char),
+          get_nonempty_line ([],L),
+          cond (is_white_char (Char),
+ 		get_nonempty_line ([Char|ReversedChars], L),
+    	        get_line ([Char|ReversedChars], L)
+               )
+         ).
+
+get_line (ReversedChars,L) :-
+    get (Char),
+    cond (is_eol_char (Char),
+          L = ReversedChars,
+          get_line ([Char|ReversedChars], L)).
+
+add_to_history (ReversedChars) :-
+    CurrentLine = str2psi (strcon ("line", int2str(current_line_number))),
+    setq (CurrentLine, ReversedChars).
+
+
+
+write_history :-
+    CurrentLine:current_line_number > 1, !,
+    open_out (File : history_file, Stream),
+    StartOfHistory = max (1, CurrentLine - history_limit),
+    write_history_lines (StartOfHistory, CurrentLine),
+    close (Stream),
+    setq (history_flag, true),
+    write ("**** Wrote history list to file ", File), nl.
+write_history.
+
+write_history_lines (N,N) :- !.
+write_history_lines (M,N) :-
+    LineM = str2psi (strcon ("line", int2str(M))),
+    ReversedChars = eval(LineM),
+    write (revchars2str(ReversedChars)),
+    nl,
+    write_history_lines (M+1,N).
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%	Initializing routines and global setq variables
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+dynamic (history_limit, history_file) ?
+
+dynamic (history_flag, keymap_flag, current_line_number, current_line,
+         line, history_ptr) ?
+
+
+non_strict (not_set) ?
+not_set (X) -> not (is_function(X)).
+
+
+initialize_variables :-
+    cond (not_set(history_limit),       `setq (history_limit, 100)),
+    cond (not_set(history_file),        `setq (history_file, ".life-history")),
+    cond (not_set(history_flag),        `setq (history_flag,  false)),
+    cond (not_set(keymap_flag),         `setq (keymap_flag,   false)),
+    cond (not_set(current_line_number), `setq (current_line_number, 1)),
+    setq (xeventflag, false),
+    setq (line, @),
+    setq (history_ptr, 1),
+    setq (trace_status, false),
+    setq (step_status, false),
+    setq (aborthook, shell2).
+
+dynamic (shell_query) ?
+shell_query.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%			Auxiliary routines
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%								%%
+%%		Tests on single ascii codes			%%
+%%								%%
+
+return_key (10) :- !.
+return_key (13).
+
+is_eol_char (10)          -> true.
+is_eol_char (end_of_file) -> true.
+is_eol_char (_)		  -> false.
+
+is_white_char (9)  -> true.
+is_white_char (32) -> true.
+is_white_char (_)  -> false.
+
+alphanumeric (X) :- X >= 48, X =< 57, !.
+alphanumeric (X) :- X >= 65, X =< 90, !.
+alphanumeric (X) :- X >= 97, X =< 122.
+
+ctl_char (X)    :- X < 32.
+single_char (X) :- X < 127.
+meta_char (X)   :- X > 127.
+
+prefix_char (27) :- !.
+prefix_char (8).
+
+
+
+%%								%%
+%%		Tests on lists of ascii codes			%%
+%%								%%
+
+is_empty ([])      -> true.
+is_empty ([9 |Xs]) -> is_empty (Xs).
+is_empty ([32|Xs]) -> is_empty (Xs).
+is_empty (_)       -> false.
+
+is_dot ([9 |Xs]) -> is_dot (Xs).
+is_dot ([32|Xs]) -> is_dot (Xs).
+is_dot ([46|Xs]) -> is_empty (Xs).
+is_dot (_)	 -> false.
+
+is_semicolon ([9 |Xs]) -> is_semicolon (Xs).
+is_semicolon ([32|Xs]) -> is_semicolon (Xs).
+is_semicolon ([59|Xs]) -> is_empty (Xs).
+is_semicolon (_)       -> false.
+
+prefix_key ([91,27]).
+
+
+
+
+%	Convert a line to a list of reversed ascii codes
+
+
+line2revchars (Line : @(left => Left, right => Right)) ->
+    join (Right,Left).
+
+
+
+%	Convert a list of ascii codes to a string
+
+
+revchars2str (ReversedChars)	   -> rc2s (ReversedChars,"").
+rc2s ([], String)		   -> String.
+rc2s ([Char|ReversedChars], String) ->
+    rc2s (ReversedChars, strcon (chr(Char), String)).
+
+
+%	Convert a list of ascii codes to their names as a 
+%	  single string
+
+key2name (X:int)    -> asc2name(X).
+key2name ([])       -> "".
+key2name ([X])      -> asc2name(X).
+key2name ([X|Rest]) -> strcon (strcon(asc2name(X), " "), key2name(Rest)).
+
+asc2name (0)   -> "NUL".
+asc2name (9)   -> "TAB".
+asc2name (10)  -> "RET".
+asc2name (13)  -> "RET".
+asc2name (27)  -> "ESC".
+asc2name (32)  -> "SPC".
+asc2name (127) -> "DEL".
+asc2name (X)   ->
+    cond (X < 26,
+    	strcon ("C-", asc2name(X+96)),
+    	cond (X < 32,
+    		strcon ("C-", asc2name(X+64)),
+    		cond (X > 127,
+    			strcon ("ESC ", asc2name(X-128)), chr(X)))).
+
+
+
+%	Convert ascii code names to the corresponding codes
+
+name2asc (Name) -> n2a (explode(Name)).
+
+n2a ([])              -> [].
+n2a (["\" | Rest])    -> bs_seq2asc(Rest).
+n2a ([Letter | Rest]) -> [asc(Letter) | n2a(Rest)].
+
+bs_seq2asc (["b" | Rest])         -> [8 | n2a(Rest)].
+bs_seq2asc (["t" | Rest])         -> [9 | n2a(Rest)].
+bs_seq2asc (["n" | Rest])         -> [10 | n2a(Rest)].
+bs_seq2asc (["f" | Rest])         -> [12 | n2a(Rest)].
+bs_seq2asc (["r" | Rest])         -> [13 | n2a(Rest)].
+bs_seq2asc (["\" | Rest])	  -> [92 | n2a(Rest)].
+bs_seq2asc (["e" | Rest])         -> esc2asc(Rest).
+bs_seq2asc (["C" | ["-" | Rest]]) -> ctl2asc(Rest).
+bs_seq2asc (["M" | ["-" | Rest]]) -> meta2asc(Rest).
+bs_seq2asc (Rest)		  -> [92 | n2a(Rest)].
+
+ctl2asc ([Letter | Rest]) ->
+    cond (64 < A:asc(Letter) and A < 96,
+    	[A-64 | n2a(Rest)],
+    	cond (95 < A and A < 123,
+    		[A-96 | n2a(Rest)],
+    		n2a(Rest))).    	
+
+
+
+
+%	The prompt
+
+
+prompt (0) -> ">> ".
+prompt (N) -> strcon (strcon (dashes(N), int2str(N)), ">> ").
+
+dashes (0) -> "".
+dashes (N) -> strcon (dashes(N-1), "--").
+
+
+
+%	Output routines
+
+
+bell		:- put_raw (7).
+backspace	:- put_raw (8).
+carriage_return :- put_raw (13).
+space		:- put_raw (32).
+
+
+put_chars (X:int) :-
+    !, cond (X =:= 9, put_raw (32), put_raw(X)).
+put_chars ([]) :-
+    !.
+put_chars ([X|T]) :-
+    cond (X =:= 9, put_raw (32), put_raw(X)),
+    put_chars (T).
+
+    
+blank_out ([]) :- !.
+blank_out ([_|T]) :-
+    put_raw (32),
+    blank_out (T).
+
+
+backspace_over ([]) :- !.
+backspace_over ([_|T]) :-
+    put_raw (8),
+    backspace_over (T).
+
+
+clear_line ( @(left => Left, right => Right, prompt => Prompt) ) :-
+    backspace_over (Left),
+    blank_out (Left),
+    blank_out (Right),
+    carriage_return,
+    write (Prompt).
+
+
+overwrite ([],L) :-
+    !, put_chars (L).
+overwrite (L:[_|_],[]) :-
+    !, blank_out (L), backspace_over (L).
+overwrite ([_|T1],[H|T2]) :-
+    put_chars (H), overwrite (T1,T2).
+
+
+
+%	Miscellaneous
+
+
+last (X:int) -> X.
+last ([X])   -> X.
+last ([_|L]) -> last(L).
+
+join ([], Ys)     -> Ys.
+join ([X|Xs], Ys) -> join (Xs, [X|Ys]).
+
+non_strict (is_defined)?
+is_defined (X) :- is_function(X) or is_predicate(X).
+
+reverse ([])     -> [].
+reverse (L:list) -> rev (L,acc => []).
+
+rev ([],    acc => L:list) -> L.
+rev ([H|T], acc => L:list) -> rev (T,acc => [H|L]).
+
+explode (S:string) -> expl (S,strlen(S)).
+
+expl ("",int) -> [].
+expl (S,L)    -> [substr(S,1,1) | expl(substr(S,2,L1:(L-1)),L1)].
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%			Default Key Bindings
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+global_map0	-> bad_key.			%% C-` (NUL)
+global_map1	-> beginning_of_line.		%% C-a
+global_map2	-> backward_char.		%% C-b
+global_map3	-> ignore_key.			%% C-c
+global_map4	-> delete_char.			%% C-d
+global_map5	-> end_of_line.			%% C-e
+global_map6	-> forward_char.		%% C-f
+global_map7	-> undefined_key.		%% C-g
+global_map8	-> help_map.			%% C-h
+global_map9	-> self_insert_command.		%% C-i (TAB)
+global_map10	-> eval_line.			%% C-j (LF)
+global_map11	-> kill_line.			%% C-k
+global_map12	-> rewrite_line.		%% C-l
+global_map13	-> eval_line.			%% C-m (CR)
+global_map14	-> next_line.			%% C-n
+global_map15	-> undefined_key.		%% C-o
+global_map16	-> previous_line.		%% C-p
+global_map17	-> undefined_key.		%% C-q
+global_map18	-> undefined_key.		%% C-r
+global_map19	-> undefined_key.		%% C-s
+global_map20	-> transpose_chars.		%% C-t
+global_map21	-> undefined_key.		%% C-u
+global_map22	-> undefined_key.		%% C-v
+global_map23	-> kill_entire_line.		%% C-w
+global_map24	-> undefined_key.		%% C-x
+global_map25	-> undefined_key.		%% C-y
+global_map26	-> undefined_key.		%% C-z
+global_map27	-> esc_map.			%% C-[ (ESC)
+global_map28	-> undefined_key.		%% C-\ (not caught)
+global_map29	-> undefined_key.		%% C-]
+global_map30	-> undefined_key.		%% C-^
+global_map31	-> undefined_key.		%% C-_
+global_map32	-> self_insert_command.		%% SPC
+global_map33	-> self_insert_command.		%% !
+global_map34	-> self_insert_command.		%% "
+global_map35	-> self_insert_command.		%% #
+global_map36	-> self_insert_command.		%% $
+global_map37	-> self_insert_command.		%% %
+global_map38	-> self_insert_command.		%% &
+global_map39	-> self_insert_command.		%% '
+global_map40	-> self_insert_command.		%% (
+global_map41	-> self_insert_command.		%% )
+global_map42	-> self_insert_command.		%% *
+global_map43	-> self_insert_command.		%% +
+global_map44	-> self_insert_command.		%% ,
+global_map45	-> self_insert_command.		%% -
+global_map46	-> self_insert_command.		%% .
+global_map47	-> self_insert_command.		%% /
+global_map48	-> self_insert_command.		%% 0
+global_map49	-> self_insert_command.		%% 1
+global_map50	-> self_insert_command.		%% 2
+global_map51	-> self_insert_command.		%% 3
+global_map52	-> self_insert_command.		%% 4
+global_map53	-> self_insert_command.		%% 5
+global_map54	-> self_insert_command.		%% 6
+global_map55	-> self_insert_command.		%% 7
+global_map56	-> self_insert_command.		%% 8
+global_map57	-> self_insert_command.		%% 9
+global_map58	-> self_insert_command.		%% :
+global_map59	-> self_insert_command.		%% ;
+global_map60	-> self_insert_command.		%% <
+global_map61	-> self_insert_command.		%% =
+global_map62	-> self_insert_command.		%% >
+global_map63	-> self_insert_command.		%% ?
+global_map64	-> self_insert_command.		%% @
+global_map65 	-> self_insert_command.		%% A
+global_map66	-> self_insert_command.		%% B
+global_map67	-> self_insert_command.		%% C
+global_map68	-> self_insert_command.		%% D
+global_map69	-> self_insert_command.		%% E
+global_map70	-> self_insert_command.		%% F
+global_map71	-> self_insert_command.		%% G
+global_map72	-> self_insert_command.		%% H
+global_map73	-> self_insert_command.		%% I
+global_map74	-> self_insert_command.		%% J
+global_map75	-> self_insert_command.		%% K
+global_map76	-> self_insert_command.		%% L
+global_map77	-> self_insert_command.		%% M
+global_map78	-> self_insert_command.		%% N
+global_map79	-> self_insert_command.		%% O
+global_map80	-> self_insert_command.		%% P
+global_map81	-> self_insert_command.		%% Q
+global_map82	-> self_insert_command.		%% R
+global_map83	-> self_insert_command.		%% S
+global_map84	-> self_insert_command.		%% T
+global_map85	-> self_insert_command.		%% U
+global_map86	-> self_insert_command.		%% V
+global_map87	-> self_insert_command.		%% W
+global_map88	-> self_insert_command.		%% X
+global_map89	-> self_insert_command.		%% Y
+global_map90	-> self_insert_command.		%% Z
+global_map91	-> self_insert_command.		%% [
+global_map92	-> self_insert_command.		%% \
+global_map93	-> self_insert_command.		%% ]
+global_map94	-> self_insert_command.		%% ^
+global_map95	-> self_insert_command.		%% _
+global_map96	-> self_insert_command.		%% `
+global_map97	-> self_insert_command.		%% a
+global_map98	-> self_insert_command.		%% b
+global_map99	-> self_insert_command.		%% c
+global_map100	-> self_insert_command.		%% d
+global_map101	-> self_insert_command.		%% e
+global_map102	-> self_insert_command.		%% f
+global_map103	-> self_insert_command.		%% g
+global_map104	-> self_insert_command.		%% h
+global_map105	-> self_insert_command.		%% i
+global_map106	-> self_insert_command.		%% j
+global_map107	-> self_insert_command.		%% k
+global_map108	-> self_insert_command.		%% l
+global_map109	-> self_insert_command.		%% m
+global_map110	-> self_insert_command.		%% n
+global_map111	-> self_insert_command.		%% o
+global_map112	-> self_insert_command.		%% p
+global_map113	-> self_insert_command.		%% q
+global_map114	-> self_insert_command.		%% r
+global_map115	-> self_insert_command.		%% s
+global_map116	-> self_insert_command.		%% t
+global_map117	-> self_insert_command.		%% u
+global_map118	-> self_insert_command.		%% v
+global_map119	-> self_insert_command.		%% w
+global_map120	-> self_insert_command.		%% x
+global_map121	-> self_insert_command.		%% y
+global_map122	-> self_insert_command.		%% z
+global_map123	-> self_insert_command.		%% {
+global_map124	-> self_insert_command.		%% |
+global_map125	-> self_insert_command.		%% }
+global_map126	-> self_insert_command.		%% ~
+global_map127	-> delete_backward_char.	%% DEL
+
+
+esc_map60	-> beginning_of_history.	%% ESC <
+esc_map62	-> end_of_history.		%% ESC >
+esc_map66	-> backward_word.		%% ESC B
+esc_map68	-> kill_word.			%% ESC D
+esc_map70	-> forward_word.		%% ESC F
+esc_map91	-> esclsb_map.			%% ESC [
+esc_map98	-> backward_word.		%% ESC b
+esc_map100	-> kill_word.			%% ESC d
+esc_map102	-> forward_word.		%% ESC f
+esc_map127	-> backward_kill_word.		%% ESC DEL
+
+
+esclsb_map65	-> previous_line.		%% ESC [ A (up arrow)
+esclsb_map66	-> next_line.			%% ESC [ B (down arrow)
+esclsb_map67	-> forward_char.		%% ESC [ C (right arrow)
+esclsb_map68	-> backward_char.		%% ESC [ D (left arrow)
+
+
+help_map67	-> describe_key_briefly.
+help_map99	-> describe_key_briefly.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% return to user module
+
+
+module("user") ?
+open("shell") ?
+open("accumulators") ?

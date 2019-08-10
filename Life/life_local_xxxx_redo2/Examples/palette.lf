@@ -1,0 +1,143 @@
+% Copyright 1994 Digital Equipment Corporation
+% All Rights Reserved
+
+% X toolkit example: tool to compose a color.
+
+module("palette") ?
+
+public(palette) ?
+import("xtools","io") ?
+
+persistent(palette_panel) ?
+global(end) ?
+
+
+
+color_text <| text_field_button.
+:: color_text(text => "255",
+	      offset => -2,
+	      h_space => 4).
+
+
+color_slider <| v_slider.
+:: color_slider(min => 0,max => 255).
+
+interface :-
+
+	(Sred,Sgreen,Sblue) = @,
+	
+	palette_panel <<-
+	panel(title => "Palette") containing
+	
+	(
+	    slide_bar(width => 100,height => 100,
+		      window => W,color_id => blanc)
+	    c_above
+
+	    v_box(5)
+
+	    c_above
+
+	    push_button(width => 100,
+			text => "quit",
+			action => stop_palette,
+			text_color_id => rouge)
+	)
+
+	t_left_of h_box(5) c_left_of 
+	
+	(
+	    (
+		v_slide_bar(height => 100) containing
+		Sred:color_slider(value => Red,
+				  action => set_color(Red,W,Tred,
+						      Red,Green,Blue)
+				 )
+	    )
+	    c_above v_box(3) c_above 
+	    Tred:color_text(action => set_slider(Red,
+						 Tred,Sred,W,
+						 Red,Green,Blue)
+			   )
+	    c_above
+	    text_box(text => "red")
+	)
+
+	c_left_of %% h_box(3) c_left_of
+	(
+	    (
+		v_slide_bar(height => 100) containing 
+		Sgreen:color_slider(value => Green,
+			     action => set_color(Green,W,Tgreen,
+						 Red,Green,Blue)
+			    )
+            )
+	    c_above v_box(3) c_above 
+	    Tgreen:color_text(action => set_slider(Green,
+					    Tgreen,Sgreen,W,
+					    Red,Green,Blue))
+	    c_above
+	    text_box(text => "green")
+	)
+
+	c_left_of %% h_box(3) c_left_of
+	(
+	    (
+		v_slide_bar(height => 100) containing
+		Sblue:color_slider(value => Blue,
+			     action => set_color(Blue,W,Tblue,
+						 Red,Green,Blue)
+			    )
+	    )
+	    c_above v_box(3) c_above 
+	    Tblue:color_text(action => set_slider(Blue,
+					    Tblue,Sblue,W,
+					    Red,Green,Blue))
+	    c_above
+	    text_box(text => "blue")
+	).
+
+
+def_color(main_colors,blanc,white) ?
+def_color(main_colors,rouge,red) ?
+
+set_color(Color,W,T,Red,Green,Blue) :-
+	set_color2(W,Red,Green,Blue),
+	set_text(Color,T). 
+
+set_slider(Color,@(text => T),Slider:@(max => Max,min => Min),W,
+	   Red,Green,Blue) :-
+	Y = parse(T),
+	cond( Y :< real,
+	    cond( Y >= Min and Y =< Max,
+		  (
+		      move_slider(Slider,Y),
+		      set_color2(W,Red,Green,Blue)
+		  )		      
+	    )
+	).
+
+set_text(Color,T:@(text => Text)) :-
+	Text <<- int2str(floor(Color)),
+	refresh_look(T).
+
+set_color2(W,Red,Green,Blue) :-
+	C = new_color(floor(Red),floor(Green),floor(Blue)),
+	xSetWindowColor(W,C),
+	xFreeColor(W,C).
+
+stop_palette :-
+	set_choice(end),
+	fail.
+
+
+interface ?
+
+palette :-
+	( end = get_choice,
+	  create_box(copy_term(palette_panel))
+	;
+	  succeed
+	).
+
+

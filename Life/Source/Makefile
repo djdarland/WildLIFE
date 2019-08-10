@@ -12,7 +12,7 @@ DEFS 		= -DREV401PLUS=1
 RANLIB		= ranlib
 INSTALL		= /usr/bin/install -c
 MKDIRHIER	= mkdirhier
-prefix		= ~/life_local
+prefix		= ~/life_local_redo
 exec_prefix	= ${prefix}
 bindir		= ${exec_prefix}/bin
 libdir		= ${prefix}/lib/life

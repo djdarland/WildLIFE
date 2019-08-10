@@ -1,8 +1,8 @@
-if test -f ~/life_local
+if test -f ~/life_local_redo
 then
-    rm -r ~/life_local
+    rm -r ~/life_local_redo
 fi
-cp -r ../life_local ~
+cp -r ../life_local_redo ~
 if test -f ~/life_local_xxxx
 then
     rm -r ~/life_local_xxxx

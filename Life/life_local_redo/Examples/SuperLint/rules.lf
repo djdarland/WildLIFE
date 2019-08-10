@@ -1,0 +1,599 @@
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%
+%                    A SMALL SET OF RULES FOR SUPERLINT
+%                    ----------------------------------
+%
+%  
+%
+%  Last modification : March 4th 1994 
+%
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%
+%  (C) Digital Equipment Corporation 1993 - 1994  
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+
+
+
+%
+% ------------------------------------------------------------------------------
+%
+% The rule 'variable_length" applies a metric test to the identifiers declared 
+% as local variables in a block : such an identifier must have a length greater
+% than or equal to the square root of the size of the block (in lines) in which 
+% it is defined. This rule insures that local variables of long blocks will have
+% long enough and wishfully explicit enough names.
+% This is one of the first rules proposed by Bill McKeeman who initiated the
+% SuperLint project.
+%
+% ------------------------------------------------------------------------------
+%
+
+variable_length(Declaration, declaration) :->
+{
+  entry_test(parse_mode == prefix
+             && Declaration == local_declaration),
+  Block = Declaration.scope,
+  LeftBrace = Block.left_brace,
+  RightBrace = Block.right_brace,
+  if(LeftBrace.file <> RightBrace.file) then
+    error_msg("Braces around a block must be in the same file",
+	      RightBrace)
+  else {
+    if(strlen(Declaration.name.id) =< sqrt(RightBrace.line - LeftBrace.line)) then
+      error_msg("Variable name is too short", Declaration.name)
+  }
+}.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+% The rule 'extern_in_c_file' insures that there is no extern declaration in
+% a '.c' file. Such declarations should only figure in '.h' files.
+%
+% ------------------------------------------------------------------------------
+%
+
+extern_in_c_file(Declaration, declaration) :->
+{
+  entry_test(parse_mode == prefix
+             && Declaration == external_declaration),
+  if(Declaration.type.store_class == extern
+     && file_extension(Declaration.name.file) == "c") then
+    error_msg("No declaration in a .c file accessed out of the .c file",
+	      Declaration.name)
+}.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+% The rule 'block_alignment' tests for the indentation of 'if', 'while' and
+% 'for' statements when bodies of these instructions are blocks.
+% The open brace must be separated by one blank space from the closing
+% parenthesis of the condition (or from the 'else' keyword) and the
+% closing brace must be on the same row that the corresponding keyword ('if',
+% 'else', 'while' or 'for').
+% It uses an auxiliary procedure : 'test_alignment'.
+%
+% ------------------------------------------------------------------------------
+%
+
+block_alignment(Instruction, alignment) :->
+{
+  entry_test(parse_mode == prefix
+             && is_not_token(Instruction)
+             && (
+                 Instruction == (if)
+                 || Instruction == while
+                 || Instruction == for
+                )
+             ),
+  switch(Instruction, 
+    {
+      case({while, for},
+        {
+          KeyWord = Instruction.keyword,
+	  Body = Instruction.body,
+	  if(Body == block) then
+            test_alignment(KeyWord, Body)
+	}
+      ),
+      case((if), 
+        {
+	  IfKeyWord = Instruction.keyword,
+	  ThenBody = Instruction.then_body,
+	  if(ThenBody == block) then
+	    test_alignment(IfKeyWord, ThenBody),
+          ElseBody = Instruction.else_body,
+          if(ElseBody <> nothing) then {
+	    ElseKeyWord = Instruction.else_keyword,
+            if(ElseBody == block) then
+	      test_alignment(ElseKeyWord, ElseBody)
+          }
+        }
+      )
+    }
+  )
+}.
+
+
+procedure test_alignment(KeyWord, Block) :->
+{
+  LeftBrace = Block.left_brace,
+  RightBrace = Block.right_brace,
+  if(LeftBrace.white_spaces <> " ") then
+    error_msg("There must be one space between brace and condition",
+	      LeftBrace),
+  if(RightBrace.column <> KeyWord.column) then
+    error_msg("Brace must be aligned with first character of instruction",
+              RightBrace)
+}.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+% The rule 'nested_typedef' checks that there is no type definition where two
+% levels of nested parentheses appear.
+%
+% ------------------------------------------------------------------------------
+%
+
+
+nested_typedef(TypeDefinition, type_definition) :->
+{
+  entry_test(parse_mode == prefix
+             && TypeDefinition == type_definition),
+  Type = TypeDefinition.type,
+  if(Type == protected_type && Type.type == protected_type) then
+    error_msg("Only one level of nested parentheses allowed around type definitions", 
+              TypeDefinition.name)
+}.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+% This rule is the same that the previous one, except that the parentheses must
+% be contiguously nested.
+%
+% ------------------------------------------------------------------------------
+%
+
+contiguous_nested_typedef(TypeDefinition, type_definition) :->
+{
+  entry_test(parse_mode == prefix
+             && TypeDefinition == type_definition),
+  Type = TypeDefinition.type,
+  if(Type == protected_type 
+     && Type.type == protected_type
+     && Type.left_parenthesis.next == "(") then
+    error_msg("Only one level of contiguous nested parentheses allowed around type definitions", 
+    TypeDefinition.name)
+}.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+% The rule 'assignment_style' checks that all operators are preceded and
+% followed by a single space.
+%
+% ------------------------------------------------------------------------------
+%
+
+assignment_style(Operator, operator) :->
+{
+  entry_test(parse_mode == prefix
+             && is_assignment_operator(Operator)),
+  if(Operator.white_spaces <> " "
+     || Operator.next.white_spaces <> " ") then
+    error_msg("Assignment operators must be preceded and followed by a single space",
+	      Operator)
+}.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+% The rule 'adjacent_operators' checks that two adjacent operators are
+% separated by blank spaces.
+%
+% ------------------------------------------------------------------------------
+%
+
+adjacent_operators(Operator, operator) :->
+{
+  entry_test(parse_mode == prefix
+             && is_operator(Operator) && is_token(Operator)),
+  if(is_operator(Operator.previous) && Operator.white_spaces == "") then
+    error_msg("Two operators cannot be adjacent",
+	      Operator)
+}.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+%  Checking for uninitialized variables :
+%  --------------------------------------
+%
+%  When an identifier is found we first check if it is a local variable (for
+%  global variables we must consider the order of the function calls and the
+%  aliases, which leads to a much more complex analysis). Here a variable is
+%  considered initialized when it figures in the left of an assignment 
+%  expression in the current scope.
+%  We mark an initialized variable by adding a feature 'init' to its local
+%  declaration (if the 'initialization' feature is 'nothing').
+%  There are two special cases for 'if' and the iteration instructions :
+%
+%  - 'if' : two features are added (for the case of an if...then...else) :
+%    'then_init_variables' and 'else_init_variables' which contain as features
+%    the names of the variables initialized in the corresponding body.
+%    When the instruction is checked in postfix parse, theses fields have been
+%    set by calls to 'set_initialized_variable' and then their intersection is
+%    computed. The result, if nonempty, is a list of variables which are
+%    then declared initialized and marked in the scope of the 'if' instruction.
+%    I haven't yet implemented this for the switch statement, since I haven't
+%    got the time to do it...
+%
+%  - iteration instructions : there's only one feature 'init_variables' added
+%    which contains the names of the variables initialized in the body of the
+%    loop. They are not propagated, since we don't know if the loop will
+%    be always executed.
+%
+%
+% ------------------------------------------------------------------------------
+%
+
+
+uninitialized_variable(Expression, semantics) :->
+{
+  entry_test(is_expression(Expression)),
+  Mode = Expression.mode,
+  if(parse_mode == prefix) then
+    switch(Mode, {
+      case(special, {
+        if(Expression.operator == "?") then {
+          verify_init(Expression.condition),
+          verify_init(Expression.then),
+          verify_init(Expression.else)
+        } else { 
+          if(Expression == protected_expression) then
+            verify_init(Expression.expression)
+          else { 
+            if(Expression == function_call) then {
+              verify_init(Expression.call),
+              verify_init_args(Expression.arguments.first_argument)
+            } else {
+              if(Expression == array_reference) then {
+                verify_init(Expression.array),
+                verify_init(Expression.index)
+              }
+              else  % it's a cast
+                verify_init(Expression.expression)
+            }
+          }
+        }
+      }),
+      case(infix, {
+        BaseExpression = base_expression(Expression.left_expression),
+        if(Expression.operator == "="
+           && BaseExpression == identifier) 
+        then
+          set_feature(uninit_marked, true, BaseExpression)
+          %%% The variable is being assigned, we must mark it, thus
+          %%% discarding all initialization checkings when it will
+          %%% be tested (don't forget that the procedure parse_tree
+          %%% recursively tests all the nodes, so when this rule will
+          %%% be completed the left expression of the assignment node
+          %%% (i.e. this variable) will be checked).
+        else
+          verify_init(Expression.left_expression),
+        verify_init(Expression.right_expression)
+      }),
+      case({prefix, postfix},
+        verify_init(Expression.expression)
+      )
+    }),
+  if(parse_mode == postfix
+     && Mode == infix
+     && Expression.operator == "=") then {
+    BaseExpression = base_expression(Expression.left_expression),
+    if(BaseExpression == identifier) then {
+      Declaration = declaration_of(BaseExpression.id),
+      if(Declaration == local_declaration) then
+        set_initialized_variable(BaseExpression.id, current_instruction.scope)
+        %%% We must mark this variable since it is initialized in the
+        %%% current scope.
+    }
+  }
+}.
+
+
+procedure verify_init(Identifier) :->
+{
+  if(Identifier == identifier) then {
+    if(has_feature(uninit_marked, Identifier)) then
+      donothing
+    else {
+      Mention = first_mention_of(Identifier.id),
+      %%% This call tests whether the variable has been initialized in
+      %%% the current scope or not.
+      if(Mention == nothing) then
+        error_msg("Variable may be uninitialized", Identifier)
+    }
+  }
+}.
+
+
+procedure verify_init_args(Argument) :->
+{
+  if(Argument <> nothing) then {
+    verify_init(Argument.expression),
+    verify_init_args(Argument.next)
+  }
+}.
+
+
+procedure set_initialized_variable(What, Instruction) :->
+{
+  switch(Instruction, {
+    case(then_body, {
+      Condition = Instruction.instruction,
+      if(has_feature(then_init_variables, Condition)) then
+        donothing
+      else
+        set_feature(then_init_variables, variables, Condition),
+      set_feature(What, init, Condition.then_init_variables)
+    }),
+    case(else_body, {
+      Condition = Instruction.instruction,
+      if(has_feature(else_init_variables, Condition)) then
+        donothing
+      else
+        set_feature(else_init_variables, variables, Condition),
+      set_feature(What, init, Condition.else_init_variables)
+    }),
+    case({for, while, do_while}, {
+      if(has_feature(init_variables, Instruction)) then
+        donothing
+      else
+        set_feature(init_variables, variables, Instruction),
+      set_feature(What, init, Instruction.init_variables)
+    }),
+    case(block, {
+      Declarations = Instruction.block_declarations.local_declarations,
+      if(has_feature(What, Declarations)) then
+        set_feature(init, true, Declarations.What)
+      else
+        set_initialized_variable(What, Instruction.scope)
+    }),
+    case({nothing, function_body},
+      donothing
+    ),
+    default(
+      set_initialized_variable(What, Instruction.scope)
+    )
+  })
+}.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+propagate_init(If, semantics) :->
+{
+  entry_test(If == (if) && is_not_token(If) && parse_mode == postfix),
+  InitVariables = intersect_init_variables(If),
+  set_initialized_variables(InitVariables, If.scope)
+}.
+
+
+procedure set_initialized_variables(InitVariables, Instruction) :->
+{
+  if(InitVariables == []) then
+    donothing
+  else {
+    set_initialized_variable(InitVariables.first_element, Instruction),
+    set_initialized_variables(InitVariables.tail, Instruction)
+  }
+}.
+
+
+function intersect_init_variables(If) :->
+{
+  if(has_feature(then_init_variables, If)) then {
+    if(has_feature(else_init_variables, If)) then
+      return intersection(features_list(If.then_init_variables), 
+                          features_list(If.else_init_variables))
+    else
+      return features_list(If.then_init_variables)
+  } else {
+    if(has_feature(else_init_variables, If)) then
+      return features_list(If.else_init_variables)
+    else
+      return []
+  }
+}.
+
+
+function intersection(List1, List2) :->
+{
+  if(List1 == []) then
+    return []
+  else {
+    V = List1.first_element,
+    Tail = intersection(List1.tail, List2),
+    if(member(V, List2)) then
+      return newlist(V, Tail)
+    else
+      return Tail
+  }
+}.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+%  Utilities functions for the verification of the uninitialized variables
+%
+% ------------------------------------------------------------------------------
+%
+
+
+function base_expression(Expression) :->
+%%%
+%%% Remove useless parentheses in an expression
+%%%
+{
+  if(Expression == protected_expression) then
+    return base_expression(Expression.expression)
+  else
+    return Expression
+}.
+
+
+function is_expression(Node) :->
+{
+  if(has_feature(mode, Node)) then
+    return true
+  else
+    return false
+}.
+
+
+function first_mention_of(What) :->
+%%%
+%%% Returns nothing if 'What' is the name of a local variable which
+%%% has not been initialized within the current scope.
+%%%
+{
+  if(current_block == nothing) then
+    return external
+  else
+    return search_mention_of(What, current_block)
+}.
+
+
+function search_mention_of(What, Instruction) :->
+{
+  switch(Instruction, {
+    case(block, {
+      Declarations = Instruction.block_declarations.local_declarations,
+      if(has_feature(What, Declarations)) then {
+        if(Declarations.What.initialization <> nothing
+           || has_feature(init, Declarations.What)) then
+          return init
+        else
+          return nothing
+      } else
+        return search_mention_of(What, Instruction.scope)
+    }),
+    case(then_body, {
+      Condition = Instruction.instruction,
+      if(has_feature(then_init_variables, Condition)
+         && has_feature(What, Condition.then_init_variables)) then
+        return init
+      else
+        return search_mention_of(What, Condition.scope)
+    }),
+    case(else_body, {
+      Condition = Instruction.instruction,
+      if(has_feature(else_init_variables, Condition)
+         && has_feature(What, Condition.else_init_variables)) then
+        return init
+      else
+        return search_mention_of(What, Condition.scope)
+    }),
+    case({for, while, do_while}, {
+      if(has_feature(init_variables, Instruction)
+         && has_feature(What, Instruction.init_variables)) then
+        return init
+      else
+        return search_mention_of(What, Instruction.scope)
+    }),
+    case({nothing, function_body},
+      return external
+    ),
+    default(
+      search_mention_of(What, Instruction.scope)
+    )
+  })
+}.
+
+
+function declaration_of(What) :->
+%%%
+%%% Returns the 'local_declaration' structure corresponding to 'What'
+%%% if it's the name of a local variable, nothing otherwise.
+%%%
+{
+  if(current_block == nothing) then
+    return nothing
+  else
+    return search_declaration(current_block.block_declarations, What)
+}.
+
+
+function search_declaration(Scope, What) :->
+{
+  if(Scope == block_declarations) then
+    Declarations = Scope.local_declarations
+  else
+    Declarations = nothing,
+  if(Declarations == nothing) then
+    return nothing
+  else {
+    if(has_feature(What, Declarations)) then
+      return Declarations.What
+    else
+      return search_declaration(Scope.parent_declarations, What)
+  }
+}.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+% The main procedure
+%
+% ------------------------------------------------------------------------------
+%
+
+main :->
+ {
+  writeln,
+  writeln("Style checking : "),
+  writeln("----------------"),
+  writeln,
+  scan_tree({operator, type_definition, alignment, 
+             declaration, variable_length}),
+  writeln,
+  writeln("Uninitialized variables : "),
+  writeln("-------------------------"),  
+  writeln,
+  scan_tree(semantics)
+ }.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+
+
+
+

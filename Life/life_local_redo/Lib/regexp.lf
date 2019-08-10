@@ -1,0 +1,31 @@
+% Copyright by Denys Duchier, Dec 1994
+% Simon Fraser University
+% --------------------------------------------------------------------
+%	$Id: regexp.lf,v 1.3 1995/01/24 23:07:21 duchier Exp $
+% --------------------------------------------------------------------
+
+module("regexp")?
+public(re_compile,re_match,re_substr,re_split,re_matching)?
+
+re_compile(S:string) -> sys#regexp_compile(S).
+re_compile(R:regexp) -> R.
+
+X:re_match(R,S) ->
+	cond(has_feature(3,X,M),
+	     sys#regexp_execute(RE:re_compile(R),S,M),
+	     sys#regexp_execute(RE,S)).
+
+re_substr((B,E),S) -> substr(S,B,E-B).
+
+maybe_substr(N,M,B,S) -> true |
+	cond(has_feature(N,M,SN),
+	     cond(has_feature(N,B,BN),
+		  SN=re_substr(BN,S),fail),
+	     succeed).
+
+re_split(R,S,M) :-
+	B=re_match(R,S),
+	F=maybe_substr(2=>M,3=>B,4=>S),
+	F(0),F(1),F(2),F(3),F(4),F(5),F(6),F(7),F(8),F(9).
+
+re_matching(R) -> S:string | re_match(R,S,@).

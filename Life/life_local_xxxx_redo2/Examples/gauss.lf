@@ -1,0 +1,470 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                               %
+%         GAUSS V. 1.1          %   (pre-alpha version, kind of)
+%                               %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Author: Christophe Bonnet
+% (c) Copyright 1992 Digital Equipment Corporation
+% All Rights Reserved
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+% How to use the solver ?
+%
+% First,needless to say, load it. You'll then have to start the solver.
+% In the most current case, at the moment when you start the solver, you
+% want to give it immediately some equations to solve. Here is the
+% way to do it :
+% starter([equation1,equation2...],Channel)?
+%
+%   The "Channel" must be an uninstantiated variable. It will play the
+% role of a constraint queue, the mandatory passage for sending new
+% equations to the solver.
+%   The equations are of any of the form described below, in the
+% normalization module. But don't bother to look through all the code,
+% here is the authorized formulae :
+%      => All formulae contructed with LIFE variables, numbers, and the
+%         "+", "*", "-" and "~" symbols. The three formers have their
+%         natural syntax (i.e. binary, infix, left-associative and the
+%         such) and meaning. Note that they can't be used as unary
+%         operators, although it's a very common usage. The "~" sign is
+%         a representation of the unary minus.
+%      => Two such expressions, each on one side of an equal sign.
+%
+% Note : The former are supposed to be equal to zero. The latter
+% behave in the obvious way.
+%
+% At this point, the reader/user may be puzzled by the fact that a
+% linear equation solver accepts any type of polynomial equations as
+% input. To be honest, the program behave in the following way :
+%  - Even if your equation doesn't look linear, it will try to expand,
+%  reduce and simplify it, in case all high degree terms could be
+%  eliminated.
+%  - If, after all its try, the normalizer can't turn your work into sum
+%  of couples (I mean product) number/variable, it will fail, with a
+%  polite note saying that your entry wasn't linear.
+%
+% I all has worked fine, the solver will treat your equations, and then
+% you'll be back to the usual LIFE environement, with strange values
+% assigned to your previously free variables. Note that (and, I know,
+% that's a pity) these values will be the only output of the solver.
+%
+%  - The "Channel" variable : You don't have to worry about is value. It
+%  should be something like q(@~). The tlda, as any experimented life
+%  user will know, means that a function has residuate on this variable.
+%  Don't worry : It is our solver itself, quietly waiting for you to
+%  give him more equations.
+%  - On the opposite, the values of the variables that has occured in
+%  your equation is of great interest :  There you'll find the value, in
+%  the mathematical sense, of your variable. The psi-term that is
+%  associated with each variable looks like the following :
+%
+%       X : vr(3,val=>[5*Y,-2*Z,765],wlist=>[]) 
+%
+% The sort "vr" for "variable" is just here on programming purpose, as
+% is the identifier (the first field, with value 3 in our exemple).
+% The attribute wlist won't give you very interesting hints either,
+% unless you worry about the conception of th program. The more
+% significant field is, for the user, the "val" field. If the variable
+% has a definite numeric value (deduced from the equation system), it
+% will be stored here, in a one element list ([42], for exemple). Else,
+% it will provide you with a linear function of other variables, which
+% is, in our former example, f(Y,Z)= 5Y - 2Z + 765. This function will
+% automatically be replaced by a more precise one, or eventually a
+% numeric value, when you'll give further information to the solver.
+
+
+%%% feeding the best
+%
+% The "Channel" variable will allow you to give additional equations,
+% that will be solved in the context defined by previous equations (i.e,
+% the partial or definitive values your variables have now). You could
+% do that "by hand", of course, by directly modifying the content of the
+% channel variable, but we won't encourage such a practice. We've made
+% for you two cute functions which theoretically do this job properly.
+% Their syntax is :
+%
+%         feeder(equation,Channel)?
+%         fast_feeder([eq1,eq2,...],Channel)?
+% They work exactly the same way, except that feeder wwill handle a
+% single equation while fast_feeder take a list of equation. Use
+% whichever you want.
+% By the way, you're perfectly free to put new variables in the
+% equations. The counter "varcount" will assure them to have different Id.
+%
+% What else to say ? Well, I think I've told the main points, on the
+% user point of view I mean.  So... enjoy !
+
+
+%            Christophe.
+%
+% PS : I hope you won't mind my spelling. Don't worry, I won't run for
+% Vice-Presidency of the USA :-)
+% By the way, It's quit as bad in my own language. But with a syntax much
+% less fantaisist...
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%
+% changes from 1.0 to 1.1 :
+%
+% - use of genint for numbering the variables.
+% - variables now have a "name" field, which is not used now, but will be..
+
+module("gauss") ?
+public( starter,feeder,fast_feeder,vr,~) ?
+
+
+collector_starter(Q:q(@)) :- @=constraint_collector(Q).
+collector_starter(Q) :- failure_handler(Q).
+
+constraint_collector(Q:q([E|S]))-> Cont | 
+        solve_constraint(E),
+	Q <- q(S),
+	Cont = constraint_collector(Q).
+
+failure_handler(@) :- nl, write("=} I'm sorry, but I'm dying !"),nl,fail.
+
+solve_constraint(gauss(L)) :- solve_eq(L).
+
+non_strict(feeder,fast_feeder,starter)?
+
+feeder(Eq,Q) :- 
+	Cstr=gauss(normalize_and_test(Eq)),
+	Q=q([Cstr|@]).
+
+fast_feeder([],@).
+fast_feeder([E|Tl],Q) :- feeder(E,Q), fast_feeder(Tl,Q).
+
+starter(EqList,Queue) :- 
+	Queue :== @,
+	collector_starter(Queue),
+	fast_feeder(EqList,Queue).
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% NORMALIZING ARBITRARY POLYNOMIAL FORMS
+
+%   Before to give the equations to the solver, we want to normalize them,
+% that is, in our case, translating them to an ordered sum of
+% coefficient*variable products. The somewhat obuscated form of the code below
+% is due to the fact that we want to give the user the freedom of writing ugly
+% things. By "ugly things", I mean any arithmetic expression that we can write
+% using *,- and + (and ~, who is just a convenient symbol for the unary minus
+% --- overloading of the minus sign  bring us a pretty heap of trouble...).
+% It's clear that such expressions won't always be linear, but our politic is
+% to accept any polynomial expression as an input, and throw them away if the
+% normalization module haven't found that they really were nonlinear.
+
+% examples of correct expressions (due to Peter Van Roy), who appeared to
+% be linear after a trip through our normalizer :
+
+% (X+1)*(X-1)-X*X
+
+% X*Y+45*(Y+W+3*(W+Q+23))-Y*X
+
+% (X*X+Y*Y)-(X+Y)*(Y+X)+X*Y*(1+1)
+
+% (A+B+C+D+E+F+G)*(1+2+3+4+3+Z)-Z*(G+F+E+D+C+B+A)
+
+
+% note that expression without equal sign are treated as if there were an "= 0"
+% just behind them. 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+%  The normalize function
+
+op(500,fx,~)?
+
+non_strict(normalize,norm_first_pass,norm_dist,kill_zeroes,non_zero_term)?
+
+normalize(E)-> Expr | 
+        norm_first_pass(E,F),
+	G= norm_dist(F),!,
+	kill_zeroes(G,Expr).
+
+kill_zeroes([],[0]).
+kill_zeroes([A:real],[A]).
+kill_zeroes([A*V|Tl1],[A*V|Tl2]) :- 
+	non_zero_term(A),!,
+	kill_zeroes(Tl1,Tl2).
+kill_zeroes([@|Tl1],Tl2) :-  kill_zeroes(Tl1,Tl2).
+
+
+non_zero_term(0) :- !,fail.
+non_zero_term(real) :- !.
+non_zero_term(A*vr) :- non_zero_term(A).
+
+
+%  normalize_and_test    check if th expression (I mean, the equation)
+%  is of degre 1, i.e that, after simplification, there is no variables
+%  product left in it.
+
+normalize_and_test(E)-> Expr | 
+        norm_first_pass(E,F),
+	G= norm_dist(F),
+	kill_zeroes(G,Expr),!,
+	deg_check(Expr).
+
+non_strict(deg_check) ?
+deg_check([real]) :- !.
+deg_check([real*vr|Tail]) :- !,deg_check(Tail).
+deg_check(@) :- write("=} Your equation is definitely non linear. We can't do
+ anything for you..."),!,fail.
+		     
+%%%%%%%%%%%%
+% This first part of the normalizer will create the adequate data structures
+% for any free variable she will meet, and suppress the minus (unary and
+% binary) signs. It will also multiply a lot of variables by one, thus ensuring
+% that we have no variable in our expression that aren't the left factor of a
+% product. 
+
+%dynamic(varcount)?
+%varcount -> 0.
+%nvar -> vr(X,val=>none,wlist=>[])|X=varcount+1,setq(varcount,X).
+nvar -> vr(Id:genint,name=>strcon("_",int2str(Id)),val=>none,wlist=>[]).
+
+named_nvar(N:string) -> vr(Id:genint,name=>N,val=>none,wlist=>[]).
+
+norm_first_pass(X,1*X) :- 
+	X :== @,!,
+	X=nvar.
+norm_first_pass(V:vr,1*V) :- !.
+norm_first_pass(A:real,A) :- !.
+norm_first_pass( ~X , Z*X2) :-
+	!,Z= -1,
+	norm_first_pass(X,X2).
+norm_first_pass(X=Y,X2+Z*Y2) :-
+	!,
+	Z= -1,
+	norm_first_pass(X,X2),
+	norm_first_pass(Y,Y2).
+norm_first_pass(X+Y,X2+Y2) :-
+	!,norm_first_pass(X,X2),
+	norm_first_pass(Y,Y2).
+norm_first_pass(X*Y,X2*Y2) :-
+	!,norm_first_pass(X,X2),
+	norm_first_pass(Y,Y2).
+norm_first_pass(X-Y,X2+Z*Y2) :-
+	!,Z= -1,
+	norm_first_pass(X,X2),
+	norm_first_pass(Y,Y2).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+% this part (which has been entirely rewritten since the original version of
+% this  program -- they are now mainly written in a functionnal way) deal with
+% embedded sums and products. The order of the term being vital for the solver,
+% our "philosophy" (may Socrates pardon me this offense...)  has been to
+% create  and modify the data structure (i.e. mainly lists that represent
+% equations)  such that they always stay sorted.
+
+
+norm_dist(A:real) -> [A].
+norm_dist(T:(real*vr)) -> [T].
+norm_dist(T1*T2) -> merge_lists(mult_list_list(norm_dist(T1),norm_dist(T2))).
+norm_dist(T1+T2) -> special_merge(norm_dist(T1),norm_dist(T2)).
+
+non_strict(varless)?
+varless(vr(X),vr(Y)) -> X<Y.
+varless(@*vr(X),B) -> varless(vr(X),B).
+varless(A,@*vr(Y)) -> varless(A,vr(Y)).
+varless(@,real) -> true.
+varless(@,@) -> false.
+
+non_strict(termless_pred) ?
+termless_pred(real,real,false).
+termless_pred(@,real,true).
+termless_pred(real,@,false).
+termless_pred(T1*V,T2*V,B) :- termless_pred(T1,T2,B).
+termless_pred(@*vr(X),@*vr(Y),B) :- B = X < Y.
+
+termless(T1,T2) -> B | termless_pred(T1,T2,B).
+
+non_strict(mult_term_var) ?
+mult_term_var(V:vr,A:real) -> `(A*V).
+mult_term_var(V1:vr,A*V2) -> cond(varless(V1,V2),`(A*V2*V1),
+				  `(T*V2)) | 
+        T=mult_term_var(V1,A).
+
+non_strict(mult_term_real) ?
+mult_term_real(A:real,B:real) -> A*B.
+mult_term_real(A,T*V) -> `(T2*V) | T2=mult_term_real(A,T).
+
+non_strict(mult_list) ?
+mult_list(A:real,L) -> mult_list_real(A,L).
+mult_list(V:vr,L) -> mult_list_var(V,L).
+mult_list(A*V:vr,L) -> T |
+        F = mult_list_var(V,L),
+        T = mult_list(A,F).
+
+non_strict(mult_list_real) ?
+mult_list_real(@,[]) -> [].
+mult_list_real(A,[B:real|Tl]) -> [A*B | mult_list_real(A,Tl)].
+mult_list_real(A,[V:vr|Tl]) -> [`(A*V) | mult_list_real(A,Tl)].
+mult_list_real(A,[T*V|Tl]) -> [`(X*V) | mult_list_real(A,Tl)] | 
+        X = mult_term_real(A,T).
+
+mult_list_var(@,[]) -> [].
+mult_list_var(V,L:[A|Tl]) -> cond(varless(A,V),
+				  [mult_term_var(V,A)| mult_list_var(V,Tl)],
+				  [`(A*V)| mult_list_var(V,Tl)]).
+
+mult_list_list([],@)-> [].
+mult_list_list([X|Tl], Liste) -> [mult_list(X,Liste)|
+				  mult_list_list(Tl,Liste)].
+
+special_merge([],L) -> L.
+special_merge(L,[]) -> L.
+special_merge(L1:[A|Tl1],L2:[B|Tl2]) ->
+	cond(termless(A,B),
+	     [A|special_merge(Tl1,L2)],
+	     (cond(termless(B,A),
+		  [B|special_merge(L1,Tl2)],
+		  [add_terms(A,B)|special_merge(Tl1,Tl2)]))).
+	%| write(termless(A,B)," | ",termless(B,A),"  ",A," + ",B),nl)).
+
+non_strict(add_terms)?
+add_terms(A:real,B:real) -> A+B.
+add_terms(A*V:vr,B*V) -> `(T*V) | T=add_terms(A,B).
+
+merge_lists([]) -> []. 
+merge_lists([X|Tl]) ->  special_merge(X,merge_lists(Tl)).
+
+non_strict(solve_eq,mult_eq,div_eq,do_subst,wake_up)?
+
+solve_eq([0]) :- !.						%succes
+solve_eq([real]) :- !,fail.					%failure
+solve_eq([A*X:vr(val=>none)|L]) :- !,inst_var(X,L,A).	        %"pivot"
+solve_eq([A*vr(val=>V)|L]) :- ML=mult_eq(V,A),			%substit
+			      slist_merge(ML,L,NL), 
+			      solve_eq(NL).
+
+div_eq([A:real],B) -> [-A/B].
+div_eq([A*X|Tl],B) -> [`(Z*X)|div_eq(Tl,B)] | Z= -A/B.
+
+mult_eq([A:real],B) -> [A*B].
+mult_eq([A*X|Tl],B) -> [`(Z*X)|mult_eq(Tl,B)] | Z=A*B.
+
+inst_var(X:vr(val=>V,wlist=>W),Eq,A) :- 
+	do_subst(Eq,NewEq),
+	V <- div_eq(NewEq,A),
+	I= -1,
+	wake_up(W,[I*X|V]),
+	update_vars(X,V),
+	W <- [].
+
+do_subst(X:[real],X) :- !.
+do_subst([T:(A*vr(val=>none))|L],[T|NL]) :- 
+	!,do_subst(L,NL).
+do_subst([T:(A*vr(val=>V))|Tl],NV) :- 
+	ML=mult_eq(V,A),
+	slist_merge(ML,Tl,NL),
+	do_subst(NL,NV).
+
+wake_up([],@) :- !.
+wake_up([gauss_wup(lhs_var=>X,coef=>A)|WL],Val) :-
+%	nl,write(X),nl,write(WL),nl,
+	recompute(X,A,Val),
+	wake_up(WL,Val).
+
+recompute(X:vr(Id,name=>N,val=>Oldval),Coef,Sval) :-
+	ML=mult_eq(Sval,Coef),
+	merge_and_clean(Oldval,ML,Newval,Upd,X),
+	update_vars(X,Upd),
+	X <- vr(Id,name=>N,val=>Newval,wlist=>[]).
+
+non_strict(update_vars)?
+
+update_vars(@,[]) :- !.
+update_vars(@,[real]) :- !.
+update_vars(X,[A*Y:vr(Id,name=>N,wlist=>WL)|Tl]) :-
+	Y <- vr(Id,name=>N,
+		val => none,
+		wlist => [gauss_wup(lhs_var=>X, coef=>root_sort(A)) | WL]),
+	update_vars(X,Tl).
+
+non_strict(slist_merge,merge_and_clean)?
+
+slist_merge([],L,L) :- !.
+slist_merge(L,[],L) :- !.
+slist_merge([A:real],[B:real],[C]) :-  !,C=A+B.
+slist_merge([A|L1],L2:[B|@],[A|L3]) :-
+	varless(A,B), !,
+	slist_merge(L1,L2,L3).
+slist_merge(L1:[A|@],[B|L2],[B|L3]) :-
+	varless(B,A),!,
+	slist_merge(L1,L2,L3).
+slist_merge([(A:real)*(V:vr(Id))|L1],[(B:real)*vr(Id)|L2],Z) :-
+	C= A+B,
+	Z=cond(null(C),L3,[`(C*V)|L3]),
+	slist_merge(L1,L2,L3).
+
+merge_and_clean([],L,L,L,@) :- !.
+merge_and_clean(L,[],L,[],@) :- !.
+
+merge_and_clean([A:real],[B:real],[C],[],@) :-  !,C=A+B.
+
+merge_and_clean([A|L1],L2:[B|@],[A|L3],Upd,Lhs) :-
+	varless(A,B), !,
+	merge_and_clean(L1,L2,L3,Upd,Lhs).
+
+merge_and_clean(L1:[A|@],[B|L2],[B|L3],[B|Upd],Lhs) :-
+	varless(B,A),!,
+	merge_and_clean(L1,L2,L3,Upd,Lhs).
+
+merge_and_clean([(A:real)*(V:vr(Id))|L1],
+		[(B:real)*vr(Id,wlist=>WL)|L2],L3,Upd,Lhs) :-
+	A+B=0,!,
+	clean_wlist(WL,Lhs),
+	merge_and_clean(L1,L2,L3,Upd,Lhs).
+
+merge_and_clean([(A:real)*(V:vr(Id))|L1],
+		[(B:real)*vr(Id,wlist=>WL)|L2],[T|L3],[T|Upd],Lhs) :-
+	C= A+B,
+	T=`(C*V),
+	clean_wlist(WL,Lhs),
+	merge_and_clean(L1,L2,L3,Upd,Lhs).
+
+null(0)->true.
+null -> false.
+
+% les deux premiers arguments de s_merge sont les slists a combiner,
+% le troisieme est le resultat, le 4eme la liste des sous_listes du resultat
+% dont le premier element vient de la premiere liste. En d'autres termes, c'est
+% la liste des cellules de listes que l'on a creees.
+
+s_merge([A|L1],L2:[B|@],L3:[A|L2],[L3|PtL]) :-
+	varless(A,B), !,
+	s_merge2(L1,L3,PtL).
+s_merge(L1,L2,L2,PtL) :- s_merge2(L1,[@|L2],PtL).
+
+s_merge2([],@,[]) :- !.	
+s_merge2(L,[@|X:[]],L) :- !,X <- L.
+s_merge2([A:real],[@,B:real],[]) :- !,B <- A+B.
+s_merge2([A|L1],LP:[U|L2:[B|@]],[L3|PtL]) :-
+	varless(A,B), !,
+	LP <- [U|L3:[A|L2]],
+	s_merge2(L1,L3,PtL).
+
+non_strict(s_merge2)?
+
+s_merge2(L1:[A|@],[@|L2:[B|@]],PtL) :-
+	varless(B,A), !,
+	s_merge2(L1,L2,PtL).
+s_merge2([(A:real)*vr(Id,wlist=>WL)|L1],LP:[@|L2:[(B:real)*vr(Id)|@]],PtL) :-
+	A+B = 0, !,
+	clean_wlist(WL,L2),
+	del(L2),
+	s_merge2(L1,LP,PtL).
+s_merge2([(A:real)*vr(Id)|L1],[@|L2:[(B:real)*vr(Id)|@]],PtL) :-
+	B <- A+B,
+	s_merge2(L1,L2,PtL).
+
+clean_wlist([],@).
+clean_wlist(WL:[gauss_wup(lhs_var=>V)|Tail],V) :- !,WL <- Tail,
+						  clean_wlist(WL,V).
+clean_wlist([@|WL],V) :- clean_wlist(WL,V).

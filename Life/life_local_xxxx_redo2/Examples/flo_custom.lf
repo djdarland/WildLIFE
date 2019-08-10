@@ -1,0 +1,133 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%                  Customization of the application.
+%
+% This file contains the definition of the fonts and colors used in the
+% interface. 
+% It also contains default values for colors of flowers, distances,...
+%         
+% This file is loaded automatically by the main file of the demo. 
+%                                                                           
+% Author: Bruno Dumant                                                        
+%                                                                             
+% Copyright 1992 Digital Equipment Corporation                                
+% All Rights Reserved                                                         
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Interface
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%
+% Fonts (Fonts in comments are suggestions for use instead of the font
+% appearing in the xLoadFont predicate).
+%
+
+xLoadFont(default_display,ButtonFont,
+         "-*-helvetica-bold-r-*-*-14-*-*-*-*-*-*-*"),
+	                                                  %% avantgarde_demi10 
+	                                                  %% 8x13Bold
+							  %% times_bold10
+							  %% courier_bold10
+setq(button_font,ButtonFont) ?
+
+xLoadFont(default_display,TextFieldFont,
+	"-*-helvetica-medium-r-*-*-14-*-*-*-*-*-*-*"),
+	                                                  %% helvetica10
+                                                          %% avantgarde_book10
+	                                                  %% r14
+	                                                  %% souvenir_light10
+	                                                  %% times_roman10
+	                                                  %% courier_bold10
+setq(textfield_font,TextFieldFont) ?
+
+xLoadFont(default_display,ColorNameFont,
+	"-*-helvetica-bold-r-*-*-*-180-*-*-*-*-*-*"),
+	                                                  %% helvetica_bold18
+                                                          %% avantgarde_demi18 
+	                                                  %% times_bold18
+							  %% vr-20
+							  %% courier_bold18
+setq(color_name_font,ColorNameFont) ?
+
+
+%
+% Colors
+%
+
+xRequestColor(default_window,63,106,106,X),
+assert(( shade_color(on_off_color) -> X)) ?
+xRequestColor(default_window,118,197,197,X),
+assert(( highlight_color(on_off_color) -> X)) ?
+X = 'cadet blue',
+assert(( button_color(on_off_color) -> X)) ?
+xRequestColor(default_window,158,32,32,X),
+assert(( text_color(on_off_color) -> X)) ?
+
+X = 'lime green',
+assert(( led_shade_color(on_off_color) -> X)) ?
+X = 'green yellow',
+assert(( led_highlight_color(on_off_color) -> X)) ?
+X = green,
+assert(( led_color(on_off_color) -> X)) ?
+
+X = 'dim grey',
+assert(( shade_color(toggle_color) -> X)) ?
+X = white,
+assert(( highlight_color(toggle_color) -> X)) ?
+X = grey,
+assert(( button_color(toggle_color) -> X)) ?
+X = firebrick,
+assert(( text_color(toggle_color) -> X)) ?
+X = firebrick,
+assert(( led_shade_color(toggle_color) -> X)) ?
+X = 'orange red',
+assert(( led_highlight_color(toggle_color) -> X)) ?
+X = red,
+assert(( led_color(toggle_color) -> X)) ?
+
+setq(textfield_color, 'light grey') ?
+xRequestColor(default_window,255,240,225,X),
+setq(selected_textfield_color,X)?
+setq(text_in_field_color,black) ?
+setq(text_in_selected_field_color,black) ?
+
+xRequestColor(default_window,180,190,190,X),
+setq(def_led_color,X) ?
+X = 'dim grey', setq(def_led_shade,X) ?
+X = 'light grey', setq(def_led_highlight,X) ?
+
+setq(panel_color,'light grey') ?
+setq(panel_highlight,white) ?
+setq(panel_shade,grey) ?
+
+setq(color_name_textfield_color, white) ?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Main Initialization
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+init_default_values :-
+
+	setq(petal_color,red),
+	setq(stamen_color,gold),
+	setq(leaf_color,green),
+	setq(defaultColor,'forest green'),
+	setq(background_color,black),
+	
+	setq(xstart,350) ,
+	setq(ystart,650) ,
+	setq(axstart,-30) ,
+	setq(aystart,150) ,
+	setq(azstart,0) ,
+	setq(deriv_num,4) ,
+	setq(zoom_fact,1) ,
+
+	setq(postout_filename,"flowers.ps").

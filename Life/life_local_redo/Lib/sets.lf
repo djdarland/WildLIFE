@@ -1,0 +1,837 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%	$Id: sets.lf,v 1.2 1994/12/09 00:20:02 duchier Exp $	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Set manipulation
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+module("sets") ?
+
+add_man(sets,
+     "module(""sets"").
+
+      This module contains a number of utilities for set manipulation.
+
+      The names of the procedures and functions have two parts separated by 
+      underscore: 
+
+      the suffix describes the functionality:
+        member, 
+        union,intersect,difference, 
+        part,member_and_rest,
+        remove,insert,
+        make_set
+
+      The prefix describes the kind of test used to test for identity of two
+      elements: 
+          gen: the procedure is generic, and the method must be given as an  
+               argument; 
+          sort: :== is used to test identity;
+          ad  : === is used to test identity.
+
+      Sets are implemented as lists with no redundant element (according to the
+      identity test).
+
+      See also: pick.")?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+%%% generic operations on sets; the method feature describes the function used
+%%% to method for equality.
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+add_man(gen_member,
+     " gen_member(Elt,Set,test => Test) -> Res
+
+       input: Elt: any psi term. 
+              Set: a set of terms.
+              Test: the test used for checking membership. Must be a boolean 
+                    function of two arguments
+
+       output: Res: a boolean.
+
+       Tests if Elt belongs to set, using Test.")?
+
+
+public(gen_member) ? 
+gen_member(A,[B|C],test => Comp) ->
+	cond( Comp(A,B),
+	      true,
+	      gen_member(A,C,test => Comp)
+	    ).
+gen_member(_,[]) -> false.
+
+
+%%% union: merging two sets
+
+
+add_man(gen_union,
+     " gen_union(Set1,Set2,test => Test) -> Set3
+
+       input: Set1 and Set2: sets. 
+              Test: the test used for checking equality between members of the
+                    two sets. Must be a boolean function of two arguments
+
+       output: Set3: a set.
+
+       Set3 is Set1 union Set2")?
+       
+public(gen_union) ?
+gen_union([],L) -> L. 
+gen_union([A|B],C,test => Comp) -> 
+	cond( gen_member(A,C,test => Comp),
+	      gen_union(B,C,test => Comp),
+	      [A|gen_union(B,C,test => Comp)]).
+
+%%% make_set: get rid of redundant elements of a set
+
+
+add_man(gen_make_set,
+     " gen_make_set(List,test => Test) -> Set
+
+       input: List: list;
+              Test: the test used for checking equality between members of the
+                    set. Must be a boolean function of two arguments
+
+       output: Set: a set.
+
+       Set is list with no redundant element.")?
+
+public(gen_make_set) ?
+gen_make_set([]) -> [].
+gen_make_set([A|B],test => Comp) -> 
+	cond( gen_member(A,B,test => Comp),
+	      gen_make_set(B,test => Comp),
+	      [A|gen_make_set(B,test => Comp)]).
+
+%%% intersect: returns the intersection of two sets
+
+add_man(gen_intersect,
+     " gen_intersect(Set1,Set2,test => Test) -> Set3
+
+       input: Set1 and Set2: sets. 
+              Test: the test used for checking equality between members of the
+                    two sets. Must be a boolean function of two arguments
+
+       output: Set3: a set.
+
+       Set3 is the intersection of the two sets Set1 and Set2")? 
+
+public(gen_intersect) ?
+gen_intersect([]) -> [].
+gen_intersect([A|B],C,test =>  Comp) ->
+	cond( gen_member(A,C,test => Comp),
+	      [A| gen_intersect(B,C,test => Comp)],
+	      gen_intersect(B,C,test => Comp)).
+
+%%%
+%%% gen_difference(L1,L2) returns L1 \ (L1 inter L2)
+%%%
+
+add_man(gen_difference,
+     " gen_difference(Set1,Set2,test => Test) -> Set3
+
+       input: Set1 and Set2: sets. 
+              Test: the test used for checking equality between members of the
+                    two sets. Must be a boolean function of two arguments
+
+       output: Set3: a set.
+
+       Set3 is  Set1 - (Set1 inter Set2)")?
+
+public(gen_difference) ?
+gen_difference(L1,[]) -> L1.
+gen_difference(L1,L2:[A|NewL2],test => Comp) ->
+	cond( gen_member_and_rest(A,L1,InterRestL1,test => Comp),
+	      gen_difference(InterRestL1,NewL2,test => Comp),
+	      gen_difference(L1,NewL2,test => Comp)).
+
+%%%
+%%% gen_member_and_rest(A,Set,Rest) returns true if A is a member of Set,
+%%% with  Rest containing the other members of Set.  
+%%%
+
+add_man(gen_member_and_rest,
+     " gen_member_and_rest(Elt,Set1,Rest,test => Test) -> Bool
+
+       input: Set1,Rest: sets.
+              Elt: any psi term.
+              Test: the test used for checking equality between Elt and the
+                    members of Set1.
+                    Must be a boolean function of two arguments.
+
+       output: Rest: a set.
+               Bool: a boolean.
+
+       Bool is true if Elt belongs to Set1, false otherwise. If Bool is true, 
+       Rest is bound to a set containing the elements of Set1 minus the
+       recognised occurrence of Elt.")? 
+
+public(gen_member_and_rest) ?
+gen_member_and_rest(_,[]) -> false.
+gen_member_and_rest(A,[B|C],Rest,test => Comp) ->
+	cond( Comp(A,B),
+	      ( true | Rest = C),
+	      gen_member_and_rest(A,C,OtherRest,test => Comp) |
+	      Rest = [B|OtherRest] ).
+
+
+add_man(gen_remove,
+     " gen_remove(Elt,Set,test => Test) -> Set2
+
+       input: Elt: any psi term. 
+              Set: a set of terms.
+              Test: the test used for checking membership. Must be a boolean 
+                    function of two arguments
+
+       output: Set2: a set.
+
+       Set2 is Set1 with no occurrence of Elt")?
+
+
+public(gen_remove) ? 
+gen_remove(A,[B|C],test => Comp) ->
+	cond( Comp(A,B),
+	      C,
+	      [B|gen_remove(A,C,test => Comp)]
+	    ).
+gen_remove(_,[]) -> [].
+
+
+add_man(gen_remove_all,
+     " gen_remove_all(Elt,Set,test => Test) -> Set2
+
+       input: Elt: any psi term. 
+              Set: a set of terms.
+              Test: Any test (boolean function of two arguments)
+
+       output: Set2: a set.
+
+       Set2 is Set1 with no elt Elt2  such that Test(Elt,Elt2) is true")?
+
+
+public(gen_remove_all) ? 
+gen_remove_all(A,[B|C],test => Comp) ->
+	cond( Comp(A,B),
+	      gen_remove_all(A,C,test => Comp),
+	      [B|gen_remove_all(A,C,test => Comp)]
+	    ).
+gen_remove_all(_,[]) -> [].
+
+
+add_man(gen_insert,
+     " gen_insert(Elt,Set,test => Test) -> Set2
+
+       input: Elt: any psi term. 
+              Set: a set of terms.
+              Test: the test used for checking membership. Must be a boolean 
+                    function of two arguments
+
+       output: Set2: a set.
+
+       Elt is added to Set to form Set2 if it was not present in Set.")?
+
+public(gen_insert) ?
+gen_insert(Elt,Set,test => Test) -> cond( gen_member(Elt,Set,test => Test),
+					  Set,
+					  [Elt|Set]).
+
+add_man(gen_order_included,
+     " gen_order_included(Set1,Set2,test => Test) -> Res
+
+       input: Set1,Set2: sets. 
+              Test: the test used for checking membership. Must be a boolean 
+                    function of two arguments
+
+       output: Res: result
+
+       Res is true(true) if Set1 is strictly included in Set2,
+              true       if Set1 has the exactly the same elements as Set2,
+              false otherwise.
+
+       Set1 and Set2 are supposed to be ordered in the same way.")?
+
+public(gen_order_included) ?
+
+gen_order_included( [],[]) -> true.
+gen_order_included( [],X) -> true(true).
+gen_order_included( L1:[A|B],[C|D],test => Comp) -> 
+	cond( Comp(A,C),
+	      gen_order_included(B,D,test => Comp),
+              gen_order_included(L1,D,test => Comp) & @(true)).
+gen_order_included(X,[]) -> false.
+
+
+add_man(gen_included,
+     " gen_included(Set1,Set2,test => Test) -> Res
+
+       input: Set1,Set2: sets. 
+              Test: the test used for checking membership. Must be a boolean 
+                    function of two arguments
+
+       output: Res: result
+
+       Res is true(true) if Set1 is strictly included in Set2,
+              true       if Set1 has the exactly the same elements as Set2,
+              false otherwise.")?
+
+public(gen_included) ?
+
+gen_included( [],[]) -> true.
+gen_included( [],X) -> true(true).
+gen_included( [A|B],L,test => Comp) -> 
+	cond( gen_member_and_rest(A,L,L1,test => Comp),
+	      gen_included(B,L1,test => Comp),
+	      false).
+
+
+
+add_man(gen_part,
+	" gen_part(Set1,Set2,Inter,Rest1,Rest2,test => Test)
+
+          input: Set1,Set2: sets;
+                 Test: the test used for checking membership. Must be a boolean 
+                       function of two arguments.
+          output: Inter,Rest1,Rest2: sets
+
+          Inter is the intersection of Set1 and Set2;
+          Rest1 is Set1 \ Inter.
+          Rest2 is Set2 \ Inter.")?
+
+public(gen_part) ?
+gen_part([],L2,[],[],L2) :- !.
+gen_part(L1:[A|NewL1],L2,Intersect,RestL1,RestL2,test => Comp) :-
+	cond( gen_member_and_rest(A,L2,InterRestL2,test => Comp),
+	      (
+		  gen_part(NewL1,InterRestL2,Intersect2,RestL1,RestL2,
+			   test => Comp),
+		  Intersect = [A|Intersect2]
+	      ),
+	      (
+		  gen_part(NewL1,L2,Intersect,RestNewL1,RestL2,test => Comp),
+		  RestL1 = [A|RestNewL1]
+	      )).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+%%% operations on sets; :== is the function used to test for equality.
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+add_man(sort_member,
+     " sort_member(Elt,Set) -> Res
+
+       input: Elt: any psi term. 
+              Set: a set of terms.
+
+       output: Res: a boolean.
+
+       Tests if Elt belongs to set, using :==.")?
+
+
+public(sort_member) ? 
+sort_member(A,[B|C]) ->
+	cond( A :== B,
+	      true,
+	      sort_member(A,C)
+	    ).
+sort_member(_,[]) -> false.
+
+
+%%% union: merging two sets
+
+
+add_man(sort_union,
+     " sort_union(Set1,Set2) -> Set3
+
+       input: Set1 and Set2: sets. 
+
+       output: Set3: a set.
+
+       Set3 is Set1 union Set2.
+       The test that checks the identity of two elements is :== .")?
+       
+public(sort_union) ?
+sort_union([],L) -> L. 
+sort_union([A|B],C) -> 
+	cond( sort_member(A,C),
+	      sort_union(B,C),
+	      [A|sort_union(B,C)]).
+
+%%% make_set: get rid of redundant elements of a set
+
+
+add_man(sort_make_set,
+     " sort_make_set(Set1) -> Set2
+
+       input: Set1: sets. 
+
+       output: Set2: a set.
+
+       Gets rid of redundant elements in Set1.
+       The test that checks the identity of two elements is :== .")?
+
+public(sort_make_set) ?
+sort_make_set([]) -> [].
+sort_make_set([A|B]) -> 
+	cond( sort_member(A,B),
+	      sort_make_set(B),
+	      [A|sort_make_set(B)]).
+
+%%% intersect: returns the intersection of two sets
+
+add_man(sort_intersect,
+     " sort_intersect(Set1,Set2) -> Set3
+
+       input: Set1 and Set2: sets. 
+
+       output: Set3: a set.
+
+       Set3 is the intersection of the two sets Set1 and Set2.
+       The test that checks the identity of two elements is :== .")? 
+
+public(sort_intersect) ?
+sort_intersect([]) -> [].
+sort_intersect([A|B],C) ->
+	cond( sort_member(A,C),
+	      [A| sort_intersect(B,C)],
+	      sort_intersect(B,C)).
+
+%%%
+%%% sort_difference(L1,L2) returns L1 \ (L1 inter L2)
+%%%
+
+add_man(sort_difference,
+     " sort_difference(Set1,Set2) -> Set3
+
+       input: Set1 and Set2: sets. 
+
+       output: Set3: a set.
+
+       Set3 is  Set1 - (Set1 inter Set2).
+       The test that checks the identity of two elements is :== .")?
+
+public(sort_difference) ?
+sort_difference(L1,[]) -> L1.
+sort_difference(L1,L2:[A|NewL2]) ->
+	cond( sort_member_and_rest(A,L1,InterRestL1),
+	      sort_difference(InterRestL1,NewL2),
+	      sort_difference(L1,NewL2)).
+
+%%%
+%%% sort_member_and_rest(A,Set,Rest) returns true if A is a member of Set,
+%%% with  Rest containing the other members of Set.  
+%%%
+
+add_man(sort_member_and_rest,
+     " sort_member_and_rest(Elt,Set1,Rest) -> Bool
+
+       input: Set1,Rest: sets.
+              Elt: any psi term.
+
+       output: Rest: a set.
+               Bool: a boolean.
+
+       Bool is true if Elt belongs to Set1, false otherwise. If Bool is true, 
+       Rest is bound to a set containing the elements of Set1 minus the
+       recognised occurrence of Elt.
+       The test that checks the identity of two elements is :== .")? 
+
+public(sort_member_and_rest) ?
+sort_member_and_rest(_,[]) -> false.
+sort_member_and_rest(A,[B|C],Rest) ->
+	cond( A :== B,
+	      ( true | Rest = C),
+	      sort_member_and_rest(A,C,OtherRest) | Rest = [B|OtherRest] ).
+
+
+add_man(sort_remove,
+     " sort_remove(Elt,Set) -> Set2
+
+       input: Elt: any psi term. 
+              Set: a set of terms.
+
+       output: Set2: a set.
+
+       Set2 is Set1 with no occurrence of Elt.
+       The test that checks the identity of two elements is :== .")?
+
+
+public(sort_remove) ? 
+sort_remove(A,[B|C]) ->
+	cond( A :== B,
+	      C,
+	      [B|sort_remove(A,C)]
+	    ).
+sort_remove(_,[]) -> [].
+
+
+add_man(sort_insert,
+     " sort_insert(Elt,Set) -> Set2
+
+       input: Elt: any psi term. 
+              Set: a set of terms.
+       output: Set2: a set.
+
+       Elt is added to Set to form Set2 if no element of the same sort was
+       present in Set.
+       The test that checks the identity of two elements is :== .")? 
+
+public(sort_insert) ?
+sort_insert(Elt,Set) -> cond( sort_member(Elt,Set),
+					  Set,
+					  [Elt|Set]).
+
+
+
+add_man(sort_order_included,
+     " sort_order_included(Set1,Set2) -> Res
+
+       input: Set1,Set2: sets. 
+
+       output: Res: result
+
+       Res is true(true) if Set1 is strictly included in Set2,
+              true       if Set1 has the exactly the same elements as Set2,
+              false otherwise.
+
+       Set1 and Set2 are supposed to be ordered in the same way.
+       The test that checks the identity of two elements is :== .")?
+
+public(sort_order_included) ?
+
+sort_order_included( [],[]) -> true.
+sort_order_included( [],X) -> true(true).
+sort_order_included( L1:[A|B],[C|D]) -> 
+	cond( A :== C,
+	      sort_order_included(B,D),
+              sort_order_included(L1,D) & @(true)).
+sort_order_included(X,[]) -> false.
+
+
+add_man(sort_included,
+     " sort_included(Set1,Set2) -> Res
+
+       input: Set1,Set2: sets. 
+
+       output: Res: result
+
+       Res is true(true) if Set1 is strictly included in Set2,
+              true       if Set1 has the exactly the same elements as Set2,
+              false otherwise.
+       The test that checks the identity of two elements is :== .")?
+
+public(sort_included) ?
+
+sort_included( [],[]) -> true.
+sort_included( [],X) -> true(true).
+sort_included( [A|B],L) -> 
+	cond( sort_member_and_rest(A,L,L1),
+	      sort_included(B,L1),
+	      false).
+
+
+
+add_man(sort_part,
+	" sort_part(Set1,Set2,Inter,Rest1,Rest2)
+
+          input: Set1,Set2: sets;
+
+          output: Inter,Rest1,Rest2: sets
+
+          Inter is the intersection of Set1 and Set2;
+          Rest1 is Set1 \ Inter.
+          Rest2 is Set2 \ Inter.
+          The test that checks the identity of two elements is :== .")?
+
+public(sort_part) ?
+sort_part([],L2,[],[],L2) :- !.
+sort_part(L1:[A|NewL1],L2,Intersect,RestL1,RestL2) :-
+	cond( sort_member_and_rest(A,L2,InterRestL2),
+	      (
+		  sort_part(NewL1,InterRestL2,Intersect2,RestL1,RestL2),
+		  Intersect = [A|Intersect2]
+	      ),
+	      (
+		  sort_part(NewL1,L2,Intersect,RestNewL1,RestL2),
+		  RestL1 = [A|RestNewL1]
+	      )).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+%%% operations on sets; === is the function used to test for equality.
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+add_man(ad_member,
+     " ad_member(Elt,Set) -> Res
+
+       input: Elt: any psi term. 
+              Set: a set of terms.
+
+       output: Res: a boolean.
+
+       Tests if Elt belongs to set, using ===.")?
+
+
+public(ad_member) ? 
+ad_member(A,[B|C]) ->
+	cond( A === B,
+	      true,
+	      ad_member(A,C)
+	    ).
+ad_member(_,[]) -> false.
+
+
+%%% union: merging two sets
+
+
+add_man(ad_union,
+     " ad_union(Set1,Set2) -> Set3
+
+       input: Set1 and Set2: sets. 
+
+       output: Set3: a set.
+
+       Set3 is Set1 union Set2.
+       The test that checks the identity of two elements is === .")?
+       
+public(ad_union) ?
+ad_union([],L) -> L. 
+ad_union([A|B],C) -> 
+	cond( ad_member(A,C),
+	      ad_union(B,C),
+	      [A|ad_union(B,C)]).
+
+%%% make_set: get rid of redundant elements of a set
+
+
+add_man(ad_make_set,
+     " ad_make_set(Set1) -> Set2
+
+       input: Set1: sets. 
+
+       output: Set2: a set.
+
+       Gets rid of redundant elements in Set1.
+       The test that checks the identity of two elements is === .")?
+
+public(ad_make_set) ?
+ad_make_set([]) -> [].
+ad_make_set([A|B]) -> 
+	cond( ad_member(A,B),
+	      ad_make_set(B),
+	      [A|ad_make_set(B)]).
+
+%%% intersect: returns the intersection of two sets
+
+add_man(ad_intersect,
+     " ad_intersect(Set1,Set2) -> Set3
+
+       input: Set1 and Set2: sets. 
+
+       output: Set3: a set.
+
+       Set3 is the intersection of the two sets Set1 and Set2.
+       The test that checks the identity of two elements is === .")? 
+
+public(ad_intersect) ?
+ad_intersect([]) -> [].
+ad_intersect([A|B],C) ->
+	cond( ad_member(A,C),
+	      [A| ad_intersect(B,C)],
+	      ad_intersect(B,C)).
+
+%%%
+%%% ad_difference(L1,L2) returns L2 \ (L1 inter L2)
+%%%
+
+add_man(ad_difference,
+     " ad_difference(Set1,Set2) -> Set3
+
+       input: Set1 and Set2: sets. 
+
+       output: Set3: a set.
+
+       Set3 is  Set1 - (Set1 inter Set2).
+       The test that checks the identity of two elements is === .")?
+
+public(ad_difference) ?
+ad_difference(L1,[]) -> L1.
+ad_difference(L1,L2:[A|NewL2]) ->
+	cond( ad_member_and_rest(A,L1,InterRestL1),
+	      ad_difference(InterRestL1,NewL2),
+	      ad_difference(L1,NewL2)).
+
+%%%
+%%% ad_member_and_rest(A,Set,Rest) returns true if A is a member of Set,
+%%% with  Rest containing the other members of Set.  
+%%%
+
+add_man(ad_member_and_rest,
+     " ad_member_and_rest(Elt,Set1,Rest) -> Bool
+
+       input: Set1,Rest: sets.
+              Elt: any psi term.
+
+       output: Rest: a set.
+               Bool: a boolean.
+
+       Bool is true if Elt belongs to Set1, false otherwise. If Bool is true, 
+       Rest is bound to a set containing the elements of Set1 minus the
+       recognised occurrence of Elt.
+       The test that checks the identity of two elements is === .")? 
+
+public(ad_member_and_rest) ?
+ad_member_and_rest(_,[]) -> false.
+ad_member_and_rest(A,[B|C],Rest) ->
+	cond( A === B,
+	      ( true | Rest = C),
+	      ad_member_and_rest(A,C,OtherRest) | Rest = [B|OtherRest] ).
+
+
+add_man(ad_remove,
+     " ad_remove(Elt,Set) -> Set2
+
+       input: Elt: any psi term. 
+              Set: a set of terms.
+
+       output: Set2: a set.
+
+       Set2 is Set1 with no occurrence of Elt.
+       The test that checks the identity of two elements is === .")?
+
+
+public(ad_remove) ? 
+ad_remove(A,[B|C]) ->
+	cond( A === B,
+	      C,
+	      [B|ad_remove(A,C)]
+	    ).
+ad_remove(_,[]) -> [].
+
+
+
+add_man(ad_insert,
+     " ad_insert(Elt,Set) -> Set2
+
+       input: Elt: any psi term. 
+              Set: a set of terms.
+       output: Set2: a set.
+
+       Elt is added to Set to form Set2 if it was not already present in
+       Set.
+       The test that checks the identity of two elements is === .")?  
+
+public(ad_insert) ?
+ad_insert(Elt,Set) -> cond( ad_member(Elt,Set),
+			    Set,
+			    [Elt|Set]).
+
+
+add_man(ad_order_included,
+     " ad_order_included(Set1,Set2) -> Res
+
+       input: Set1,Set2: sets. 
+
+       output: Res: result
+
+       Res is true(true) if Set1 is strictly included in Set2,
+              true       if Set1 has the exactly the same elements as Set2,
+              false otherwise.
+
+       Set1 and Set2 are supposed to be ordered in the same way.
+       The test that checks the identity of two elements is === .")?
+
+public(ad_order_included) ?
+
+ad_order_included( [],[]) -> true.
+ad_order_included( [],X) -> true(true).
+ad_order_included( L1:[A|B],[C|D]) -> 
+	cond( A === C,
+	      ad_order_included(B,D),
+              ad_order_included(L1,D) & @(true)).
+ad_order_included(X,[]) -> false.
+
+
+add_man(ad_included,
+     " ad_included(Set1,Set2) -> Res
+
+       input: Set1,Set2: sets. 
+
+       output: Res: result
+
+       Res is true(true) if Set1 is strictly included in Set2,
+              true       if Set1 has the exactly the same elements as Set2,
+              false otherwise.
+       The test that checks the identity of two elements is === .")?
+
+public(ad_included) ?
+
+ad_included( [],[]) -> true.
+ad_included( [],X) -> true(true).
+ad_included( [A|B],L) -> 
+	cond( ad_member_and_rest(A,L,L1),
+	      ad_included(B,L1),
+	      false).
+
+
+
+add_man(ad_part,
+	" ad_part(Set1,Set2,Inter,Rest1,Rest2)
+
+          input: Set1,Set2: sets;
+
+          output: Inter,Rest1,Rest2: sets
+
+          Inter is the intersection of Set1 and Set2;
+          Rest1 is Set1 \ Inter.
+          Rest2 is Set2 \ Inter.
+
+          The test that checks the identity of two elements is === .")?
+
+public(ad_part) ?
+ad_part([],L2,[],[],L2) :- !.
+ad_part(L1:[A|NewL1],L2,Intersect,RestL1,RestL2) :-
+	cond( ad_member_and_rest(A,L2,InterRestL2),
+	      (
+		  ad_part(NewL1,InterRestL2,Intersect2,RestL1,RestL2),
+		  Intersect = [A|Intersect2]
+	      ),
+	      (
+		  ad_part(NewL1,L2,Intersect,RestNewL1,RestL2),
+		  RestL1 = [A|RestNewL1]
+	      )).
+
+
+
+
+add_man(pick,
+	"pick(Term,List)?
+
+         input: List
+         output: Term, List
+
+         Enumerates all the possible values of 'Term' in 'List' and removes
+         them from the list.
+
+         Useful when several variables have to have mutually different values
+         from a single domain.")?
+
+public(pick)?
+
+%% pick(X,L:[H|T]) :- !,(X=H,L<-T;pick(X,T)).
+%% pick(X,[]).
+
+pick(X,L:[H|T]) :-
+	(
+	    X = H,
+	    L <- T
+	;
+	    pick(X,T)
+	).
+

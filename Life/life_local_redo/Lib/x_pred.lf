@@ -1,0 +1,414 @@
+%	$Id: x_pred.lf,v 1.2 1994/12/09 00:27:42 duchier Exp $	
+% Copyright 1992 Digital Equipment Corporation.
+% Distributed only by permission.
+%
+% Last modified by vanroy
+%      modified on Wed Jun 23 16:13:19 MET DST 1993 by dumant
+%      modified on Wed Jun 23 07:06:28 1993 by Rmeyer
+%      modified on Thu Nov 26 19:57:04 1992 by herve
+%
+% X predicates for Life
+%
+
+% default values in the X predicates
+
+global(xDefaultScreen<-"")?
+global(xDefaultName<-"Life")?
+persistent(xDefaultBackground)?
+xDefaultBackground<<-xWhite?
+global(xDefaultBorderWidth<-2)?
+persistent(xDefaultBorderColor)?
+xDefaultBorderColor<<-xBlack?
+global(xDefaultDepth<-0)?
+global(xDefaultClass<-1)?
+global(xDefaultVisual<-0)?
+global(xDefaultFunction<-xCopy)?
+global(xDefaultLineWidth<-xThinLine)?
+global(xDefaultFontName<-"9x15")?
+global(xDefaultFont<- -1)?
+global(xDefaultEventMask<-xExposureMask \/ xKeyPressMask \/ xButtonPressMask)?
+global(xDefaultPsFilename<-"X.ps")?
+
+xDefaultColor -> copy_term(xBlack).
+
+
+% hierarchy of events 
+
+%%% RM 4th May 93 revised the hierarchy (still not complete however)
+
+
+%                    ,-configure_event
+%                    |
+%      ,-window_event|-expose_event
+%      |             |
+%      |             `-destroy_event
+%      |					
+%      |                         ,-motion_event
+%      |            ,-mouse_event|
+%      |            |            |-button_event
+% event|-input_event|            |                ,-enter_event
+%      |            |	         `-entrance_event-|
+%      |            |				  `-leave_event
+%      |            `-keyboard_event
+%      |
+%      |-null_event
+%      |
+%      `-misc_event
+%
+
+
+configure_event <| window_event.
+expose_event    <| window_event.
+destroy_event   <| window_event.
+
+button_event    <| mouse_event.
+motion_event    <| mouse_event.
+mouse_event     <| input_event.
+
+enter_event     <| entrance_event.
+leave_event     <| entrance_event.
+entrance_event  <| mouse_event.
+
+keyboard_event  <| input_event.
+
+window_event    <| event.
+input_event     <| event.
+null_event      <| event.
+misc_event      <| event.
+
+
+
+
+
+% Drawables
+
+window <| drawable.
+pixmap <| drawable.
+
+
+
+% X predicates
+
+xOpenConnection (D,Screen:{xDefaultScreen;string}) :- !,
+	xcOpenConnection (Screen, Display:@(id => D)), 
+                              %%% en attendant de modifier le C
+	xBlack<<- xGetScreenBlackPixel (D, xGetConnectionDefaultScreen (D))
+                  & @(name => "black"),
+	xWhite<<- xGetScreenWhitePixel (D, xGetConnectionDefaultScreen (D))
+                  & @(name => "white").
+
+%	setq (xBlack, BlackPixel),
+%	setq (xWhite, WhitePixel),
+%	pause(0.5)
+
+
+
+xDefaultRootWindow (Display, Root) :-
+	xcDefaultRootWindow (Display,Root).
+
+
+xCloseConnection (Display) :-
+	xcCloseConnection (Display).
+
+
+xCreateWindow (Display, X0, Y0, Width, Height,Window, 
+               parent=>Parent,
+               color=>Color:{xDefaultBackground;int},
+               borderwidth=>BorderWidth:{xDefaultBorderWidth;int},
+               bordercolor=>BorderColor:{xDefaultBorderColor;int},
+	       windowtitle=>WindowTitle:{xDefaultName;string},
+	       icontitle=>IconTitle,
+	       eventmask=>EventMask:{xDefaultEventMask;int},
+	       permanent=>Permanent:{false;bool},
+	       show=>Show:{true;bool},
+               overrideredirect=>OverrideRedirect:{false;bool}) :-
+	IconTitle = {WindowTitle;string},
+	xcDefaultRootWindow (Display,Root),
+	Parent:@(id => P) = {Root;@},
+	!,
+	xcCreateSimpleWindow (Display, P, X0, Y0, Width, Height, 
+			      Color, WindowTitle, IconTitle, 
+			      BorderWidth, BorderColor,
+			      Permanent, Show, 
+			      Win:@(id=>W)),
+%	pause (0.75),
+%	xSetWindowBackingStore (W, xAlways),
+%	xSetWindowSaveUnder (W, xTrue),
+	xcSelectInput (Display, W, EventMask),
+	Win = @(display=>Display, permanent=>Permanent),
+%	xSetWindowBackPixel (Win, Color),
+	xSetWindowOverrideRedirect (Win, OverrideRedirect),
+	cond (Show, xcMapWindow (Display,W)),
+	Window = Win & @(id => W).
+
+
+xShowWindow (Window:@(display=>Display, id=>W)) :- 
+	xcMapWindow (Display, W).
+
+
+xRaiseWindow (Window:@(display => Display, id=>W)) :- 
+	xcRaiseWindow (Display, W).
+
+
+xHideWindow (Window:@(display=>Display, id=>W)) :- 
+	xcUnmapWindow (Display, W).
+
+
+xClearWindow (Window:@(display=>Display)) :- 
+	xcClearWindow (Display, Window).
+
+
+xRefreshWindow (Window:@(display=>Display)) :- 
+ 	xcRefreshWindow (Display, Window).
+
+
+xPostScriptWindow (Window:@(display=>Display),
+	           Filename:{xDefaultPsFilename;string}) :- !,
+ 	xcPostScriptWindow (Display, Window, Filename).
+
+
+xGetWindowGeometry (Window:@(display=>Display), 
+		    X0, Y0, Width, Height) :- 
+	xcGetWindowGeometry (Display, Window, X0, Y0, Width, Height).
+
+
+xSetWindowGeometry (Window:@(display=>Display), 
+		    X0, Y0, Width, Height) :- 
+	xcSetWindowGeometry (Display, Window, X0, Y0, Width, Height).
+
+
+xResizeWindowPixmap (Window:@(display=>Display),
+		     Width, Height) :- 
+	xcResizeWindowPixmap (Display, Window, Width, Height).
+
+xSetWindowColor (Window, Color) :- 
+ 	xSetWindowBackPixel (Window, Color).
+
+
+xDestroyWindow (Window:@(display=>Display)) :- 
+ 	xcDestroyWindow (Display, Window).
+
+
+xRequestColor (Window:@(display=>Display), 
+	       Red, Green, Blue, Color) :- 
+ 	ColorMap = xGetWindowColormap (Window),
+	xcRequestColor (Display, ColorMap, Red, Green, Blue, Color).
+
+
+xRequestNamedColor (Window:@(display=>Display), 
+		    Name, Color) :- 
+ 	ColorMap = xGetWindowColormap (Window),
+	xcRequestNamedColor (Display, ColorMap, Name, Color).
+
+
+xFreeColor (Window:@(display=>Display), 
+	    Color) :-
+ 	ColorMap = xGetWindowColormap (Window),
+	xcFreeColor (Display, ColorMap, Color).
+
+
+xDrawLine (Window:@(display=>Display), 
+	   X0, Y0, X1, Y1, 
+	   function=>Function:{xDefaultFunction; int}, 
+	   color=>Color:{xDefaultColor; int}, 
+	   linewidth=>LineWidth:{xDefaultLineWidth; real}) 
+	:- !,
+ 	xcDrawLine (Display, Window, X0, Y0, X1, Y1, 
+	            Function, Color, LineWidth).
+
+
+xMoveWindow(Window:@(display=>Display),X,Y) :-
+	xcMoveWindow(Display,Window,X,Y).
+
+
+xDrawRectangle (Window:@(display=>Display), 
+	        X0, Y0, Width, Height, 
+	        function=>Function:{xDefaultFunction; int}, 
+	        color=>Color:{xDefaultColor; int}, 
+	        linewidth=>LineWidth:{xDefaultLineWidth; real}) 
+	:- !,
+ 	xcDrawRectangle (Display, Window, X0, Y0, Width, Height, 
+			 Function, Color, LineWidth).
+
+
+xDrawArc (Window:@(display=>Display), 
+          X0, Y0, Width, Height, StartAngle, ArcAngle,
+	  function=>Function:{xDefaultFunction; int}, 
+	  color=>Color:{xDefaultColor; int}, 
+	  linewidth=>LineWidth:{xDefaultLineWidth; real}) 
+	:- !,
+ 	xcDrawArc (Display, Window, X0, Y0, Width, Height,
+		   StartAngle*64, ArcAngle*64,
+		   Function, Color, LineWidth).
+
+
+xDrawOval (Window, X0, Y0, Width, Height,
+	   function=>Function:{xDefaultFunction; int}, 
+	   color=>Color:{xDefaultColor; int}, 
+	   linewidth=>LineWidth:{xDefaultLineWidth; real}) 
+	:- !,
+	xDrawArc (Window, X0, Y0, Width, Height, 0, 360,
+	          function=>Function, color=>Color, 
+		  linewidth=>LineWidth).
+
+
+xPointsPut ([(X,Y) | L], Polygon, N) 
+	:-
+	!,
+	xcCoordPut (Polygon, N, X), 
+	xcCoordPut (Polygon, N+1, Y),
+	xPointsPut (L,Polygon, N+2).
+xPointsPut ([]).
+
+
+xDrawPolygon (Window:@(display=>Display), 
+	      PointList,
+	      function=>Function:{xDefaultFunction; int}, 
+	      color=>Color:{xDefaultColor; int},
+ 	      linewidth=>LineWidth:{xDefaultLineWidth; real})
+	:- !,
+	xcPointsAlloc (L:length (PointList), Polygon),
+ 	xPointsPut (PointList,Polygon,0),
+ 	xcDrawPolygon (Display,Window,Polygon,L,Function,Color,LineWidth),
+	xcPointsFree (Polygon).
+
+
+xFillRectangle (Window:@(display=>Display), 
+	        X0, Y0, Width, Height, 
+	        function=>Function:{xDefaultFunction; int}, 
+	        color=>Color:{xDefaultColor; int}) 
+	:- !,
+	xcFillRectangle (Display, Window, X0, Y0, Width, Height,
+		  	 Function, Color).
+
+
+xFillArc (Window:@(display=>Display), 
+	  X0, Y0, Width, Height, 
+	  StartAngle, ArcAngle, % given in degrees
+	  function=>Function:{xDefaultFunction; int}, 
+	  color=>Color:{xDefaultColor; int}) 
+	:- !,
+	xcFillArc (Display, Window, X0, Y0, Width, Height,
+		   StartAngle*64, ArcAngle*64,
+		   Function, Color).
+
+
+xFillOval (Window, X0, Y0, Width, Height,
+	   function=>Function:{xDefaultFunction; int}, 
+	   color=>Color:{xDefaultColor; int}) 
+	:- !,
+	xFillArc (Window, X0, Y0, Width, Height, 0, 360,
+	          function=>Function, color=>Color).
+
+
+xFillPolygon (Window:@(display=>Display), 
+	      PointList,
+	      function=>Function:{xDefaultFunction; int}, 
+	      color=>Color:{xDefaultColor; int}) 
+	:- !,
+	xcPointsAlloc (L:length (PointList), Polygon),
+ 	xPointsPut (PointList,Polygon, 0),
+ 	xcFillPolygon (Display, Window, Polygon, L, Function, Color),
+	xcPointsFree (Polygon).
+
+
+xLoadFont (Display, 
+	   Font, 
+	   FontName:{xDefaultFontName; string}) 
+	:- !,
+ 	xcLoadFont (Display, FontName, Font).
+
+
+xUnloadFont (Display, 
+	     Font)
+	:- !,
+	xcUnloadFont (Display, Font).
+
+
+xDrawString (Window:@(display=>Display), 
+	     X0, Y0, String, 
+  	     font=>Font:{xDefaultFont; int},
+	     function=>Function:{xDefaultFunction; int}, 
+ 	     color=>Color:{xDefaultColor; int}) 
+	:- !,
+	xcDrawString (Display, Window, X0, Y0, String, 
+		      Font, Function, Color).
+
+
+xDrawImageString (Window:@(display=>Display), 
+		  X0, Y0, String, 
+	          font=>Font:{xDefaultFont; int},
+	   	  function=>Function:{xDefaultFunction; int}, 
+ 	   	  color=>Color:{xDefaultColor; int}) 
+	:- !,
+	xcDrawImageString (Display, Window, X0, Y0, String,
+		  	   Font, Function, Color).
+
+
+
+xQueryTextExtents(Display,
+	          Font:{xDefaultFont;int},
+                  String:string,
+		  text_direction => Tdir,
+		  text_ascent => Tasc,
+		  text_descent => Tdes,
+		  text_left_bearing => TLB,
+		  text_right_bearing => TRB,
+		  text_width => TW,
+		  font_ascent => FA,
+		  font_descent => FD) :-
+
+  xcQueryTextExtents(Display,Font,String,
+		     Tdir,FA,FD,TLB,TRB,TW,
+		     Tasc,Tdes).
+  
+
+xStringWidth (Display, Font, String)
+	-> 
+	xcStringWidth (Display, Font, String).
+
+
+xGetEvent (Window:@(display=>Display), 
+	   eventmask=>EventMask) 
+	-> 
+%%	xcGetEvent (Display, Window, EventMask) 
+%%	| 
+%%	EventMask = {xDefaultEventMask;int}, !.  %% BD 4/06/93
+        xcGetEvent(Display,Window,EventMask).
+
+
+xFlushEvents (Window:@(display=>Display), 
+ 	      eventmask=>EventMask:{xDefaultEventMask;int}) 
+	:- !,
+	xcFlushEvents (Display, Window, EventMask).
+
+
+%%% RM: 7/12/92
+xQueryPointer(Window:@(display=>Display),
+              Root_return,   Child_return,
+              Root_x_return, Root_y_return,
+              Win_x_return,  Win_y_return,
+              Mask_return,   Same_screen) :-
+
+	xcQueryPointer(Display,       Window,
+                       Root_return,   Child_return,
+                       Root_x_return, Root_y_return,
+                       Win_x_return,  Win_y_return,
+                       Mask_return,   Same_screen).
+%%% RM: 7/12/92 (END)
+
+
+%%% RM: 8/12/92
+
+xShowSubwindows(Window:@(display=>Display, id=>W)) :- 
+	xcMapSubwindows(Display, W).
+
+
+xHideSubwindows(Window:@(display=>Display, id=>W)) :- 
+	xcUnmapSubwindows(Display, W).
+
+%%% RM: 8/12/92 (END)
+
+xSync(Display) :- xcSync(Display,0). %% BD 23 June 1993
+
+%%% PVR: 13/10/93 (END)

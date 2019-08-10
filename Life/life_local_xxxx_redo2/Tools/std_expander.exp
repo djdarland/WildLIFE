@@ -1,0 +1,67 @@
+%	$Id: std_expander.exp,v 1.2 1994/12/08 23:53:49 duchier Exp $	
+module("std_expander")?
+
+import_exp("acc_declarations")?
+
+public(std_expander,comma,clauses,context,code,define,macro)?
+
+associate_expanders(std_expander,make_expander)?
+
+op(1000,xfy,comma)?
+
+global(init_method,head_method,traverse_method,leaf_method,split_method,save_method,restore_method,merge_method,terminate_method)?
+
+:-(_A: std_expander,,(make_expander(_A,in_clauses => _B,out_clauses => []),,(maprel(assert,_B),fail))).
+
+:-(make_expander(std_expander(_A,head => head_method,init => init_method,leaf => leaf_method,merge => merge_method,restore => restore_method,save => save_method,split => split_method,terminate => terminate_method),in_clauses => _B,out_clauses => _C),,(;(,(=(head_method,std),!),pred_info(head_method,[context,clauses,code])),,(;(,(=(save_method,std),!),pred_info(save_method,[context,code])),,(;(,(=(restore_method,std),!),pred_info(restore_method,[context,code])),,(;(,(=(leaf_method,std),!),pred_info(leaf_method,[clauses,context,code])),,(;(,(=(init_method,std),!),pred_info(init_method,[clauses])),,(;(,(=(terminate_method,std),!),pred_info(terminate_method,[code,clauses])),,(=(split_method,{std;@}),,(!,,(=(merge_method,{std;@}),,(!,,(=(traverse_method,str2psi(strcon(psi2str(_A),"_traverse"),current_module)),,(pred_info(_A,clauses),,(pred_info(traverse_method,[context,clauses,code]),,(first_clause(_A,_D),,(conj_clause(_E),,(disj_clause(_F),,(cond_clause(_G),,(macro_clause(_H),,(leaf_clause(_I),=(_B,[_D,_E,_F,_G,_H,_I|_C]))))))))))))))))))))).
+
+:-(first_clause(_A,_B),=(_B,:-(&(_A,@(:-(_C,_D),file => _E,in_clauses => _F,line => _G,out_clauses => _H)),comma(initialize(context => _I,file => _E,in_clauses => _F,line => _G,out_clauses => _J),comma(head(_C,_K,in_clauses => _J,in_code => _L,in_context => _I,out_clauses => _M,out_code => _N,out_context => _O),comma(traverse(_D,in_clauses => _M,in_code => _N,in_context => _I,out_clauses => _P,out_code => _Q,out_context => _O),,(terminate(context => _O,in_clauses => _P,in_code => _Q,out_clauses => _R,out_code => succeed),=(_R,[`(:-(_K,_L))|_H])))))))).
+
+:-(conj_clause(_A),=(_A,:-(traverse(_B: @(_C,_D),in_clauses => _E,in_code => _F,in_context => _G,out_clauses => _H,out_code => _I,out_context => _J),,(`(:==(_B,,)),,(!,,(traverse(_C,in_clauses => _E,in_code => _F,in_context => _G,out_clauses => _K,out_code => _L,out_context => _M),traverse(_D,in_clauses => _K,in_code => _L,in_context => _M,out_clauses => _H,out_code => _I,out_context => _J))))))).
+
+:-(disj_clause(_A),=(_A,:-(traverse(_B: @(_C,_D),in_clauses => _E,in_code => _F,in_context => _G,out_clauses => _H,out_code => _I,out_context => _J),,(`(:==(_B,;)),,(!,comma(split(in => _G,in_code => _F,out1 => _K,out2 => _L,out_code => _M),,(comma(save(in_code => _N,in_context => _K,out_code => _O,out_context => _P),comma(traverse(_C,in_clauses => _E,in_code => _O,in_context => _P,out_clauses => _Q,out_code => _R,out_context => _S),restore(in_code => _R,in_context => _S,out_code => succeed,out_context => _T))),,(comma(save(in_code => _U,in_context => _L,out_code => _V,out_context => _W),comma(traverse(_D,in_clauses => _Q,in_code => _V,in_context => _W,out_clauses => _H,out_code => _X,out_context => _Y),restore(in_code => _X,in_context => _Y,out_code => succeed,out_context => _Z))),,(merge(in1 => _T,in2 => _Z,in_code => _AA,out => _J,out_code => _I),=(_M,`(comma(;(_N,_U),_AA)))))))))))).
+
+:-(cond_clause(_A),=(_A,:-(traverse(_B,in_clauses => _C,in_code => _D,in_context => _E,out_clauses => _F,out_code => _G,out_context => _H),,(`(:==(_B,`(cond))),,(!,,(;(,(`(has_feature(1,_B,_I)),!),=(_I,"missing condition in the code!")),comma(split(in => _E,in_code => _D,out1 => _J,out2 => _K,out_code => _L),,(;(,(`(has_feature(2,_B,_M)),,(!,comma(save(in_code => _N,in_context => _J,out_code => _O,out_context => _P),comma(traverse(_M,in_clauses => _C,in_code => _O,in_context => _P,out_clauses => _Q,out_code => _R,out_context => _S),restore(in_code => _R,in_context => _S,out_code => succeed,out_context => _T))))),comma(save(in_code => _U,in_context => _J,out_code => _V,out_context => _W),comma(restore(in_code => _V,in_context => _W,out_code => succeed,out_context => _T),,(=(_C,_Q),=(_N,_U))))),,(;(,(`(has_feature(3,_B,_X)),,(!,comma(save(in_code => _Y,in_context => _K,out_code => _Z,out_context => _AA),comma(traverse(_X,in_clauses => _Q,in_code => _Z,in_context => _AA,out_clauses => _F,out_code => _AB,out_context => _AC),restore(in_code => _AB,in_context => _AC,out_code => succeed,out_context => _AD))))),comma(save(in_code => _AE,in_context => _K,out_code => _AF,out_context => _AG),comma(restore(in_code => _AF,in_context => _AG,out_code => succeed,out_context => _AD),,(=(_Q,_F),=(_Y,_AE))))),,(merge(in1 => _T,in2 => _AD,in_code => _AH,out => _H,out_code => _G),=(_L,`(comma(`(cond(_I,_N,_Y)),_AH))))))))))))).
+
+:-(macro_clause(_A),=(_A,:-(traverse(_B,in_clauses => _C,in_code => _D,in_context => _E,out_clauses => _F,out_code => _G,out_context => _H),,(`(macro(_B,_I)),,(!,traverse(_I,in_clauses => _C,in_code => _D,in_context => _E,out_clauses => _F,out_code => _G,out_context => _H)))))).
+
+:-(leaf_clause(_A),=(_A,:-(traverse(_B,in_clauses => _C,in_code => _D,in_context => _E,out_clauses => _F,out_code => _G,out_context => _H),leaf(_B,in_clauses => _C,in_code => _D,in_context => _E,out_clauses => _F,out_code => _G,out_context => _H)))).
+
+->(initialize(context => _A,file => _B,in_clauses => _C,line => _D,out_clauses => _E),cond(:==(init_method,std),|(succeed,=(_C,_E)),&(root_sort(init_method),@(context => _A,file => _B,in_clauses => _C,line => _D,out_clauses => _E)))).
+
+->(terminate(context => _A,in_clauses => _B,in_code => _C,out_clauses => _D,out_code => _E),cond(:==(terminate_method,std),|(succeed,,(=(_B,_D),=(_C,_E))),&(root_sort(terminate_method),@(context => _A,in_clauses => _B,in_code => _C,out_clauses => _D,out_code => _E)))).
+
+->(head(_A,_B,in_clauses => _C,in_code => _D,in_context => _E,out_clauses => _F,out_code => _G,out_context => _H),cond(:==(head_method,std),|(succeed,,(=(_C,_F),,(=(_B,_A),=(_D,_G)))),&(root_sort(head_method),@(_A,_B,in_clauses => _C,in_code => _D,in_context => _E,out_clauses => _F,out_code => _G,out_context => _H)))).
+
+->(traverse(_A,in_clauses => _B,in_code => _C,in_context => _D,out_clauses => _E,out_code => _F,out_context => _G),&(root_sort(traverse_method),@(_A,in_clauses => _B,in_code => _C,in_context => _D,out_clauses => _E,out_code => _F,out_context => _G))).
+
+->(split(in => _A,in_code => _B,out1 => _C,out2 => _D,out_code => _E),cond(:==(split_method,std),|(succeed,,(=(_A,_C),,(=(_C,_D),=(_B,_E)))),&(root_sort(split_method),@(in => _A,in_code => _B,out1 => _C,out2 => _D,out_code => _E)))).
+
+->(save(in_code => _A,in_context => _B,out_code => _C,out_context => _D),cond(:==(save_method,std),|(succeed,,(=(_B,_D),=(_A,_C))),&(root_sort(save_method),@(in_code => _A,in_context => _B,out_code => _C,out_context => _D)))).
+
+->(restore(in_code => _A,in_context => _B,out_code => _C,out_context => _D),cond(:==(restore_method,std),|(succeed,,(=(_B,_D),=(_A,_C))),&(root_sort(restore_method),@(in_code => _A,in_context => _B,out_code => _C,out_context => _D)))).
+
+->(merge(in1 => _A,in2 => _B,in_code => _C,out => _D,out_code => _E),cond(:==(merge_method,std),|(succeed,,(=(_D,_A),,(=(_A,_B),=(_C,_E)))),&(root_sort(merge_method),@(in1 => _A,in2 => _B,in_code => _C,out => _D,out_code => _E)))).
+
+->(leaf(_A,in_clauses => _B,in_code => _C,in_context => _D,out_clauses => _E,out_code => _F,out_context => _G),cond(:==(leaf_method,std),|(succeed,,(=(_D,_G),,(=(_B,_E),=(_C,comma(_A,_F))))),&(root_sort(leaf_method),@(_A,in_clauses => _B,in_code => _C,in_context => _D,out_clauses => _E,out_code => _F,out_context => _G)))).
+
+->(comma(_A,_B),cond(:==(_A,succeed),_B,cond(:==(_B,succeed),_A,,(_A,_B)))).
+
+persistent(macros_table)?
+
+non_strict(define)?
+
+:-(define(_A,_B),<<-(.(.(macros_table,current_module),_A),@(_A,_B))).
+
+associate_expanders(define,define_expander)?
+
+:-(define_expander(define(_A,_B),in_clauses => _C,out_clauses => _C),define(_A,_B)).
+
+->(macro(_A,_B),cond(:<(_A,string),submacro(features(.(macros_table,current_module),"std_expander"),_A,_B),macro2(_A,_B))).
+
+->(macro2(_A,_B),cond(has_feature(_A,.(macros_table,current_module),_C),|(true,=(@(_A,_B),copy_term(_C))),cond(is_sort(_A),submacro(features(macros_table,current_module),_A,_B),false))).
+
+->(submacro([_A|_B],_C,_D),cond(:<(_C,_A),|(true,=(@(_C,_D),copy_term(.(.(macros_table,current_module),_A)))),submacro(_B,_C,_D))).
+
+->(submacro([],@,@),false).
+

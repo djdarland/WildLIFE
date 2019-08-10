@@ -1,0 +1,253 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Copyright 1991 Digital Equipment Corporation.
+% All Rights Reserved.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% This file is read upon startup each time Wild_Life is run.
+% It should not be modified by the user.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%	$Id: .set_up_basis,v 1.4 1996/01/17 00:49:53 vorbeck Exp $	
+
+
+%%%%%%%%%%%%%%%%%%%% RM: Jan 12 1993
+% Set up the basic modules correctly.
+% The system starts up with an undetermined current module.
+
+
+
+built_ins#set_module("built_ins")?
+
+%trace_input?
+
+non_strict(public) ? %% BD June 10 1993
+
+public(public)?
+public(str2psi)?
+public(c_op)?
+public(xfy)?
+public(xfx)?
+
+public(yfx)?  %% BD June 10 1993
+public(fx)?
+public(fy)?
+public(xf)?
+public(yf)?
+
+public(set_module)?
+public(open_module)?
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% S Y N T A X
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+set_module("syntax")?
+built_ins#open_module("built_ins")?
+
+% The problem guys:
+c_op(1000,xfy,',')?
+c_op(700,xfx,=)?
+
+
+A=str2psi("{"),public(A)?
+A=str2psi("}"),public(A)?
+A=str2psi("["),public(A)?
+A=str2psi("]"),public(A)?
+
+% A=str2psi("("),public(A)?
+% A=str2psi(")"),public(A)?
+% A=str2psi("?"),public(A)?
+
+A=str2psi("."),public(A)?
+A=str2psi(","),public(A)?
+A=str2psi("{}"),public(A)?
+
+
+public(
+
+'!', '#', '$<', '$>', '$>=', '$\==', '&', '*', '+', ',', '-', '->', '/',
+'//', '/\', ':', ':-', '::', ':<', ':=', ':=<', ':==', ':>', ':><', ':>=',
+':\<', ':\=<', ':\==', ':\>', ':\><', ':\>=', ';', '<', '<-', '<<', '<<-',
+'<|', '=', '=:=', '=<', '===', '\===', '=>', '=\=', '>', '>=', '>>', '@',
+'\/', '^', '`', 'and', 'end_of_file', 'or', 'not', 'xor', 'mod', '|', '\'
+
+% , '<<<-'   Obsolete % RM: Feb 24 1993 
+
+)?
+
+public('\+','$==','$=<') ?    %% BD June 10 1993
+
+
+% Operator declarations.
+% Insofar as possible, these correspond with ISO standard Prolog.
+
+% Declarations of sorts, functions, and predicates.
+c_op(1200,xfx,:-)?
+c_op(1200,xfx,->)?
+c_op(1200,xfx,<|)?
+c_op(1200,fx,::)?
+c_op(1200,xfx,:=)?
+
+% Control flow inside of predicates.
+c_op(1150,xfx,|)?
+c_op(1100,xfy,;)? 
+c_op(900,fy,'\+')?
+
+% Unification predicate and lookalikes.
+c_op(700,xfx,<-)?
+c_op(700,xfx,<<-)?
+
+% Functions.
+% All expressions have precedence < 700.
+% PVR 24.2.94: changed according to Bruno's suggestion
+c_op(675,yfx,or)?
+c_op(675,yfx,xor)? % PVR 10.2.94
+c_op(650,yfx,and)? 
+c_op(625,fy,not)? % PVR 10.2.94
+
+c_op(600,xfx,===)?
+c_op(600,xfx,\===)?
+
+% Arithmetic comparisons 
+c_op(600,xfx,<)?
+c_op(600,xfx,>)?
+c_op(600,xfx,=<)?
+c_op(600,xfx,>=)?
+c_op(600,xfx,=:=)?
+c_op(600,xfx,=\=)?
+
+% String comparisons
+c_op(600,xfx,$<)?
+c_op(600,xfx,$>)?
+c_op(600,xfx,$=<)?
+c_op(600,xfx,$>=)?
+c_op(600,xfx,$==)?
+c_op(600,xfx,$\==)?
+
+% Sort comparisons
+c_op(600,xfx,:<)?
+c_op(600,xfx,:>)?
+c_op(600,xfx,:=<)?
+c_op(600,xfx,:>=)?
+c_op(600,xfx,:==)?
+c_op(600,xfx,:><)?
+c_op(600,xfx,:\<)?
+c_op(600,xfx,:\>)?
+c_op(600,xfx,:\=<)?
+c_op(600,xfx,:\>=)?
+c_op(600,xfx,:\==)?
+c_op(600,xfx,:\><)?
+
+% Arithmetic operations
+c_op(500,yfx,+)?
+c_op(500,yfx,-)?
+c_op(500,yfx,/\)?
+c_op(500,yfx,\/)?
+
+c_op(400,yfx,*)?
+c_op(400,yfx,//)?
+c_op(400,yfx,/)?
+c_op(400,yfx,>>)?
+c_op(400,yfx,<<)?
+c_op(400,yfx,mod)? % PVR 24.2.94
+c_op(200,fy,-)? % PVR 24.2.94
+c_op(200,xfy,^)?
+c_op(200,fy,\)?
+
+% Unify function and coreference tag
+c_op(150,yfx,.)? % PVR 24.2.94
+c_op(100,xfy,&)?   % RM: Feb  1 1993  % PVR 24.2.94
+c_op(75,fy,`)?  % RM: Feb  1 1993 % PVR 24.2.94
+c_op(50,xfy,:)? % PVR 24.2.94
+
+%%% Old stuff:
+
+% c_op(700,xfx,<<<-) ?  % RM: Feb  8 1993    Obsolete % RM: Feb 24 1993 
+% c_op(695,fx,`)?  % Quote is loosest of the functions
+% c_op(500,xfy,\)?
+% c_op(500,fx,+)? PVR 24.2.94
+% c_op(500,fx,-)? PVR 24.2.94
+
+% Project operator
+% c_op(400,yfx,##)?   % RM: Jan  7 1993
+
+%% c_op(300,yfx,mod)? BD June 10 1993
+
+% Module operator
+% c_op(130,xfy,#)?   % RM: Jan  7 1993 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% B U I L T _ I N 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+built_ins#set_module("built_ins")?
+
+open_module("syntax")? % This module contains symbols init. in built_ins.c
+% open_module("x")?
+
+%% BD June 11 1993
+global(tools_dir<-"+SETUPDIR+/Tools/") ?
+
+global(examples_dir<-"+SETUPDIR+/Examples/") ?
+global(superlint_dir<-"+SETUPDIR+/Examples/SuperLint/") ?
+global(demo_dir<-"+SETUPDIR+/Demo/") ? %% MJV January 16 1996
+global(lib_dir<-"+SETUPDIR+/Lib/") ?
+
+simple_load("+SETUPDIR+/Source/built_ins.lf") ?       %% BD June 10 1993
+simple_load("+SETUPDIR+/Source/term_expansion.lf") ?
+simple_load("+SETUPDIR+/Source/onlinedoc.lf")?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% X start up.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% PVR 13.10.93
+
+% persistent(x_loaded), x_loaded<<-false?
+
+% public(x_loaded)?
+% persistent(x_loaded)?
+% x_loaded<<-false?
+
+% public(load_x)?
+% dynamic(load_x)?
+% 
+% load_x :-
+% 	retract(load_x :- G),
+% 	assert((load_x :- write_err("*** X library already loaded."),nl)),
+% 	quiet_write("Loading X library..."),
+% 	simple_load("+SETUPDIR+/xpublic.lf"),      % RM: Jan 13 1993 
+% 	simple_load("+SETUPDIR+/xconstants.lf"),
+% 	simple_load("+SETUPDIR+/xtables.lf"),
+% 	simple_load("+SETUPDIR+/xgetset.lf"),
+% 	simple_load("+SETUPDIR+/xpred.lf").
+% 
+%%  simple_load("+SETUPDIR+/xfunctions.lf"),  % RM: Mar 11 1993 
+% 
+  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Get ready for user input
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% The 'user' module:
+
+display_modules(false) ?
+
+module("user")?
+open_module("built_ins")?
+open_module("syntax")?
+% PVR 13.10.93 open_module("x")?
+init,
+initrandom(real_time)?
+
+% display_modules(false)?   % BD June 10 1993
+% display_module_status?
