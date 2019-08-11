@@ -5698,6 +5698,8 @@ long c_random()
   Uses its integer argument to initialize
   the random number generator, which is the Unix random() function.
 */
+
+
 long c_initrandom()
 {
   ptr_psi_term t;
@@ -5744,7 +5746,6 @@ long c_initrandom()
 
   return success;
 }
-
 
 
 /******** C_DEREF_LENGTH

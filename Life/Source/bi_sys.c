@@ -204,6 +204,38 @@ static long c_cputime()
   Return the time in seconds since 00:00:00 GMT, January 1, 1970.
   This is useful for building real-time applications such as clocks.
 */
+
+// REV401PLUS I had revised c_realtime as below in prior work on X
+
+static long c_realtime()
+{
+  ptr_psi_term result, t;
+  REAL thetime,val;
+  long num,success;
+  struct timeval tp;
+  struct timezone tzp;
+ 
+  t=aim->aaaa_1;
+  deref_args(t,set_empty);
+  result=aim->bbbb_1;
+  deref_ptr(result);
+  success=get_real_value(result,&val,&num);
+  if (success) {
+    gettimeofday(&tp, &tzp);
+    thetime=(REAL)tp.tv_sec + ((REAL)tp.tv_usec/1000000.0);
+    /* thetime=times(&life_end)/60.0; */
+    //    if (num)
+    //  success=(val==thetime);
+    // else
+      success=unify_real_result(result,thetime);
+  }
+  return success;
+}
+
+
+#if FALSE
+// origin below
+
 static long c_realtime()
 {
   ptr_psi_term result, t;
@@ -228,6 +260,8 @@ static long c_realtime()
   }
   return success;
 }
+
+#endif
 
 /******** C_LOCALTIME
   Return a psi-term containing the local time split up into year, month, day,

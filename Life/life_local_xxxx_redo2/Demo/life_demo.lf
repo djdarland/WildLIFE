@@ -5,6 +5,9 @@
 module("life_demo")?
 public(demo, using_demo_fonts) ?
 
+djd_dbg(Str) :-
+    write("DJD_DBG ",Str,"\n").
+
 %%% Make sure the Demo fonts are known by the Xserver
 
 persistent(using_demo_fonts) ?
@@ -67,53 +70,65 @@ d_button(label => S:string,
 					       D)).
 
 control_panel :-
-	
+	djd_dbg("before B0"),
 	B0 = d_button(label => "Color Editor",
 		      file => "color_edit",
 		      demo => demo_color),
 	
+	djd_dbg("before B1"),
 	B1 = d_button(label => "Queens",
 		      file => "queens",
 		      demo => demo_queens),
 	
+	djd_dbg("before B2"),
 	B2 = d_button(label => "Boxes",
 		      file => "boxes",
 		      demo => demo_boxes),
 	
+	djd_dbg("before B3"),
 	B3 = d_button(label => "Flowers",
 		      file => "flowers",
 		      demo => demo_flowers),
 	
+	djd_dbg("before B41"),
 	B41 = d_button(label => "Schedule (small)",
 		       file => "x_schedule",
 		       demo => demo_schedule_s),
 
+	djd_dbg("before B2"),
 	B42 = d_button(label => "Schedule (large)",
 		       file => "x_schedule",
 		       demo => demo_schedule_l),
 	
+	djd_dbg("before B5"),
 	B5 = d_button(label => "Zebra",
 		      file => "x_zebra",
 		      demo => demo_zebra),
 	
+	djd_dbg("before B6"),
 	B6 = d_button(label => "Cryptarithmetic",
 		      file => "crypt",
 		      demo => demo_crypt),
 	
+	djd_dbg("before B7"),
 	B7 = d_button(label => "Math Wiz",
 		      file => "x_mathwiz",
 		      demo => demo_mathwiz),
 	
+	djd_dbg("before B8"),
 	B8 = d_button(label => "Tutorial",
 		      file => "tutorial",
 		      demo => demo_tutorial),
 	
+	djd_dbg("before same_size"),
 	same_size([B0, B1, B2, B3, B41, B42, B5, B6, B7, B8]),
 
+	djd_dbg("before QT"),
 	QT = push_button(text => "Quit",
 			 font_id => button_font,
 			 action => get_out),
 
+	djd_dbg("before demo panel"),
 	demo_panel <<- panel(title => "LIFE DEMO") 
 	  containing
 	  vc_list
@@ -140,7 +155,8 @@ control_panel :-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% Actions
 
-demo_color :- str2psi("color_edit", "color_edit").
+demo_color :- str2psi("color_edit", "color_edit"), djd_dbg("demo_color").
+
 demo_queens :- str2psi("queens", "queens").
 demo_boxes :- str2psi("boxes", "boxes").
 demo_flowers :- str2psi("flowers", "flowers").
@@ -173,5 +189,7 @@ demo :-
 	   ).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% trace?
+djd_dbg("before demo?")?
 
 demo?
