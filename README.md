@@ -8,21 +8,14 @@ Plans and Goals
   * Realized local directory would not be found if
   wild_life executed elsewhere.
   * Added cp_local.sh
-  * Now, I believe, to install: (in Life/Source directory)
-    * ./mk.sh
-    * ./cp_local.sh
+  * Now, I believe, to install:
+    *See Life/INSTALL file
     * to run test_suite ./ts.sh
-    * The Test Suite gives slightly different results from 4.01
-    * I did not overwrite 1.02 files in IN or LF directories.
-    * I have not investigated differeces yet.
-    * Going to create version of test suite - using original 1.02 data.
-    * It will still use my (revised) scripts.
+    * for original 1.02 suite use ./ts-1.02.sh
+    * for with X Windows enabled ./ts-X.sh
 
-
-
-* Plan to add separate Makefile to make x version
-  - and create different executable
-  * Eventually work on x version
+  * X Windows seems to display OK
+  * But not capturing evants.
 
 ---------------------------------------------------------------------------
 Copyright (C) Digital Equipment Corporation 1994
@@ -42,6 +35,8 @@ I have been informed that DEC was bought by Compaq in 1998.
 And that Compaq was bought by HP in 2002.
 
 I tried to contact HP, but got no response.
+
+See also Life/LICENSE
 
 ---------------------------------------------------------------------------
 
