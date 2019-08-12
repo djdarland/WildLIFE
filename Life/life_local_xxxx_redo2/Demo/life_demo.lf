@@ -10,7 +10,7 @@ persistent(using_demo_fonts) ?
 
 check_font_path :-
     %	X = system("+SETUPDIR+/Demo/check_fp"),
-    X = -1,
+    X = 1,
 	X =:= 0, !,
 	write("\nDemo fonts not found. Using standard fonts.\nSee the file +SETUPDIR+/Demo/INSTALL on a possible fix to this problem.\n"),
 	write("\nShould I try to use the demo fonts anyway? (yes/no) "),
@@ -28,7 +28,7 @@ check_font_path :-
 %%% load the toolkit, open the xtools module
 
 import("xtools") ?
-% import("xtools_utils") ?
+%% import("xtools_utils") ?  
 
 %%% Checking font availability
 
