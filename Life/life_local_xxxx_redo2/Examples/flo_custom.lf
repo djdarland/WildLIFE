@@ -29,7 +29,8 @@
 %
 
 xLoadFont(default_display,ButtonFont,
-         "-*-helvetica-bold-r-*-*-14-*-*-*-*-*-*-*"),
+         "-misc-fixed-medium-o-semicondensed--13-120-75-75-c-60-iso10646-1"),
+
 	                                                  %% avantgarde_demi10 
 	                                                  %% 8x13Bold
 							  %% times_bold10
@@ -37,7 +38,7 @@ xLoadFont(default_display,ButtonFont,
 setq(button_font,ButtonFont) ?
 
 xLoadFont(default_display,TextFieldFont,
-	"-*-helvetica-medium-r-*-*-14-*-*-*-*-*-*-*"),
+	"-misc-fixed-medium-o-semicondensed--13-120-75-75-c-60-iso10646-1"),
 	                                                  %% helvetica10
                                                           %% avantgarde_book10
 	                                                  %% r14
@@ -47,7 +48,7 @@ xLoadFont(default_display,TextFieldFont,
 setq(textfield_font,TextFieldFont) ?
 
 xLoadFont(default_display,ColorNameFont,
-	"-*-helvetica-bold-r-*-*-*-180-*-*-*-*-*-*"),
+	"-misc-fixed-medium-o-semicondensed--13-120-75-75-c-60-iso10646-1"),
 	                                                  %% helvetica_bold18
                                                           %% avantgarde_demi18 
 	                                                  %% times_bold18

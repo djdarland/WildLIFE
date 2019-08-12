@@ -284,6 +284,4 @@ global(queensymbol <- "Y") ?
 			%% If your system has the MIT chess font "chs-s50"
 			%% installed, change the previous two lines to
 			%%	load_font(Chessfont, "chs-s50"),
-      %%	global(queensymbol <- "b").
-
- queens?
+			%%	global(queensymbol <- "b").
