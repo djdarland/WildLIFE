@@ -4,7 +4,8 @@
 
 
 % module("life_demo")?
-public(life_demo, using_demo_fonts, check_font_path ) ?
+public(life_demo, using_demo_fonts) ?
+global(life_demo, using_demo_fonts) ?
 
 djd_dbg(Str) :-
     write("DJD_DBG ",Str,"\n").
@@ -32,7 +33,7 @@ check_font_path :-
 
 %%% load the toolkit, open the xtools module
 
-%% import("xtools") ?
+import("xtools") ?
 %% import("xtools_utils") ?
 
 %%% Checking font availability
@@ -180,7 +181,7 @@ C:writeln :- write&strip(C), nl.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% compose the interface at load time
 
-life_demo :-
+demo :-
 	control_panel, !,
 	   (
 	       begin_demo = get_choice,
@@ -190,8 +191,8 @@ life_demo :-
 	   ).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-trace?
 djd_dbg("before demo?")?
 
-% module("user") ?
+module("user")?
+%% open("life_demo")?
 

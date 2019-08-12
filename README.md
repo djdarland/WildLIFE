@@ -17,6 +17,18 @@ Plans and Goals
   * X Windows seems to display OK
   * But not capturing evants.
 
+  * X Windows now getting events.
+  * In life_local_redo2/Examples queens.lf works - but not a good font
+  * I was gust using a font I knew existed.
+  * flowers works somewhat - but also get fatal errors at points.
+  * in life_local_redo2/Demo life_demo responds to events - things
+  * it calls are not there yet
+
+  * Main problem I I had that caused not getting events was
+  * using a .wild_life file to start applications.
+  * I found that out by accident!!!
+
+
 ---------------------------------------------------------------------------
 Copyright (C) Digital Equipment Corporation 1994
 This work may not be copied or reproduced in whole or in part or for any
@@ -54,4 +66,3 @@ My philosophy is described more at:
 
 https://eclectic-philosopher.com/e_pluribus_unum/1951-ad-dennis-joe-darland/
 
-Test
