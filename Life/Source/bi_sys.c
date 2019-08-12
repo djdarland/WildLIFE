@@ -200,7 +200,7 @@ static long c_cputime()
   return success;
 }
 
-#if FALSE
+
 
 /******** C_REALTIME
   Return the time in seconds since 00:00:00 GMT, January 1, 1970.
@@ -233,7 +233,7 @@ static long c_realtime()
   }
   return success;
 }
-#endif
+#if FALSE
 
 // origin below
 
@@ -262,6 +262,7 @@ static long c_realtime()
   return success;
 }
 
+#endif
 
 /******** C_LOCALTIME
   Return a psi-term containing the local time split up into year, month, day,

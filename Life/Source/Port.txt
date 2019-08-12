@@ -1410,3 +1410,25 @@ echo 405 Total Tests match
 echo 8 Total Tests differ
 echo 8 Total Tests out differ
 echo 4 Total Tests err differ
+
+-------------------------------------------------------------------------
+
+Worked on X Windows
+Main changes
+
+Use fonts that exist on my system.
+
+Update +SETUP+ path.
+
+Sometimes added
+module("user")?
+and
+open("....")?
+
+at end of modules
+
+Removed load("xtools_utils") from life_demo.lf
+
+Disabled (effectively_ check for font in life_demo - I just used one I
+knew that I had.
+
