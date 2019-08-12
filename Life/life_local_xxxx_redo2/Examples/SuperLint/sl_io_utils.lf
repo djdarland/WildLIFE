@@ -1,0 +1,96 @@
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%
+%                       I/O UTILITIES FOR SUPERLINT
+%                       ---------------------------
+%
+%  
+%
+%
+%  AUTHOR : Arnaud Venet                     CREATION : September 17th 1993
+%  ------                                    --------
+%
+%
+%                             ---------------                        
+%
+%                    
+%                   Last modification : September 17th 1993 
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  (C) Digital Equipment Corporation 1993
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+
+
+
+remove_file(File) :-
+  @ = system(strcon("rm ", File)).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+safe_open_in(File, InStream) :-
+  (
+    exists_file(File),
+    !,
+    open_in(File, InStream)
+  ;
+    write_err(">>> superlint : file ", File, " doesn't exist"),
+    nl_err,
+    halt
+  ).
+  
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+display_token(identifier(Identifier)) -> truncate(Identifier).
+
+
+display_token(number(integer(Number))) -> Number.
+
+
+display_token(number(float(integer_part => IntegerPart, 
+                           decimal_part => DecimalPart))) -> 
+  strcon(IntegerPart, strcon(".", DecimalPart)).
+
+
+display_token(characters(Characters)) -> Characters.
+
+
+display_token(characters_string(String)) -> String.
+
+
+display_token(Token) -> root_sort(Token).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+truncate(String) -> TruncatedString
+  | (
+      strlen(String) > max_string_length,
+      !,
+      TruncatedString = 
+        strcon(substr(String, 1, max_string_length), "...")
+    ;
+      TruncatedString = String
+    ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+

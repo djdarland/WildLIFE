@@ -1,0 +1,1957 @@
+
+____________________________________________________________________________
+
+                               SuperLint
+____________________________________________________________________________
+
+                    A generator of C source analyzers
+____________________________________________________________________________
+
+Author   : Arnaud Venet
+Date     : Feb 19th 1994
+Modified : Mar  4th 1994
+Version  : 0.3
+____________________________________________________________________________
+
+              (C) Digital Equipment Corporation 1993 - 1994  
+____________________________________________________________________________
+
+This document gives a rapid description of the SuperLint package. 
+SuperLint is a real application written in LIFE allowing the user to build 
+lint-like tools for K&R and ANSI C programs. The user can enter rules 
+written in a simple C-like language which will be automatically applied or,
+if he is ambitious, write a real program in LIFE, using directly the
+syntactic structures provided by the integrated C parser.
+This tool is a prototype.  All comments, suggestions and bug reports are
+welcome.
+____________________________________________________________________________
+
+An extended example of use is in the file 'rules.lf' of the package
+____________________________________________________________________________
+
+
+
+Overview
+========
+
+SuperLint is built on top of a parser which produces a rich representation
+of C code (a fully annotated syntax tree). Building an analyzer consists
+in writing a set of rules that use the syntactic structures produced by the
+parser.
+
+In the most general case, the difficulty is that the user must write his
+own procedure exploring the syntactic tree and collecting the needed
+information, which may be very tedious.
+
+It turns out that in most cases the verifications are local in the sense
+that the user only needs the information reachable from one or more
+particular nodes. A characteristic example is an analyzer that checks a C
+program with regard to a set of style rules. In this case a rule only needs 
+the lexical information contained in the node to which it applies.
+
+Therefore we provided SuperLint with a C-like language which allows the 
+user to write easily a set of verification rules, each rule being only 
+applicable to some syntactic structures. Then a procedure can be called 
+which automatically explores all the nodes of the tree and for each one
+invokes the appropriate rules.
+
+But actually SuperLint is much more than a simple C-code verifier. It is
+a real programming environment entirely dedicated to the manipulation of 
+C-programs, ranging from stylistic verifications to code rewriting or static
+analysis. The C-like rules specification language is expanded into LIFE
+code, and it is possible to mix in a same file parts of code written in
+this language and real LIFE code. Thus one can take advantage of all the
+functionalities and tools offered by Wild_LIFE, like the X Window interface
+for example.  A typical use consists in writing libraries of functions and
+procedures which involve complex manipulations in LIFE and the analyzers
+specifications in C-like code.   We illustrate this with a small toolkit that
+is provided with SuperLint and which is systematically imported by each
+analyzer.  Moreover modules are fully supported. It is thus possible to
+construct complete encapsulated programming libraries devoted to the purpose
+of the SuperLint user.
+
+We will first give a brief description of the syntactic structures produced 
+by the parser, then we will explain how to write analyzers.
+
+
+
+
+I. Syntactic structures
+=========================
+
+0 - Notations
+-------------
+
+The syntactic and lexical structures are represented by psi-terms,
+that is, by flexible records.  The record type is called the "root sort"
+of the psi-term.  The field names are called "features".  We use the
+following notation to describe the psi-term with root sort PsiTerm and
+the features Feature1, ..., FeatureN :
+
+ PsiTerm
+ -------
+  o Feature1 : 
+      description of Feature1
+      .
+      .
+      .
+  o FeatureN : 
+      description of FeatureN
+
+Several symbols separated by commas may sometimes be written in place of
+'PsiTerm' above. This simply means that several psi-terms with different
+root sorts share the same features with identical meanings.
+In the following we will use the term 'structure' to denote psi-terms.
+
+The parser was built upon the grammar specified in Kernighan & Ritchie :
+"The C programming language", 2nd edition.
+
+
+1 - Tokens
+----------
+All tokens have the common features :
+
+ o file : 
+     the name of the file in which the token was found
+
+ o line : 
+     the line number of the token in its file
+
+ o column : 
+     the column number of the token in its file
+
+ o white_spaces : 
+     a string containing all the white spaces (blank, tab, newline) 
+     preceding the current token
+
+ o previous : 
+     the token preceding the current one
+
+ o next : 
+     the token following to the current one
+
+ o first : 
+     the first token in the file
+
+ o last : 
+     the last token in the file
+
+The tokens are :
+
+
+nothing
+-------
+ The empty token. Actually, the value of the 'previous' feature of the
+ first token and the 'next' feature of the last token in a file.
+
+
+identifier
+----------
+ o id : 
+     the string representing the identifier
+
+
+characters_string
+-----------------
+ o string : 
+     the string itself, all escape characters being processed
+
+ o extended : 
+     a boolean telling whether the string is extended (i.e. preceded
+     by an uppercase 'L' letter)
+
+
+character
+---------
+ o char : 
+     the string representing the character, all escape characters 
+     being processed
+
+ o extended : 
+     a boolean telling whether the character is extended (i.e. preceded
+     by an uppercase 'L' letter)
+
+
+number
+------
+ o num : 
+     the description of the number. It may be :
+   
+     - int
+       ---
+        o value : 
+            the string representing the integer
+
+        o base : 
+            the base of the integer. It may be
+            - octal
+            - decimal
+            - hexadecimal
+
+        o signed : 
+            a boolean telling whether a 'S' suffix was present
+
+        o long : 
+            a boolean telling whether a 'L' suffix was present
+
+     - float
+       -----
+        o integer_part : 
+            the string representing the integer part of the float
+
+        o decimal_part : 
+            the string representing the decimal part of the float 
+            ("0" if none)
+
+        o exponential_part : 
+            It is
+
+            exponential_part
+            ----------------
+             o value : 
+                 the string representing the exponential part of the float 
+                 ("0" if none)
+            
+             o sign : 
+                 the sign of the exponential part. It may be :
+                 - positive
+                 - negative
+
+        o type : 
+            depending on the eventual suffix. It may be :
+            - float
+            - double
+            - long_double
+
+
+The vararg token : '...'
+------------------------
+
+
+An operator symbol
+------------------
+It may be : '+', '-', '*', '/', '<', '>', '&', '|', '!', '%', '^', 
+            '~', '<<', '>>', '=', '+=', '-=', '*=', '/=', '%=', '&=', 
+            '^=', '|=', '<<=', '>>=', '!=', '?', '.', '->'
+
+
+A separator symbol
+------------------
+It may be : ',', ';', ':', '(', ')', '{', '}', '[', ']'
+
+
+A keyword
+---------
+It may be :
+
+auto         break         case         char
+const        continue      default      do
+double       else          enum         extern
+float        for           goto         if
+int          long          register     return
+short        signed        sizeof       static
+struct       switch        typedef      union
+unsigned     void          volatile     while
+
+
+NOTE : When you access a token name from within an analyzer the root sort
+----   of a token is always converted into a string because some
+       symbols like '(', '{', ...etc are difficult to handle explicitly
+       in LIFE code (parse problems). In all cases you'd better use the
+       'string2id' function (see section 3, part II).
+
+
+2 - Types
+---------
+
+We note simple types :
+ - void, char
+ - the numerical types
+ - the structures and unions
+ - the enumerations
+The complex types are the pointers, arrays, tags and types between 
+parentheses.
+
+All simple types have these common features :
+
+ o qualification : 
+     It may be
+     - const
+     - volatile
+     - nothing
+     The case nothing occurs when no qualifier was specified.
+
+ o store_class : 
+     It may be
+     - auto
+     - register
+     - static
+     - extern
+     - nothing
+     The case nothing occurs when no store class was specified.
+
+ o specifiers : 
+     it is the list of the lexical type specifiers. They are keyword tokens 
+     like 'int', 'const', ...etc and also :
+
+     - type_alias
+       ----------
+        It represents an identifier previously aliased to a type in a 'typedef'
+        statement. Its only feature is :
+         o name : the corresponding identifier token
+
+     - struct_name, union_name, enum_name
+       ----------------------------------
+        It represents an identifier designing a structured or enumerated type. 
+        Its features are :
+        o name : 
+            the identifier token representing the name of the complex type
+
+        o keyword : 
+            the keyword coming with the identifier. It is one of the tokens : 
+            struct, union, enum
+
+     - struct, union, enum
+       -------------------
+        It is the case of an anonymous struct definition. See below for further
+        details.
+
+
+2.1 Simple types
+----------------
+
+void
+----
+
+
+char, int, short_int, long_int, float, double, long_double
+----------------------------------------------------------
+ o signed : 
+     a boolean which is true when type is signed
+
+ o inserted : 
+     this feature is optional. It's present for a type 'int' which has been 
+     inserted by the parser when he encounters a function declaration without 
+     a return type (i.e. for external and local declarations and for function
+     definitions).
+
+
+struct, union
+-------------
+ o keyword : 
+     one of the tokens : struct, union
+
+ o body : 
+     the body of the struct or union type specification. It is
+
+     struct_body, union_body
+     -----------------------
+      o left_brace : the token "{" beginning the body definition
+      o fields :
+          It is a structure of root sort 'fields' containing as features 
+          the names of all the fields of the C structure or union. These names 
+          are strings. The name of an anonymous tag is "tag*N" where N is an 
+          integer (it tells that it's the Nth anonymous tag encountered in the
+          structure).
+          It has the extra feature 'first_member' which gives the first field
+          in the C structure or union.
+          The structure of a field is :
+
+          field
+          -----
+           o name : 
+               the identifier token of the field name or the structure :
+
+               anonymous_tag
+               -------------
+                o id : the tag name generated by the parser
+
+               in the case of an anonymous tag.
+
+           o type : 
+               the type of the field
+
+           o initialization : 
+               an initialization expression (see section 6.7 for further 
+               details)
+
+           o separator : 
+               the separator token at the end of the field specification 
+               (namely a semicolon)
+
+           o first : 
+               the first field in the structure
+
+           o last : 
+               the last field in the structure
+
+           o previous : 
+               the previous field (if any, nothing otherwise)
+
+           o next : 
+               the next field (if any, nothing otherwise)
+
+      o right_brace : the token "}" ending the body definition
+
+
+enum
+----
+ o keyword : 
+     the token enum
+
+ o body : 
+     the body of the enum type specification. It is
+
+     enum_body
+     ---------
+      o left_brace : 
+          the token "{" beginning the body definition
+
+      o enumerators :
+          It is a structure of root sort 'enumerators' containing as features 
+          the names of all the enumerators defined in the enum statement.
+          These names are strings. It also has the feature 'first_member' 
+          which gives the first enumerator specified.
+          The structure of an enumerator is :
+
+          enumerator
+          ----------
+           o name : 
+               the identifier token of the enumerator
+
+           o initialization : 
+               an initialization expression (see section 6.7 for further 
+               details)
+
+           o separator : 
+               the separator token at the end of the field specification 
+               (namely a comma) or nothing
+
+           o initialization : 
+               an initialization expression (see section 6.7 for further 
+               details) setting the value of the enumerator
+
+           o first : 
+               the first enumerator in the enumeration
+
+           o last : 
+               the last enumerator in the enumeration
+
+           o previous : 
+               the previous enumerator (if any, nothing otherwise)
+
+           o next : 
+               the next enumerator (if any, nothing otherwise)
+
+      o right_brace : the token "}" ending the body definition
+
+
+2.2 Complex types
+-----------------
+
+protected_type 
+--------------
+Case of a type between parentheses
+ o left_parenthesis : 
+     the token "("
+
+ o type : 
+     the type between parentheses
+
+ o right_parenthesis : 
+     the token ")"
+
+
+pointer
+-------
+ o to : 
+     the type the pointer points to
+
+ o star : 
+     the token "*" appearing in the type specification
+
+ o qualification : 
+     the pointer's qualification, the same as for simple types.
+
+
+array
+-----
+ o of : 
+     the type of the elements of the array
+
+ o dimensions : 
+     the dimensions of the array. It is
+
+     dimensions
+     ----------
+      o dimensions_number : 
+          the number of dimensions of the array
+
+      o features 1..dimensions_number : 
+          they are the dimensions of the array.
+          A dimension is 
+    
+          dimension
+          ---------
+           o left_bracket : 
+               the token "["
+
+           o size : 
+               the constant expression defining the size of the dimension
+               or 'nothing' if unspecified.
+
+           o right_bracket : 
+               then token "]"
+
+
+tag
+---
+ o type : 
+     the type of the tag
+
+You must note that in this case the size of the tag is put in the
+initialization feature of the associated declarations (see section 6.7).
+This enables an homogeneous presentation of the declarations.
+
+
+function
+--------
+ o return_type : 
+     the return type of the function
+
+ o left_parenthesis : 
+     the token "(" preceding the parameters specification
+
+ o parameters : 
+     It is 'nothing' (if no parameter is specified) or
+
+     parameters
+     ----------
+      o parameters_number : 
+          number of parameters
+
+      o vararg : 
+          this boolean is true when the function accepts a variable
+          number of arguments (in this case, 'parameters_number' is the number
+          of parameters explicitly declared).
+
+      o suspension_points : 
+          this feature exists only if 'vararg' is true. It contains the token 
+          '...' which appears at the end of the parameters specification.
+
+      o the features 1..parameters_number : 
+          Each feature contains a parameter specification, namely
+
+          parameter
+          ---------
+           o name : 
+               the corresponding identifier token if any, or an 'anonymous'
+               structure :
+
+               anonymous
+               ---------
+                o file :
+                    the name of the file in which the parameter's specification
+                    occurs
+
+                o line :
+                    the corresponding line number in the previous file
+
+                o white_spaces :
+                    the empty string : ""
+
+               This case is related to ANSI function prototypes where the
+               types of the arguments appear without any name.
+
+           o type : 
+               the parameter type
+
+          or
+
+          label_parameter
+          ---------------
+           It only occurs in K&R C function definition : only the names of
+           parameters appear in the function head. Their types are specified
+           at the beginning of the function body.
+            o label : 
+                the corresponding identifier token
+
+          Both kinds of parameters have the common features :
+
+           o separator : 
+               the comma following the parameter, if not the last one, 
+               'nothing' otherwise (for an explication of the semicolon
+               case see 'parameters_declarations' in section 3.2).
+
+           o previous : 
+               the previous parameter, if any, 'nothing' otherwise
+
+           o next : 
+               the next parameter, if any, 'nothing' otherwise
+
+           o first : 
+               the first parameter in the specification
+
+           o last : 
+               the last parameter in the specification
+
+ o right_parenthesis : 
+     the token ")" ending the parameters declaration
+
+
+3 - Type and Function Definitions
+---------------------------------
+
+3.1 Type definitions
+--------------------
+
+All type definitions have the common features :
+
+ o previous : 
+     the previous statement, i.e., type definition, declaration or
+     function definition depending on the location of the current type
+     definition (external, local declaration)
+
+ o next : 
+     the next statement
+
+ o first : 
+     the first statement in the type definition's scope
+
+ o last : 
+     the last statement in the type definition's scope
+
+
+type_definition
+---------------
+ o keyword : 
+     the token typedef
+
+ o type : 
+     the type being defined
+
+ o name : 
+     the corresponding identifier
+
+ o separator : 
+     the comma or semicolon token ending the type definition
+
+
+struct_definition, union_definition, enum_definition
+----------------------------------------------------
+ o keyword : 
+     a keyword token among struct, union, enum
+
+ o name : 
+     the corresponding identifier
+
+ o body : 
+     the body of the compound type (see previous section)
+
+
+3.2 Function definitions
+------------------------
+
+function_definition
+-------------------
+ o type : 
+     a 'function' type describing the function head
+
+ o name : 
+     the corresponding identifier token
+
+ o style : 
+     it is 'old' for a K&R's style function definition, 'modern' for
+     an ANSI definition
+
+ o parameters_declarations : 
+     it is
+  
+     parameters_declarations
+     -----------------------
+      o ParameterDeclaration1
+          .
+          .
+          .
+      o ParameterDeclarationN
+
+      o parent_declarations :
+          the 'toplevel' declarations (see section 4.1)
+
+      o first_declaration
+
+     The features names ParameterDeclarationX are string corresponding to the
+     parameters names (if any). They contain :
+
+     parameter_declaration
+     ---------------------
+      o parameter : 
+          a 'parameter' structure (see 'function' type, section 2).
+          For K&R function definitions this structure refers to the
+          corresponding declaration between the function's head and body.
+
+      o previous : 
+          the previous parameter declaration if any, 'nothing' otherwise
+
+      o next : 
+          the next parameter declaration if any, nothing otherwise
+
+      o first : 
+          the first parameter declaration
+
+      o last : 
+          the last parameter declaration
+
+      o scope : 
+          it is
+
+          function_head
+          -------------
+           o function_name : 
+               a string representing the function's name where the parameter 
+               declaration appears
+
+     The feature first_declaration contains the first parameter declaration
+     if any, 'nothing' otherwise.
+     Note that a 'parameter_declaration' structure can be inserted by the
+     parser when a parameter figures in the head of a K&R function definition
+     but is not declared thereafter. In this case the type of the parameter
+     is by default set to 'int'. 
+
+ o body : 
+     the function body. It's a 'block' instruction (see section 5)
+
+
+4 - Declarations
+----------------
+
+4.1 The toplevel declarations
+-----------------------------
+
+This structure is the root of the syntactic tree :
+
+
+toplevel
+--------
+ o parent_declarations : 
+     nothing
+
+ o type_definitions : 
+     a term of root sort 'type_definitions'. The features are strings 
+     representing the names of the type aliases. Each feature contains a 
+     'type_definition' term (see section 3.1)
+
+ o struct_definitions : 
+     a term of root sort 'struct_definitions'. The features are strings 
+     representing the names of the structures defined. Each feature contains 
+     a 'struct_definition' term (see section 3.1)
+
+ o union_definitions : 
+     on the same model as struct_definitions
+
+ o enum_definitions : 
+     on the same model as struct_definitions
+
+ o struct_declarations : 
+     a term of root sort 'struct_declarations'. The features are strings 
+     representing the names of the structures declared. Each feature contains
+     a 'struct_declaration' term (see section 4.3)
+
+ o union_declarations : 
+     on the same model as struct_declarations
+
+ o enum_declarations : 
+     on the same model as struct_declarations
+
+ o external_declarations : 
+     a term of root sort 'external_declarations'. The features are strings 
+     representing the names of the identifiers declared. Each feature contains
+     an 'external_declaration' (see section 4.3)
+
+ o function_definitions :
+     a term of root sort 'function_definitions'. The features are strings 
+     representing the names of the functions defined. Each feature contains
+     a 'function_definition' term (see section 3.2)
+
+ o files :
+     it is
+  
+     files
+     -----
+      o files_number : 
+          the number of files that have been parsed when SuperLint was called
+
+      o 1 .. file_number :
+          each feature contains a 'file_info' structure, namely :
+
+        file_info
+        ---------
+         o name :
+             a string representing the name of the file as he was typed on
+             the command line when SuperLint was called
+
+         o first_token :
+             the first token in the file
+
+
+4.2 Block declarations
+----------------------
+
+These are the declarations appearing at the beginning of a block { ... } :
+
+
+block_declarations
+------------------
+ o parent_declarations :
+     it may be a structure
+     - 'parameters_declarations' for a function body (see section 3.2)
+     - 'block_declarations' for a nested block
+
+ o local_declarations : 
+     a term of root sort 'local_declarations'. The features are strings 
+     representing the names of the identifiers declared in the block. 
+     Each feature contains a 'local_declaration' (see section 4.3)
+
+ o type_definitions :
+     the same as for toplevel
+
+ o struct_definitions :
+     the same as for toplevel
+
+ o enum_definitions :
+     the same as for toplevel
+
+ o union_definitions :
+     the same as for toplevel
+
+ o struct_declarations :
+     the same as for toplevel
+
+ o enum_declarations :
+     the same as for toplevel
+
+ o union_declarations :
+     the same as for toplevel
+
+
+4.3 Single declarations
+-----------------------
+
+All single declarations have the common features :
+
+ o scope :
+     the declarations which the declaration belongs to. It may be
+     'toplevel' or 'block_declarations'
+
+ o previous : 
+     the previous statement (declaration, function definition, type definition,
+     according to the context) in the declaration's scope
+
+ o next : 
+     the next statement in the declaration's scope
+
+ o first : 
+     the first statement in the declaration's scope
+
+ o last : 
+     the last statement in the declaration's scope
+
+Logically the parameter_declaration structure should figure here.
+However for clarity we described it with the function_definition structure.
+
+The single declarations are :
+
+
+external_declaration, local_declaration
+---------------------------------------
+ o type : 
+     the type of the declared identifier
+
+ o name : 
+     the corresponding identifier token
+
+ o initialization : 
+     the initialization expression if any (see section 6.7), 'nothing' 
+     otherwise
+
+ o separator : 
+     a comma or semicolon token ending the declaration
+
+
+
+struct_declaration, union_declaration, enum_declaration
+-------------------------------------------------------
+ o keyword : 
+     a token among struct, union, enum
+
+ o name : 
+     the corresponding identifier token
+
+ o semi_colon : 
+     the semicolon token ending the declaration
+
+Several verifications are performed at parse time :
+ . an incomplete struct or union declaration without a corresponding
+   struct or union definition in the same scope is stated as an error
+ . an enum declaration which does not correspond to a visible definition
+   is also stated as an error
+
+
+5 - Instructions
+----------------
+
+All instructions have the common features :
+
+ o scope : 
+     the scope of the current instruction. It may be
+     - function_body(FunctionName) where FunctionName is a string. 
+       This form occurs for a block instruction which is the body of the 
+       function FunctionName (see section 3.2)
+     - block : the block which the current instruction belongs to
+     - then_body : it is
+        
+         then_body
+         ---------
+          o instruction :
+              the 'if' instruction which executes the current instruction
+              when the expression in the condition is not zero
+
+     - else_body : it is
+        
+         else_body
+         ---------
+          o instruction :
+              the 'if' instruction which executes the current instruction
+              when the expression in the condition is zero
+
+     - labeled_instruction, case, default, switch, while, for, do_while :
+       the instruction which embodies the current one
+
+ o next : 
+     the next instruction in the current block if any, 'nothing' otherwise
+
+ o previous : 
+     the previous instruction in the current block if any, 'nothing' otherwise
+
+ o first : 
+     the first instruction in the current block
+
+ o last :
+     the last instruction in the current block
+
+NOTE : a single instruction which is the body of a labeled instruction,
+----   case, default, if, switch, while, for or do..while instruction has
+       no previous nor next instruction. In these cases the features previous
+       and next contain 'nothing' while the features first and last contain
+       the instruction itself.
+
+
+5.1 Labeled instructions
+------------------------
+
+labeled_instruction
+-------------------
+ o label :
+     the identifier token corresponding to the instruction's label
+
+ o colon :
+     the colon token separating the label and the instruction
+
+ o body :
+     the labeled instruction
+
+
+case
+----
+ o keyword ;
+     the token 'case'
+
+ o condition :
+     the expression of the case statement
+
+ o colon :
+     the colon token separating the condition and the instruction
+
+ o body :
+     the corresponding instruction
+
+
+default
+-------
+ o keyword ;
+     the token 'default'
+
+ o colon :
+     the colon token separating the keyword 'default' and the instruction
+
+ o body :
+     the corresponding instruction
+
+
+5.2 Compound instruction
+------------------------
+
+block
+-----
+ o left_brace :
+     the "{" token corresponding to the brace beginning the block
+
+ o block_declarations :
+     a 'block_declarations' structure corresponding to the local
+     declarations and definitions made within the block (see section 4.2)
+
+ o instructions :
+     the list of instructions of the block (see section II for a description
+     of the list data type)
+
+ o right_brace :
+     the "}" token corresponding to the brace ending the block
+
+
+5.3 Expression instruction
+--------------------------
+
+expression_instruction
+----------------------
+ o expression :
+     the corresponding expression (see section 6)
+
+ o semi_colon :
+     the semicolon token ending the instruction
+
+
+5.4 Selection instructions
+--------------------------
+
+if
+--
+ o keyword :
+     the token 'if'
+
+ o left_parenthesis :
+     the token "(" beginning the condition
+
+ o condition :
+     the corresponding expression (see section 6)
+
+ o right_parenthesis :
+     then token ")" ending the condition
+
+ o then_body :
+     the corresponding instruction
+
+ o else_keyword :
+     the token 'else' if any, 'nothing' otherwise
+
+ o else_body :
+     the instruction corresponding to the 'else' case if any, 'nothing'
+     otherwise
+
+
+switch
+------
+ o keyword :
+     the token 'switch'
+
+ o left_parenthesis :
+     the token "(" beginning the condition
+
+ o condition :
+     the corresponding expression (see section 6)
+
+ o right_parenthesis :
+     then token ")" ending the condition
+
+ o body :
+    a block instruction containing a sequence of 'case' statements.
+    There is currently no verification of the coherence of this block
+    at parse time.
+
+
+5.5 Iteration instructions
+--------------------------
+
+while
+-----
+ o keyword :
+     the token 'while'
+
+ o left_parenthesis :
+     the token "(" beginning the loop condition
+
+ o condition :
+     the corresponding expression (see section 6)
+
+ o right_parenthesis :
+     then token ")" ending the loop condition
+
+ o body :
+     the instruction corresponding to the body of the loop
+
+
+do_while
+--------
+  o do_keyword :
+     the token 'do'
+
+ o body :
+     the instruction corresponding to the body of the loop
+
+ o while_keyword :
+     the token 'while'
+
+ o left_parenthesis :
+     the token "(" beginning the loop condition
+
+ o condition :
+     the corresponding expression (see section 6)
+
+ o right_parenthesis :
+     then token ")" ending the loop condition
+
+ o semi_colon :
+     the semicolon token endin the instruction
+
+
+for
+---
+ o keyword :
+     the token 'for'
+
+ o left_parenthesis :
+     the token "(" beginning the for 
+
+ o initialization :
+     the initialization expression of the loop if any (see section 6), 
+     'nothing' otherwise
+
+ o first_semi_colon :
+     the semicolon token following the initialization
+
+ o condition :
+     the expression corresponding to the loop condition if any (see section 6),
+     'nothing' otherwise
+
+ o second_semi_colon :
+     the semicolon token following the condition
+
+ o step :
+     the last expression of the 'for' statement if any (see section 6), 
+     'nothing' otherwise
+
+ o right_parenthesis :
+     the token ")" ending the for
+
+ o body :
+     the instruction corresponding to the body of the loop
+
+
+5.6 Jump instructions
+---------------------
+
+continue, break
+---------------
+ o keyword :
+     the corresponding keyword token
+
+ o semi_colon :
+     the semicolon token ending the instruction
+
+
+goto
+----
+ o keyword :
+     the token 'goto'
+
+ o label :
+     the identifier token corresponding to the goto label
+
+ o semi_colon :
+     the semicolon token ending the instruction
+
+
+return
+------
+ o keyword :
+     the token 'return'
+
+ o value :
+     the returned expression
+
+ o semi_colon :
+     the semicolon token ending the instruction
+
+
+5.7 Void instruction
+--------------------
+
+void_instruction
+----------------
+ o semi_colon :
+     the semicolon token in which this instruction consists
+
+
+6 - Expressions
+---------------
+
+6.1 Primary expressions
+-----------------------
+
+Primary expressions are the identifier, number, characters_string and 
+character tokens. We must add to this list the parenthesized expressions 
+which have the following structure :
+
+protected_expression
+--------------------
+ o left_parenthesis :
+     the token "("
+
+ o expression :
+     the parenthesized expression
+
+ o right_parenthesis :
+     the token ")"
+
+
+All non primary expressions have the common features :
+
+ o operator :
+     an operator token corresponding to the expression's one if any,
+     'nothing' otherwise
+
+ o mode :
+     it may be :
+      - prefix
+      - postfix
+      - infix
+      - special
+     since the expression's operator is prefix, postfix, infix or has
+     a special behaviour. When describing an operator we will systematically
+     give its mode.
+
+
+6.2 Unary expressions
+---------------------
+
+The root sort of unary expressions is the corresponding unary operator's 
+symbol. They have one common feature :
+
+ o expression :
+     it contains the expression which is applied to the unary operator
+
+The unary expressions are
+
+
+Incrementation expression
+-------------------------
+
+The operator is '++' or '--'. Their mode feature contains 'prefix' or 
+'postfix', according to the position of the operator.
+
+
+Unary arithmetic expression
+---------------------------
+
+The operator is '+', '-' or '~' and the mode is 'prefix'.
+
+
+Unary logical expression
+------------------------
+
+The operator is '!' and the mode is 'prefix'.
+
+
+Pointer reference
+-----------------
+
+The operator is '*' and the mode is 'prefix'.
+
+
+Address value
+-------------
+
+The operator is '&' and the mode is 'prefix'.
+
+
+Size of expression
+------------------
+
+The operator is 'sizeof' and the mode is 'prefix'.
+
+
+6.3 Binary expressions
+----------------------
+
+The root sort of binary expressions is the corresponding binary operator's 
+symbol.
+
+The binary expressions are
+
+
+Regular binary expressions
+--------------------------
+
+Their mode is always 'infix'. They have two common features :
+
+ o left_expression :
+     it contains the expression on the left side of the operator
+
+ o right_expression :
+     it contains the expression on the right side of the operator
+
+The operator is one of : '+', '-', '*', '/', '<', '>', '|', '%', '^', '<<', 
+                         '>>', '=', '+=', '-=', '*=', '/=', '%=', '&=', '^=', 
+                         '|=', '<<=', '>>=', '!=', '.', '->', ','
+
+The array reference is a binary expression, but it has a particular
+representation since its operator is discontinuous  : [ ... ]
+
+
+array_reference
+---------------
+ o array :
+     the expression corresponding to the array
+
+ o mode :
+     'special'
+
+ o operator :
+     'nothing'
+
+ o left_bracket :
+     the token "[" preceding the element's index in the array
+
+ o index :
+     the expression corresponding to the element's index in the array
+
+ o right_bracket :
+     the token "[" following the element's index in the array
+
+
+6.4 Conditional expression
+--------------------------
+
+The root sort of this expression is '?'. The feature mode contains 'special'
+and the feature operator the token of the corresponding question mark.
+Its features are :
+
+ o condition :
+     the expression corresponding to the test
+
+ o then :
+     the resulting expression if condition evaluates to non zero value
+
+ o colon :
+     the colon token of the expression
+
+ o else :
+     the resulting expression if condition evaluates to zero
+
+
+6.5 Function call
+-----------------
+
+function_call
+-------------
+ o call :
+     the expression corresponding to the function being called
+
+ o left_parenthesis :
+     the token "(" beginning the arguments list
+
+ o arguments :
+     the arguments of the call. It is
+
+     arguments
+     ---------
+      o arguments_number :
+          the number of arguments
+
+      o 1 .. arguments_number :
+          the arguments (if arguments_number is not 0). Each feature
+          contains an expression. All arguments have the common features :
+          
+           o previous : 
+               the previous argument
+
+           o next : 
+               the next argument
+
+           o first : 
+               the first argument
+
+           o last :
+               the last argument
+
+ o right_parenthesis :
+     the token "(" ending the arguments list
+
+
+6.6 Cast expression
+-------------------
+
+cast
+----
+ o left_parenthesis :
+     the token "(" at the beginning of the type specification
+
+ o type :
+     the cast type (see section 2)
+
+ o right_parenthesis :
+     the token ")" at the end of the type specification
+
+ o expression :
+     the cast expression
+
+
+6.7 Initialization expressions
+------------------------------
+
+They are expressions which set the initial value of an identifier within
+its declaration.
+
+
+setting
+-------
+ o keyword :
+     a token ":" (for the size of a tag) or a token "=" for the classical 
+     initialization of an identifier in its declaration.
+
+ o setting :
+     the initalization expression. It's either a constant expression
+     either a complex initialization (e.g. the initialization of the elements
+     of an array). In the latter case the expression is
+
+     complex_initialization
+     ----------------------
+      o left_brace :
+          the token "{" beginning the initialization
+
+      o body :
+          the initialization expression (a constant expression or a
+          sequence of expressions with perhaps complex initializations inside)
+
+      o right_brace :
+          the token "}" ending the initialization
+
+
+
+
+II. Building analyzers
+======================
+
+1 - Principles
+--------------
+
+A shell script named 'slc' is provided with the SuperLint package. It
+automatically calls the rules compiler and produces an analyzer from
+one or several files containing the analyzer's specification.
+
+After creating an analyzer from a rules file, you can run the analyzer
+on C files using the 'sl' shell script. See the README file in the
+SuperLint package for complete information concerning the use of sl and
+slc.
+
+
+2 - Description of the rules specification language
+---------------------------------------------------
+
+2.1 Analyzer's design
+---------------------
+
+An analyzer's specification consists of one or several files which may contain
+verification rules, functions or procedures written in the C-like language
+as well as pure LIFE code.
+The entry point of the analyzer is a procedure (see section 2.4) called
+'main' which is invoked when the analyzer is launched with 'sl'. The parse
+of the C files specified on the command line is automatically effected and
+the result stored in the global variable named 'syntactic_tree' which
+contains a 'toplevel' structure (see section 4.1).
+When the procedure 'main' is absent, SuperLint launches an automatic
+verification of all the rules of the analyzer's specification. But if you 
+write your own main procedure you have to handle by yourself all the 
+verification operations.
+
+
+2.2 Structures and aliases
+--------------------------
+
+A structure is designed by an alphanumerical name always beginning by
+a lower case letter. You don't need to declare structures like in C since 
+they don't have predefined fields, i.e. you can add as many features
+to your structure as you want. You access the features of a structure with
+the '.' operator, just like in C. When you try to get the value of a
+nonexisting feature an error occurs.
+You add a new feature to a structure with the 'set_feature' procedure.
+This assignment is destructive, in the sense that if you set a preexisting
+feature with 'set_feature', the previous value of the feature is lost.
+Note that a structure ought not to have any feature. In the following we
+will name identifiers such featureless structures.
+
+The basic way to pass arguments or to denote particular structures in
+SuperLint is to use aliases. An alias is an alphanumerical name beginning
+by an uppercase letter or an underscore. You don't need to declare aliases.
+You set an alias value using the '=' operator. Once declared an alias cannot
+be reassigned. The scope of an alias is the rule/procedure/function in which
+it is declared. It is destroyed when exiting the scope.
+An alias is much like a local variable in C, but with restrictions in the way
+is is assigned.
+
+Example :
+
+     MyStructure = my_structure,
+     set_feature(name, "Mr. Struct", MyStructure),
+     set_feature(foo, bar, MyStructure),
+     X = MyStructure.foo,
+     set_feature(foo, nothing, MyStructure)
+
+These operations declare that the alias MyStructure designs the structure
+'my_structure', which has two features : name and foo with the initial
+values "Mr. Struct" and 'bar'. X is an alias for the feature foo of
+MyStructure. At this moment the value of X is 'bar'. But after the destrcutive
+reassignment : 'set_feature(foo, nothing, MyStructure)' the value of X is
+'nothing'. The alias X doesn't design the structure 'bar' but the feature
+foo of MyStructure independently of its content.
+
+
+Note for the purpose of the LIFE programmer :
+---------------------------------------------
+
+Structures are actually psi-terms and aliases logical variables. The 
+'set_feature' operation is the non-backtrackable assignment '<<-'. 
+It's not dangerous to use it for all the syntactic structures produced by 
+the parser are persistent.
+It will not cause any problem as long as the user who programs with the C-like
+language, programs *effectively* like in C and doesn't mix both imperative and
+declarative styles.
+
+
+2.3 Rules
+---------
+
+A rule is a specific procedure which is called for each node during the 
+automatic scanning of the syntactic tree.
+
+A rule specification has the following form :
+
+[ rule ] <RULE NAME> (<NODE NAME>, <DOMAIN NAME>) :->
+{
+  entry_test(<ENTRY TEST>),
+  <RULE BODY>
+}.
+
+ o <RULE NAME> is an identifier. Two different rules cannot have the same
+   name
+
+ o <NODE NAME> is an alias designing the syntactic node currently scanned
+
+ o <DOMAIN NAME> is an identifier designing a set of rules. This can
+   be useful when using libraries of rules since it's possible to tell 
+   SuperLint to perform verifications only for particular rules sets.
+   See section 3 for further details.
+
+ o <ENTRY TEST> is a logical expression selecting the nodes to which the
+   rule must apply. If the expression is true the rule's body is executed
+   else the verification process continues with another rule or another node.
+   See section 2.6 for further details on logical expressions.
+
+ o <RULE BODY> is a sequence of instructions constituting the body of the
+   rule. See section 2.5 for further details on instructions.
+
+NOTE : the keyword 'rule' before the rule's name is optional.
+----
+
+
+2.4 Procedures and functions
+----------------------------
+
+Procedures and functions behave much like in C. Their syntax is :
+
+procedure <PROCEDURE NAME> (<PARAMETER 1>, ..., <PARAMETER N>) :->
+{
+  <PROCEDURE BODY>
+}.
+
+ o <PROCEDURE NAME> is an identifier.
+
+ o <PARAMETER 1>, ..., <PARAMETER N> are aliases designing the parameters
+   of the procedure.
+
+ o <PROCEDURE BODY> is a sequence of instructions constituting the body of 
+   the procedure. See section 2.5 for further details on instructions.
+
+
+function <FUNCTION NAME> (<ARGUMENT 1>, ..., <ARGUMENT N>) :->
+{
+  <FUNCTION BODY>
+}.
+
+ o <FUNCTION NAME> is an identifier.
+
+ o <ARGUMENT 1>, ..., <ARGUMENT N> are aliases designing the arguments
+   of the procedure.
+
+ o <FUNCTION BODY> is a sequence of instructions constituting the body of 
+   the function. If you forget to specify a return value for the function,
+   the identifier 'unknown' is returned. See section 2.5 for further details
+   on instructions.
+
+NOTE : If you call a function or a procedure with aliases which have not
+----   been previously set you are in deep trouble. Currently there is no
+       runtime verification insuring that all the arguments of a procedure
+       or function call are defined.
+
+
+Note for the purpose of the LIFE programmer :
+---------------------------------------------
+
+Functions are actually translated into LIFE functions and procedures into 
+predicates.
+
+
+2.5 Instructions
+----------------
+
+An instruction may be :
+
+ o A block instruction : { ... }
+   It contains a sequence of instructions, two instructions being separated
+   by a comma.
+  
+   Example :
+ 
+     {
+       X = f(1, name),
+       Y1 = X.field1,
+       Y2 = X.field2,
+       p(Y1.foo, Y2)
+     }
+
+   WARNING : Aliases defined within a block are NOT local to this block.
+   -------   Remember that the scope of an alias is the rule/function/procedure
+             in which it appears.
+
+ o An alias definition (see section 2.2) :
+
+     <ALIAS NAME> = <EXPRESSION>
+
+   See section 2.6 for further details on expressions.
+
+ o A procedure call :
+  
+     <PROCEDURE NAME> (<PARAMETER 1>, ..., <PARAMETER N>)
+
+   where <PARAMETER 1>, ..., <PARAMETER N> are expressions.
+
+ o A 'donothing' instruction which does nothing.
+
+ o A 'return' statement :
+
+     return <EXPRESSION>
+
+   where <EXPRESSION> is an expression.
+   It can only occur in a function body for it is intended to specify the
+   return value of the function.
+
+   WARNING : Unlike in C the function doesn't return after the 'return' has 
+   -------   been executed. If there are other instructions following the 
+             'return' instruction they are executed in turn.
+
+ o An 'if' statement :
+
+     if(<CONDITION>) then
+       <FIRST CASE>
+     [ else
+        <SECOND CASE> ]
+
+   where <CONDITION> is a logical expression an <FIRST CASE> and <SECOND CASE>
+   are instructions.
+
+   When <CONDITION> is true <FIRST CASE> is executed, <SECOND CASE> otherwise.
+   The <SECOND CASE> specification is optional.
+
+   WARNING : Because of the method used to parse LIFE (operator's precedence)
+   -------   it is difficult to parse correctly nested if...then...else 
+             statements. Currently if one of the <FIRST CASE> or <SECOND CASE>
+             instructions needs to be an if statement, it MUST be protected
+             in a block instruction.
+
+             Example :
+  
+               if(...) then {
+                 if(...) then
+                   ...
+               } else {
+                 if (...) then
+                   ...
+                 else
+                   ...
+               }
+
+             Moreover the symbol 'if' being defined as an operator of the
+             SuperLint rules language, you must put in between parentheses
+             if you want to use it as an identifier (when handling an 'if'
+             syntactic node produced by the parser, for example). Otherwise
+             it will be parsed incorrectly by Wild_LIFE.
+             This remark remains true for the 'return' symbol.
+
+ o A 'switch' statement :
+
+     switch(<EXPRESSION>) {
+       case(<CASE 1>, <INSTRUCTION 1>),
+          .
+          .
+          .
+       case(<CASE N>, <INSTRUCTION N>) [,
+       default(<DEFAULT INSTRUCTION>) ]
+     }
+   
+   where <EXPRESSION> is an expression and <INSTRUCTION 1> ... <INSTRUCTION N>
+   and <DEFAULT INSTRUCTION> are instructions.
+   The <CASE 1> .. <CASE N> are either expressions or multiple choice cases,
+   namely :
+
+     { <EXPRESSION 1>, ..., <EXPRESSION M> }
+
+   where <EXPRESSION 1>, ..., <EXPRESSION M> ar expressions.
+
+   When executing this instruction <EXPRESSION> is first evaluated and
+   its value V compared with each case.
+   If i is the least integer in 1..N such that V is equal to the value of 
+   <CASE i>, if this one is an expression, or V is equal to the value of one 
+   of the <EXPRESSION j>, if <CASE i> is a multiple choice case, then 
+   <INSTRUCTION i> is executed and the execution of the 'switch' is over.
+   If there is a 'default' case, the <DEFAULT INSTRUCTION>  is executed when
+   the i defined above doesn't exist.
+
+
+2.6 Expressions
+---------------
+
+2.6.1 Standard expressions
+--------------------------
+
+A standard expression may be
+
+ o a structure with or without features
+
+ o a number
+
+ o a boolean value : true or false
+
+ o a string
+
+ o a function call. Note that any LIFE function may be used in a function
+   call. Therefore we encourage you to search in the Wild_LIFE manual for
+   the built-in function that you may need.
+
+ o a feature access with the '.' operator
+ 
+   Example :
+
+     MyStruct.the_feature
+     X.tree.node.label
+
+ o an arithmetical expression with operators : '+', '*', '-', '/', '^'
+
+ o a boolean expression with operators : 'or', 'and', 'not' or a comparison
+   expression.
+
+   A comparison expression is a binary expression whose operator may be
+   '==', '<>', '<', '=<', '>' or '>=' and whose operands are standard
+   expressions.
+   The '==' operator is the same as in C, except that it can be used with
+   structures. For example :
+
+     X == foo
+
+   evaluates to 'true' iff X designs a structure named foo, independently
+   from its features.
+   The '<>' operator is the negative form of the precedent. It's much like
+   the '!=' operator in C.
+
+
+2.6.2 Logical expressions
+-------------------------
+
+A logical expression is an expression occuring only in an 'entry_test' or 'if'
+statement. A logical expression may be :
+
+ o a boolean expression
+
+ o a binary expression with operators '&&' or '||'
+   They have the same meaning as the corresponding ones in C.
+   BUT you cannot use them in a boolean expression. The major difference
+   comes from the evaluation's order. These operators evaluate from left to
+   right. The boolean operators 'and' and 'or' have no insured evaluation's
+   order.
+
+
+3 - The toolkit
+---------------
+
+SuperLint comes with several built-in structures, functions and procedures.
+
+ o Lists
+   -----
+   A list may be given by :
+ 
+    o [] : the empty list with no elements
+
+    o newlist(E, L) : where E is a structure and L a list (it's the lists
+      constructor function)
+
+   A non empty list has two features :
+ 
+    o first_element : the first element in the list (corresponding to the
+      structure designed by E above)
+
+    o tail : the list except its first element (corresponding to the
+      list designed by L above)
+
+   A list may be specified extensively by giving all its elements
+
+   Example :
+
+     L = [1, 2, 3],
+     E = L.tail.first_element,
+     L2 = newlist("hello", L)
+     
+
+   In this example the value of E is 2 and the value of L2 is 
+   ["hello", 1, 2, 3].
+
+
+ o features_list(What)
+   -------------------
+   Function returning the list of features of the structure designed by
+   'What' if any, [] otherwise.
+
+
+ o has_feature(Feature, What)
+   --------------------------
+   Tells if the structure designed by 'What' has the feature designed by
+   'Feature'.
+   May only be used in a logical expression.
+
+
+ o syntactic_tree
+   --------------
+   This function returns the 'toplevel' structure of the syntactic tree.
+
+   Note for the purpose of the LIFE programmer :
+   ---------------------------------------------
+   Actually it's not a function but a persistent variable. This information
+   is however meaningless for the user of the C-like language.
+
+
+ o parse_tree(Operation, Node)
+   ---------------------------
+   This procedure scans the syntactic tree from the node 'Node' applying
+   to each of its subtrees the operation 'Operation' which must be a procedure
+   with one parameter.
+   In fact the procedure 'Operation' is applied twice on the node :
+
+    o when the node is encountered for the first time
+
+    o when the operation has been applied to all the subtrees of the node
+
+   To distinguish these two cases the function 'parse_mode' is provided.
+   In the first case it returns 'prefix', in the second case it returns
+   'postfix'.
+
+   Three other functions are provided :
+  
+    o current_declaration : the declaration whose subtrees are currently
+      explored, 'nothing' otherwise (see section 4, part I).
+
+    o current_block : the block whose subtrees are currently explored,
+      'nothing' otherwise (see section 5, part I).
+
+    o current_instruction : the instruction whose subtrees are currently 
+      explored, 'nothing' otherwise (see section 5, part I).
+
+
+ o scan_tree [ ({ <DOMAIN 1>, ..., <DOMAIN N> }) ]
+   -----------------------------------------------
+   This operation launches the scanning of the syntactic tree from the
+   'toplevel' node, applying the rules whose domain is one of :
+   <DOMAIN 1>, ..., <DOMAIN N>.
+   If no domain name is specified all the rules are applied : it's the
+   default behaviour of an analyzer.
+   This procedure uses 'parse_tree', therefore all the associated functions
+   are available.
+
+   
+ o error_msg(Message [, Token])
+   ----------------------------
+   This procedure writes the error message 'Message', giving informations 
+   about file and line from the token 'Token' (see section 1, part I).
+   The second argument is optional.
+   This procedure can only be called in a rule or in a function/procedure
+   which is accessed from a rule.
+   The name of the rule in which this procedure is called is also displayed.
+   You can retrieve this option by adding the directive :
+
+     display_rules(no).
+
+   in one of your rules files.
+
+
+ o is_token(What), is_not_token(What)
+   ----------------------------------
+   Tells whether the structure designed by 'What' is a token or not.
+   May only be used in a logical expression.
+
+
+ o is_operator(What)
+   -----------------
+   Tells if 'What' designed by 'What' is an operator or not, i.e. an 
+   expression (see section 6, part I).
+   May only be used in a logical expression.
+
+
+ o is_assignment_operator, is_logical_operator, is_arithmetic_operator, 
+   is_relation_operator, is_conditional_operator, is_unary_operator, 
+   is_struct_reference, is_assignment :
+   
+   Like the previous one, but for specific expressions (see section 6, part I).
+   They may only be used in a logical expression.
+
+
+ o expand_type(Type)
+   -----------------
+   This function returns the expanded form of the type structure designed
+   by 'Type' (see section 3, part I), i.e. the equivalent type where all
+   the type names defined in a typedef statement have been recursively 
+   replaced by their equivalent type.
+
+
+ o basename(FilePath)
+   ------------------
+   'FilePath' designing an absolute UNIX path of a file, this function
+   returns the single file name.
+
+
+ o file_extension(FilePath)
+   ------------------------
+   'FilePath' designing an absolute UNIX path of a file, this function
+   returns the extension of the file name if any, the empty string ""
+   otherwise.
+
+
+ o writeln
+   -------
+   This procedure writes all its arguments in the standard output, the last
+   being followed by a newline.
+
+
+ o string2id(Identifier)
+   ---------------------
+   This function transforms the string 'Identifier' into an identifier of
+   same name. This function is useful when handling structures names which
+   cannot be literally written because they would cause problems to the
+   LIFE parser (e.g. '!', '(', ...etc).
+   You should always use this function when using non alphanumerical structures
+   names like the tokens or expressions nodes (see section 1 and 6, part I).

@@ -1,0 +1,45 @@
+% Copyright 1992 Digital Equipment Corporation
+% All Rights Reserved
+
+% This program is compatible with Prolog.
+
+module("xxxooo") ?
+public(xxxooo) ?
+
+xxxooo :-
+	nl,
+	nl,
+	solution(S),
+	pretty(S),
+	nl,
+	fail.
+
+start([x,x,x,' ',o,o,o]).
+finish([o,o,o,' ',x,x,x]).
+
+move([H|T],[H|U],D) :- move(T,U,D).
+move([x,' '|T],[' ',x|T],'x move right').
+move([' ',o|T],[o,' '|T],'o move left ').
+move([x,o,' '|T],[' ',o,x|T],'x jump right').
+move([' ',x,o|T],[o,x,' '|T],'o jump left ').
+
+go(A,A,[]).
+go(A,C,[[M|B]|P]):-
+	move(A,B,M),
+	go(B,C,P).
+
+solution([['Start       '|A]|S]):-
+	start(A),
+	finish(B),
+	go(A,B,S).
+
+pretty([[A|B]|S]):-
+	write(A),
+	write(' -> '),
+	write(B),
+	nl,
+	pretty(S).
+
+pretty([]):-
+	write('Solved !!'),
+	nl.

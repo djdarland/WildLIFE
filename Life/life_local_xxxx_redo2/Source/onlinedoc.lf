@@ -1,0 +1,116 @@
+%	$Id: onlinedoc.lf,v 1.2 1994/12/08 23:31:40 duchier Exp $	
+%%% routine to give information on symbols online
+
+%module("built_in") ?
+
+public(add_man,man) ?
+
+persistent(online_info) ?
+
+non_strict(add_man) ?
+
+add_man(X,S) :-
+	S :< string,
+	cond( X :< list,
+	      ( true |
+		S1 <<- S,
+		info_list(X,S1)
+	      ),
+	      one_info(X,S)
+	    ).
+
+info_list([X|L],S) :-
+	!,
+	one_info(X,S),
+	info_list(L,S).
+info_list([]):- !.
+
+one_info(X,S) :-
+	Module = current_module,
+	online_info.current_module.X <<- S.
+
+
+non_strict(man) ?
+persistent(exits_entry) ?
+op(1200,fy,man) ?
+
+man(X) :-
+	man2(features(online_info),psi2str(X),false).
+
+man2([A|B],S,Entry) :-
+	!,
+	(
+	    has_feature(S,online_info.A,Info),!,
+	    write("In module: ",A,","),nl,nl,
+	    write(Info),
+	    nl,
+	    nl,
+	    man2(B,S,true)
+	;
+	    man2(B,S,Entry)
+	).
+man2([],S,Entry) :-
+	cond( Entry,
+	      succeed,
+	      (write(" No manual entry for ",S),nl)
+	    ).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Built-ins documentation
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+add_man(add_man,
+	" add_man(X,S) ?
+
+  input: X is a symbol name, or a list of symbol names;
+         S is a string containing the information describing X. 
+
+  add_man stores the information describing its first argument. 
+  ") ?
+
+add_man((man),
+	" man X ?
+
+  input: X is a symbol name.
+
+  ""man"" reads information about X stored by ""add_man"",
+  and writes it on the standard output. 
+  ") ? 
+
+add_man(reconsult,
+	" reconsult(File1,File2,...) ?
+
+  input: File1, File2,... : strings (file names)
+
+  reconsult(File1,File2,...) is a facility offered to avoid restarting 
+  Wild_Life each time you make a minor modification to a file. It works 
+  properly in 90% of the cases, but there are some limitations. 
+
+  1) reconsult may only be used with expand_load(true).
+  2) reconsult retracts the definitions of the functions and predicates 
+     occurring in the previous version of the file, then reloads the 
+     file, reexecuting the queries and directives. 
+
+  3) Warnings:
+
+     - if a function or predicate was defined across multiple files,
+       the whole definition is retracted, not only the rules that 
+       appeared in the reconsulted file.
+     - Sort declarations are never retracted. It means that the sort 
+       hierarchy can be only be extended.
+     - Some directives have non-retractable side-effects: 
+       public,private,private_feature,dynamic,static,non_strict,
+       strict,op,global,persistent.
+     - If a query in the file asserts rules, these rules are not 
+       retracted when reconsulting the file. This should anyway never 
+       occur: use expanders, and end your rules with a dot.
+
+  4) Files are identified by the complete name (path included) used 
+     to load them. It means that you may have problems if you don't 
+     use the same name to load and reconsult the file.
+  ") ?

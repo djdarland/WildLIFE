@@ -1,0 +1,124 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%	$Id: xtools_init.lf,v 1.2 1994/12/09 00:30:10 duchier Exp $	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% XTOOLS: X Functions initialization
+%
+% Author: Bruno Dumant
+% (c) Copyright 1993 - Digital Equipment Corporation 
+% All Rights Reserved
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+import("x") ?
+
+public(default_display,default_window,
+
+	aquamarine,black,blue,'blue violet',brown,'cadet blue',coral,
+        'cornflower blue',cyan,'dark green','dark olive green','dark orchid',
+        'dark slate blue', 'dark slate grey','dark turquoise','dim grey',
+        firebrick,'forest green',gold,goldenrod,green,'green yellow',grey,
+        'indian red',khaki,'light blue','light grey','light steel blue',
+        'lime green',magenta,maroon,'medium aquamarine','medium blue',
+        'medium orchid','medium sea green','medium slate blue',
+        'medium spring green','medium turquoise','medium violet red',
+        'midnight blue','navy blue',orange,'orange red','orchid','pale green',
+        pink,plum,red,salmon,'sea green',sienna,'sky blue','slate blue',
+        'spring green','steel blue','light brown',thistle,turquoise,
+        violet,'violet red',wheat,white,yellow,'yellow green')?
+
+
+persistent(default_display) ?
+persistent(default_window) ?
+
+xOpenConnection(D), default_display <<- D ?
+
+xDefaultRootWindow(D:default_display,Root), 
+Root = @(display => D), 
+default_window <<- Root ?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% COLORS
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+persistent(number_of_colors)?
+number_of_colors <<- 0 ?
+
+named_color(Reference,String) :- 
+	String = {psi2str(Reference);string},!,
+	number_of_colors <<- N:(number_of_colors+1),
+%%	asserta(color(Reference,N)),
+	xRequestNamedColor(default_window,String,C:int(name => String)),
+	global(Reference <- C).
+
+named_color(aquamarine),
+named_color(black),
+named_color(blue),
+named_color('blue violet'),
+named_color(brown),
+named_color('cadet blue'),
+named_color(coral),
+named_color('cornflower blue'),
+named_color(cyan),
+named_color('dark green'),
+named_color('dark olive green'),
+named_color('dark orchid'),
+named_color('dark slate blue'),
+named_color('dark slate grey'),
+named_color('dark turquoise'),
+named_color('dim grey'),
+named_color(firebrick),
+named_color('forest green'),
+named_color(gold),
+named_color(goldenrod),
+named_color(green),
+named_color('green yellow'),
+named_color(grey),
+named_color('indian red'),
+named_color(khaki),
+named_color('light blue'),
+named_color('light grey'),
+named_color('light steel blue'),
+named_color('lime green'),
+named_color(magenta),
+named_color(maroon),
+named_color('medium aquamarine'),
+named_color('medium blue'),
+named_color('medium orchid'),
+named_color('medium sea green'),
+named_color('medium slate blue'),
+named_color('medium spring green'),
+named_color('medium turquoise'),
+named_color('medium violet red'),
+named_color('midnight blue'),
+named_color('navy blue'),
+named_color(orange),
+named_color('orange red'),
+named_color('orchid'),
+named_color('pale green'),
+named_color(pink),
+named_color(plum),
+named_color(red),
+named_color(salmon),
+named_color('sea green'),
+named_color(sienna),
+named_color('sky blue'),
+named_color('slate blue'),
+named_color('spring green'),
+named_color('steel blue'),
+named_color('light brown',"tan"),
+named_color(thistle),
+named_color(turquoise),
+named_color(violet),
+named_color('violet red'),
+named_color(wheat),
+named_color(white),
+named_color(yellow),
+named_color('yellow green') ?
+
+
