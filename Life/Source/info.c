@@ -41,7 +41,7 @@ void title()
   
   printf("Wild_Life Interpreter Version +VERSION+ +DATE+\n");
   printf("Copyright (C) 1991-93 DEC Paris Research Laboratory\n");
-  printf("Extensions, Copyright (C) 1994-1995 Intelligent Software Group, SFU\n");
+  printf("Extensions, Copyright (C) 1994-1995 Intelligent Software Group, SFU -- Ported to Linux and Cygwin August 2019 after many efforts since 1995\n");
   
 #ifndef X11
   printf("X interface not installed.\n");

@@ -131,11 +131,11 @@ MANPAGE = $(PROGRAM).1
 LIBA = c_life.a
 
 # Please don't change this so we can tell which release you are using.
-DATE        = Fri Jul  7 13:57:49 PDT 1995
-VERSION     = 1.02
+# DATE        = Fri Jul  7 13:57:49 PDT 1995
+# VERSION     = 1.02
 # Saved above to use above for test suite
-# DATE = `date`
-# VERSION     = 4.01
+DATE = `date`
+VERSION     = 4.11
 
 
 
