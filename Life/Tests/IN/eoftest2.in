@@ -2,4 +2,3 @@ A=end_of_file?
 
 read(X),gc,write("Just read '",X,"'"),nl?
 end_of_file.
-

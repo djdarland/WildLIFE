@@ -1,3 +1,3 @@
 
-import("dictionary","hamming","machine","nl","prime",
-       "simple","magic","schedule","soap","solve","xxxooo")?
+import("~/life_local_xxxx_redo2/Examples/dictionary","~/life_local_xxxx_redo2/Examples/hamming","~/life_local_xxxx_redo2/Examples/machine","~/life_local_xxxx_redo2/Examples/nl","~/life_local_xxxx_redo2/Examples/prime",
+       "~/life_local_xxxx_redo2/Examples/simple","~/life_local_xxxx_redo2/Examples/magic","~/life_local_xxxx_redo2/Examples/schedule","~/life_local_xxxx_redo2/Examples/soap","solve","~/life_local_xxxx_redo2/Examples/xxxooo")?

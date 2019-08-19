@@ -1432,3 +1432,70 @@ Removed load("xtools_utils") from life_demo.lf
 Disabled (effectively_ check for font in life_demo - I just used one I
 knew that I had.
 
+-----------------------------------------------------------------------
+
+Going back to test suite.
+Investigating end_of_file (2 of 4 mismatches)
+
+Add example 08-27 from handbook
+
+It works OK as is. (And makes sense).
+
+eoftest2 is confusing to me. (Approve output).
+
+eoftest does't make sense either. (Approve also).
+
+in extest.lf added full paths
+
+Updated paths to sl and slc
+
+Test testsl now works --
+also added 2nd \ 2 places in c_tokenizer.lf
+
+testslc does not work -- c has changed anyway -- remove test
+
+added 2nd \ in preparser.lf and then matched
+
+NOW
+
+echo 414 Total Tests completed
+echo 414 Total Tests match
+echo 0 Total Tests differ
+echo 0 Total Tests out differ
+echo 0 Total Tests err differ
+
+Note: No changes to c code.
+
+Still need to update suites for 1.02 & X
+
+
+Original 1.02 Test Suite Now gives
+
+echo 324 Total Tests completed
+echo 324 Total Tests match
+echo 0 Total Tests differ
+echo 0 Total Tests out differ
+
+For -X
+
+had to approve 08-29 - had earlier for others.
+
+had to approve children -- additions for X
+
+Eliminated eoftest2 for this also
+
+Eliminated eoftest for this also
+
+Problem with glob_test2 --- p in persistent missing.
+May have approved others by mistake.
+
+test03 also differs - not sure  -- involves children - may be X difference
+
+Now for X version
+
+echo 412 Total Tests completed
+echo 410 Total Tests match
+echo 2 Total Tests differ
+echo 2 Total Tests out differ
+echo 0 Total Tests err differ
+

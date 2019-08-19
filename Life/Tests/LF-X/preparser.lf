@@ -450,7 +450,7 @@ token62( simple_atom(X)) -->
 token92( simple_atom(X)) --> 
 	[_],
 	op_atom_cars(Z),
-	#(  X = strcon("\",Z)) ?
+	#(  X = strcon("\\",Z)) ? % added 2nd \ REV401PLUS
 token94( simple_atom(X)) --> 
 	[_],
 	op_atom_cars(Z),

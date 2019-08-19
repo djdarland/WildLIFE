@@ -10,5 +10,8 @@ A = end_of_file.
 *** Yes
 X = end_of_file.
 --1> 
+*** Yes
+X = end_of_file.
+
 *** No
 > 

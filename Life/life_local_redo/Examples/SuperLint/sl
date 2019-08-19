@@ -7,7 +7,7 @@ setenv SLDIR /udir/venet/LIFE/SUPERLINT/PACKAGE
 
 chdir $SLDIR
 
-./wild_life -q $DIRECTORY sl.lf $* <<EOF
+~/bin/wild_life -q $DIRECTORY sl.lf $* <<EOF
 
 [@, "-q", Directory, Binary | Args] = argv,
   load(Binary),

@@ -1,0 +1,17 @@
+copy_file(F1,F2) :-
+open_in(F1,S1),
+open_out(F2,S2),
+open_out(stdout,S3),
+write("Copying from """,F1,""", to """,F2,""" ... "),
+set_output(S2),
+repeat,
+get(X),
+( X=end_of_file,
+close(S1), close(S2),
+write("done."),
+!
+;
+put(X),
+fail
+).
+copy_file(xxxooo,junk)?

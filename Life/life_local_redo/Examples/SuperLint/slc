@@ -2,11 +2,12 @@
 
 set DIR = `pwd`
 
-setenv SLDIR /udir/venet/LIFE/SUPERLINT/PACKAGE
+% setenv SLDIR /udir/venet/LIFE/SUPERLINT/PACKAGE
+setenv SLDIR ~/life_local_redo/Examples/SuperLint
 
 chdir $SLDIR
 
-./wild_life -q $DIR slc.lf $* <<EOF
+~/bin/wild_life -q $DIR slc.lf $* <<EOF
 
 [@, "-q", Directory, Binary | Args] = argv,
   load(Binary),

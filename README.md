@@ -28,6 +28,11 @@ Plans and Goals
   * using a .wild_life file to start applications.
   * I found that out by accident!!!
 
+  * Completed getting X Windows working
+  * Also works with cygwin
+
+  * Went back to test suites -- See Source/Port.txt
+
 
 ---------------------------------------------------------------------------
 Copyright (C) Digital Equipment Corporation 1994
