@@ -2109,25 +2109,15 @@ long load_aim()
   int end_of_file=FALSE; /*  RM: Jan 27 1993  */
 
   
-    dennis_debug("load_aim 00001");
   save_state(input_state);
-    dennis_debug("load_aim 00002");
   input_state=(ptr_psi_term)aim->aaaa_1;
-    dennis_debug("load_aim 00003");
   restore_state(input_state);
-    dennis_debug("load_aim 00004");
   old_file_date=file_date;
-    dennis_debug("load_aim 00005");
   file_date=(unsigned long)aim->bbbb_1;
-    dennis_debug("load_aim 00006");
   old_noisy=noisy;
-    dennis_debug("load_aim 00007");
   noisy=FALSE;
-  dennis_debug("load_aim 00008");
   fn=(char*)aim->cccc_1;
-    dennis_debug("load_aim 00009");
   exitloop=FALSE;
-    dennis_debug("load_aim 000010");
 
 
   
@@ -2135,52 +2125,35 @@ long load_aim()
     /* Variables in queries in files are *completely independent* of top- */
     /* level variables.  I.e.: top-level variables are *not* recognized   */
     /* while loading files and variables in file queries are *not* added. */
-    dennis_debug("load_aim 000011");
     old_var_occurred=var_occurred; /* 18.8 */
     old_var_tree=var_tree;
     var_tree=NULL;
     s=stack_copy_psi_term(parse(&sort));
     var_tree=old_var_tree;
     var_occurred=old_var_occurred; /* 18.8 */
-    dennis_debug("load_aim 000012");
 
     if (s->type==eof) {
-    dennis_debug("load_aim 000013");
       encode_types();
       if (input_stream!=stdin) fclose(input_stream);
       exitloop=TRUE;
       end_of_file=TRUE; /*  RM: Jan 27 1993  */
-    dennis_debug("load_aim 000014");
     }
     else if (sort==FACT) {
-    dennis_debug("load_aim 000015");
       assert_first=FALSE;
       assert_clause(s);
-    dennis_debug("load_aim 000016");
     }
     else if (sort==QUERY) {
-    dennis_debug("load_aim 000017A");
       encode_types();
-    dennis_debug("load_aim 000017B");
       save_state(input_state);
-    dennis_debug("load_aim 000017C");
       /* Handle both successful and failing queries correctly. */
       cutpt=choice_stack;
-    dennis_debug("load_aim 000017D");
       push_choice_point(load,input_state,(ptr_psi_term)file_date,(GENERIC)fn); // REV401PLUS cast
-      dennis_debug("load_aim 000017E");    
       push_goal(load,input_state,(ptr_psi_term)file_date,(GENERIC)fn);  // REV401PLUS casts
-    dennis_debug("load_aim 000017F");
       push_goal(general_cut,(ptr_psi_term)cutpt,NULL,NULL); // REV401PLUS cast
-    dennis_debug("load_aim 000017G");
       push_goal(prove,s,(ptr_psi_term)DEFRULES,NULL); // REV401PLUS cast
-    dennis_debug("load_aim 000017H");
       exitloop=TRUE;
-    dennis_debug("load_aim 000018");
     }
     else {
-    dennis_debug("load_aim 000019");
-      
       /* fprintf(stderr,"*** Error: in input file %c%s%c.\n",34,fn,34); */
       /* success=FALSE; */
       /* fail_all(); */
@@ -2189,14 +2162,11 @@ long load_aim()
       /* printf("\n*** Abort\n"); */
       /* main_loop_ok=FALSE; */
     }
-    dennis_debug("load_aim 000020");
   } while (success && !exitloop);
 
-    dennis_debug("load_aim 000021");
 
   /*  RM: Jan 27 1993 */
   if(end_of_file || !success) {
-    dennis_debug("load_aim 000022");
     /*
       printf("END OF FILE %s, setting module to %s\n",
       ((ptr_psi_term)get_attr(input_state,
@@ -2205,20 +2175,16 @@ long load_aim()
       CURRENT_MODULE))->value);
       */
 	   
-    dennis_debug("load_aim 000023");
     set_current_module(
 		       find_module((char *)((ptr_psi_term)get_attr(input_state,
        CURRENT_MODULE))->value_3));
-    dennis_debug("load_aim 000024");
   }
 
-    dennis_debug("load_aim 000025");
   
   noisy=old_noisy;
   file_date=old_file_date;
   open_input_file("stdin");
 
-    dennis_debug("load_aim 000026");
   
   return success;
 }
@@ -2236,13 +2202,11 @@ void main_prove()
   long success=TRUE;
   ptr_pair_list *p;
   ptr_psi_term unused_match_date; /* 13.6 */
-    dennis_debug("0000001");
     
   xcount=0;
   xeventdelay=XEVENTDELAY;
   interrupted=FALSE;
   main_loop_ok=TRUE;
-    dennis_debug("0000002");
   
   while (main_loop_ok && goal_stack) {
 
@@ -2261,14 +2225,11 @@ void main_prove()
     }
     */
 
-    dennis_debug("0000003");
     
     aim=goal_stack;
-    dennis_debug("0000004");
     switch(aim->type) {
       
     case unify:
-    dennis_debug("unify");
       goal_stack=aim->next;
       goal_count++;
       success=unify_aim();
@@ -2277,40 +2238,34 @@ void main_prove()
     /* Same as above, but do not evaluate top level */
     /* Used to bind with unbound variables */
     case unify_noeval:
-    dennis_debug("unify_noeval");
       goal_stack=aim->next;
       goal_count++;
       success=unify_aim_noeval();
       break;
       
     case prove:
-    dennis_debug("prove");
       success=prove_aim();
       break;
       
     case eval:
-    dennis_debug("eval");
       goal_stack=aim->next;
       goal_count++;
       success=eval_aim();
       break;
 
     case load:
-    dennis_debug("load");
       goal_stack=aim->next;
       goal_count++;
       success=load_aim();
       break;
       
     case match:
-    dennis_debug("match");
       goal_stack=aim->next;
       goal_count++;
       success=match_aim();
       break;
       
     case disj:
-          dennis_debug("disj");
 
       goal_stack=aim->next;
       goal_count++;
@@ -2318,7 +2273,6 @@ void main_prove()
       break;
 
     case general_cut:
-          dennis_debug("general_cut");
 
       goal_stack=aim->next;
       goal_count++;
@@ -2334,7 +2288,6 @@ void main_prove()
       break;
       
     case eval_cut:
-          dennis_debug("eval_cut");
 
       /* RESID */ restore_resid((ptr_resid_block)aim->cccc_1, &unused_match_date);
       if (curried)
@@ -2367,7 +2320,6 @@ void main_prove()
       break;
       
     case freeze_cut:
-          dennis_debug("freeze_cut");
 
       /* RESID */ restore_resid((ptr_resid_block)aim->cccc_1, &unused_match_date);
       if (curried) {
@@ -2400,7 +2352,6 @@ void main_prove()
       break;
       
     case implies_cut: /* 12.10 */
-          dennis_debug("implies_cut");
 
       /* This 'cut' is actually more like a no-op! */
       restore_resid((ptr_resid_block)aim->cccc_1, &unused_match_date);
@@ -2420,21 +2371,18 @@ void main_prove()
       break;
 
     case fail:
-          dennis_debug("fail");
 
       goal_stack=aim->next;
       success=FALSE;
       break;
       
     case what_next:
-          dennis_debug("what_next");
 
       goal_stack=aim->next;
       success=what_next_aim();
       break;
       
     case type_disj:
-          dennis_debug("type_disj");
 
       goal_stack=aim->next;
       goal_count++;
@@ -2442,7 +2390,6 @@ void main_prove()
       break;
       
     case clause:
-          dennis_debug("clause");
 
       goal_stack=aim->next;
       goal_count++;
@@ -2450,7 +2397,6 @@ void main_prove()
       break;
       
     case del_clause:
-          dennis_debug("del_clause");
 
       goal_stack=aim->next;
       goal_count++;
@@ -2458,7 +2404,6 @@ void main_prove()
       break;
       
     case retract:
-          dennis_debug("retract");
 
       goal_stack=aim->next;
       goal_count++;
@@ -2471,18 +2416,15 @@ void main_prove()
       break;
 
     case c_what_next: /*  RM: Mar 31 1993  */
-          dennis_debug("c_what_next");
 
       main_loop_ok=FALSE; /* Exit the main loop */
       break;
       
     default:
-          dennis_debug("default");
 
       Errorline("bad goal on stack %d.\n",goal_stack->type);
       goal_stack=aim->next;
     }
-    dennis_debug("past case");
 
     if (main_loop_ok) {
     

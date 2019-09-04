@@ -3022,7 +3022,8 @@ static ptr_psi_term xcEventToPsiTerm(event)
 
   str=tstr;
   tstr[1]=0;
-  
+  //   dennis_debug("hello0001");
+  //   printf("event->type = %d\n",event->type);
   psiEvent = stack_psi_term(4);
   bk_stack_add_int_attr(psiEvent,"display",(long)event->xany.display);
   bk_stack_add_int_attr(psiEvent,"window",(long)event->xany.window);

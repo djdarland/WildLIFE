@@ -1019,147 +1019,90 @@ void encode_types()
   long p=0,i,possible,ok=TRUE;
   ptr_int_list layer,l,kids,dads,code;
   ptr_definition xdef,kdef,ddef,err;
-dennis_debug("0001");  
   if (types_modified) {
-dennis_debug("0001");  
     
     nothing->parents=NULL;
-dennis_debug("0001");  
     nothing->children=NULL;
-dennis_debug("0001");  
     
     top->parents=NULL;
-dennis_debug("0001");  
     top->children=NULL;
-dennis_debug("0001");  
 
     /* The following definitions are vital to avoid crashes */
     make_type_link(integer,real);
-dennis_debug("0001");  
     make_type_link(lf_true,boolean);
-dennis_debug("0001");  
     make_type_link(lf_false,boolean);
-dennis_debug("0001");  
 
     /* These just might be useful */
     make_type_link(quoted_string,built_in);
-dennis_debug("0001");  
     make_type_link(boolean,built_in);
-dennis_debug("0001");  
     make_type_link(real,built_in);
-dennis_debug("0001");  
 
     make_sys_type_links();
-dennis_debug("0001");  
     
     type_count=count_sorts(-1); /* bottom does not count */
-dennis_debug("0001");  
     clear_coding();
-dennis_debug("0001");  
     nothing->parents=NULL; /* Must be cleared before all_sorts */
-dennis_debug("0001");  
     all_sorts();
-dennis_debug("0001");  
     if (type_cyclicity(nothing,NULL)) {
-dennis_debug("0001");  
       clear_coding();
-dennis_debug("0001");  
       return;
     }
-dennis_debug("0001");  
     clear_coding();
-dennis_debug("0001");  
     nothing->parents=NULL; /* Must be cleared before least_sorts */
-dennis_debug("0001");  
     least_sorts();
-dennis_debug("0001");  
     
     nothing->code=NULL;
-dennis_debug("0001");  
 
     /*  RM: Feb 17 1993  */
     Traceline("*** Codes:\n%C= %s\n", NULL, nothing->keyword->symbol);
-dennis_debug("0001");  
     
     gamma_table=(ptr_definition *) heap_alloc(type_count*sizeof(definition));
-dennis_debug("0001");  
     
     layer=nothing->parents;
-dennis_debug("0001");  
     
     while (layer) {
-dennis_debug("0001");  
       l=layer;
-dennis_debug("0001");  
       do {
-dennis_debug("0001");  
         xdef=(ptr_definition)l->value_1;
-dennis_debug("0001");  
         if (xdef->code==NOT_CODED && xdef!=top) {
-dennis_debug("0001");  
           
           kids=xdef->children;
-dennis_debug("0001");  
           code=two_to_the(p);
-dennis_debug("0001");  
           
           while (kids) {
-dennis_debug("0001");  
             kdef=(ptr_definition)kids->value_1;
-dennis_debug("0001");  
             or_codes(code,kdef->code);
-dennis_debug("0001");  
             kids=kids->next;
-dennis_debug("0001");  
           }
           
-dennis_debug("0001");  
           xdef->code=code;
-dennis_debug("0001");  
           gamma_table[p]=xdef;
-dennis_debug("0001");  
 
 	  /*  RM: Feb 17 1993  */
           Traceline("%C = %s\n", code, xdef->keyword->symbol);
-dennis_debug("0001");  
           p=p+1;
         }
-dennis_debug("0001");  
         
         l=l->next;
         
-dennis_debug("0001");  
       } while (l);
       
-dennis_debug("0001");  
       l=layer;
-dennis_debug("0001");  
       layer=NULL;
-dennis_debug("0001");  
       
       do {
-dennis_debug("0001");  
         xdef=(ptr_definition)l->value_1;
-dennis_debug("0001");  
         dads=xdef->parents;
-dennis_debug("0001");  
         
         while (dads) {
-dennis_debug("0001");  
           ddef=(ptr_definition)dads->value_1;
-dennis_debug("0001");  
           if(ddef->code==NOT_CODED) {
-dennis_debug("0001");  
             
             possible=TRUE;
-dennis_debug("0001");  
             kids=ddef->children;
-dennis_debug("0001");  
             
             while(kids && possible) {
-dennis_debug("0001");  
               kdef=(ptr_definition)kids->value_1;
-dennis_debug("0001");  
               if(kdef->code==NOT_CODED)
                 possible=FALSE;
               kids=kids->next;
@@ -1167,50 +1110,34 @@ dennis_debug("0001");
             if(possible)
               layer=cons((GENERIC)ddef,layer); // REV401PLUS cast
           }
-dennis_debug("0001");  
           dads=dads->next;
         }
-dennis_debug("0001");  
         l=l->next;
-dennis_debug("0001");  
       } while(l);
-dennis_debug("0001");  
     }
     
-dennis_debug("0001");  
     top->code=two_to_the(p);
-dennis_debug("0001");  
     for (i=0;i<p;i++)
       or_codes(top->code,two_to_the(i));
-dennis_debug("0001");  
 
  gamma_table[p]=top; // err in debugging?? DJD
-dennis_debug("0001");  
 
     /*  RM: Jan 13 1993  */
     /* Added the following line because type_count is now over generous
        because the same definition can be referenced several times in
        the symbol table because of modules
        */
-dennis_debug("0001");  
     type_count=p+1;
-dennis_debug("0001");  
     for(i=type_count;i<type_count;i++)
       gamma_table[i]=NULL;
     
-dennis_debug("0001");  
     Traceline("%C = @\n\n", top->code);
-dennis_debug("0001");  
     equalize_codes(p/32+1);
-dennis_debug("0001");  
 
-dennis_debug("0001");  
     propagate_definitions();
 
     /* Inherit 'FALSE' always_check flags to all types' children */
-dennis_debug("0001");  
     inherit_always_check();
-dennis_debug("0001");  
     
     Traceline("*** Encoding done, %d sorts\n",type_count);
     
@@ -1218,7 +1145,6 @@ dennis_debug("0001");
       Errorline("the sorts 'real' and 'string' are not disjoint.\n");
       ok=FALSE;
     }
-dennis_debug("0001");  
 
     /*  RM: Dec 15 1992  I don't think this really matters any more
 	if (overlap_type(real,alist)) {
@@ -1234,21 +1160,14 @@ dennis_debug("0001");
 	}
 	*/
     
-dennis_debug("0001");  
-    if (!ok) {
+   if (!ok) {
       perr("*** Internal problem:\n");
       perr("*** Wild_Life may behave abnormally because some basic types\n");
       perr("*** have been defined incorrectly.\n\n");
-dennis_debug("0001");  
     }
-dennis_debug("0001");  
-
     types_modified=FALSE;
-dennis_debug("0001");  
     types_done=TRUE;
-dennis_debug("0001");  
   }
-dennis_debug("0001");  
 }
 
 

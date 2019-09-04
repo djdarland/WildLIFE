@@ -53,16 +53,11 @@ int main(int argc, char *argv[])  // REV401PLUS correct main proto
   else
     Errorline("Too many command line arguments\n");
   
-  dennis_debug("0000001");
   quietflag = GetBoolOption("q");
 
-  dennis_debug("0000002");
   init_io();
-  dennis_debug("0000003");
   init_memory();
-  dennis_debug("0000004");
   exit_if_true(!mem_base || !other_base);
-  dennis_debug("0000005");
   assert(stack_pointer==mem_base); /* 8.10 */
   init_copy();
   assert(stack_pointer==mem_base); /* 8.10 */
@@ -70,70 +65,48 @@ int main(int argc, char *argv[])  // REV401PLUS correct main proto
   assert(stack_pointer==mem_base); /* 8.10 */
 
   /* Timekeeping initialization */
-  dennis_debug("0000006");
   tzset();
-  dennis_debug("0000007");
   times(&life_start);
-  dennis_debug("0000008");
   assert(stack_pointer==mem_base); /* 8.10 */
-  dennis_debug("0000009");
 
   init_modules(); /*  RM: Jan  8 1993  */
-  dennis_debug("0000010");
   
   init_built_in_types();
-  dennis_debug("0000011");
   assert(stack_pointer==mem_base); /* 8.10 */
 #ifdef X11
   x_setup_builtins();
   assert(stack_pointer==mem_base); /* 8.10 */
 #endif
-  dennis_debug("0000012");
   init_interrupt();
-  dennis_debug("0000013");
   assert(stack_pointer==mem_base); /* 8.10 */
-  dennis_debug("0000014");
   title();
-  dennis_debug("0000015");
   assert(stack_pointer==mem_base); /* 8.10 */
-  dennis_debug("0000016");
   init_trace();
-  dennis_debug("0000017");
   noisy=FALSE;
-  dennis_debug("0000018");
 
   assert(stack_pointer==mem_base); /* 8.10 */
 
-  dennis_debug("0000019");
 
   set_current_module(user_module); /*  RM: Jan 27 1993  */
-  dennis_debug("0000020");
   
   /* Read in the .set_up file */
   init_system();
-  dennis_debug("0000021");
   
 #ifdef ARITY  /*  RM: Mar 29 1993  */
   arity_init();
 #endif
 
   
-  dennis_debug("0000022");
   open_input_file("+SETUP+");
-    dennis_debug("0000023");
 
   push_goal(load,input_state,(ptr_psi_term)file_date,(GENERIC)heap_copy_string("+SETUP+")); // REV401PLUS casts
-    dennis_debug("0000024");
 
   file_date+=2;
-    dennis_debug("0000025");
   main_prove();
-    dennis_debug("0000026");
 
 
   /* Main loop of interpreter */
   do {
-    dennis_debug("0000027");
     setjmp(env);
     /* printf("%ld\n",(long)(stack_pointer-mem_base)); */ /* 8.10 */
     init_system(); 

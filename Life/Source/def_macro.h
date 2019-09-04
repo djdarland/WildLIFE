@@ -315,5 +315,5 @@ extern unsigned long global_time_stamp; /* 9.6 */
                             choice_stack->time_stamp>=Q->time_stamp)
 #endif
 
-// #define dennis_debug(str) printf ("This is line %d of file \"%s\" in function \"%s\" str = %s.\n",	__LINE__, __FILE__,__FUNCTION__,str);
-#define dennis_debug(str) 
+#define dennis_debug(str) printf ("This is line %d of file \"%s\" in function \"%s\" str = %s.\n",	__LINE__, __FILE__,__FUNCTION__,str);
+// #define dennis_debug(str) 
