@@ -1,4 +1,6 @@
-tar -xzvf WildLIFE.....tar.gz
+tar -xzvf WildLIFE..[version]...tar.gz
+
+THEN
 in Life/Source subdirectory
 
 do
