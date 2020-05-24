@@ -1,4 +1,54 @@
 # WildLIFE
+Having got a new (much faster computer) I cloned my WildLIFE code.
+1st time I had done that.
+I had a few things I needed to do.
+I am using Ubuntu 20.04
+I had to istall the c shell (csh)
+sudo apt install tcsh
+I had to set default editor
+in .profile I added
+export EDITOR=emacs
+there were some missing work directories
+I added
+--------------------
+chmod u+x editdiffs.sh
+if (! -d "ERR" ) then 
+    mkdir ERR
+endif
+if (! -d "OUT" ) then 
+    mkdir OUT
+endif
+if (! -d "ERRDIFF" ) then 
+    mkdir ERRDIFF
+endif
+if (! -d "REFDIFF" ) then 
+    mkdir REFDIFF
+endif
+------------------------
+in 
+check_edit_all
+check_edit_all-1.02
+check_edit_all-X
+-------------------------
+I had the wromg path for
+prefix		= ~/life_local_redo
+in Makefile.102
+
+I forgot to run
+cp_local.sh
+
+I forgot How to run X Windows Demo.
+Correct way is
+in Wildlife/life_local_xxxx_redo2
+wild_life_X
+load("life_demo")?
+demo?
+
+X sometimes has "fatal" errors.
+Mostly on exit if clicking upper right hand corner.
+I may not pursue.
+My interests are not in X and I have little knowledge of it.
+-----------------------------------------------------
 Plans and Goals
 * There is an easy install method. [see Life/INSTALL] that is:
 * tar -xzvf WildLIFE..[version]...tar.gz

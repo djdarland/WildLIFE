@@ -4,6 +4,22 @@
 set umask=666
 rm -f editdiffs.sh
 touch editdiffs.sh
+chmod u+x editdiffs.sh
+if (! -d "ERR" ) then 
+    mkdir ERR
+endif
+if (! -d "OUT" ) then 
+    mkdir OUT
+endif
+if (! -d "ERRDIFF" ) then 
+    mkdir ERRDIFF
+endif
+if (! -d "REFDIFF" ) then 
+    mkdir REFDIFF
+endif
+#if [ -d "" ] ; then
+#    PATH="$HOME/src/other/unicon/unicon/bin:$PATH"
+#fi
 rm LF/*~
 if ($1 == 1) then
 echo "Running complete Test"

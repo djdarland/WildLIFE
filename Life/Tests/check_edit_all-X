@@ -4,6 +4,19 @@
 set umask=666
 rm -f editdiffs.sh
 touch editdiffs.sh
+chmod u+x editdiffs.sh
+if (! -d "ERR" ) then 
+    mkdir ERR
+endif
+if (! -d "OUT" ) then 
+    mkdir OUT
+endif
+if (! -d "ERRDIFF" ) then 
+    mkdir ERRDIFF
+endif
+if (! -d "REFDIFF" ) then 
+    mkdir REFDIFF
+endif
 rm LF-X/*~
 if ($1 == 1) then
 echo "Running complete Test"
