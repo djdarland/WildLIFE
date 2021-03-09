@@ -1,0 +1,15 @@
+persistent(a,b,c)?
+listing(a,b,c)?
+
+a <<- 34, b <<- a, c <<- a?
+
+write(a,b,c)?
+.
+A=s?
+write(b)?
+write(c)?
+write(a)?
+
+
+
+

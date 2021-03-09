@@ -1,0 +1,61 @@
+
+*** Yes
+> > 
+*** Yes
+A = 0, B = real.
+--1> > 
+*** Yes
+A = real, B = real.
+--1> > 
+*** Yes
+A = real~, B = real~.
+--1> > 
+*** Yes
+A = real~, B = real~.
+--1> > 
+*** No
+> 
+*** Yes
+A = real, B = real.
+--1> > 
+*** Yes
+A = 0.
+--1> > 
+*** Yes
+A = real~, B = real~.
+--1> > 
+*** Yes
+A = real~, B = real~.
+--1> > 
+*** Yes
+A = real~, B = real~.
+--1> > 
+*** Yes
+A = real.
+--1> > 
+*** No
+> 
+*** Yes
+A = 0.
+--1> > 
+*** Yes
+A = 1.
+--1> > 
+*** Yes
+A = 0.
+--1> > 
+*** Yes
+A = 1.
+--1> > 
+*** No
+> 
+*** Yes
+A = 0.
+--1> > 
+*** No
+> 
+*** Yes
+A = 1.
+--1> 
+*** No
+> 

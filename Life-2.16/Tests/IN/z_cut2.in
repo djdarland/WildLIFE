@@ -1,0 +1,121 @@
+nl,write("Part 1"),nl?
+A={1;2},B= !,call_once(B)?
+;
+A={1;2},B= !,!,call_once(B)?
+;
+A={1;2},B= !, !, call_once(B),!,call_once(B)?
+;
+A= !,B={1;2}?
+call_once(A)?
+;
+A= !,B={1;2}?
+!?
+;
+;
+A= !,B={1;2},call_once(A)?
+;
+A= !,B={1;2},!?
+;
+
+nl,write("Part 2"),nl?
+gc,A={1;2},gc,B= !,gc,call_once(B),gc?
+;
+gc,A={1;2},gc,B= !,gc,!,gc,call_once(B),gc?
+;
+gc,A={1;2},gc,B= !,gc, !,gc, call_once(B),gc,!,gc,call_once(B),gc?
+;
+gc,A= !,gc,B={1;2},gc?
+gc,call_once(A),gc?
+;
+gc,A= !,gc,B={1;2},gc?
+gc,!,gc?
+;
+;
+gc,A= !,gc,B={1;2},gc,call_once(A),gc?
+;
+gc,A= !,gc,B={1;2},gc,!,gc?
+;
+
+%%%%%% With another choice point inserted.
+
+nl,write("Part 3"),nl?
+X={1;2}?
+A={1;2},B= !,call_once(B)?
+;
+;
+;
+X={1;2}?
+A={1;2},B= !,!,call_once(B)?
+;
+;
+;
+X={1;2}?
+A={1;2},B= !, !, call_once(B),!,call_once(B)?
+;
+;
+;
+X={1;2}?
+A= !,B={1;2}?
+call_once(A)?
+;
+;
+;
+X={1;2}?
+A= !,B={1;2}?
+!?
+;
+;
+;
+;
+X={1;2}?
+A= !,B={1;2},call_once(A)?
+;
+;
+;
+X={1;2}?
+A= !,B={1;2},!?
+;
+;
+;
+
+
+nl,write("Part 4"),nl?
+X={1;2}?
+gc,A={1;2},gc,B= !,gc,call_once(B),gc?
+;
+;
+;
+X={1;2}?
+gc,A={1;2},gc,B= !,gc,!,gc,call_once(B),gc?
+;
+;
+;
+X={1;2}?
+gc,A={1;2},gc,B= !,gc, !,gc, call_once(B),gc,!,gc,call_once(B),gc?
+;
+;
+;
+X={1;2}?
+gc,A= !,gc,B={1;2},gc?
+gc,call_once(A),gc?
+;
+;
+;
+X={1;2}?
+gc,A= !,gc,B={1;2},gc?
+gc,!,gc?
+;
+;
+;
+;
+X={1;2}?
+gc,A= !,gc,B={1;2},gc,call_once(A),gc?
+;
+;
+;
+X={1;2}?
+gc,A= !,gc,B={1;2},gc,!,gc?
+;
+;
+;
+

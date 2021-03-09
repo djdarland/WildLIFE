@@ -1,0 +1,60 @@
+5c5
+< X = (f1(a) -> a), Y = a.
+---
+> X = (f1(a) -> Y), Y = a.
+8c8
+< X = (f1(b) -> b), Y = b.
+---
+> X = (f1(b) -> Y), Y = b.
+13c13
+< X = (f2 -> c), Y = c.
+---
+> X = (f2 -> Y), Y = c.
+16c16
+< X = (f2(a,s,d) -> s, d), Y = (s, d).
+---
+> X = (f2(a,s,d) -> Y), Y = (s, d).
+21c21
+< X = (f3(a,s,d) -> s, d), Y = (s, d).
+---
+> X = (f3(a,s,d) -> Y), Y = (s, d).
+24c24
+< X = (f3 -> c), Y = c.
+---
+> X = (f3 -> Y), Y = c.
+29c29
+< X = (g -> a), Y = a.
+---
+> X = (g -> Y), Y = a.
+32c32
+< X = (g(a) -> b), Y = b.
+---
+> X = (g(a) -> Y), Y = b.
+37c37
+< X = (h -> a), Y = a.
+---
+> X = (h -> Y), Y = a.
+40c40
+< X = (h -> b), Y = b.
+---
+> X = (h -> Y), Y = b.
+45,49c45
+< A = [@|@], 
+< B = list, 
+< C = [@|append(@,list)], 
+< X = (append([@|@],list) -> [@|append(@,list)]).
+< 
+---
+> A = [], B = list, C = B, X = (append(A,B) -> B).
+52c48
+< A = [], B = list, C = list, X = (append([],list) -> list).
+---
+> A = [_A|_B], B = list, C = [_A|append(_B,B)], X = (append(A,B) -> C).
+57c53
+< X = (append([@|@],list) -> [@|append(@,list)]).
+---
+> X = (append([],_A: list) -> _A).
+60c56
+< X = (append([],list) -> list).
+---
+> X = (append([_A|_B],_C: list) -> [_A|append(_B,_C)]).

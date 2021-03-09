@@ -1,0 +1,16 @@
+
+*** Yes
+> > 
+*** Yes
+> 
+*** Yes
+> 
+*** Yes
+> int implies int
+int implies real
+
+*** No
+> 3.45 implies real
+
+*** No
+> 

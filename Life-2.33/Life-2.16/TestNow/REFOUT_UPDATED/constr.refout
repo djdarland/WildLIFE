@@ -1,0 +1,21 @@
+
+*** Yes
+> > 
+*** Yes
+> 
+*** Yes
+> foo
+*** Yes
+X = foo.
+--1> > bar
+*** Yes
+X = bar.
+--1> > 
+:: foo | write(foo).
+foo <| @.
+
+:: bar | write(bar).
+bar <| @.
+
+*** Yes
+> 

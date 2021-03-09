@@ -1,0 +1,26 @@
+% Between *** is not cyclic
+i <| m.
+b <| d.
+e <| i.
+c <| d.
+k <| o.
+e <| j.
+j <| n.
+d <| f.
+f <| k.
+g <| j.
+l <| o.
+d <| e.
+j <| o.
+h <| k.
+c <| l.
+c <| g.
+g <| k.
+a <| b.
+f <| j.
+m <| p.
+n <| q.
+n <| r.
+c <| h.
+% ***
+o <| e. % This introduces a cycle.

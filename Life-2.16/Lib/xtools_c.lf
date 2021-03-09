@@ -1,0 +1,972 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%	$Id: xtools_c.lf,v 1.3 1996/02/01 23:23:35 vorbeck Exp $	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% XTOOLKIT: CONSTRUCTOR TYPES
+%
+% Author: Bruno Dumant
+% (c) Copyright 1993 - Digital Equipment Corporation 
+% All Rights Reserved
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% interface
+
+public(panel_c,menu_panel_c,sub_panel_c,
+       push_c,on_off_c, text_field_c,menu_button_c,item_c,
+       slider_c,v_slider_c,h_slider_c,
+       move_slider,
+       show_panel,hide_panel,close_panel,
+       show_menu,hide_menu,close_menu,
+       button_pressed,enabled,
+       grid_c
+      ) ?
+
+
+%%% event masks
+
+global(panel_mask <- xButtonReleaseMask \/ xKeyPressMask  \/ xExposureMask) ?
+global(menu_panel_mask <- xButtonReleaseMask \/ xExposureMask) ?
+
+global(button_mask <- xButtonPressMask  \/  xButtonReleaseMask \/
+	           xLeaveWindowMask \/ 
+		   xEnterWindowMask \/xExposureMask) ? 
+
+global(text_field_mask <- xButtonPressMask  \/ xExposureMask) ?
+global(menu_button_mask <- xButtonPressMask \/ xButtonReleaseMask \/ 
+                          xOwnerGrabButtonMask \/ xExposureMask) ? 
+global(item_mask <- xButtonReleaseMask  \/xExposureMask \/ 
+                   xLeaveWindowMask \/ xEnterWindowMask) ?
+
+global(slider_mask <- xButtonPressMask \/ xButtonReleaseMask \/
+                     xOwnerGrabButtonMask \/ xPointerMotionMask \/ 
+	             xExposureMask) ?
+global(slider_mask_1 <- xButtonPressMask \/ xButtonReleaseMask \/ 
+                       xPointerMotionMask \/ xExposureMask) ?
+global(slider_mask_2 <- xButtonReleaseMask  \/ xPointerMotionMask \/ 
+                       xExposureMask) ?
+
+persistent(cur_orig) ?
+persistent(cur_zero) ?
+persistent(cur_ratio) ?
+persistent(is_cur_vertical) ?
+persistent(cur_max) ?
+persistent(cur_min) ?
+persistent(lastx) ?
+persistent(lasty) ?
+persistent(button_pressed) ?
+
+persistent(enabled) ?
+enabled <<- false?
+persistent(clicked_in) ?
+clicked_in <<- false ?
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% Panels
+
+%%% standard panel
+
+:: P:panel_c(constructor => build_panel(P),
+	     selected_text => ST,
+	     title => T).
+panel_c <| widget.
+
+
+%%% panel constructor
+
+build_panel(P:@(X0:{0;real},Y0:{0;real},
+            Width,Height,title => T,color_id => C,
+	    window => PanelWindow)) :-
+	C = {d_panel;@},
+	!,
+	cond(Width >= 1200,
+	    RealWidth = 1200,
+	    RealWidth = Width
+	),
+	cond(Height >= 980,
+	    RealHeight = 980,
+	    RealHeight = Height
+	),
+	xCreateWindow(default_display, 
+		      X0,Y0,RealWidth,RealHeight,
+		      PanelWindow,
+		      windowtitle => T,
+		      color     => m_colors(C),
+		      eventmask => panel_mask, 
+		      show => true),
+	P.selected_text <<- false,
+	P.clearable <<- true,
+	P.mother <<- no_mother,
+	catch_panel_events(P).
+
+
+%%% panel: events handler
+
+catch_panel_events(Panel:@(window => PW:window)) -> 
+	handle_panel_event(xGetEvent(PW,eventmask => panel_mask),
+	PW,Panel).
+
+handle_panel_event (E:expose_event,PW,Panel) -> true |
+	xRefreshWindow(PW),
+	handle_panel_event(xGetEvent(PW,eventmask =>  panel_mask),
+	PW,Panel).
+
+handle_panel_event(keyboard_event (char => C),PW,
+	Panel:@(selected_text => S)) -> true |
+        cond(S,
+	    handle_char(Panel.daughters.(S.1), Panel, char => C)
+	),
+	handle_panel_event(xGetEvent(PW,eventmask => panel_mask),
+	PW,Panel).
+
+handle_panel_event(B:button_event,PW,
+	           Panel) -> true |
+	check_button_to_release(Panel),
+	handle_panel_event(xGetEvent(PW,eventmask => panel_mask),
+                           PW,Panel).
+
+
+%%% open and close a panel. 
+
+show_panel(P:@(window => PW)) :-
+	xShowWindow(PW).
+
+hide_panel(P:@(window => PW)) :-
+	xHideWindow(PW).
+
+close_panel(P:@(window => PW)) :-	
+	xDestroyWindow(PW).
+
+
+%%% menu panel
+
+:: P:menu_panel_c(0,0,
+	          constructor => build_menu_panel(P),
+		  menu_button => MB).
+menu_panel_c <| widget.
+
+
+%%% menu_panel constructor
+
+build_menu_panel(P:@(width => Width,height => Height,
+	             color_id => C,
+		     window => Window)) :-
+	C = {d_panel;@},
+	!,
+	P.mother = no_mother,
+	xCreateWindow(default_display, 
+		      0,0,Width,Height,
+		      Window,
+		      color     => m_colors(C),
+		      eventmask => menu_panel_mask,
+		      borderwidth => 0,
+		      overrideredirect => true,
+		      show => false),
+	catch_menu_panel_events(P).
+
+%%% menu_panel: events handler
+
+catch_menu_panel_events(MenuPanel:@(window => PW:window)) -> 
+	handle_menu_panel_event(xGetEvent(PW,
+	                                  eventmask => menu_panel_mask),
+	                        PW,MenuPanel).
+
+handle_menu_panel_event (expose_event,PW,MenuPanel) -> true |
+	xRefreshWindow(PW),
+	handle_menu_panel_event(xGetEvent(PW,
+	                                  eventmask =>  menu_panel_mask),
+			        PW,MenuPanel).
+
+handle_menu_panel_event(button_event,PW,MenuPanel) -> true |
+	hide_menu(MenuPanel),
+	handle_menu_panel_event(xGetEvent(PW,
+	                                  eventmask => menu_panel_mask),
+				PW,MenuPanel).
+
+
+%%% sub_panel
+
+:: P:sub_panel_c(constructor => build_sub_panel(P)).
+sub_panel_c <| widget.
+
+
+%%% sub_panel constructor
+
+build_sub_panel(SubPanel:@(X,Y,Width,Height,
+	                   color_id => C,
+			   window => Window,
+			   mother => @(window => MW))) :-
+	C = {d_panel;@},
+	!,
+	create_subwindow(default_display, 
+	                 X,Y,Width,Height,
+			 Window,
+			 parent => MW,
+			 color  => m_colors(C),
+			 eventmask => xExposureMask),
+	catch_sub_panel_events(SubPanel).
+
+%%% sub_panel: events handler
+
+catch_sub_panel_events(SubPanel:@(window => PW:window)) -> 
+	handle_sub_panel_event(xGetEvent(PW,
+	                                 eventmask => xExposureMask),
+	                        PW).
+
+handle_sub_panel_event (expose_event,PW) -> true |
+	xRefreshWindow(PW),
+	handle_sub_panel_event(xGetEvent(PW,
+	                                  eventmask => xExposureMask),
+			        PW).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% buttons
+
+%%% generic button: 
+
+:: button(active => Bool) | init_state(Bool). 
+button <| widget.
+
+
+%%%
+%%%                        ,- push_c
+%%%                        |
+%%%                        |- on_off_c
+%%%               button  -|
+%%%                        |- menu_button_c
+%%%                        |
+%%%                        `- text_field_c
+
+%%% on_off button                  
+
+on_off_c <| button.
+:: A:on_off_c(associated_action => on_off_action(A),
+	      action => @,
+              constructor => build_on_off_button(A),
+	      on => bool).
+
+on_off_action(A:@(on => ON, action => RAct)) :-
+	ON <<- not(ON),
+	(
+	    copy_pointer(RAct),
+	    !
+	;    
+	    write_err("error"), nl_err
+	).
+
+%%% on_off button constructor
+
+build_on_off_button(B:@(X0,Y0,Width,Height,color_id => C,
+	             window => ButtonWindow,
+		     mother => @(window => PW))) :-
+	C = {d_button;@},
+	!,
+	create_subwindow(default_display,
+	                 X0,Y0,Width,Height,
+			 ButtonWindow,
+			 parent => PW,
+			 color => m_colors(C),
+			 eventmask => button_mask),
+	B.on <<- false,
+	cond( BAction:(B.action) :== @,
+	      BAction = succeed
+	), 
+	catch_button_events(B).
+
+%%% push button
+
+push_c <| button.
+:: A:push_c(associated_action => push_action(A),
+	    action => Action,
+            constructor => build_push_button(A)).
+
+push_action(A:@(action => RAct)) :-
+	RAct.
+
+%%% push button constructor
+
+build_push_button(B:@(X0,Y0,Width,Height,color_id => C,
+	             window => ButtonWindow,
+		     mother => @(window => PW))) :-
+	C = {d_button;@},
+	!,
+	create_subwindow(default_display,
+	                 X0,Y0,Width,Height,
+			 ButtonWindow,
+			 parent => PW,
+			 color => m_colors(C),
+                         eventmask => button_mask),
+	cond( BAction:(B.action) :== @,
+	      BAction = succeed
+	), 
+	catch_button_events(B).
+
+
+%%% Button events
+
+catch_button_events(Button:@(window => BW:window)) -> true |
+	handle_button_events(xGetEvent(BW,eventmask => button_mask),
+	                     BW,Button).
+	
+handle_button_events(B:button_event(state => 0),
+	             BW,Button) -> true |
+	button_pressed <<- B."button",
+	enabled <<- true,
+	Button.active <<- true,
+	change_look(Button),
+	handle_button_events(xGetEvent(BW,eventmask => button_mask),
+	                     BW,Button).
+
+handle_button_events(B:button_event, BW, Button) ->
+	true |
+	(Act:(Button.active),!,
+	 (
+	     B."button" =:= button_pressed,!, %%% releasing the
+                                              %%% pressed button
+	     Act <<- false,
+	     cond(enabled,
+		  (
+		      enabled <<- false,
+		      Button.associated_action
+		  )
+		 ),
+	     change_look(Button)
+	 ;
+                                              %%% releasing another button
+	     succeed
+	 )
+	;
+	 check_button_to_release(Button)
+	),
+	handle_button_events(xGetEvent(BW,eventmask => button_mask),
+	                     BW, Button).
+
+
+
+
+handle_button_events(enter_event,W,Button) -> true |
+        cond( Button.active,
+            (
+		enabled <<- true,
+		change_look(Button)
+	    )
+	),
+	handle_button_events(xGetEvent(W,eventmask => button_mask),
+		             W,Button).
+
+
+handle_button_events(leave_event,W,Button) -> true |
+	cond( enabled and Button.active,
+            (
+		enabled <<- false,
+		change_look(Button)
+	    )
+ 	),
+	handle_button_events(xGetEvent(W,eventmask => button_mask),
+		             W,Button).
+
+handle_button_events(expose_event,BW,Button) -> true |
+        xRefreshWindow(BW),
+	handle_button_events(xGetEvent(BW,eventmask =>  button_mask),
+			     BW,Button).
+
+
+%%% text fields
+
+:: A:text_field_c(on => bool,
+	          text => string,
+		  action => Action,
+		  constructor => build_text_field(A)).
+text_field_c <| widget.
+
+text_action(A) :-
+	P:@(selected_text => Q) = find_panel(A),
+	(
+	    Q :== true, !,
+	    PrevButton = find_button((Q.1),P),
+	    (
+		B:(not( PrevButton ===  A)),
+		PrevButton.action,
+		PrevButton.on <<- false,
+		change_look(PrevButton) 
+	    ;
+	        succeed
+	    )
+	;
+	    succeed
+	),
+	A.on <<- true,
+	P.clearable <<- true,
+	Q <<- true(A.id),
+	change_look(A).
+
+
+%%% very basic editor for a text-field
+
+handle_char( B, P, char  => C) :-
+	( 
+	    C =:= 13,!, %%% return
+	    P.selected_text <<- false,
+	    B.on <<- false,
+	    change_look(B),
+	    copy_pointer(B.action)
+	;
+	    (
+		Q:(P.clearable),!,   
+		B.text <<- "",
+		change_look(B),
+		Q <<- false
+	    ;
+	        succeed
+	    ),
+	    ( 
+		C >= 32 and C =< 126,!,
+		add_new_char(B,C)
+	    ;
+	        C =:= 8,!,
+		remove_last_char(B)
+	    ;
+	        succeed
+	    )
+	).
+
+add_new_char(B:@(text => T),K) :-
+	T <<- strcon(T,chr(K)),
+	change_look(B).
+
+remove_last_char(B:@(text => T)) :-
+	cond( L:strlen(T) > 0,
+	    (   
+		T <<- substr(T,1,L-1),
+		change_look(B)
+	    )
+	).
+
+
+%%% constructor of a text_field
+
+build_text_field(B:@(X0,Y0,Width,Height,
+	             window => ButtonWindow)) :-
+	Panel:@(window => MW,color_id => C) = find_panel(B),
+	C = {d_button;@},
+	!,
+	create_subwindow(default_display,
+	                 X0,Y0,Width,Height,
+			 ButtonWindow,
+			 parent => MW,
+			 color => m_colors(C),
+			 eventmask => text_field_mask),
+	B.on <<- false,
+	cond( BText:(B.text) :< string,
+	    BText <<- copy_pointer(BText),
+	    BText <<- ""
+	),
+	cond( BAction:(B.action) :== @,
+	    BAction = succeed
+	),
+	catch_text_field_events(B).
+
+%%% Text Field events
+
+catch_text_field_events(Button:@(window => BW:window)) -> true |
+	handle_text_field_events(xGetEvent(BW,eventmask => text_field_mask),
+	                         BW,Button).
+	
+handle_text_field_events(expose_event,BW,Button) -> true |
+        xRefreshWindow(BW),
+	handle_text_field_events(xGetEvent(BW,eventmask =>  text_field_mask),
+			         BW,Button).
+
+handle_text_field_events(B:button_event,
+		         BW,Button) -> true |
+	Button.on <<- true,
+	change_look(Button),
+	text_action(Button),
+	handle_text_field_events(xGetEvent(BW,eventmask => text_field_mask),
+				 BW,Button).
+
+%%% menu button
+
+menu_button_c <| button.
+:: A:menu_button_c(on => On,
+	           menu => @(menu_button => A),
+                   constructor => build_menu_button(A)).
+
+
+%%% constructor of a menu button
+
+build_menu_button(B:@(X0,Y0,Width,Height,color_id => C,
+	              on => On,
+	              window => ButtonWindow,
+		      mother => @(window => MW))) :-
+	C = {d_button;@},
+	!,
+	create_subwindow(default_display,
+	                 X0,Y0,Width,Height,
+			 ButtonWindow,
+			 parent => MW,
+			 color => m_colors(C),
+			 eventmask => menu_button_mask),
+	catch_menu_button_events(B).
+
+%%% menu button: events handler
+
+catch_menu_button_events(Button:@(window => BW:window)) ->
+	handle_menu_button(xGetEvent(BW,eventmask => menu_button_mask),
+	                   BW,Button).
+	
+handle_menu_button(expose_event,BW,Button) -> true |
+        xRefreshWindow(BW),
+	handle_menu_button(xGetEvent(BW,eventmask =>  menu_button_mask),
+			   BW,Button).
+
+handle_menu_button(B:button_event,BW,Button:@(menu => Menu)) -> true |
+	(
+	    B.state =:= 0,!,    %%% button press	
+	    Button.on <<- true,
+	    clicked_in <<- true(Button.id),
+	    show_menu(Menu),
+	    change_look(Button)
+	;
+	    implies(release(Button))
+	),      
+        handle_menu_button(xGetEvent(BW,eventmask => menu_button_mask),
+	                   BW,Button).
+
+release(Button:menu_button_c) :- 
+	!,
+	hide_menu(Button.menu),
+	Button.on <<- false,
+	change_look(Button),
+	clicked_in <<- false.	
+
+
+show_menu(Menu:@(_,_,WidthM,HeightM,window => MenuWindow,
+	         menu_button => @(_,_,_,Height,on => ON,window => W1))) :-
+	xQueryPointer(W1,
+              Root_return,   Child_return,
+              Root_x_return, Root_y_return,
+              Win_x_return,  Win_y_return),
+	xSetWindowGeometry(MenuWindow,
+	                   Root_x_return - Win_x_return,
+			   Root_y_return - Win_y_return + Height,
+			   WidthM,HeightM),
+	xRaiseWindow(MenuWindow),
+	xShowWindow(MenuWindow).
+
+hide_menu(Menu:@(window => MenuWindow)) :-
+	xHideWindow(MenuWindow).
+
+close_menu(Menu:@(window => MenuWindow)) :-
+	xDestroyWindow(MenuWindow).
+
+%%% item
+
+:: I:item_c(action => A,
+	    on => bool,
+	    menu => Menu,
+	    constructor => build_item(I)).
+item_c <| widget.
+
+
+%%% item constructor
+
+build_item (I:@(X0,Y0,Width,Height,
+	        window => ItemWindow,
+	        mother => @(window => PW),
+		color_id => C, on => On,
+	        menu => Menu )) :-
+	C = {d_item;@},
+	!,
+	create_subwindow(default_display,
+	                 X0,Y0,Width,Height,
+			 ItemWindow,
+			 parent => PW,
+			 color => m_colors(C),
+			 eventmask => item_mask),
+	Menu = find_panel(I), 
+	cond( Action:(I.action) :== @,
+	    Action = succeed
+	),
+	On <<- false,
+	catch_item_events(I).
+
+
+
+%%% item: events handler
+
+catch_item_events(MenuItem:@(window => W:window)) ->
+	handle_item_event(xGetEvent(W,eventmask => item_mask),
+	                  W,MenuItem).
+
+handle_item_event(expose_event,W,MenuItem) -> true |
+	xRefreshWindow(W),
+	handle_item_event(xGetEvent(W,eventmask => item_mask),
+			  W,MenuItem).
+
+handle_item_event(E:enter_event(state => State),W,MenuItem) -> true |
+	cond(State =\= 0,
+	    (
+		MenuItem.on <<- true,
+		change_look(MenuItem)
+	    )
+	),
+	handle_item_event(xGetEvent(W,eventmask => item_mask),
+			  W,MenuItem).
+
+handle_item_event(L:leave_event,W,MenuItem) -> true |
+	MenuItem.on <<- false,
+	change_look(MenuItem),
+	handle_item_event(xGetEvent(W,eventmask => item_mask),
+		          W,MenuItem).
+
+handle_item_event(button_event,W,MenuItem:@(action => Act,
+	                                    menu => Menu)) -> true | 
+	Button:(Menu.menu_button).on <<- false,
+	clicked_in <<- false,
+	change_look(Button),
+	(
+	    copy_pointer(Act),!
+	;
+	    succeed
+	),
+	hide_menu(Menu),
+	handle_item_event(xGetEvent(W,eventmask => item_mask),
+			  W,MenuItem).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% slider button
+
+:: Slider:slider_c(constructor => build_slider(Slider),
+		   is_vertical => D,
+		   value => V,
+		   action => A,
+		   ratio => R,
+		   min => Min,
+		   max => Max,
+		   zero => Zero).
+slider_c <| widget.
+
+v_slider_c <| slider_c.
+:: v_slider_c(is_vertical => true).
+
+h_slider_c <| slider_c.
+:: h_slider_c(is_vertical => false).
+
+
+build_slider(Slider:@(X0,Y0,Width,Height,
+	              action => Action,
+		      color_id => C,
+		      is_vertical => IsVert,
+		      value => V,
+		      ratio => R,
+		      max => Max, min => Min,
+		      zero => Zero,
+		      mother => @(width => WM,
+				  height => HM,
+				  border => B,
+				  window => PW),
+		      window => SliderWindow)) :-
+	C = {d_slider;@},
+	!,
+	create_subwindow(default_display,
+	                 X0,Y0,Width,Height,
+			 SliderWindow,
+			 parent => PW,
+			 color => m_colors(C),
+			 eventmask => slider_mask_1),
+	cond( Action :== @,
+	    Action = succeed
+	),
+		    
+        %%% Coor = Zero + R * Value
+    
+        cond( IsVert,
+	    (
+		R = (HM - 2*B - Height)/(Min - Max),
+		Zero = B - R*Max,
+		V <<- (Y0 - Zero)/R
+	    ),
+	    (
+		Zero = B - R*Min,
+		R = (WM -2*B - Width)/(Max - Min),
+		V <<- (X0 - Zero)/R
+	    )
+	),
+	catch_slider_events(Slider).
+
+%%% slider button: events handler
+
+catch_slider_events(Button:@(window => BW:window)) ->
+	handle_slider(xGetEvent(BW,eventmask => slider_mask_1),
+	              BW,Button).
+	
+
+%%% Before sliding
+
+handle_slider(expose_event,BW,Button) -> true |
+        xRefreshWindow(BW),
+	handle_slider(xGetEvent(BW,eventmask => slider_mask_1),
+	              BW,Button).
+
+handle_slider(B:button_event(x_root => X, y_root => Y,state => 0),BW,
+	      Button:@(is_vertical => IsVert,
+		       ratio => Ratio,max => Max,min => Min,
+		       zero => Zero,value => V)) -> true |
+	is_cur_vertical <<- IsVert,
+	cur_ratio <<- Ratio,
+	cur_max <<- Max,
+	cur_min <<- Min,
+	cur_zero <<- Zero,
+	cond( IsVert,
+	    Start = Y,
+	    Start = X
+	),
+	cur_orig <<-  copy_pointer(V - Start/Ratio),
+	handle_slider2(xGetEvent(BW,eventmask => slider_mask_2),
+	               BW,Button).
+
+global(cwin) ?
+handle_slider(motion_event,BW,Button) -> true |
+        handle_slider(xGetEvent(BW,eventmask => slider_mask_1),
+	                  BW,Button).
+
+handle_slider(button_event,BW,Button) -> true |
+        check_button_to_release(Button),
+	handle_slider(xGetEvent(BW,eventmask => slider_mask_1),
+	              BW,Button).
+
+
+%%% During sliding
+
+handle_slider2(M:motion_event,BW,
+	       Button) -> true |
+        lastx <<- @,
+	(
+	    cwin = BW,
+	    get_last_motion(xGetEvent(BW,eventmask => 64))
+	;
+	    cond( is_value(lastx),
+	        move_slider(Button,pointer_value(lastx,lasty)),
+		move_slider(Button,pointer_value(M.x_root,M.y_root))
+	    ),
+	    Button.action,
+	    handle_slider2(xGetEvent(BW,eventmask => slider_mask_2),
+	                   BW,Button)
+	).
+
+
+get_last_motion(M:motion_event) ->
+      get_last_motion(xGetEvent(cwin,eventmask => 64)) 
+  |
+      lasty <<- M.y_root,
+      lastx <<- M.x_root,
+      fail.
+
+
+handle_slider2(B:button_event(x_root => X,y_root => Y),BW,
+	      Button:@(action => Action)) -> true |
+	move_slider(Button,pointer_value(X,Y)),
+	Action,
+        handle_slider(xGetEvent(BW,eventmask => slider_mask_1),
+	              BW,Button).
+
+handle_slider2(expose_event,BW,Button) -> true |
+        xRefreshWindow(BW),
+	handle_slider2(xGetEvent(BW,eventmask => slider_mask_2),
+	               BW,Button).
+
+M:move_slider(Button:@(X0,Y0,value => V,window => BW,
+	             is_vertical => Bool, zero => Zero, ratio => Ratio),
+	    Value) :-
+	cond( Bool,
+	      Y0 <- P:root_sort(Zero + Ratio*Value),
+	      X0 <- P
+	    ),
+	V <<- root_sort(Value),
+	xMoveWindow(BW,X0,Y0).
+
+pointer_value(X,Y) ->
+	cond( is_cur_vertical,
+	    get_value(Y),
+	    get_value(X)
+	).
+	
+
+get_value(Coor) ->
+	cond( NewVal:(cur_orig + Coor/cur_ratio) > CMax:cur_max,
+	    CMax,
+	    cond( NewVal < CMin:cur_min,
+	        CMin,
+		NewVal
+	    )
+	).
+	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+%%% grid button
+%%%
+%%% Added by Martin Vorbeck
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+grid_c <| look.
+
+grid_c <| button.
+:: A:grid_c(associated_action => grid_action(A),
+	    action => Action,
+            constructor => build_grid_button(A)).
+
+grid_action(A:@(action => RAct)) :-
+	RAct.
+
+%%% grid button constructor
+
+build_grid_button(B:@(X0,Y0,Width,Height,color_id => C,
+	             window => ButtonWindow,
+		     mother => @(window => PW))) :-
+	C = {d_button;@},
+	!,
+	create_subwindow(default_display,
+	                 X0,Y0,Width,Height,
+			 ButtonWindow,
+			 parent => PW,
+			 color => m_colors(C),
+                         eventmask => button_mask),
+	cond( GAction:(B.action) :== @,
+	      GAction = succeed
+	    ),
+	catch_grid_events(B).
+
+
+%%% Button events
+
+catch_grid_events(Grid:@(window => BW:window)) -> true |
+	handle_grid_events(xGetEvent(BW,eventmask => button_mask),
+	                     BW,Grid).
+	
+handle_grid_events(B:button_event(state => 0, x => X, y => Y),
+	             BW,Grid) -> true |
+	button_pressed <<- B."button",
+	enabled <<- true,
+	Grid.active <<- true,
+	Grid.old_x_pos <<- X,
+	Grid.old_y_pos <<- Y,
+	change_look(Grid),
+	handle_grid_events(xGetEvent(BW,eventmask => button_mask),
+	                     BW,Grid).
+
+handle_grid_events(B:button_event(x => X, y => Y),
+		     BW,Grid) -> true |
+	(Act:(Grid.active),!,
+	 (
+	     B."button" =:= button_pressed,!, %%% releasing the
+                                              %%% pressed button
+	     Act <<- false,
+	     cond(enabled,
+		  (
+		      enabled <<- false,
+		      Grid.x_pos <<- X,
+		      Grid.y_pos <<- Y,
+		      Grid.associated_action
+		  )
+		 ),
+	     change_look(Grid)
+	 ;
+                                              %%% releasing another button
+	     succeed
+	 )
+	;
+	 check_button_to_release(Grid)
+	),
+	handle_grid_events(xGetEvent(BW,eventmask => button_mask),
+	                     BW,Grid).
+
+
+
+
+handle_grid_events(enter_event,W,Grid) -> true |
+        cond( Grid.active,
+            (
+		enabled <<- true,
+		change_look(Grid)
+	    )
+	),
+	handle_grid_events(xGetEvent(W,eventmask => button_mask),
+		             W,Grid).
+
+
+handle_grid_events(leave_event,W,Grid) -> true |
+	cond( enabled and Grid.active,
+            (
+		enabled <<- false,
+		change_look(Grid)
+	    )
+ 	),
+	handle_grid_events(xGetEvent(W,eventmask => button_mask),
+		             W,Grid).
+
+handle_grid_events(expose_event,BW,Grid) -> true |
+        xRefreshWindow(BW),
+	handle_grid_events(xGetEvent(BW,eventmask =>  button_mask),
+			     BW,Grid).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+create_subwindow(D,
+	         X0,Y0,Width,Height,
+		 SubWindow,
+		 parent => PW:window,
+		 color => C,
+		 eventmask => M
+	        ) -> true |
+	xCreateWindow(D,
+	              X0,Y0,Width,Height,
+		      SubWindow,
+		      parent => PW,
+		      borderwidth => 0,
+		      color => C,
+		      eventmask => M).
+
+C:writeln :- write&strip(C), nl.
+
+check_button_to_release(X) :-
+	cond( C:clicked_in,
+	    implies(release(find_button(C.1,find_panel(X))))
+	).
+
+find_panel(X:@(mother => M)) -> cond( M :== no_mother,
+	                            X,
+				    find_panel(M)
+				).
+
+find_button(Id,X) -> cond( has_feature(daughters,X,D),
+	                 cond(has_feature(Id,D,Button),
+			     Button,
+			     find_in_daughters(features(D),Id,D)
+			 ),
+			 {}
+		     ).
+			     
+find_in_daughters([A|B],Id,D) -> Button |
+        (
+	    Button = find_button(Id,D.A),!
+	;
+	    Button = find_in_daughters(B,Id,D)
+	).
+
+find_in_daughters([]) -> {}.

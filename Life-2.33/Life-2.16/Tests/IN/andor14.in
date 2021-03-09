@@ -1,0 +1,16 @@
+%% again @ for vars & lines missing after No's
+
+A = and(B)?
+A=@(2=>C)?
+C=false?
+
+
+A=@(2=>false)?
+.
+A = and(2=>B)?
+A=@(C)?
+B=false?
+
+
+A=@(false)?
+.

@@ -1,0 +1,603 @@
+
+\section{The graphical interface toolkit}
+\label{xtools}
+
+\subsection{Introduction}
+
+\say{xtools} is a simple toolkit to build interactive window-based X applications
+in \WLIFE. It provides the
+user with the basic functionality of bigger toolkits,
+in short the ability to use buttons, text fields, menus,
+and sliders. 
+Composite objects containing these primitives can be created
+arbitrarily at run-time. The toolkit is built on top of the 
+basic X interface described in the previous section.
+The toolkit module is loaded and opened with the command
+\say{import("xtools")}.
+
+The toolkit is organized around three concepts: boxes, looks, and constructors.
+  \begin{itemize}
+  \item {\it boxes} are used to compute the sizes and positions of
+     objects on the screen.
+     All screen objects manipulated by the toolkit are subsorts of {\tt box}. 
+  \item {\it constructors} are used to build and initialize screen objects. All
+    objects that have a behavior (i.e. not simple graphical objects,
+    but real widgets) inherit from one constructor type. Ten of them are
+    predefined.  
+  \item {\it looks} are used to describe the appearance of screen objects.
+    An object may be a subsort of several look types (four such subsorts are
+    predefined), and will inherit the appearance of these ``looks''.  
+  \end{itemize}
+
+All these sorts are organised in the following hierarchy:
+
+\centerline{\psfig{figure=toolkit.ps,width=13cm}} 
+
+The next sections give details about boxes, constructors, looks, and the
+predefined objects inheriting from these. An example (file \verb+ex_tools.lf+)
+is provided with the system and should help the user to get started.
+
+\subsection{Boxes and their placement constraints}
+
+  All the objects manipulated by the toolkit are boxes. A box is defined by the
+  following type declaration:
+  \bv
+  :: box(X,Y,width => DX,height => DY,
+         border => B,
+         mother => M).\end{verbatim}
+
+  {\tt X} and {\tt Y} are integers giving
+  the coordinates of the box, {\tt DX} and {\tt DY} 
+  are integers giving the dimensions of the box.
+
+  Boxes may contain other boxes: the {\tt mother} feature of a box
+  points to the box that contains it, if any. 
+
+  The {\tt border} feature is the width of reserved space on each side
+  of a box. It has a default value \verb+d_border+.
+
+  The following sections list the placement constraints
+  on boxes that are implemented in the toolkit.
+  These constraints may be cumulated and imposed in any order.
+  The local constraint propagation of \WLIFE\ guarantees that
+  if the constraints are consistent and enough information exists
+  to determine a placing, it will be determined.  If the constraints
+  are inconsistent, then they will fail and cause backtracking.
+
+  \subsubsection{Boxes used as padding}
+
+  Some boxes are only used to reserve space between objects:
+  
+  \begin{itemize}
+  \item \verb+h_box(W)+ is a function that returns a box of width {\tt W}.
+  \item \verb+v_box(H)+ is a function that returns a box of height {\tt H}.
+  \item \verb+null_box+ is a box of zero size.  It is the sort:
+\bv
+null_box <| box.
+:: null_box(width => 0,height => 0).\end{verbatim}
+
+  The values in \verb+h_box(W)+ and \verb+v_box(H)+ may be negative.
+  \end{itemize}
+  
+  \subsubsection{Positioning}
+  
+  \begin{itemize}
+  \item Relative positioning
+
+The toolkit offers a number of primitives to place boxes:
+
+\begin{tabular}{lll}
+\say{l\_above} &    \say{c\_above} &    \say{r\_above}   \\
+\say{l\_below} &    \say{c\_below} &    \say{r\_below}   \\
+\say{t\_left\_of} &  \say{c\_left\_of} &  \say{b\_left\_of} \\
+\say{t\_right\_of} & \say{c\_right\_of} & \say{b\_right\_of}
+\end{tabular}
+
+    The letter prefixes have the following meaning:
+    {\tt l} stands for left, {\tt r} for right, {\tt t} for top, {\tt b} 
+    for bottom, and {\tt c} for center.
+
+    Each of these primitives is a function returning the smallest box
+    containing its two arguments; for instance, \verb+Box1 l_above Box2+
+    returns the smallest box containing {\tt Box1} and {\tt Box2},such that:
+    \begin{itemize}
+    \item Box1 is above Box2, and
+    \item their left sides are aligned.  
+    \end{itemize}
+
+    These primitives will set and try to resolve the placement constraints.
+
+  \item Containment
+
+    The toolkit offers two primitives to express that one box contains
+    another:   
+
+  \begin{tabular}{ll}
+  \say{contains} & \say{containing}
+  \end{tabular}
+
+    Syntax:
+  \bv 
+  Box1 contains Box2 
+  Box = Box1 containing Box2 \end{verbatim}
+
+    Both of these primitives express the same containment constraint.
+    The difference is that
+    {\tt contains} is a predicate and {\tt containing} a function.
+    If no size is specified for Box1,
+    it will be given the same size as that of Box2.
+    The function call {\tt containing} returns the containing box,
+    in this case {\tt Box1}.
+
+    If {\tt Box1} has a {\tt border} feature worth {\tt Border} (in
+    pixels), it will be used to reserve a space of that width
+    around the box.
+    In this case, {\tt Box1} will be larger than {\tt Box2}.
+
+  \item Refined positioning
+
+There are also some primitives that set finer constraints:
+
+\begin{tabular}{lllll}
+\say{ll\_aligned} & \say{lr\_aligned} & \say{lc\_aligned} &
+\say{rr\_aligned} & \say{rc\_aligned}
+\\
+\say{tt\_aligned} & \say{tb\_aligned} & \say{tc\_aligned} &
+\say{bb\_aligned} & \say{bc\_aligned}
+\\
+\say{cc\_v\_aligned} & \say{cc\_h\_aligned} & & &
+\end{tabular}
+
+    These are predicates.
+    The first letter of the predicate name applies to the first argument, the
+    second to the second argument.
+    As before, {\tt l} stands for left, {\tt r} for right, {\tt t} for top,
+    {\tt b} for bottom, and {\tt c} for center. 
+
+    For instance:
+  \bv
+  Box1 lr_aligned Box2 \end{verbatim}
+	  	will force the left side of {\tt Box1} to be aligned
+                with the right side of {\tt Box2}.
+  \bv
+  Box1 cc_v_aligned Box2 \end{verbatim}
+	        will force the centers of {\tt Box1} and {\tt Box2} to
+                be vertically ({\tt v}) aligned.
+  \end{itemize}
+
+  \subsubsection{Lists}
+  
+  Lists are just syntactic sugar to express the vertical or horizontal
+  alignment of boxes. 
+  \begin{tabular}{lll}
+  \say{vl\_list} & \say{vc\_list} & \say{vr\_list} \\
+  \say{ht\_list} & \say{hc\_list} & \say{hb\_list} \\
+  \say{menu\_list} & 
+  \end{tabular}
+
+  \verb+vl_list List_of_Boxes+ returns the box containing all the
+  boxes of the list, 
+  such that each of them is \verb+l_above+ the next one in the list.
+  As before, {\tt l} stands for left, {\tt r} for right, {\tt t} for top,
+  {\tt b} for bottom, and {\tt c} for center. 
+
+  \verb+menu_list List_of_Boxes+ first constrains all the boxes of
+  the list to be of  
+  the same size, then returns \verb+vl_list List_of_Boxes+.
+
+  It is very easy to make your own kind of list, using the implementation
+  of these as an inspiration.
+  All these functions are prefix operators.
+
+
+  \subsubsection{Sizes of boxes}
+
+  A very useful constraint predicate is \verb+same_size+.
+  \verb+same_size(List_of_Boxes)+ will force all the boxes of the list to have
+        the same height and width.
+    In the same way,
+	\verb+same_height(List_of_Boxes)+ will force all the boxes of
+        the list to have the same height, and 
+  	\verb+same_width(List_of_Boxes)+ will force all the boxes of
+        the list to have the same width.
+
+  Sizes of boxes are computed on the fly, using a subsort of box: \verb+t_box+.
+
+  Features
+  \bv
+  t_box(h_space => HSpace,
+        v_space => VSpace, 
+        text => Text,
+        font_id => Fid)\end{verbatim}
+    \begin{tabbing}
+    {\tt HSpace}\= \kill
+    {\tt Text}   \>: the text appearing in the box\\
+    {\tt VSpace} \>: the {\it total} amount of vertical space reserved around
+            the text\\
+    {\tt HSpace} \>: the {\it total} amount of horizontal space reserved around
+            the text\\
+    {\tt Fid}    \>: \= The font id used. Default is bold.\\
+                 \>  \> (see below for an explanation of font ids)\\
+    \end{tabbing}
+
+  If no size is already given for a box, and if it is a subtype of
+  \verb+t_box+, then its size is computed according to {\tt Text}, {\tt Fid},
+  {\tt VSpace} and {\tt HSpace}. 
+
+
+  \subsubsection{Creating a box}
+
+  In order to be displayed and to work, a box has to be {\it created}.
+
+  \verb+create_box(Box)+ calls the constructor of {\tt Box} (if it is a subsort
+  of a constructor) and the drawing routine (if the box is a subsort
+  of a look sort). If a box contains other boxes, you only need to call
+  \verb+create_box+ for the parent box: the call is propagated to the
+  daughters. 
+
+  \verb+create_box+ must be called only after all positioning constraints
+  have been declared. It is in fact possible to separate completely
+  the positioning and the creation.
+  \verb+create_box+ may be called several times with the same argument.
+  Later calls than the first will have no effect.
+
+\subsection{Main constructors}
+
+  All the constructors are implemented as sorts whose names end with \verb+_c+.
+
+  \subsubsection{Panels}
+  \begin{itemize}
+  \item \verb+panel_c+
+  
+    A \verb+panel_c+ consists of a top-level window containing widgets.
+
+    
+    Features: (optional)
+  \bv
+  panel_c(title => Title) \end{verbatim}
+
+    {\tt Title}: title of the window and icon 
+
+    Beware: the positions of \verb+top_level+ windows are usually modified by
+    the window manager. 
+
+  \item \verb+sub_panel_c+
+
+    A simple sub-window that deals with refresh events. It is used by
+    slide bars.
+  \end{itemize}
+
+  \subsubsection{Buttons}
+
+  Features:
+  \bv
+  push_c(action => Action)
+  on_off_c(on => On, action => Action)
+  text_field_c(action => Action)
+  menu_button_c(menu => Menu)\end{verbatim}
+  
+  \begin{tabbing}
+  {\tt Action}\=: \= Buttons of sort \verb+on_off_c+, \verb+push_c+, 
+                     \verb+text_field_c+ have a feature \\ 
+              \>  \> {\tt action} that describes the action activated by
+                     the button.\\
+              \>  \> The default action is succeed.\\
+              \>  \> If the button is an \verb+on_off_c+ or a
+                     \verb+push_c+, the action is activated each time \\ 
+              \>  \> the mouse is pressed and released inside 
+                     the button.\\
+	      \>  \> If the button is a \verb+text_field_c+, the
+                     action is activated each time the return \\
+              \>  \> key is pressed and the button active.\\ 
+  
+  {\tt On}    \>: \> Buttons of type \verb+on_off_c+ have a boolean
+                     feature {\tt on} that describes their state.\\
+              \>  \> {\tt On} is a persistent term.\\ 
+
+  {\tt Menu}  \>: \> A \verb+menu_button+ has a feature {\tt menu} that must
+                     contain a term of sort \\
+              \>  \> \verb+menu_panel_c+.\\
+  \end{tabbing} 
+
+  To distinguish between the mouse buttons, a persistent variable
+  \verb+button_pressed+ is modified each time a mouse button is pressed (Its
+  value is 1 for the first button, 2 for the second button, ...).  
+  
+
+  \subsubsection{Menus}
+  \begin{itemize}
+  \item \verb+menu_panel_c+
+
+      A \verb+menu_panel_c+ is essentially a \verb+panel_c+ with a different
+      kind of window. A menu panel is always positioned under its
+      associated menu button. In fact, a menu panel may contain any
+      object, exactly like a panel.   
+
+  \item \verb+item_c+
+ 
+    Features:
+  \bv 
+  item_c(action => A)\end{verbatim}
+    
+    {\tt Action}: The action associated with the item.
+  \end{itemize}
+
+  \subsubsection{Sliders}
+
+  A slider is just a moving button. It may move either vertically 
+  (\verb+v_slider_c+) or horizontally (\verb+h_slider_c+), inside the box that
+  contains it. 
+
+    Features:
+    \bv
+    *_slider_c(min => Min,max => Max,value => Value,action => Action)\end{verbatim}
+
+    \begin{tabbing}
+    {\tt Min,Max,Value}\=: \= the position of the slider is associated
+                              with a real value, that is\\
+                       \>  \> constrained
+                              to stay between {\tt Min} and {\tt Max}.\\
+                       \>  \> {\tt Min} and {\tt Max} must be given by
+                              the user.\\ 
+                       \>  \> {\tt Value} is a persistent term.\\
+    {\tt Action}       \>: \> Each time the value of the slider is updated by
+                              moving the slider,\\
+                       \>  \> {\tt Action} is executed. 
+    \end{tabbing}
+
+\subsection{Looks}
+
+  \subsubsection{Look types}
+  \begin{itemize}
+  \item \verb+text_box+
+
+      A \verb+text_box+ appears as text. \verb+text_box+ is of course
+      a subsort of \verb+t_box+.     
+   
+      Features:
+  \bv
+  text_box(text => Text,
+           text_state => State,
+           text_color_id => Tid,
+           true_text_color_id => TTid,
+           font_id => Fid,
+           offset  => Offset).\end{verbatim}
+
+        (a \verb+text_box+ also has the features of \verb+t_box+)
+      
+      \begin{tabbing}
+      {\tt Offset}\=: \= \kill        
+      {\tt Text}  \>: \> the text appearing in the box\\
+      {\tt Offset}\>: \> If {\tt Offset = 0},\= the text is centered
+                                                in the box;\\ 
+                  \>  \> If {\tt Offset > 0},\> the text is flushed
+                         left, and {\tt Offset} is the distance between\\
+                  \>  \>                    \> the left border
+                         of the box and the beginning of the text.\\
+                  \>  \> If {\tt Offset < 0},\> the text is flushed
+                         right, and {\tt Offset} is the distance between \\
+                  \>  \>                    \> the right
+                         border of the box and the end of the text.\\
+                  \>  \> Default is \verb+d_offset+.\\
+      {\tt State} \>: \> A boolean describing the state of the button.\\
+                  \>  \> {\tt State} is a persistent term.\\
+      {\tt Tid}   \>: \> the color id used when State is false. The color
+                         value is found in  \verb+main_colors+.\\ 
+                  \>  \> (see Colors below) \\
+                  \>  \> Default is \verb+d_text+. \\
+      {\tt TTid}  \>: \> The color id used when {\tt State} is true.\\
+                  \>  \> Default is \verb+d_text+.\\
+      {\tt Fid}   \>: \> The font id used. Default is {\tt bold}.
+      \end{tabbing}
+
+    \item \verb+frame+ 
+
+      A {\tt frame} corresponds to the 3D border of a button.
+
+      Features:
+  \bv
+  frame(frame_state => State,
+        flat => Flat,
+        color_id => Cid)\end{verbatim}
+
+    \begin{tabbing}
+    {\tt State}\=: \= if {\tt State} is true, the frame is sunken,
+                      otherwise it is raised.\\
+               \>  \> State is a persistent term.\\
+    {\tt Flat} \>: \> if {\tt Flat} is true, then there is no raised
+                      position: When {\tt State}\\
+               \>  \> is false, the frame appears flat.\\
+    {\tt Cid}  \>: \> The color id used.\\
+               \>  \> The actual color values are found in
+                      \verb+highlight_colors+ and \verb+shade_colors+.  
+    \end{tabbing}
+
+    \item \verb+field+
+
+      A field is a colored rectangle.
+
+      Features:
+  \bv
+  field(field_state => State,
+        color_id => Cid,
+        true_field_color_id => TFid)\end{verbatim}
+
+    \begin{tabbing}
+    {\tt State}\=: \= A boolean describing the state of the button.\\
+               \>  \> {\tt State} is a persistent term.\\
+    {\tt Cid}  \>: \> the color id used when {\tt State} is false.\\
+               \>  \> The color value is found in \verb+main_colors+.
+                      (see Colors below)\\ 
+	       \>  \> Default is \verb+d_field+.\\ 
+    {\tt TFid} \>: \> The color id used when {\tt State} is true. \\
+               \>  \> Default is \verb+d_selected_field+.
+    \end{tabbing}
+
+    \item \verb+led+
+
+      An led is just like a little LED\ldots 
+
+      Features:
+  \bv
+  led(led_state => State,
+      led_on_color_id => LedOn,
+      led_off_color_id => LedOff)\end{verbatim}
+
+    \begin{tabbing}
+      {\tt LedOff}\=: \= \kill 
+      {\tt State} \>: \> A boolean describing the state of the led.\\
+                  \>  \> {\tt State} is a persistent term.\\
+      {\tt LedOn} \>: \> The color id used when {\tt State} is true.\\
+                  \>  \> The color values are found in \verb+main_colors+,
+                         \verb+highlight_colors+ and \verb+shade_colors+,\\
+                  \>  \> depending on the part of the led (see Colors below).\\
+	          \>  \> Default is \verb+d_led_on+.\\
+      {\tt LedOff}\>: \> The color id used when {\tt State} is false.\\
+                  \>  \> Default is \verb+d_led_off+ .
+    \end{tabbing}
+  \end{itemize}
+
+  \subsubsection{Inheritance}
+
+    Looks are inherited through subtyping. For instance, \verb+on_off_button+ 
+    is a  subsort of \verb+text_box+, {\tt led} and {\tt frame}. Note
+    that the \verb+color_id+ 
+    feature appears in {\tt frame} and {\tt field}. Therefore, they should be
+    compatible.
+
+
+  \subsubsection{Colors and fonts}
+
+    Colors and fonts are stored in tables.
+    There are three tables for colors
+    (\verb+main_colors+, \verb+highlight_colors+, \verb+shade_colors+)
+    and one table for fonts.  
+  
+    Colors and fonts are accessed through identifiers that may
+    be any atom. All objects have default colors (stored in
+    \verb+xtools_constants+). To change the color of an object, you have to:
+    \begin{itemize}
+    \item Store a color in the appropriate table, with the id you have  
+          chosen, using \verb+def_color(Table,Id,Color)+.
+          (for a font: \verb+def_font(Id,Font)+)
+    \item Set the appropriate color id of the object to Id.
+    \end{itemize}
+
+    \begin{example}
+      To have a class of text boxes with red text:
+  \bv
+  def_color(main_colors,my_id,red) ?
+ 
+  my_txt <| text_box.
+  :: my_txt(text_color_id => my_id)\end{verbatim}
+    \end{example}
+
+    As the same \verb+color_id+ feature appears in {\tt field} and
+    {\tt frame}, if a color is defined for the id {\tt I} in
+    \verb+main_colors+, then the corresponding colors 
+    (for the same id {\tt I}) in \verb+shade_colors+ and
+    \verb+highlight_colors+ should 
+    be respectively a dark and light version of the same color. 
+
+    To load a new color, use \verb+new_color+:
+
+    \begin{example}
+    To add to the color table, the color with RGB values 180,190,190, type:
+  \bv
+  X = new_color(180,190,190) ?\end{verbatim}
+    \end{example}
+
+    \verb+new_color+ returns the color corresponding to the RGB values.
+
+    To load a new font, use \verb+new_font+:
+
+    \begin{example}
+  \bv
+  X = new_font("helvetica_bold18") ?\end{verbatim}
+    \end{example}
+
+      \verb+new_font+ returns the font corresponding to the string.
+      The string must be one of the names obtained by typing xlsfonts
+      (Unix command).
+
+    All widgets (objects with their own window, in short all subsorts of
+    constructors) have a \verb+color_id+ feature to set the background color of
+    the window.
+
+    Two font ids are predefined:
+  \bv
+  bold  : "-*-helvetica-bold-r-*-*-14-*-*-*-*-*-*-*" 
+  medium: "-*-helvetica-medium-r-*-*-14-*-*-*-*-*-*-*"\end{verbatim}
+
+    The following colors are loaded by default:
+  \begin{tabbing}
+  {\tt aquamarine, black, blue, 'blue violet', brown, 'cadet blue',}\\
+  {\tt coral, 'cornflower blue', cyan, 'dark green', 'dark olive green'}\\
+  {\tt 'dark orchid', 'dark slate blue',  'dark slate grey',}\\
+  {\tt 'dark turquoise', 'dim grey', firebrick, 'forest green',gold,}\\
+  {\tt goldenrod, green, 'green yellow', grey, 'indian red', khaki,}\\
+  {\tt 'light blue', 'light grey', 'light steel blue', 'lime green',}\\
+  {\tt magenta, maroon, 'medium aquamarine', 'medium blue', 'medium orchid',}\\
+  {\tt 'medium sea green', 'medium slate blue', 'medium spring green',}\\
+  {\tt 'medium turquoise', 'medium violet red', 'midnight blue',}\\
+  {\tt 'navy blue', orange, 'orange red', 'orchid', 'pale green', pink,}\\
+  {\tt plum, red, salmon, 'sea green', sienna, 'sky blue', 'slate blue',}\\
+  {\tt 'spring green', 'steel blue', 'light brown', thistle, turquoise,}\\
+  {\tt violet, 'violet red', wheat, white, yellow, 'yellow green'.}
+  \end{tabbing}
+  These are loaded when the X toolkit is loaded, and may be used
+  wherever a \say{Color} parameter is indicated.
+
+\subsection{Screen objects}
+
+  The screen objects manipulated by the X toolkit are subsorts of looks and/or
+  constructors. They usually have an additional feature that
+  stipulates how the states of the look and that of the constructor
+  are linked (\verb+change_state+). 
+
+  Here are the hierarchies describing the objects:
+  \begin{itemize}
+  \item panels
+    \bv
+    panel <| panel_c.
+    panel <| frame.
+
+    menu_panel <| menu_panel_c.
+    menu_panel <| frame.
+
+    slide_bar <| sub_panel_c.
+    slide_bar <| frame.
+
+    v_slide_bar <| sub_panel_c.
+    v_slide_bar <| v_slide_l.
+
+    h_slide_bar <| sub_panel_c.
+    h_slide_bar <| h_slide_l.\end{verbatim}
+
+  \item buttons
+    \bv
+    push_button <| push_c.
+    push_button <| text_box.
+    push_button <| frame.
+
+    on_off_button <| on_off_c.
+    on_off_button <| led.
+    on_off_button <| text_box.
+    on_off_button <| frame.
+
+    text_field_button <| text_field_c.
+    text_field_button <| field.
+    text_field_button <| frame.
+    text_field_button <| text_box.
+
+    menu_button <| menu_button_c.
+    menu_button <| frame.
+    menu_button <| text_box.
+
+    menu_item <| item_c.
+    menu_item <| frame.
+    menu_item <| text_box.\end{verbatim}
+  \end{itemize}
+
+  The complete definition is in xtools.lf.
+

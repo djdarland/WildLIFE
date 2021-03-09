@@ -1,0 +1,4 @@
+X:sum -> sum_all(features(X),X).
+sum_all([F|FL],X) -> X.F+sum_all(FL,X).
+sum_all([]) -> 0.
+A=sum(1,2,3,4,5)?

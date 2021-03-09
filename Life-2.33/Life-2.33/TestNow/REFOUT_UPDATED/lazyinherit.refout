@@ -1,0 +1,85 @@
+
+*** Yes
+> > B:b
+E:b
+A:b
+
+*** Yes
+X = b.
+--1> C:c
+A:c
+
+*** Yes
+X = b, Y = c.
+--1> D:d
+
+*** Yes
+X = d, Y = d.
+--1> > D:d
+C:d
+B:d
+E:d
+A:d
+
+*** Yes
+X = d.
+--1> > C:c
+A:c
+
+*** Yes
+X = c.
+--1> E:e
+
+*** Yes
+X = c, Y = e.
+--1> D:d
+B:d
+
+*** Yes
+X = d, Y = d.
+--1> > A:a
+
+*** Yes
+X = a.
+--1> E:e
+
+*** Yes
+X = a, Y = e.
+--1> B:b
+
+*** Yes
+X = b, Y = b.
+--1> > 
+*** Yes
+> E:e
+
+*** Yes
+X = e.
+--1> 
+*** Yes
+X = e, Y = f.
+--1> D:d
+C:d
+B:d
+A:d
+
+*** Yes
+X = d, Y = d.
+--1> > 
+*** Yes
+> E:e
+
+*** Yes
+X = e.
+--1> F:f
+
+*** Yes
+X = e, Y = f.
+--1> D:d
+C:d
+B:d
+A:d
+
+*** Yes
+X = d, Y = d.
+--1> > 

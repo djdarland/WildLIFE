@@ -1,0 +1,18 @@
+
+*** Yes
+> > 
+*** Yes
+A = [].
+--1> 
+*** Yes
+A = [].
+--1> > 
+*** Yes
+A = [1,2].
+--1> 
+*** Yes
+A = [1,2].
+--1> > 
+*** Yes
+A = [day,hour,minute,month,second,weekday,year].
+--1> > 

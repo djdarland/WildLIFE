@@ -1,0 +1,2868 @@
+%!PS-Adobe-2.0
+%%Creator: dvips 5.499 Copyright 1986, 1993 Radical Eye Software
+%%Title: life.dvi
+%%CreationDate: Mon Aug 14 15:33:24 1995
+%%Pages: 69
+%%PageOrder: Ascend
+%%BoundingBox: 0 0 612 792
+%%DocumentFonts: Helvetica-Bold Helvetica Helvetica-Oblique Courier-Bold
+%%+ Times-Roman
+%%EndComments
+%DVIPSCommandLine: dvips -o life.ps life
+%DVIPSSource:  TeX output 1995.08.14:1533
+%%BeginProcSet: tex.pro
+/TeXDict 250 dict def TeXDict begin /N{def}def /B{bind def}N /S{exch}N /X{S N}
+B /TR{translate}N /isls false N /vsize 11 72 mul N /@rigin{isls{[0 -1 1 0 0 0]
+concat}if 72 Resolution div 72 VResolution div neg scale isls{Resolution hsize
+-72 div mul 0 TR}if Resolution VResolution vsize -72 div 1 add mul TR matrix
+currentmatrix dup dup 4 get round 4 exch put dup dup 5 get round 5 exch put
+setmatrix}N /@landscape{/isls true N}B /@manualfeed{statusdict /manualfeed
+true put}B /@copies{/#copies X}B /FMat[1 0 0 -1 0 0]N /FBB[0 0 0 0]N /nn 0 N
+/IE 0 N /ctr 0 N /df-tail{/nn 8 dict N nn begin /FontType 3 N /FontMatrix
+fntrx N /FontBBox FBB N string /base X array /BitMaps X /BuildChar{
+CharBuilder}N /Encoding IE N end dup{/foo setfont}2 array copy cvx N load 0 nn
+put /ctr 0 N[}B /df{/sf 1 N /fntrx FMat N df-tail}B /dfs{div /sf X /fntrx[sf 0
+0 sf neg 0 0]N df-tail}B /E{pop nn dup definefont setfont}B /ch-width{ch-data
+dup length 5 sub get}B /ch-height{ch-data dup length 4 sub get}B /ch-xoff{128
+ch-data dup length 3 sub get sub}B /ch-yoff{ch-data dup length 2 sub get 127
+sub}B /ch-dx{ch-data dup length 1 sub get}B /ch-image{ch-data dup type
+/stringtype ne{ctr get /ctr ctr 1 add N}if}B /id 0 N /rw 0 N /rc 0 N /gp 0 N
+/cp 0 N /G 0 N /sf 0 N /CharBuilder{save 3 1 roll S dup /base get 2 index get
+S /BitMaps get S get /ch-data X pop /ctr 0 N ch-dx 0 ch-xoff ch-yoff ch-height
+sub ch-xoff ch-width add ch-yoff setcachedevice ch-width ch-height true[1 0 0
+-1 -.1 ch-xoff sub ch-yoff .1 add]{ch-image}imagemask restore}B /D{/cc X dup
+type /stringtype ne{]}if nn /base get cc ctr put nn /BitMaps get S ctr S sf 1
+ne{dup dup length 1 sub dup 2 index S get sf div put}if put /ctr ctr 1 add N}
+B /I{cc 1 add D}B /bop{userdict /bop-hook known{bop-hook}if /SI save N @rigin
+0 0 moveto /V matrix currentmatrix dup 1 get dup mul exch 0 get dup mul add
+.99 lt{/QV}{/RV}ifelse load def pop pop}N /eop{SI restore showpage userdict
+/eop-hook known{eop-hook}if}N /@start{userdict /start-hook known{start-hook}
+if pop /VResolution X /Resolution X 1000 div /DVImag X /IE 256 array N 0 1 255
+{IE S 1 string dup 0 3 index put cvn put}for 65781.76 div /vsize X 65781.76
+div /hsize X}N /p{show}N /RMat[1 0 0 -1 0 0]N /BDot 260 string N /rulex 0 N
+/ruley 0 N /v{/ruley X /rulex X V}B /V{}B /RV statusdict begin /product where{
+pop product dup length 7 ge{0 7 getinterval dup(Display)eq exch 0 4
+getinterval(NeXT)eq or}{pop false}ifelse}{false}ifelse end{{gsave TR -.1 -.1
+TR 1 1 scale rulex ruley false RMat{BDot}imagemask grestore}}{{gsave TR -.1
+-.1 TR rulex ruley scale 1 1 false RMat{BDot}imagemask grestore}}ifelse B /QV{
+gsave transform round exch round exch itransform moveto rulex 0 rlineto 0
+ruley neg rlineto rulex neg 0 rlineto fill grestore}B /a{moveto}B /delta 0 N
+/tail{dup /delta X 0 rmoveto}B /M{S p delta add tail}B /b{S p tail}B /c{-4 M}
+B /d{-3 M}B /e{-2 M}B /f{-1 M}B /g{0 M}B /h{1 M}B /i{2 M}B /j{3 M}B /k{4 M}B
+/w{0 rmoveto}B /l{p -4 w}B /m{p -3 w}B /n{p -2 w}B /o{p -1 w}B /q{p 1 w}B /r{
+p 2 w}B /s{p 3 w}B /t{p 4 w}B /x{0 S rmoveto}B /y{3 2 roll p a}B /bos{/SS save
+N}B /eos{SS restore}B end
+%%EndProcSet
+%%BeginProcSet: pstricks.pro
+/tx@Dict 200 dict def tx@Dict begin
+/ADict 25 dict def
+/CM { matrix currentmatrix } bind def
+/SLW /setlinewidth load def
+/CLW /currentlinewidth load def
+/CP /currentpoint load def
+/ED { exch def } bind def
+/L /lineto load def
+/T /translate load def
+/Atan { /atan load stopped { pop pop 0 } if } def
+/Div { dup 0 eq { pop } { div } ifelse } def
+/NET { neg exch neg exch T } def
+/Pyth { dup mul exch dup mul add sqrt } def
+/PtoC { 2 copy cos mul 3 1 roll sin mul } def
+/PathLength@ { /z z y y1 sub x x1 sub Pyth add def /y1 y def /x1 x def }
+def
+/PathLength { flattenpath /z 0 def { /y1 ED /x1 ED /y2 y1 def /x2 x1 def
+} { /y ED /x ED PathLength@ } {} { /y y2 def /x x2 def PathLength@ }
+pathforall z } def
+/STP { .996264 dup scale } def
+/STV { SDict begin normalscale end STP  } def
+/DashLine { dup 0 gt { /a .5 def PathLength exch div } { pop /a 1 def
+PathLength } ifelse /b ED /x ED /y ED /z y x add def b a .5 sub 2 mul y
+mul sub z Div round z mul a .5 sub 2 mul y mul add b exch Div dup y mul
+/y ED x mul /x ED x 0 eq y 0 eq and { /x 1 def /y 1 def } if [ y x ] 1 a
+sub y mul setdash stroke } def
+/DotLine { /b PathLength def /a ED /z ED /y CLW def /z y z add def a 0 gt
+{ /b b a div def } { a 0 eq { /b b y sub def } { a -3 eq { /b b y add
+def } if } ifelse } ifelse [ 0 b b z Div round Div dup 0 le { pop 1 } if
+] a 0 gt { 0 } { y 2 div a -2 gt { neg } if } ifelse setdash 1
+setlinecap stroke } def
+/LineFill { abs CLW add /a ED gsave clip pathbbox a Div ceiling /y2 ED
+/x2 ED a Div floor /y1 ED /x1 ED /n y2 y1 sub 1 add cvi def /y1 a y1 mul
+def newpath 2 setlinecap n { currentstrokeadjust == x1 y1 moveto x2 y1 L
+stroke /y1 y1 a add def } repeat grestore } def
+/LineFill { abs CLW add /a ED gsave clip pathbbox a Div ceiling /y2 ED
+/x2 ED a Div floor /y1 ED /x1 ED /n y2 y1 sub 1 add cvi def /y1 a y1 mul
+def newpath 2 setlinecap systemdict /currentstrokeadjust known {
+currentstrokeadjust } { false } ifelse { /t { } def } { /t { transform
+0.25 sub round 0.25 add exch 0.25 sub round 0.25 add exch itransform }
+bind def } ifelse n { x1 y1 t moveto x2 y1 t L stroke /y1 y1 a add def }
+repeat grestore } def
+/BeginArrow { ADict begin /@mtrx CM def gsave 2 copy T 2 index sub neg
+exch 3 index sub exch Atan rotate newpath } def
+/EndArrow { @mtrx setmatrix CP grestore end } def
+/Arrow { CLW mul add dup 2 div /w ED mul dup /h ED mul /a ED { 0 h T 1 -1
+scale } if w neg h moveto 0 0 L w h L w neg a neg rlineto gsave fill
+grestore } def
+/Tbar { CLW mul add /z ED z -2 div CLW 2 div moveto z 0 rlineto stroke 0
+CLW moveto } def
+/Bracket { CLW mul add dup CLW sub 2 div /x ED mul CLW add /y ED /z CLW 2
+div def x neg y moveto x neg CLW 2 div L x CLW 2 div L x y L stroke 0
+CLW moveto } def
+/RoundBracket { CLW mul add dup 2 div /x ED mul /y ED /mtrx CM def 0 CLW
+2 div T x y mul 0 ne { x y scale } if 1 1 moveto .85 .5 .35 0 0 0
+curveto -.35 0 -.85 .5 -1 1 curveto mtrx setmatrix stroke 0 CLW moveto }
+def
+/Shadow { [ { /moveto load } { /lineto load } { /curveto load } {
+/closepath load } pathforall ] cvx newpath 3 1 roll T exec } def
+/SD { 0 360 arc fill } def
+/SQ { /r ED r r moveto r r neg L r neg r neg L r neg r L fill } def
+/ST { /y ED /x ED x y moveto x neg y L 0 x L fill } def
+/SP { /r ED gsave 0 r moveto 4 { 72 rotate 0 r L } repeat fill grestore }
+def
+/NArray { aload length 2 div dup dup cvi eq not { exch pop } if /n exch
+cvi def } def
+/NArray { /f ED counttomark 2 div dup cvi /n ED n eq not { exch pop } if
+f { ] aload /Points ED } { n 2 mul 1 add -1 roll pop } ifelse } def
+/Line { NArray n 0 eq not { n 1 eq { 0 0 /n 2 def } if ArrowA /n n 2 sub
+def n { Lineto } repeat CP 4 2 roll ArrowB L pop pop } if } def
+/Arcto { /a [ 6 -2 roll ] cvx def a r /arcto load stopped { 5 } { 4 }
+ifelse { pop } repeat a } def
+/CheckClosed { dup n 2 mul 1 sub index eq 2 index n 2 mul 1 add index eq
+and { pop pop /n n 1 sub def } if } def
+/Polygon { NArray n 2 eq { 0 0 /n 3 def } if n 3 lt { n { pop pop }
+repeat } { n 3 gt { CheckClosed } if n 2 mul -2 roll /y0 ED /x0 ED /y1
+ED /x1 ED x1 y1 /x1 x0 x1 add 2 div def /y1 y0 y1 add 2 div def x1 y1
+moveto /n n 2 sub def n { Lineto } repeat x1 y1 x0 y0 6 4 roll Lineto
+Lineto pop pop closepath } ifelse } def
+/CCA { /y ED /x ED 2 copy y sub /dy1 ED x sub /dx1 ED /l1 dx1 dy1 Pyth
+def } def
+/CCA { /y ED /x ED 2 copy y sub /dy1 ED x sub /dx1 ED /l1 dx1 dy1 Pyth
+def } def
+/CC { /l0 l1 def /x1 x dx sub def /y1 y dy sub def /dx0 dx1 def /dy0 dy1
+def CCA /dx dx0 l1 c exp mul dx1 l0 c exp mul add def /dy dy0 l1 c exp
+mul dy1 l0 c exp mul add def /m dx0 dy0 Atan dx1 dy1 Atan sub 2 div cos
+abs b exp a mul dx dy Pyth Div 2 div def /x2 x l0 dx mul m mul sub def
+/y2 y l0 dy mul m mul sub def /dx l1 dx mul m mul neg def /dy l1 dy mul
+m mul neg def } def
+/IC { /c c 1 add def c 0 lt { /c 0 def } { c 3 gt { /c 3 def } if }
+ifelse /a a 2 mul 3 div 45 cos b exp div def CCA /dx 0 def /dy 0 def }
+def
+/BOC { IC CC x2 y2 x1 y1 ArrowA CP 4 2 roll x y curveto } def
+/NC { CC x1 y1 x2 y2 x y curveto } def
+/EOC { x dx sub y dy sub 4 2 roll ArrowB 2 copy curveto } def
+/BAC { IC CC x y moveto CC x1 y1 CP ArrowA } def
+/NAC { x2 y2 x y curveto CC x1 y1 } def
+/EAC { x2 y2 x y ArrowB curveto pop pop } def
+/OpenCurve { NArray n 3 lt { n { pop pop } repeat } { BOC /n n 3 sub def
+n { NC } repeat EOC } ifelse } def
+/AltCurve { { false NArray n 2 mul 2 roll [ n 2 mul 3 sub 1 roll ] aload
+/Points ED n 2 mul -2 roll } { false NArray } ifelse n 4 lt { n { pop
+pop } repeat } { BAC /n n 4 sub def n { NAC } repeat EAC } ifelse } def
+/ClosedCurve { NArray n 3 lt { n { pop pop } repeat } { n 3 gt {
+CheckClosed } if 6 copy n 2 mul 6 add 6 roll IC CC x y moveto n { NC }
+repeat closepath pop pop } ifelse } def
+/EndDot { { /z DS def } { /z 0 def } ifelse /b ED 0 z DS SD b { 0 z DS
+CLW sub SD } if 0 DS z add CLW 4 div sub moveto } def
+/Rect { x1 y1 y2 add 2 div moveto x1 y2 lineto x2 y2 lineto x2 y1 lineto
+x1 y1 lineto closepath } def
+/OvalFrame { x1 x2 eq y1 y2 eq or { pop pop x1 y1 moveto x2 y2 L } { y1
+y2 sub abs x1 x2 sub abs 2 copy gt { exch pop } { pop } ifelse 2 div
+exch { dup 3 1 roll mul exch } if 2 copy lt { pop } { exch pop } ifelse
+/b ED x1 y1 y2 add 2 div moveto x1 y2 x2 y2 b arcto x2 y2 x2 y1 b arcto
+x2 y1 x1 y1 b arcto x1 y1 x1 y2 b arcto 16 { pop } repeat closepath }
+ifelse } def
+/Frame { CLW mul /a ED 3 -1 roll 2 copy gt { exch } if a sub /y2 ED a add
+/y1 ED 2 copy gt { exch } if a sub /x2 ED a add /x1 ED 1 index 0 eq {
+pop pop Rect } { OvalFrame } ifelse } def
+/Parab { /y0 exch def /x0 exch def /y1 exch def /x1 exch def /dx x0 x1
+sub 3 div def /dy y0 y1 sub 3 div def x0 dx sub y0 dy add x1 y1 ArrowA
+x0 dx add y0 dy add x0 2 mul x1 sub y1 ArrowB curveto /Points [ x1 y1 x0
+y0 x0 2 mul x1 sub y1 ] def } def
+/Grid { /a 4 string def /b ED /d ED /n ED cvi dup 1 lt { pop 1 } if /c ED
+c div dup 0 eq { pop 1 } if /cy ED c div dup 0 eq { pop 1 } if /cx ED cy
+div cvi /y ED cx div cvi /x ED cy div cvi /y2 ED cx div cvi /x2 ED cy
+div cvi /y1 ED cx div cvi /x1 ED /h y2 y1 sub 0 gt { 1 } { -1 } ifelse
+def /w x2 x1 sub 0 gt { 1 } { -1 } ifelse def b 0 gt { /z1 b 4 div CLW 2
+div add def /Helvetica findfont b scalefont setfont /b b .95 mul CLW 2
+div add def } if gsave n 0 gt { 1 setlinecap [ 0 cy n div ] 0 setdash }
+{ 2 setlinecap } ifelse /c x1 def /i 500 w mul x1 add def /e y cy mul
+def /f y1 cy mul def /g y2 cy mul def x1 cx mul 0 T { newpath 0 e moveto
+b 0 gt { gsave d c a cvs dup stringwidth pop /z2 ED w 0 gt {z1} {z1 z2
+add neg} ifelse h 0 gt {b neg} {z1} ifelse rmoveto show grestore } if 0
+f moveto 0 g L stroke cx w mul 0 T c x2 eq c i eq or {exit} if /c c w
+add def } loop grestore gsave n 0 gt { 1 setlinecap [ 0 cx n div ] 0
+setdash } { 2 setlinecap } ifelse /c y1 def /i 500 h mul y1 add def /e x
+cx mul def /f x1 cx mul def /g x2 cx mul def 0 y1 cy mul T { newpath e 0
+moveto b 0 gt { gsave d c a cvs dup stringwidth pop /z2 ED w 0 gt {z1 z2
+add neg} {z1} ifelse h 0 gt {z1} {b neg} ifelse rmoveto show grestore }
+if f 0 moveto g 0 L stroke 0 cy h mul T c y2 eq c i eq or {exit} if /c c
+h add def } loop grestore } def
+/ArcArrow { /d ED /b ED /a ED gsave newpath 0 -1000 moveto clip newpath 0
+1 0 0 b grestore c mul /e ED pop pop pop r a e d PtoC y add exch x add
+exch r a PtoC y add exch x add exch b pop pop pop pop a e d CLW 8 div c
+mul neg d } def
+/Ellipse { /mtrx CM def T scale 0 0 1 5 3 roll arc mtrx setmatrix } def
+/Rot { CP CP translate 3 -1 roll neg rotate NET  } def
+/PutCoor { gsave CP T CM STV exch exec moveto setmatrix CP grestore } def
+/PutBegin { /lmtrx [ tx@Dict /lmtrx known { lmtrx aload pop } if CM ] def
+CP 4 2 roll T moveto } def
+/PutEnd { CP /lmtrx [ lmtrx aload pop setmatrix ] def moveto } def
+/Uput { /a ED add 2 div /h ED 2 div /w ED /s a sin def /c a cos def /b s
+abs c abs 2 copy gt dup /q ED { pop } { exch pop } ifelse def /w1 c b
+div w mul def /h1 s b div h mul def q { w1 abs w sub dup c mul abs } {
+h1 abs h sub dup s mul abs } ifelse } def
+/UUput { /z ED abs /y ED /x ED q { x s div c mul abs y gt } { x c div s
+mul abs y gt } ifelse { x x mul y y mul sub z z mul add sqrt z add } { q
+{ x s div } { x c div } ifelse abs } ifelse a PtoC h1 add exch w1 add
+exch } def
+/BeginOL { dup (all) eq exch TheOL eq or { IfVisible not { CP OLUnit T
+moveto /IfVisible true def } if } { IfVisible { CP OLUnit NET moveto
+/IfVisible false def } if } ifelse } def
+/InitOL { /OLUnit [ gsave CM STV 2890.79999 dup moveto setmatrix CP
+grestore ] cvx def /BOL { BeginOL } def /IfVisible true def } def
+end
+%%EndProcSet
+%%BeginProcSet: texps.pro
+TeXDict begin /rf{findfont dup length 1 add dict begin{1 index /FID ne 2 index
+/UniqueID ne and{def}{pop pop}ifelse}forall[1 index 0 6 -1 roll exec 0 exch 5
+-1 roll VResolution Resolution div mul neg 0 0]/Metrics exch def dict begin
+Encoding{exch dup type /integertype ne{pop pop 1 sub dup 0 le{pop}{[}ifelse}{
+FontMatrix 0 get div Metrics 0 get div def}ifelse}forall Metrics /Metrics
+currentdict end def[2 index currentdict end definefont 3 -1 roll makefont
+/setfont load]cvx def}def /ObliqueSlant{dup sin S cos div neg}B /SlantFont{4
+index mul add}def /ExtendFont{3 -1 roll mul exch}def /ReEncodeFont{/Encoding
+exch def}def end
+%%EndProcSet
+%%BeginProcSet: special.pro
+TeXDict begin /SDict 200 dict N SDict begin /@SpecialDefaults{/hs 612 N /vs
+792 N /ho 0 N /vo 0 N /hsc 1 N /vsc 1 N /ang 0 N /CLIP 0 N /rwiSeen false N
+/rhiSeen false N /letter{}N /note{}N /a4{}N /legal{}N}B /@scaleunit 100 N
+/@hscale{@scaleunit div /hsc X}B /@vscale{@scaleunit div /vsc X}B /@hsize{/hs
+X /CLIP 1 N}B /@vsize{/vs X /CLIP 1 N}B /@clip{/CLIP 2 N}B /@hoffset{/ho X}B
+/@voffset{/vo X}B /@angle{/ang X}B /@rwi{10 div /rwi X /rwiSeen true N}B /@rhi
+{10 div /rhi X /rhiSeen true N}B /@llx{/llx X}B /@lly{/lly X}B /@urx{/urx X}B
+/@ury{/ury X}B /magscale true def end /@MacSetUp{userdict /md known{userdict
+/md get type /dicttype eq{userdict begin md length 10 add md maxlength ge{/md
+md dup length 20 add dict copy def}if end md begin /letter{}N /note{}N /legal{
+}N /od{txpose 1 0 mtx defaultmatrix dtransform S atan/pa X newpath clippath
+mark{transform{itransform moveto}}{transform{itransform lineto}}{6 -2 roll
+transform 6 -2 roll transform 6 -2 roll transform{itransform 6 2 roll
+itransform 6 2 roll itransform 6 2 roll curveto}}{{closepath}}pathforall
+newpath counttomark array astore /gc xdf pop ct 39 0 put 10 fz 0 fs 2
+F/|______Courier fnt invertflag{PaintBlack}if}N /txpose{pxs pys scale ppr
+aload pop por{noflips{pop S neg S TR pop 1 -1 scale}if xflip yflip and{pop S
+neg S TR 180 rotate 1 -1 scale ppr 3 get ppr 1 get neg sub neg ppr 2 get ppr 0
+get neg sub neg TR}if xflip yflip not and{pop S neg S TR pop 180 rotate ppr 3
+get ppr 1 get neg sub neg 0 TR}if yflip xflip not and{ppr 1 get neg ppr 0 get
+neg TR}if}{noflips{TR pop pop 270 rotate 1 -1 scale}if xflip yflip and{TR pop
+pop 90 rotate 1 -1 scale ppr 3 get ppr 1 get neg sub neg ppr 2 get ppr 0 get
+neg sub neg TR}if xflip yflip not and{TR pop pop 90 rotate ppr 3 get ppr 1 get
+neg sub neg 0 TR}if yflip xflip not and{TR pop pop 270 rotate ppr 2 get ppr 0
+get neg sub neg 0 S TR}if}ifelse scaleby96{ppr aload pop 4 -1 roll add 2 div 3
+1 roll add 2 div 2 copy TR .96 dup scale neg S neg S TR}if}N /cp{pop pop
+showpage pm restore}N end}if}if}N /normalscale{Resolution 72 div VResolution
+72 div neg scale magscale{DVImag dup scale}if 0 setgray}N /psfts{S 65781.76
+div N}N /startTexFig{/psf$SavedState save N userdict maxlength dict begin
+/magscale false def normalscale currentpoint TR /psf$ury psfts /psf$urx psfts
+/psf$lly psfts /psf$llx psfts /psf$y psfts /psf$x psfts currentpoint /psf$cy X
+/psf$cx X /psf$sx psf$x psf$urx psf$llx sub div N /psf$sy psf$y psf$ury
+psf$lly sub div N psf$sx psf$sy scale psf$cx psf$sx div psf$llx sub psf$cy
+psf$sy div psf$ury sub TR /showpage{}N /erasepage{}N /copypage{}N /p 3 def
+@MacSetUp}N /doclip{psf$llx psf$lly psf$urx psf$ury currentpoint 6 2 roll
+newpath 4 copy 4 2 roll moveto 6 -1 roll S lineto S lineto S lineto closepath
+clip newpath moveto}N /endTexFig{end psf$SavedState restore}N /@beginspecial{
+SDict begin /SpecialSave save N gsave normalscale currentpoint TR
+@SpecialDefaults count /ocount X /dcount countdictstack N}N /@setspecial{CLIP
+1 eq{newpath 0 0 moveto hs 0 rlineto 0 vs rlineto hs neg 0 rlineto closepath
+clip}if ho vo TR hsc vsc scale ang rotate rwiSeen{rwi urx llx sub div rhiSeen{
+rhi ury lly sub div}{dup}ifelse scale llx neg lly neg TR}{rhiSeen{rhi ury lly
+sub div dup scale llx neg lly neg TR}if}ifelse CLIP 2 eq{newpath llx lly
+moveto urx lly lineto urx ury lineto llx ury lineto closepath clip}if
+/showpage{}N /erasepage{}N /copypage{}N newpath}N /@endspecial{count ocount
+sub{pop}repeat countdictstack dcount sub{end}repeat grestore SpecialSave
+restore end}N /@defspecial{SDict begin}N /@fedspecial{end}B /li{lineto}B /rl{
+rlineto}B /rc{rcurveto}B /np{/SaveX currentpoint /SaveY X N 1 setlinecap
+newpath}N /st{stroke SaveX SaveY moveto}N /fil{fill SaveX SaveY moveto}N
+/ellipse{/endangle X /startangle X /yrad X /xrad X /savematrix matrix
+currentmatrix N TR xrad yrad scale 0 0 1 startangle endangle arc savematrix
+setmatrix}N end
+%%EndProcSet
+TeXDict begin 40258431 52099146 1000 300 300
+(/amd/brie/home/brie/hak/documents/slides/life.dvi) @start
+/Fa 131[35 1[35 35 35 35 35 35 35 35 35 35 35 35 35 35 35 35
+35 35 35 35 35 35 35 35 35 35 1[35 1[35 35 35 1[35 35 3[35
+35 2[35 35 1[35 35 3[35 5[35 35 35 35 35 35 2[35 1[35 35 35
+35 35 35 35 35 35 1[35 35 35 2[35 35 40[{}61 58.333336 /Courier-Bold
+rf /Fb 129[42 42 42 42 1[42 42 42 42 42 42 42 42 42 42 42 42
+42 42 42 42 42 42 42 42 42 42 42 42 42 1[42 1[42 42 42 1[42
+42 1[42 42 42 42 42 42 42 42 42 42 42 2[42 42 42 42 42 42 42
+42 42 42 42 42 42 42 42 42 42 42 42 42 42 42 42 42 42 42 42
+42 42 42 42 42 42 42 1[42 42 42 1[42 42 33[{}85 70.833336 /Courier-Bold
+rf /Fc 131[30 2[30 1[30 30 30 30 30 30 1[30 30 30 30 30 30
+30 30 30 1[30 30 30 30 30 30 4[30 2[30 23[30 1[30 30 3[30 2[30
+30 30 30 30 30 30 1[30 1[30 2[30 42[{}39 50.000000 /Courier-Bold
+rf /Fd 196[23 59[{}1 83.333336 /Times-Roman rf /Fe 3 62 df<0000300000700000C0
+0001C0000380000700000E00001C00001C0000380000700000F00000E00001E00001C00003C000
+03C0000780000780000F00000F00000F00001F00001E00001E00003E00003E00003C00003C0000
+7C00007C00007C00007C0000780000780000F80000F80000F80000F80000F80000F80000F80000
+F80000F80000F80000F80000F80000F80000F80000F80000F800007800007800007C00007C0000
+7C00007C00003C00003C00003E00003E00001E00001E00001F00000F00000F00000F0000078000
+07800003C00003C00001C00001E00000E00000F000007000003800001C00001C00000E00000700
+0003800001C00000C0000070000030145679C021>40 D<800000C000006000007000003800001C
+00000E000007000007000003800001C00001E00000E00000F000007000007800007800003C0000
+3C00001E00001E00001E00001F00000F00000F00000F80000F800007800007800007C00007C000
+07C00007C00003C00003C00003E00003E00003E00003E00003E00003E00003E00003E00003E000
+03E00003E00003E00003E00003E00003E00003E00003C00003C00007C00007C00007C00007C000
+0780000780000F80000F80000F00000F00001F00001E00001E00001E00003C00003C0000780000
+780000700000F00000E00001E00001C0000380000700000700000E00001C000038000070000060
+0000C0000080000013567AC021>I<7FFFFFFFFFFFFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+FFFFFFFF0000000000000000000000000000000000000000000000000000000000000000000000
+000000000000000000000000000000000000000000000000000000000000000000000000000000
+000000000000000000000000000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFF7FFFFFFFFFFFFE38167BA043>61 D E /Ff 129[50 50 50
+50 1[50 50 50 50 50 50 50 50 50 50 50 50 50 50 50 50 50 50
+50 50 50 50 50 50 50 50 50 1[50 1[50 50 50 50 50 50 1[50 50
+50 1[50 50 50 50 50 2[50 50 50 50 1[50 50 50 50 50 50 50 50
+50 50 50 50 50 50 50 50 50 50 50 50 50 50 50 50 50 50 50 50
+50 50 50 50 2[50 50 33[{}84 83.333336 /Courier-Bold rf /Fg
+139[23 10[18 1[46 1[46 1[42 1[46 48[46 1[23 1[23 44[{}9 83.333336
+/Helvetica-Oblique rf /Fh 5 111 df<00007FFFFFF8000000FFFFFFF80000007FFFFFF800
+0000003FE000000000003FC000000000003F8000000000003F8000000000003F8000000000003F
+8000000000007F0000000000007F000000FF00007F0001FEFF80007F0003FE1FC000FE0007F01F
+C000FE000FE00FE000FE001FC00FE000FE001FC00FE001FC003F800FE001FC003F800FE001FC00
+7F001FC001FC007F001FC003F800FE001FC003F800FE001FC003F800FE001FC003F800FE003F80
+07F001FC003F8007F001FC003F8007F001FC003F8007F003F8003F800FE003F8003F800FE003F0
+003F800FE007F0003F800FE007E0003F801FC00FE0003F801FC00FC0003F801FC01FC0001F801F
+C01F80001F803F803F00001F803F807E00000FC03F80FC000007C03F81F8000007E07F03F00000
+03F07F0FE0000000F87F1F800000007F7FFE000000001FFFF80000000003FF800000000000FE00
+0000000000FE000000000001FC000000000001FC000000000001FC000000000001FC0000000000
+03F8000000000003F800000000000FFC000000001FFFFFFE0000003FFFFFFE0000001FFFFFFE00
+0000373B7DBA35>9 D<0000000002000000000000060000000000000600000000000006000000
+0000000C0000000000000C0000000000000C0000000000000C0000000000001800000000000018
+000000000000180000000000001800000000000030000000000000300000000000003000000000
+00003000000000000060000000000000600000000000006000000000000060000000000000C000
+0000000000C00000007C0000C0038001FF0000C007C003878001800FE00607C001800FF00C07C0
+01800FF01807E001800FF01807E0030007F03007E0030003F03007E0030001F0600FC0030000F0
+600FC0060000F0600FC0060000F0C01F8006000060C01F8006000060001F800C000060003F000C
+000060003F000C0000C0007E000C0000C0007E00180000C0007E001800018000FC001800018000
+FC001800018000FC003000030000FC003000030001F8003000060001F80030000C0001F8006000
+0C0001F8006000180001F8006000300000F8006000600000F800C000C00000FC00C0018000007C
+00C0030000003E00C00E0000001F01801C0000000FC1807000000007F983E000000001FFFF8000
+0000001FFC00000000000300000000000003000000000000030000000000000600000000000006
+00000000000006000000000000060000000000000C0000000000000C0000000000000C00000000
+00000C000000000000180000000000001800000000000018000000000000180000000000003000
+00000000001000000000344E7EBB38>32 D<000000007FC0002000000007FFF800700000003FFF
+FE00E0000000FFC01F00E0000003FC000781E000000FF00001C3E000001FC00000E7C000007F00
+00007FC00000FE0000003FC00001F80000003FC00003F00000001F800007E00000001F80000FC0
+0000000F80001F800000000F80003F800000000F00007F000000000F0000FE000000000F0000FE
+00000000070001FC00000000060003F800000000060003F800000000060007F8000000000E000F
+F0000000000C000FF00000000004001FE00000000000001FE00000000000001FE0000000000000
+3FC00000000000003FC00000000000003FC00000000000007F800000000000007F800000000000
+007F800000000000007F800000000000007F800000000000007F00000000000000FF0000000000
+0000FF00000000000000FF00000000004000FF0000000000C0007F0000000000C0007F00000000
+0180007F000000000180007F000000000180007F000000000300003F000000000300003F800000
+000600003F800000000C00001F800000000C00001FC00000001800000FC000000030000007E000
+000060000007F0000001C0000003F000000380000001F800000700000000FE00001E000000007F
+8000F8000000001FF007F00000000007FFFFC00000000001FFFE0000000000003FF0000000003C
+3D7CBB3E>67 D<0003FFFFFFF800000003FFFFFFFF80000003FFFFFFFFE000000007F8001FF800
+000007F80003FC00000007F00000FE00000007F000007F00000007F000003F80000007F000003F
+8000000FE000003FC000000FE000003FC000000FE000003FC000000FE000003FC000001FC00000
+3FC000001FC000003FC000001FC000003FC000001FC000003FC000003F8000007F8000003F8000
+007F8000003F800000FF0000003F800000FE0000007F000001FC0000007F000001F80000007F00
+0003F00000007F00000FE0000000FE00001F80000000FE00007F00000000FE0007F800000000FF
+FFFFE000000001FFFFFF0000000001FC000FC000000001FC0003F000000001FC0001F800000003
+F80000FC00000003F80000FC00000003F800007E00000003F800007E00000007F000007F000000
+07F000007F00000007F000007F00000007F000007F0000000FE00000FE0000000FE00000FE0000
+000FE00000FE0000000FE00000FE0000001FC00001FE0000001FC00001FE0000001FC00001FE00
+00001FC00001FE0000003F800003FE0000003F800003FC0030003F800003FC0030003F800003FC
+0060007F000001FC0060007F000001FC00C000FF000000FE00C0FFFFFF00007E0380FFFFFF0000
+3F0700FFFFFF00001FFC00000000000003F8003C3C7CBA41>82 D<01F0003FC00003FC00FFF000
+061E03C0F8000C1F07007C00181F0C003E00180F98003E00300FB0003E00301FE0003F00601FC0
+003F00601FC0003F00601F80003F00601F80003E00C03F00007E00C03F00007E00003F00007E00
+003F00007E00007E0000FC00007E0000FC00007E0000FC00007E0001F80000FC0001F80000FC00
+01F80000FC0003F00000FC0003F00001F80003F00001F80007E00C01F80007E00C01F80007E00C
+03F0000FC01803F0000FC01803F0000FC03003F0000F803007E0000F806007E0000F806007E000
+0F80C007E0000781800FC00007870007C00001FE0003800000F8002E277EA534>110
+D E /Fi 10[23 44[28 5[28 71[42 42 42 60 42 46 23 42 28 46 46
+46 46 69 18 42 18 18 46 46 23 46 46 42 46 46 18 7[55 78 55
+60 51 55 60 65 55 65 60 69 46 55 42 23 60 65 51 55 60 60 55
+55 1[46 3[23 23 46 46 46 46 3[46 46 46 1[23 28 23 2[28 28 18
+1[74 3[23 33[{}72 83.333336 /Helvetica rf /Fj 9 106 df<000FF000007FFE0001FFFF
+8003FFFFC007FFFFE00FFFFFF01FFFFFF83FFFFFFC3FFFFFFC7FFFFFFE7FFFFFFE7FFFFFFEFFFF
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF7FFFFFFE7FFFFFFE7F
+FFFFFE3FFFFFFC3FFFFFFC1FFFFFF80FFFFFF007FFFFE003FFFFC001FFFF80007FFE00000FF000
+20207BA52B>15 D<70000000000000FC000000000000FF0000000000007FC000000000001FF000
+0000000007FC000000000001FF0000000000007FC000000000001FF0000000000007FC00000000
+0001FF0000000000007FC000000000001FF0000000000007FC000000000001FF0000000000007F
+C000000000001FF0000000000007FC000000000001FF0000000000007FC000000000001FF00000
+00000007FC000000000001FF0000000000007FC000000000001FF0000000000007F00000000000
+1FF000000000007FE00000000001FF000000000007FC00000000001FF000000000007FC0000000
+0001FF000000000007FC00000000001FF000000000007FC00000000001FF000000000007FC0000
+0000001FF000000000007FC00000000001FF000000000007FC00000000001FF000000000007FC0
+0000000001FF000000000007FC00000000001FF000000000007FC00000000000FF000000000000
+FC0000000000007000000000000000000000000000000000000000000000000000000000000000
+000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000007FFFFFFFFFFFE0FFFFFFFFFF
+FFF0FFFFFFFFFFFFF07FFFFFFFFFFFE0344479B643>21 D<7FFFFFFFFFFFFEFFFFFFFFFFFFFFFF
+FFFFFFFFFFFF7FFFFFFFFFFFFE0000003C0000000000003C0000000000003C0000000000003C00
+00000000003C0000000000003C0000000000003C0000000000003C0000000000003C0000000000
+003C0000000000003C0000000000003C0000000000003C0000000000003C0000000000003C0000
+000000003C0000000000003C0000000000003C0000000000003C0000000000003C000000000000
+3C0000000000003C0000000000003C0000000000003C0000000000003C0000000000003C000000
+0000003C0000000000003C0000000000003C0000000000003C0000000000003C0000000000003C
+0000000000003C0000000000003C0000000000003C0000000000003C0000000000003C00000000
+00003C0000000000003C0000000000003C0000000000003C0000000000003C0000000000003C00
+00000000003C0000000000003C0000000000003C0000000000003C0000000000003C0000000000
+003C0000000000003C0000000000003C0000000000001800000038387BB743>62
+D<000000180000000000003C0000000000003C0000000000003C0000000000003C000000000000
+3C0000000000003C0000000000003C0000000000003C0000000000003C0000000000003C000000
+0000003C0000000000003C0000000000003C0000000000003C0000000000003C0000000000003C
+0000000000003C0000000000003C0000000000003C0000000000003C0000000000003C00000000
+00003C0000000000003C0000000000003C0000000000003C0000000000003C0000000000003C00
+00000000003C0000000000003C0000000000003C0000000000003C0000000000003C0000000000
+003C0000000000003C0000000000003C0000000000003C0000000000003C0000000000003C0000
+000000003C0000000000003C0000000000003C0000000000003C0000000000003C000000000000
+3C0000000000003C0000000000003C0000000000003C0000000000003C0000000000003C000000
+0000003C0000000000003C0000007FFFFFFFFFFFFEFFFFFFFFFFFFFFFFFFFFFFFFFFFF7FFFFFFF
+FFFFFE38387BB743>I<00000300000000000780000000000780000000000FC0000000000FC000
+0000001FE0000000001FE0000000003FF0000000003CF0000000007CF800000000787800000000
+787800000000F87C00000000F03C00000001F03E00000001E01E00000003E01F00000003C00F00
+000003C00F00000007C00F8000000780078000000F8007C000000F0003C000001F0003E000001E
+0001E000003E0001F000003C0000F000003C0000F000007C0000F80000780000780000F800007C
+0000F000003C0001F000003E0001E000001E0001E000001E0003E000001F0003C000000F0007C0
+00000F800780000007800F80000007C00F00000003C01F00000003E01E00000001E01E00000001
+E03E00000001F03C00000000F07C00000000F8780000000078F8000000007CF0000000003CF000
+0000003C6000000000182E347BB239>94 D<000000FC00000FFC00003F8000007E000000F80000
+01F0000003E0000007E0000007E000000FC000000FC000000FC000000FC000000FC000000FC000
+000FC000000FC000000FC000000FC000000FC000000FC000000FC000000FC000000FC000000FC0
+00000FC000000FC000000FC000000FC000000FC000000FC000000FC000000FC000000FC000000F
+C000000FC000001F8000001F8000003F0000007E000000FC000003F800007FE00000FF0000007F
+E0000003F8000000FC0000007E0000003F0000001F8000001F8000000FC000000FC000000FC000
+000FC000000FC000000FC000000FC000000FC000000FC000000FC000000FC000000FC000000FC0
+00000FC000000FC000000FC000000FC000000FC000000FC000000FC000000FC000000FC000000F
+C000000FC000000FC000000FC000000FC0000007E0000007E0000003E0000001F0000000F80000
+007E0000003F8000000FFC000000FC1E577AC02B>102 D<7C000000FFC0000007F0000001F800
+00007C0000003E0000001F0000001F8000001F8000000FC000000FC000000FC000000FC000000F
+C000000FC000000FC000000FC000000FC000000FC000000FC000000FC000000FC000000FC00000
+0FC000000FC000000FC000000FC000000FC000000FC000000FC000000FC000000FC000000FC000
+000FC000000FC000000FC0000007E0000007E0000003F0000001F8000000FC0000007F0000001F
+F8000003FC00001FF800007F000000FC000001F8000003F0000007E0000007E000000FC000000F
+C000000FC000000FC000000FC000000FC000000FC000000FC000000FC000000FC000000FC00000
+0FC000000FC000000FC000000FC000000FC000000FC000000FC000000FC000000FC000000FC000
+000FC000000FC000000FC000000FC000000FC000000FC000001F8000001F8000001F0000003E00
+00007C000001F8000007F00000FFC000007C0000001E577AC02B>I<0001800003C00003C00007
+C0000780000780000F80000F00000F00001F00001E00001E00003E00003C00003C00007C000078
+0000780000F80000F00000F00001F00001E00003E00003C00003C00007C0000780000780000F80
+000F00000F00001F00001E00001E00003E00003C00003C00007C0000780000780000F80000F000
+00F00000F800007800007800007C00003C00003C00003E00001E00001E00001F00000F00000F00
+000F800007800007800007C00003C00003C00003E00001E00001F00000F00000F00000F8000078
+00007800007C00003C00003C00003E00001E00001E00001F00000F00000F00000F800007800007
+800007C00003C00003C0000180125677C021>I<600000F00000F00000F800007800007800007C
+00003C00003C00003E00001E00001E00001F00000F00000F00000F800007800007800007C00003
+C00003C00003E00001E00001F00000F00000F00000F800007800007800007C00003C00003C0000
+3E00001E00001E00001F00000F00000F00000F800007800007800007C00003C00003C00007C000
+0780000780000F80000F00000F00001F00001E00001E00003E00003C00003C00007C0000780000
+780000F80000F00000F00001F00001E00003E00003C00003C00007C0000780000780000F80000F
+00000F00001F00001E00001E00003E00003C00003C00007C0000780000780000F80000F00000F0
+000060000012567BC021>I E /Fk 198[25 25 25 25 25 25 25 25 25
+25 48[{}10 45.833332 /Helvetica-Oblique rf /Fl 134[29 1[42
+29 32 16 29 19 1[32 32 32 48 13 2[13 1[32 16 32 3[32 11[42
+1[39 9[16 1[45 36 70[{}22 58.333336 /Helvetica rf /Fm 10[23
+44[28 79[46 3[28 46 2[51 1[51 74 23 2[23 3[46 1[46 1[46 21[60
+2[60 2[55 3[60 6[28 12[28 45[{}19 83.333336 /Helvetica-Bold
+rf /Fn 138[58 29 52 35 58 1[58 58 4[23 58 58 1[58 1[52 1[58
+97[{}13 104.166664 /Helvetica rf /Fo 134[58 1[81 58 63 35 58
+40 1[63 63 63 92 29 58 29 29 63 63 35 58 63 58 63 58 7[69 2[69
+75 63 69 75 81 69 81 75 86 63 2[29 75 81 63 69 75 75 75 75
+3[61 15[35 1[61 1[35 35 40[{}49 104.166664 /Helvetica-Bold
+rf end
+%%EndProlog
+%%BeginSetup
+%%Feature: *Resolution 300dpi
+TeXDict begin
+
+%%EndSetup
+%%Page: 1 1
+1 0 bop -118 190 a
+ 0.5 setgray
+ -118 191 1990 2 v -118 1273 2 1082 v 29
+337 a
+ 1. 0. 0. setrgbcolor
+ 421 412 a Fo(Programming)32 b(with)500 572 y(L)588 572
+y
+ 0. 0. 1. setrgbcolor
+ Fn(ogic)779 572 y
+ 1. 0. 0. setrgbcolor
+ 500 696 a Fo(I)588 696 y
+ 0. 0. 1. setrgbcolor
+ Fn(nheritance)1075
+696 y
+ 1. 0. 0. setrgbcolor
+ 500 821 a Fo(F)588 821 y
+ 0. 0. 1. setrgbcolor
+ Fn(unctions)976 821 y
+ 1. 0. 0. setrgbcolor
+ 500 945
+a Fo(E)588 945 y
+ 0. 0. 1. setrgbcolor
+ Fn(quations)982 945 y
+ 1. 0. 0. setrgbcolor
+ 29 1027 a
+ 0. 1. 1. setrgbcolor
+ 456 1106 a
+Fo(\(An)c(Introduction\))1296 1106 y
+ 1. 0. 0. setrgbcolor
+ 1724 745 a
+ 0.5 setgray
+ 1870 1273 2
+1082 v -118 1275 1990 2 v 1870 1378 105 1085 v -14 1378 1990
+105 v -118 1614 a
+ 0.5 setgray
+ 402 1620 802 2 v 402 1848 2 228 v 487 1763
+a
+ 0. 0. 1. setrgbcolor
+ 487 1763 a
+ 0. 0. 1. setrgbcolor
+ Fm(Hassan)23 b(A)n(\310)-26 b(\365t-Kaci)1119
+1763 y
+ 0.5 setgray
+ 1119 1763 a
+ 0.5 setgray
+ 1202 1848 2 228 v 402 1850 802 2 v 1203
+1891 43 232 v 444 1891 802 43 v -118 1945 a
+ 0.5 setgray
+ 708 2539 a
+ 0.5 setgray
+ 708
+2187 1029 2 v 708 2508 2 321 v 752 2283 a
+ 1. 0. 1. setrgbcolor
+ 913 2325 a Fl(Simon)16
+b(Fraser)h(University)895 2400 y(Intelligent)h(Sofware)f(Group)752
+2467 y
+ 0.5 setgray
+ 1735 2508 2 321 v 708 2510 1029 2 v 1736 2539 30 325
+v 737 2539 1029 30 v 1766 1377 a
+ 0 setgray
+ 1766 1377 a
+ 0 setgray
+ eop
+%%Page: 1 2
+1 1 bop 1884 2802 54 2 v 1884 2859 2 57 v 1898 2846 a Fk(1)p
+1936 2859 V 1884 2861 54 2 v 1937 2877 18 61 v 1900 2877 54
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 79 x Fo(Outline)1662
+220 y
+ 0 setgray
+ -33 298 a
+ 1. 0. 1. setrgbcolor
+ 21 511 a Fj(\017)25 b Fi(History)21 739 y Fj(\017)g
+Fi(Generalities)21 967 y Fj(\017)g Fi(LIFE's)e(Basic)g(Data)g(Structure:)1154
+967 y
+ 1. 0. 0. setrgbcolor
+ Fh( )s Fi(-Terms)1477 967 y
+ 1. 0. 1. setrgbcolor
+ 21 1196 a Fj(\017)i Fi(Predicates)21
+1424 y Fj(\017)g Fi(Functions)21 1652 y Fj(\017)g Fi(Sorts)21
+1880 y Fj(\017)g Fi(Toy)d(Programming)i(Examples)21 2109 y
+Fj(\017)h Fi(Conclusion)-33 2164 y
+ 0 setgray
+ 1933 2731 2 2647 v -118
+2733 2054 2 v 1934 2766 35 2650 v -85 2766 2054 35 v eop
+%%Page: 2 3
+2 2 bop 1884 2802 54 2 v 1884 2859 2 57 v 1898 2846 a Fk(2)p
+1936 2859 V 1884 2861 54 2 v 1937 2877 18 61 v 1900 2877 54
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 75 x Fo(History)1662
+228 y
+ 0 setgray
+ -33 465 a Fi(LIFE)28 b(was)f(originally)j(conceived)d
+Fg(ca.)h Fi(1986)g(by)g(Hassan)-33 569 y(A)n(\310)-26 b(\365t-Kaci)23
+b(and)h(colleagues)g(at)f(MCC,)g(in)h(Austin,)g(Texas.)1826
+569 y
+ 0. 0. 1. setrgbcolor
+ -33 690 a
+ 1. 0. 1. setrgbcolor
+ 21 797 a Fj(\017)h Fi(Idea:)273 797 y
+ 0. 0. 1. setrgbcolor
+ 89 901
+a Fi(Reconcile)15 b(programming)h(with)f(predicate)1490 901
+y
+ 1. 0. 0. setrgbcolor
+ Fi(logic)1660 901 y
+ 0. 0. 1. setrgbcolor
+ Fi(,)1700 901 y
+ 1. 0. 0. setrgbcolor
+ Fi(func-)89 1004 y(tions)264
+1004 y
+ 0. 0. 1. setrgbcolor
+ Fi(,)23 b(and)h(structured)e(object)1108 1004 y
+ 1. 0. 0. setrgbcolor
+ Fi(inheritance)1513
+1004 y
+ 0. 0. 1. setrgbcolor
+ Fi(.)-33 1043 y
+ 1. 0. 1. setrgbcolor
+ 21 1150 a Fj(\017)j Fi(Key:)255 1150
+y
+ 0. 0. 1. setrgbcolor
+ 89 1253 a Fi(Use)41 b(a)i(universal,)k(simple,)h(but)42 b(powerful,)48
+b(formal)89 1357 y(data)23 b(structure)f(called)859 1357 y
+ 1. 0. 0. setrgbcolor
+
+Fh( )s Fi(-term.)1135 1357 y
+ 0. 0. 1. setrgbcolor
+ -33 1395 a
+ 1. 0. 1. setrgbcolor
+ 21 1503 a Fj(\017)j
+Fi(How?)301 1503 y
+ 0. 0. 1. setrgbcolor
+ 89 1606 a Fi(By)20 b(solving)484 1606 y
+ 1. 0. 0. setrgbcolor
+
+Fi(equational)i(and)f(entailment)h(constraints)1851 1606 y
+ 0. 0. 1. setrgbcolor
+
+89 1710 a Fi(over)g(order-sorted)g(feature)i(graphs.)-33 1770
+y
+ 0 setgray
+ 1933 2731 2 2647 v -118 2733 2054 2 v 1934 2766 35 2650 v
+-85 2766 2054 35 v eop
+%%Page: 3 4
+3 3 bop 1884 2801 54 2 v 1884 2859 2 58 v 1898 2846 a Fk(3)p
+1936 2859 V 1884 2861 54 2 v 1937 2877 18 62 v 1900 2877 54
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 75 x Fo(History)1662
+228 y
+ 0 setgray
+ -33 465 a Fi(Still)49 b(LIFE)f(was)f(the)g(first)h(prototype)f(of)h
+(LIFE,)g(done)-33 569 y(at)34 b(MCC)g(in)h(1987-88)g(by)f(David)g(Plummer)i
+(in)e(Quintus)-33 672 y(Prolog.)253 672 y
+ 0. 0. 1. setrgbcolor
+ -33 794 a
+ 1. 0. 1. setrgbcolor
+ 21 901
+a Fj(\017)25 b Fi(Idea:)273 901 y
+ 0. 0. 1. setrgbcolor
+ 89 1004 a Fi(To)h(experiment)i(with)g(the)f
+(prototype)g(to)g(have)g(a)h(feel)89 1108 y(of)23 b(worth.)-33
+1130 y
+ 1. 0. 1. setrgbcolor
+ 21 1253 a Fj(\017)i Fi(Plus:)273 1253 y
+ 0. 0. 1. setrgbcolor
+ 89 1357 a Fi(Fun)c(to)h(see)f
+(it)h(work,)g(surprising)f(convenience,)h(fixed)89 1461 y(the)h(syntax.)-33
+1500 y
+ 1. 0. 1. setrgbcolor
+ 21 1606 a Fj(\017)i Fi(Minus:)333 1606 y
+ 0. 0. 1. setrgbcolor
+ 89 1710 a Fi(Incomplete,)f
+(slow,)f(and)g(MCC)h(proprietary.)-33 1770 y
+ 0 setgray
+ 1933 2731 2 2647
+v -118 2733 2054 2 v 1934 2766 35 2650 v -85 2766 2054 35 v
+eop
+%%Page: 4 5
+4 4 bop 1884 2802 54 2 v 1884 2859 2 57 v 1898 2846 a Fk(4)p
+1936 2859 V 1884 2861 54 2 v 1937 2877 18 61 v 1900 2877 54
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 75 x Fo(History)1662
+228 y
+ 0 setgray
+ -33 465 a Fi(Wild)37 b(LIFE)f(is)g(the)h(successor)d(of)i(Still)i
+(LIFE,)e(done)h(by)-33 569 y(Richard)29 b(Meyer)g(at)h(Digital's)h(Paris)f
+(Research)e(Labora-)-33 672 y(tory)22 b(in)i(C.)322 672 y
+ 0. 0. 1. setrgbcolor
+ -33
+794 a
+ 1. 0. 1. setrgbcolor
+ 21 901 a Fj(\017)h Fi(Idea:)273 901 y
+ 0. 0. 1. setrgbcolor
+ 89 1004 a Fi(Full)e(independent)i
+(reimplementation)h(in)e(C.)-33 1043 y
+ 1. 0. 1. setrgbcolor
+ 21 1150 a Fj(\017)h
+Fi(Plus:)273 1150 y
+ 0. 0. 1. setrgbcolor
+ 89 1253 a Fi(Much)16 b(more)g(complete,)j(reasonably)d
+(fast,)i(good)f(user)89 1357 y(conveniences,)30 b(convincingly)f(solid)h(to)f
+(support)g(se-)89 1461 y(rious)22 b(applications.)-33 1500
+y
+ 1. 0. 1. setrgbcolor
+ 21 1606 a Fj(\017)j Fi(Minus:)333 1606 y
+ 0. 0. 1. setrgbcolor
+ 89 1710 a Fi(Interpreted,)e(big,)h
+(still)g(incomplete)h(\(not)e(by)f(much\).)-33 1770 y
+ 0 setgray
+ 168 x
+Fi(A)h(compiler)h(is)f(currently)f(in)i(the)f(works...)p 1933
+2731 2 2647 v -118 2733 2054 2 v 1934 2766 35 2650 v -85 2766
+2054 35 v eop
+%%Page: 5 6
+5 5 bop 1884 2801 54 2 v 1884 2859 2 58 v 1898 2846 a Fk(5)p
+1936 2859 V 1884 2861 54 2 v 1937 2877 18 62 v 1900 2877 54
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 75 x Fo(History)1662
+228 y
+ 0 setgray
+ -33 465 a Fi(Wild)24 b(LIFE)f(Contributors:)848 465 y
+ 0. 0. 1. setrgbcolor
+
+-33 570 a
+ 1. 0. 0. setrgbcolor
+ 21 693 a Fj(\017)i Fi(Richard)e(Meyer)629 693 y
+ 0. 0. 1. setrgbcolor
+ 89
+797 a Fi(90\045)g(of)g(Wild)i(LIFE,)e(and)h(the)f(compiler)-33
+836 y
+ 1. 0. 0. setrgbcolor
+ 21 942 a Fj(\017)i Fi(Peter)e(Van)h(Roy)629 942 y
+ 0. 0. 1. setrgbcolor
+ 89
+1046 a Fi(the)f(missing)g(10\045,)h(and)f(the)h(compiler)-33
+1085 y
+ 1. 0. 0. setrgbcolor
+ 21 1191 a Fj(\017)h Fi(Bruno)e(Dumant)623 1191 y
+ 0. 0. 1. setrgbcolor
+ 89
+1295 a Fi(graphics)f(toolkit,)i(term)f(expansion,)h(static)f(analyzer)-33
+1334 y
+ 1. 0. 0. setrgbcolor
+ 21 1440 a Fj(\017)i Fi(Jean-Claude)e(Herv)767 1438 y(\302)758
+1440 y(e)804 1440 y
+ 0. 0. 1. setrgbcolor
+ 89 1544 a Fi(basic)f(X)i(interface)-33
+1566 y
+ 1. 0. 0. setrgbcolor
+ 21 1689 a Fj(\017)h Fi(Kathleen)f(Milsted)701 1689 y
+ 0. 0. 1. setrgbcolor
+
+89 1793 a Fi(LIFE)f(shell)-33 1815 y
+ 1. 0. 0. setrgbcolor
+ 21 1938 a Fj(\017)i Fi(Andreas)e
+(Podelski)734 1938 y
+ 0. 0. 1. setrgbcolor
+ 89 2042 a Fi(theorems,)g(theorems,)g(theorems...)-33
+2075 y
+ 1. 0. 0. setrgbcolor
+ 21 2187 a Fj(\017)i Fi(Hassan)d(A)n(\310)-26 b(\365t-Kaci)683
+2187 y
+ 0. 0. 1. setrgbcolor
+ 89 2291 a Fi(watching)23 b(the)h(rest)e(work)g(and)i(taking)g(all)g
+(the)f(credit!)-33 2351 y
+ 0 setgray
+ 1933 2731 2 2647 v -118 2733 2054
+2 v 1934 2766 35 2650 v -85 2766 2054 35 v eop
+%%Page: 6 7
+6 6 bop 1884 2801 54 2 v 1884 2859 2 58 v 1898 2846 a Fk(6)p
+1936 2859 V 1884 2861 54 2 v 1937 2877 18 62 v 1900 2877 54
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 79 x Fo(Generalities)1662
+220 y
+ 0 setgray
+ -33 457 a Fi(LIFE)44 b(is)h(a)g(generalization)h(of)f(Prolog:)1386
+457 y
+ 1. 0. 1. setrgbcolor
+ Fi(most)g(Prolog)-33 560 y(program)23 b(run)g(under)g(LIFE.)875
+560 y
+ 0 setgray
+ -33 747 a Fi(Same)h(syntactic)e(conventions:)1042 747
+y
+ 0. 1. 0. setrgbcolor
+ 21 976 a Fj(\017)j Fi(variables)e(are)g(capitalized)h(\(or)f(start)f(with)
+1482 976 y
+ 1. 0. 0. setrgbcolor
+ 1487 976 25 2 v 1512 976 a
+ 0. 1. 0. setrgbcolor
+ Fi(\))21 1121 y Fj(\017)j
+Fi(other)e(identifiers)h(start)f(with)g(a)h(lower-case)e(letter)21
+1266 y Fj(\017)j Fi(the)e(unification)i(predicate)e(is)1071
+1266 y
+ 1. 0. 0. setrgbcolor
+ Ff(=)1121 1266 y
+ 0. 1. 0. setrgbcolor
+ 21 1411 a Fj(\017)i Fi(defining)f(Horn)f(clauses)g
+(uses)1108 1411 y
+ 1. 0. 0. setrgbcolor
+ Ff(:-)1208 1411 y
+ 0. 1. 0. setrgbcolor
+ 21 1557 a Fj(\017)i Fi(the)e(cut)g
+(control)g(operator)g(is)1048 1557 y
+ 1. 0. 0. setrgbcolor
+ Ff(!)1098 1557 y
+ 0. 1. 0. setrgbcolor
+ 21 1702
+a Fj(\017)i Fg(etc.)-33 1745 y
+ 0 setgray
+ 185 x Fi(Except)d(for)h(these)h(differences:)
+1042 1930 y
+ 1. 0. 0. setrgbcolor
+ 21 2159 a Fj(\017)h Fi(queries)e(are)g(terminated)h(with)g(a)f
+Ff(?)21 2304 y Fj(\017)i Fi(assertions)d(are)h(terminated)h(with)g(a)f
+Ff(.)-33 2351 y
+ 0 setgray
+ 1933 2731 2 2647 v -118 2733 2054 2 v 1934
+2766 35 2650 v -85 2766 2054 35 v eop
+%%Page: 7 8
+7 7 bop 1884 2802 54 2 v 1884 2859 2 57 v 1898 2846 a Fk(7)p
+1936 2859 V 1884 2861 54 2 v 1937 2877 18 61 v 1900 2877 54
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 75 x Fh(\011)9
+b Fo(-Terms)1662 218 y
+ 0 setgray
+ -33 294 a
+ 0. 1. 0. setrgbcolor
+ -33 411 a
+ 1. 0. 0. setrgbcolor
+ 21 509 a Fj(\017)25
+b Ff(42)189 509 y
+ 0. 1. 0. setrgbcolor
+ -33 535 a
+ 1. 0. 0. setrgbcolor
+ 21 654 a Fj(\017)g Ff(int)239 654
+y
+ 0. 1. 0. setrgbcolor
+ -33 680 a
+ 1. 0. 0. setrgbcolor
+ 21 800 a Fj(\017)g Ff(-5.66)339 800 y
+ 0. 1. 0. setrgbcolor
+ -33 826 a
+ 1. 0. 0. setrgbcolor
+
+21 945 a Fj(\017)g Ff(real)289 945 y
+ 0. 1. 0. setrgbcolor
+ -33 971 a
+ 1. 0. 0. setrgbcolor
+ 21 1090 a Fj(\017)g
+Ff("a)49 b(piece)g(of)g(rope")936 1090 y
+ 0. 1. 0. setrgbcolor
+ -33 1132 a
+ 1. 0. 0. setrgbcolor
+ 21 1235
+a Fj(\017)25 b Ff(string)389 1235 y
+ 0. 1. 0. setrgbcolor
+ -33 1277 a
+ 1. 0. 0. setrgbcolor
+ 21 1381 a Fj(\017)g
+Ff(foo)p 244 1381 25 2 v 29 w(bar)418 1381 y
+ 0. 1. 0. setrgbcolor
+ -33 1407 a
+ 1. 0. 0. setrgbcolor
+ 21
+1526 a Fj(\017)g Ff('\045*)49 b(PsyCH\(a\)oTic**SyMb)o(oL!')1387
+1526 y
+ 0. 1. 0. setrgbcolor
+ -33 1568 a
+ 1. 0. 0. setrgbcolor
+ 21 1671 a Fj(\017)25 b Ff(date\(friday,13\))839
+1671 y
+ 0. 1. 0. setrgbcolor
+ -33 1713 a
+ 1. 0. 0. setrgbcolor
+ 21 1817 a Fj(\017)g Ff(date\(1)48 b(=>)i(friday,)e(2)i(=>)f
+(13\))1384 1817 y
+ 0. 1. 0. setrgbcolor
+ -33 1858 a
+ 1. 0. 0. setrgbcolor
+ 21 1962 a Fj(\017)25 b Ff(freddy\(nails)47
+b(=>)j(long,face)e(=>)h(ugly\))1783 1962 y
+ 0. 1. 0. setrgbcolor
+ -33 2003 a
+ 1. 0. 0. setrgbcolor
+ 21 2107
+a Fj(\017)25 b Ff([this,is,a,list])889 2107 y
+ 0. 1. 0. setrgbcolor
+ -33 2145 a
+ 1. 0. 0. setrgbcolor
+ 21
+2252 a Fj(\017)g Ff(cons\(this,cons\(to)o(o,[]\))o(\))1237
+2252 y
+ 0. 1. 0. setrgbcolor
+ -33 2324 a
+ 0 setgray
+ 1933 2731 2 2647 v -118 2733 2054 2 v 1934
+2766 35 2650 v -85 2766 2054 35 v eop
+%%Page: 8 9
+8 8 bop 1884 2801 54 2 v 1884 2859 2 58 v 1898 2846 a Fk(8)p
+1936 2859 V 1884 2861 54 2 v 1937 2877 18 62 v 1900 2877 54
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 79 x Fo(Sorts)1662
+220 y
+ 0 setgray
+ -33 457 a Fi(Sorts)22 b(are)h(the)465 457 y
+ 1. 0. 1. setrgbcolor
+ Fi(data)h(constructors)1104
+457 y
+ 0 setgray
+ 21 w Fi(of)f(LIFE.)-33 643 y(Sorts)e(are)h(partially)h(ordered)f(by)
+1050 643 y
+ 1. 0. 0. setrgbcolor
+ Ff(<|)1150 643 y
+ 0 setgray
+ 21 w Fi(in)h(a)1326 643 y
+ 1. 0. 1. setrgbcolor
+ Fi(sort)e(hierarchy)
+1828 643 y
+ 0 setgray
+ Fi(.)-33 661 y
+ 1. 0. 0. setrgbcolor
+ 169 x Ff(@)17 830 y
+ 0 setgray
+ 22 w Fi(is)i(the)261
+830 y
+ 1. 0. 1. setrgbcolor
+ Fi(most)g(general)740 830 y
+ 0 setgray
+ 24 w Fi(sort)925 830 y
+ 0. 0. 1. setrgbcolor
+ Fe(\()p
+Fj(>)p Fe(\))1058 830 y
+ 0 setgray
+ Fi(.)-33 852 y
+ 1. 0. 0. setrgbcolor
+ 165 x Fj(fg)53 1017
+y
+ 0 setgray
+ 23 w Fi(is)g(the)297 1017 y
+ 1. 0. 1. setrgbcolor
+ Fi(least)472 1017 y
+ 0 setgray
+ 24 w Fi(sort)657
+1017 y
+ 0. 0. 1. setrgbcolor
+ Fe(\()p Fj(?)p Fe(\))790 1017 y
+ 0 setgray
+ Fi(.)-33 1039 y
+ 1. 0. 0. setrgbcolor
+ 165
+x Fi(values)207 1204 y
+ 0 setgray
+ 23 w Fi(are)g(sorts)f(like)h(all)h(others.)p
+1933 2731 2 2647 v -118 2733 2054 2 v 1934 2766 35 2650 v -85
+2766 2054 35 v eop
+%%Page: 9 10
+9 9 bop 1884 2801 54 2 v 1884 2859 2 58 v 1898 2846 a Fk(9)p
+1936 2859 V 1884 2861 54 2 v 1937 2877 18 62 v 1900 2877 54
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 75 x Fo(Variables)28
+b(and)h(Tags)1662 228 y
+ 0 setgray
+ -33 465 a Fi(Like)20 b(Prolog,)i(LIFE's)f(variables)f
+(start)g(with)p 1386 465 25 2 v 71 w(or)g(an)h(upper)-33 569
+y(case)h(letter,)-33 755 y(Unlike)j(Prolog,)i(LIFE's)f(variables)f(are)g(not)
+h(restricted)e(to)-33 859 y(appear)f(only)g(as)g(leaves)g(of)h(terms.)-33
+1046 y(Thus,)44 b(variables)d(can)f(be)h(used)f(as)g(\(reference\))1694
+1046 y
+ 1. 0. 0. setrgbcolor
+ Fi(tags)1851 1046 y
+ 0 setgray
+ -33 1150 a Fi(within)24 b(a)f Fh( )s
+Fi(-term's)g(structure.)-33 1337 y(They)36 b(are)g(used)g(as)h(explicit)g
+(handles)g(for)f(referencing)-33 1440 y(the)23 b(part)g(of)h
+Fh( )s Fi(-term)e(they)h(tag.)-33 1627 y(These)k(references)g(may)h(be)h
+(cyclic;)g(that)f(is,)i(a)e(variable)-33 1731 y(may)22 b(occur)h(within)h(a)f
+Fh( )s Fi(-term)g(tagged)h(by)f(it.)p 1933 2731 2 2647 v -118
+2733 2054 2 v 1934 2766 35 2650 v -85 2766 2054 35 v eop
+%%Page: 10 11
+10 10 bop 1884 2801 80 2 v 1884 2859 2 58 v 1898 2846 a Fk(10)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 62 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 75 x Fo(Variables)28
+b(and)h(Tags)1662 228 y
+ 0 setgray
+ -33 465 a Fi(Tagging)24 b(of)g(a)f
+Fh( )s Fi(-term)728 465 y
+ 1. 0. 0. setrgbcolor
+ Ff(t)778 465 y
+ 0 setgray
+ 24 w Fi(by)g(a)g(variable)1296
+465 y
+ 1. 0. 0. setrgbcolor
+ Ff(X)1346 465 y
+ 0 setgray
+ 24 w Fi(is)g(of)h(the)f(form)-33 569
+y
+ 1. 0. 0. setrgbcolor
+ Ff(X:t)117 569 y
+ 0 setgray
+ Fi(.)-33 755 y(If)30 b(a)g(variable)g(occurs)f(not)h(as)g
+(a)g Fh( )s Fi(-term's)g(tag)g(but)h(as)e(a)-33 859 y(simple)22
+b(isolated)h(variable,)g(it)f(is)g(implicitly)h(be)f(tagging)1760
+859 y
+ 0. 1. 0. setrgbcolor
+ Fj(>)1827 859 y
+ 0 setgray
+ Fi(,)-33 963 y(exactly)g(as)h(if)g(it)h(had)g(been)f
+(written)1125 963 y
+ 1. 0. 0. setrgbcolor
+ Ff(X:@)1275 963 y
+ 0 setgray
+ Fi(.)-33 1150 y(If)28
+b(the)g(same)g(variable)g(needs)g(to)g(be)g(constrained)g(to)g(be)-33
+1253 y(the)h(conjunction)g(of)g(two)g(terms,)h(it)f(is)g(written)g(using)g
+(the)-33 1357 y
+ 1. 0. 0. setrgbcolor
+ Ff(&)17 1357 y
+ 0 setgray
+ 26 w Fi(connective,)f(as)f(in)698
+1357 y
+ 1. 0. 0. setrgbcolor
+ Ff(X:t1&t2)1048 1357 y
+ 0 setgray
+ Fi(.)34 b(This)27 b(is)g(equivalent)h(to)-33
+1461 y(writing)230 1461 y
+ 1. 0. 0. setrgbcolor
+ Ff(X=t1,)48 b(X=t2)728 1461 y
+ 0 setgray
+ Fi(.)p
+1933 2731 2 2647 v -118 2733 2054 2 v 1934 2766 35 2650 v -85
+2766 2054 35 v eop
+%%Page: 11 12
+11 11 bop 1884 2802 80 2 v 1884 2859 2 57 v 1898 2846 a Fk(11)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 61 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 75 x Fo(Disjunctive)27
+b(terms)1662 228 y
+ 0 setgray
+ -33 465 a Fi(A)45 465 y
+ 1. 0. 0. setrgbcolor
+ Fi(disjunctive)d(term)622
+465 y
+ 0 setgray
+ 23 w Fi(is)f(an)g(expression)g(of)g(the)g(form:)1711
+465 y
+ 0. 1. 0. setrgbcolor
+ -33 693 a Ff({t1;)49 b(...)g(;tn})-33 752 y
+ 0 setgray
+ 169 x Fh(n)44
+b Fj(\025)h Fg(0)s Fi(,)51 b(where)45 b(each)794 921 y
+ 0. 1. 0. setrgbcolor
+ Ff(ti)894
+921 y
+ 0 setgray
+ 45 w Fi(is)g(either)g(a)h Fh( )s Fi(-term)e(or)h(a)-33
+1025 y(disjunctive)23 b(term.)-33 1212 y(In)49 b(Wild)i(LIFE,)f(disjunctive)g
+(terms)f(are)g(enumerated)-33 1316 y(using)37 b(a)h(left-right)g(depth-first)
+f(backtracking)f(strategy,)-33 1420 y(exactly)j(as)h(Prolog's)g(\(and)h
+(LIFE's!\))73 b(predicate)41 b(level)-33 1523 y(resolution.)373
+1523 y
+ 0. 0. 1. setrgbcolor
+ -33 1629 a
+ 1. 0. 0. setrgbcolor
+ 21 1752 a Fj(\017)25 b Ff(A=)p Fj(f)p Ff(1;2;3)p
+Fj(g)p Ff(?)575 1752 y
+ 0. 0. 1. setrgbcolor
+ 56 w Fi(is)34 b(like)884 1752 y
+ 1. 0. 0. setrgbcolor
+ Ff(A=1;A=2;A=3?)1484
+1752 y
+ 0. 0. 1. setrgbcolor
+ 56 w Fi(where)1801 1752 y
+ 1. 0. 0. setrgbcolor
+ Ff(;)1851 1752 y
+ 0. 0. 1. setrgbcolor
+ 89 1855 a
+Fi(signifies)23 b(``or'')i(in)f(Edinburgh)g(Prolog)g(syntax.)-33
+1894 y
+ 1. 0. 0. setrgbcolor
+ 21 2001 a Fj(\017)h Ff(p\()p Fj(f)p Ff(a;b)p Fj(g)p
+Ff(\).)525 2001 y
+ 0. 0. 1. setrgbcolor
+ 21 w Fi(is)e(like)h(asserting)1137 2001 y
+ 1. 0. 0. setrgbcolor
+
+Ff(p\(a\).)49 b(p\(b\).)1686 2001 y
+ 0. 0. 1. setrgbcolor
+ -33 2043 a
+ 1. 0. 0. setrgbcolor
+ 21 2146 a Fj(\017)25
+b Ff(write\(vehicle&fou)o(r)p 993 2146 25 2 v 27 w(wheels\)?)1415
+2146 y
+ 0. 0. 1. setrgbcolor
+ 62 w Fi(first)36 b(prints)89 2250 y
+ 1. 0. 0. setrgbcolor
+ Ff(car)239 2250
+y
+ 0. 0. 1. setrgbcolor
+ 22 w Fi(then)24 b(on)f(backtracking)f(will)i(print)1373 2250
+y
+ 1. 0. 0. setrgbcolor
+ Ff(truck)1623 2250 y
+ 0. 0. 1. setrgbcolor
+ Fi(.)-33 2309 y
+ 0 setgray
+ 1933 2731 2 2647 v -118
+2733 2054 2 v 1934 2766 35 2650 v -85 2766 2054 35 v eop
+%%Page: 12 13
+12 12 bop 1884 2802 80 2 v 1884 2859 2 57 v 1898 2846 a Fk(12)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 61 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 75 x Fo(Backtrackable)26
+b(Tag)k(Assignment)1662 228 y
+ 0 setgray
+ -33 465 a Fi(The)23 b(statement)520
+465 y
+ 1. 0. 0. setrgbcolor
+ Ff(X<-Y)720 465 y
+ 0 setgray
+ 743 465 a
+ 0. 1. 0. setrgbcolor
+ Fi(overwrites)1122 465 y
+ 0 setgray
+
+1144 465 a
+ 1. 0. 0. setrgbcolor
+ Ff(X)1194 465 y
+ 0 setgray
+ 23 w Fi(with)1388 465 y
+ 1. 0. 0. setrgbcolor
+ Ff(Y)1438
+465 y
+ 0 setgray
+ Fi(.)-33 652 y(The)15 b(tags)296 652 y
+ 1. 0. 0. setrgbcolor
+ Ff(X)346 652 y
+ 0 setgray
+
+15 w Fi(and)515 652 y
+ 1. 0. 0. setrgbcolor
+ Ff(Y)565 652 y
+ 0 setgray
+ 14 w Fi(reference)g(standard)g
+(\(backtrackable\))-33 755 y Fh( )s Fi(-terms.)-33 942 y(Backtracking)44
+b(past)g(this)h(statement)h(will)g(restore)e(the)-33 1046 y(original)24
+b(value)g(of)571 1046 y
+ 1. 0. 0. setrgbcolor
+ Ff(X)621 1046 y
+ 0 setgray
+ Fi(.)-33 1233 y(For)e(example:)474
+1233 y
+ 1. 0. 1. setrgbcolor
+ -33 1461 a Ff(>)49 b(X=5,\(X)g(<-)g(6;X)h(<-)f(7\),write\(X\),nl,fail)
+o(?)-33 1565 y(6)-33 1669 y(7)-33 1772 y(***)g(No)-33 1876
+y(>)-33 1923 y
+ 0 setgray
+ 181 x Fi(This)e(predicate)h(is)g(very)e(useful)i(for)g
+(building)i(``black)-33 2208 y(boxes'')15 b(that)g(have)g(clean)g(logical)h
+(behavior)f(when)g(viewed)-33 2312 y(from)32 b(the)h(outside)g(but)g(that)g
+(need)g(destructive)f(assign-)-33 2416 y(ment)23 b(to)h(be)f(implemented)i
+(efficiently.)p 1933 2731 2 2647 v -118 2733 2054 2 v 1934
+2766 35 2650 v -85 2766 2054 35 v eop
+%%Page: 13 14
+13 13 bop 1884 2801 80 2 v 1884 2859 2 58 v 1898 2846 a Fk(13)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 62 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 79 x Fo(Sort)29
+b(intersection)1662 220 y
+ 0 setgray
+ -33 298 a
+ 1. 0. 0. setrgbcolor
+ 213 x Ff(bike)49 b(<|)g(two_wheels.)-33
+614 y(bike)g(<|)g(vehicle.)-33 718 y(truck)f(<|)i(four_wheels.)-33
+822 y(truck)e(<|)i(vehicle.)-33 926 y(car)f(<|)g(four_wheels.)-33
+1029 y(car)g(<|)g(vehicle.)-33 1133 y(toy_car)f(<|)i(four_wheels.)-33
+1237 y(rolls_royce)d(<|)j(car.)-33 1320 y
+ 0 setgray
+ -33 1320 a
+ 1. 0. 1. setrgbcolor
+ 21 1532
+a Fj(\017)25 b Ff(two)p 245 1532 25 2 v 30 w(wheels)18 b Fj(^)h
+Ff(vehicle)k Fe(=)h Ff(bike)21 1677 y Fj(\017)h Ff(four)p 296
+1677 V 30 w(wheels)18 b Fj(^)i Ff(vehicle)j Fe(=)g Fj(f)p Ff(car)r
+Fd(;)14 b Ff(truck)r Fj(g)21 1822 y(\017)25 b Ff(two)p 245
+1822 V 30 w(wheels)18 b Fj(^)h Ff(four)p 870 1822 V 31 w(wheels)k
+Fe(=)p Fj(?)21 1968 y(\017)i Ff(rolls)p 344 1968 V 28 w(royce)19
+b Fj(^)g Ff(car)25 b Fe(=)f Ff(rolls)p 1233 1968 V 29 w(royce)21
+2113 y Fj(\017)h Ff(truck)19 b Fj(^)h Ff(@)k Fe(=)g Ff(truck)-33
+2180 y
+ 0 setgray
+ 1933 2731 2 2647 v -118 2733 2054 2 v 1934 2766 35 2650
+v -85 2766 2054 35 v eop
+%%Page: 14 15
+14 14 bop 1884 2802 80 2 v 1884 2859 2 57 v 1898 2846 a Fk(14)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 61 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 75 x Fh(\011)9
+b Fo(-Term)29 b(Unification)1662 218 y
+ 0 setgray
+ -33 294 a
+ 0. 1. 0. setrgbcolor
+ 684 465 a
+Fc(person)744 526 y(|)534 586 y(-----------------)505 646 y(/)508
+b(\\)295 706 y(student)567 b(employee)265 766 y(/)210 b(\\)508
+b(/)239 b(\\)86 827 y(------)268 b(\\)329 b(staff)298 b(faculty)56
+887 y(/)90 b(|)59 b(\\)269 b(\\)g(/)60 b(|)g(\\)239 b(/)89
+b(|)h(\\)-33 947 y(bob)59 b(piotr)29 b(pablo)149 b(workstudy)59
+b(art)30 b(judy)89 b(don)59 b(john)h(sheila)564 1007 y(/)269
+b(\\)505 1067 y(simon)178 b(elena)-33 1124 y
+ 0 setgray
+ -33 1124 a
+ 1. 0. 1. setrgbcolor
+ 226
+x Fb(student)87 b(<|)43 b(person.)-33 1441 y(employee)i(<|)e(person.)-33
+1624 y(staff)128 b(<|)43 b(employee.)130 b(workstudy)46 b(<|)d(student.)-33
+1715 y(faculty)h(<|)f(employee.)130 b(workstudy)46 b(<|)d(staff.)-33
+1898 y(bob)170 b(<|)43 b(student.)214 b(don)171 b(<|)43 b(faculty.)-33
+1989 y(piotr)86 b(<|)43 b(student.)214 b(john)129 b(<|)43 b(faculty.)-33
+2080 y(pablo)86 b(<|)43 b(student.)214 b(sheila)45 b(<|)e(faculty.)-33
+2263 y(elena)86 b(<|)43 b(workstudy.)130 b(art)171 b(<|)43
+b(staff.)-33 2354 y(simon)86 b(<|)43 b(workstudy.)130 b(judy)f(<|)43
+b(staff.)-33 2426 y
+ 0 setgray
+ 1933 2731 2 2647 v -118 2733 2054 2 v 1934
+2766 35 2650 v -85 2766 2054 35 v eop
+%%Page: 15 16
+15 15 bop 1884 2801 80 2 v 1884 2859 2 58 v 1898 2846 a Fk(15)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 62 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 75 x Fh(\011)9
+b Fo(-Term)29 b(Unification)1662 218 y
+ 0 setgray
+ -33 294 a
+ 0. 1. 0. setrgbcolor
+ 186 x Fa(X)34
+b(=)h(student)141 555 y(\(roommate)f(=>)g(employee\(rep)g(=>)g(S\),)176
+629 y(advisor)69 b(=>)34 b(don\(secretary)f(=>)i(S\)\),)-33
+779 y(Y)f(=)h(employee)141 854 y(\(advisor)69 b(=>)34 b(don\(assistant)f(=>)i
+(A\),)176 928 y(roommate)f(=>)g(S:student\(rep)f(=>)i(S\),)176
+1003 y(helper)104 b(=>)34 b(simon\(spouse)g(=>)g(A\)\),)-33
+1152 y(X=)g(Y?)-33 1210 y
+ 0 setgray
+ -33 1210 a
+ 0. 0. 1. setrgbcolor
+ 208 x Fa(X)g(=)h(workstudy)211
+1493 y(\(advisor)e(=>)i(don)664 1568 y(\(assistant)f(=>)g(_A,)699
+1642 y(secretary)g(=>)g(_B:)h(workstudy)1361 1717 y(\(rep)g(=>)f(_B\)\),)246
+1792 y(helper)g(=>)g(simon\(spouse)g(=>)g(_A\),)246 1866 y(roommate)f(=>)i
+(_B\),)-33 1941 y(Y)f(=)h(X.)-33 1999 y
+ 0 setgray
+ 1933 2731 2 2647 v
+-118 2733 2054 2 v 1934 2766 35 2650 v -85 2766 2054 35 v eop
+%%Page: 16 17
+16 16 bop 1884 2801 80 2 v 1884 2859 2 58 v 1898 2846 a Fk(16)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 62 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 75 x Fo(Predicates)1662
+218 y
+ 0 setgray
+ -33 455 a Fi(LIFE's)34 b(predicates)g(are)g(defined)h(exactly)f(as)f
+(Prolog's,)-33 559 y(except)22 b(that)i(terms)e(are)h(replaced)h(by)f
+Fh( )s Fi(-terms.)-33 746 y(They)f(are)h(executed)g(using)h
+Fh( )s Fi(-term)f(unification.)-33 764 y
+ 1. 0. 1. setrgbcolor
+ 222 x Ff(>)49 b(truck)g(<|)h
+(vehicle.)-33 1194 y(***)f(Yes)-33 1298 y(>)g(mobile\(vehicle\).)-33
+1505 y(***)g(Yes)-33 1609 y(>)g(useful\(truck\).)-33 1817 y(***)g(Yes)-33
+1920 y(>)g(mobile\(X\),useful\(X\)?)-33 2128 y(***)g(Yes)-33
+2232 y(X)g(=)h(truck.)-33 2291 y
+ 0 setgray
+ 1933 2731 2 2647 v -118 2733
+2054 2 v 1934 2766 35 2650 v -85 2766 2054 35 v eop
+%%Page: 17 18
+17 17 bop 1884 2802 80 2 v 1884 2859 2 57 v 1898 2846 a Fk(17)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 61 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 79 x Fo(Compatibility)28
+b(with)g(Prolog)1662 230 y
+ 0 setgray
+ -33 466 a Fi(A)d(difference)g(with)g(Prolog)h(is)f
+(that)1121 466 y
+ 1. 0. 0. setrgbcolor
+ Fi(LIFE)g(terms)f(have)h(no)-33 570 y(fixed)e(arity.)345
+570 y
+ 0 setgray
+ -33 588 a
+ 1. 0. 1. setrgbcolor
+ 223 x Ff(pred\(A,B,C\))47 b(:-)j(write\(A,B,C\).)-33
+886 y
+ 0 setgray
+ 166 x Fi(In)23 b(\(SICStus\))g(Prolog:)728 1052 y
+ 0. 0. 1. setrgbcolor
+ -33
+1280 a Ff(?-)49 b(pred\(1,2,3\).)-33 1384 y(123)-33 1488 y(?-)g
+(pred\(A,B,C\).)-33 1591 y(_26_60_94)-33 1695 y(?-)g(pred\(A,B,C,D\).)-33
+1799 y(WARNING:)f(predicate)g('pred/4')g(undefined.)-33 1903
+y(?-)h(pred\(A,B\).)-33 2006 y(WARNING:)f(predicate)g('pred/2')g(undefined.)
+-33 2069 y
+ 0 setgray
+ 1933 2731 2 2647 v -118 2733 2054 2 v 1934 2766
+35 2650 v -85 2766 2054 35 v eop
+%%Page: 18 19
+18 18 bop 1884 2801 80 2 v 1884 2859 2 58 v 1898 2846 a Fk(18)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 62 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 79 x Fo(Compatibility)28
+b(with)g(Prolog)1662 230 y
+ 0 setgray
+ -33 457 a Fi(In)23 b(Wild)h(LIFE:)465
+457 y
+ 0. 1. 0. setrgbcolor
+ -33 670 a Ff(>)49 b(pred\(1,2,3\)?)-33 774 y(123)-33
+878 y(***)g(Yes)-33 981 y(>)g(pred\(A,B,C\)?)-33 1085 y(@@@)-33
+1189 y(***)g(Yes)-33 1293 y(A)g(=)h(@,)f(B)h(=)g(@,)f(C)h(=)f(@.)-33
+1396 y(--1>)-33 1500 y(***)g(No)-33 1604 y(>)g(pred\(A,B,C,D\)?)-33
+1708 y(@@@)-33 1812 y(***)g(Yes)-33 1915 y(A)g(=)h(@,)f(B)h(=)g(@,)f(C)h(=)f
+(@,)h(D)f(=)h(@.)-33 2019 y(--1>)-33 2123 y(***)f(No)-33 2227
+y(>)g(pred?)-33 2330 y(@@@)-33 2434 y(***)g(Yes)-33 2466 y
+ 0 setgray
+
+1933 2731 2 2647 v -118 2733 2054 2 v 1934 2766 35 2650 v -85
+2766 2054 35 v eop
+%%Page: 19 20
+19 19 bop 1884 2801 80 2 v 1884 2859 2 58 v 1898 2846 a Fk(19)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 62 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 75 x Fo(User)28
+b(interaction)1662 218 y
+ 0 setgray
+ -33 443 a Fi(Interaction)g(with)h(user)e(is)h(more)g
+(flexible)h(than)f(Prolog's:)-33 547 y(Once)g(a)h(query)g(is)g(answered,)h(a)
+g(user)e(can)h(extend)g(it)1786 547 y
+ 1. 0. 1. setrgbcolor
+ Fi(in)-33 650 y(the)23
+b(current)f(context)654 650 y
+ 0 setgray
+ 23 w Fi(by)h(entering:)-33 757
+y
+ 1. 0. 0. setrgbcolor
+ 89 861 a Fj(h)p Fh(C)6 b(R)q Fj(i)289 861 y
+ 0 setgray
+ 27 w Fi(to)27
+b(abandon)h(this)f(query)f(and)i(go)f(back)f(to)h(the)89 964
+y(previous)22 b(level,)-33 1000 y
+ 1. 0. 0. setrgbcolor
+ 89 1104 a Ff(;)139 1104 y
+ 0 setgray
+
+55 w Fi(to)45 b(force)f(backtracking)f(and)j(look)e(for)h(another)89
+1207 y(answer,)-33 1237 y
+ 1. 0. 0. setrgbcolor
+ 89 1347 a Fi(a)23 b(goal)314 1347
+y
+ 0 setgray
+ 24 w Fi(followed)h(by)776 1347 y
+ 1. 0. 0. setrgbcolor
+ Ff(?)826 1347 y
+ 0 setgray
+ 23 w Fi(to)f(extend)h
+(this)f(query,)-33 1382 y
+ 1. 0. 0. setrgbcolor
+ 89 1486 a Ff(.)139 1486 y
+ 0 setgray
+ 22 w Fi(to)h(pop)f(to)h
+(top-level)f(from)h(any)e(depth.)-33 1696 y Fm(Example:)-33
+1713 y
+ 0. 0. 1. setrgbcolor
+ 199 x Ff(father\(john,harry)o(\).)-33 2016 y(father\(john,mike\))o(.)
+-33 2120 y(father\(harry,mich)o(ael\).)-33 2327 y(grandfather\(X,Y\))46
+b(:-)k(father\(X,Z\),)963 2431 y(father\(Z,Y\).)-33 2478 y
+ 0 setgray
+
+1933 2731 2 2647 v -118 2733 2054 2 v 1934 2766 35 2650 v -85
+2766 2054 35 v eop
+%%Page: 20 21
+20 20 bop 1884 2801 80 2 v 1884 2859 2 58 v 1898 2846 a Fk(20)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 62 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 75 x Fo(User)28
+b(interaction)1662 218 y
+ 0 setgray
+ -33 294 a
+ 1. 0. 1. setrgbcolor
+ 203 x Fb(>)42 b(grandfathe)q(r\(A)q(,B\))q
+(?)-33 588 y(***)h(Yes)-33 679 y(A)f(=)h(john,)h(B)f(=)f(michael.)-33
+771 y(--1>)h(father\(A,C)q(\)?)-33 862 y(***)g(Yes)-33 953
+y(A)f(=)h(john,)h(B)f(=)f(michael,)j(C)e(=)g(harry.)-33 1044
+y(----2>)h(;)-33 1136 y(***)f(Yes)-33 1227 y(A)f(=)h(john,)h(B)f(=)f
+(michael,)j(C)e(=)g(mike.)-33 1318 y(----2>)h(;)-33 1410 y(***)f(No)-33
+1501 y(A)f(=)h(john,)h(B)f(=)f(michael.)-33 1592 y(--1>)h(father\(C,B)q(\)?)
+-33 1684 y(***)g(Yes)-33 1775 y(A)f(=)h(john,)h(B)f(=)f(michael,)j(C)e(=)g
+(harry.)-33 1866 y(----2>)h(father\(A,C\))q(?)-33 1958 y(***)f(Yes)-33
+2049 y(A)f(=)h(john,)h(B)f(=)f(michael,)j(C)e(=)g(harry.)-33
+2140 y(------3>)-33 2232 y(***)g(No)-33 2323 y(A)f(=)h(john,)h(B)f(=)f
+(michael,)j(C)e(=)g(harry.)-33 2414 y(----2>)h(.)-33 2506 y(>)-33
+2564 y
+ 0 setgray
+ 1933 2731 2 2647 v -118 2733 2054 2 v 1934 2766 35 2650
+v -85 2766 2054 35 v eop
+%%Page: 21 22
+21 21 bop 1884 2802 80 2 v 1884 2859 2 57 v 1898 2846 a Fk(21)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 61 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v 1933 2731 V -118 2733
+2054 2 v 1934 2766 35 2650 v -85 2766 2054 35 v eop
+%%Page: 22 23
+22 22 bop 1884 2802 80 2 v 1884 2859 2 57 v 1898 2846 a Fk(22)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 61 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 75 x Fo(Functions)1662
+218 y
+ 0 setgray
+ -33 455 a Fi(LIFE's)27 b(function)h(are)f(defined)i(exactly)d(as)h
+(rewrite)h(rules)-33 559 y(transforming)23 b Fh( )s Fi(-terms)f(into)i
+Fh( )s Fi(-terms.)-33 746 y(They)41 b(are)h(executed)g(using)g
+Fh( )s Fi(-term)1269 746 y
+ 1. 0. 0. setrgbcolor
+ Fi(matching,)1628 746 y
+ 0 setgray
+ 1675 746
+a
+ 0. 1. 0. setrgbcolor
+ Fi(NOT)1851 746 y
+ 0 setgray
+ -33 849 a
+ 1. 0. 0. setrgbcolor
+ Fi(unification)339 849 y
+ 0 setgray
+ Fi(.)-33
+850 y
+ 0. 0. 1. setrgbcolor
+ 240 x Ff(fact\(0\))48 b(->)i(1.)-33 1194 y(fact\(N:int\))d(->)j
+(N*fact\(N-1\).)-33 1265 y
+ 0 setgray
+ -33 1265 a
+ 1. 0. 1. setrgbcolor
+ 224 x Ff(>)f(write\(fact\(5\)\)?)-33
+1592 y(120)-33 1696 y(***)g(Yes)-33 1755 y
+ 0 setgray
+ 1933 2731 2 2647
+v -118 2733 2054 2 v 1934 2766 35 2650 v -85 2766 2054 35 v
+eop
+%%Page: 23 24
+23 23 bop 1884 2801 80 2 v 1884 2859 2 58 v 1898 2846 a Fk(23)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 62 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 75 x Fo(Residuation)1662
+218 y
+ 0 setgray
+ -33 294 a
+ 1. 0. 1. setrgbcolor
+ 215 x Ff(>)49 b(A=fact\(B\)?)-33 613 y(***)g(Yes)-33
+717 y(A)g(=)h(@,)f(B)h(=)g(@~.)-33 820 y(--1>)f(B=real?)-33
+924 y(***)g(Yes)-33 1028 y(A)g(=)h(@,)f(B)h(=)g(real~.)-33
+1132 y(----2>)e(B=5?)-33 1235 y(***)h(Yes)-33 1339 y(A)g(=)h(120,)f(B)h(=)f
+(5.)-33 1443 y(------3>)-33 1547 y(***)g(No)-33 1651 y(A)g(=)h(@,)f(B)h(=)g
+(real~.)-33 1754 y(----2>)e(A=123?)-33 1858 y(***)h(Yes)-33
+1962 y(A)g(=)h(123,)f(B)h(=)f(real~.)-33 2066 y(------3>)f(B=6?)-33
+2169 y(***)h(No)-33 2273 y(A)g(=)h(123,)f(B)h(=)f(real~.)-33
+2377 y(------3>)-33 2436 y
+ 0 setgray
+ 1933 2731 2 2647 v -118 2733 2054
+2 v 1934 2766 35 2650 v -85 2766 2054 35 v eop
+%%Page: 24 25
+24 24 bop 1884 2802 80 2 v 1884 2859 2 57 v 1898 2846 a Fk(24)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 61 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 75 x Fo(Functions)1662
+218 y
+ 0 setgray
+ -33 294 a
+ 1. 0. 0. setrgbcolor
+ 161 x Fi(Functions)22 b(are)g(deterministic)956
+455 y
+ 0 setgray
+ Fi(---no)h(value)g(guessing)f(nor)-33 559 y(backtracking.)-33
+746 y(Calling)261 746 y
+ 1. 0. 1. setrgbcolor
+ Ff(f\(foo,bar\))761 746 y
+ 0 setgray
+ 800 746 a
+ 0. 1. 0. setrgbcolor
+
+Fi(skips)990 746 y
+ 0 setgray
+ 39 w Fi(definition)1402 746 y
+ 1. 0. 1. setrgbcolor
+ Ff(f\(X,X\))49
+b(->)-33 849 y(...)117 849 y
+ 0 setgray
+ 31 w Fi(if)216 849 y
+ 1. 0. 1. setrgbcolor
+ Ff(foo)366
+849 y
+ 0 setgray
+ 25 w Fi(and)556 849 y
+ 1. 0. 1. setrgbcolor
+ Ff(bar)706 849 y
+ 0 setgray
+ 26 w Fi(are)878
+849 y
+ 0. 1. 0. setrgbcolor
+ Fi(non-unifiable)1351 849 y
+ 0 setgray
+ Fi(;)30 b(otherwise,)d(it)-33
+953 y
+ 0. 1. 0. setrgbcolor
+ Fi(residuates)350 953 y
+ 0 setgray
+ Fi(.)417 953 y
+ 0. 0. 1. setrgbcolor
+ Fi(It)j(will)i(use)e(it)h(only)f
+(if,)j(and)d(when,)j(the)d(two)-33 1057 y(args)22 b(are)h(unified)i(by)e(the)
+g(context.)1102 1057 y
+ 0 setgray
+ -33 1075 a
+ 1. 0. 0. setrgbcolor
+ 169 x Fi(Arithmetic)49 b(functions)g(are)g
+(inverted)1229 1244 y
+ 0 setgray
+ Fi(---)p Fg(e.g.,)55 b Fi(the)50 b(goal)-33
+1348 y
+ 1. 0. 1. setrgbcolor
+ Ff(0=B-C)217 1348 y
+ 0 setgray
+ 22 w Fi(causes)525 1348 y
+ 1. 0. 1. setrgbcolor
+ Ff(B)575
+1348 y
+ 0 setgray
+ 23 w Fi(and)759 1348 y
+ 1. 0. 1. setrgbcolor
+ Ff(C)809 1348 y
+ 0 setgray
+ 23 w Fi(to)23
+b(be)h(unified.)-33 1353 y
+ 1. 0. 1. setrgbcolor
+ 235 x Ff(>)49 b(A)h(=)f(F\(B\),)g(F)h(=)g
+(/\(2=>A\),)e(A)i(=)f(5?)-33 1692 y(***)g(Yes)-33 1796 y(A)g(=)h(5,)f(B)h(=)g
+(25,)f(F)g(=)h(/\(2)f(=>)h(A\).)-33 1867 y
+ 0 setgray
+ 170 x Fi(Note)31
+b(that)g(here)539 2037 y
+ 1. 0. 1. setrgbcolor
+ Ff(/)589 2037 y
+ 0 setgray
+ 31 w Fi(\(division\))g(is)f(curryed)
+g(before)h(being)-33 2140 y(inverted.)p 1933 2731 2 2647 v
+-118 2733 2054 2 v 1934 2766 35 2650 v -85 2766 2054 35 v eop
+%%Page: 25 26
+25 25 bop 1884 2801 80 2 v 1884 2859 2 58 v 1898 2846 a Fk(25)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 62 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 79 x Fo(Currying)1662
+230 y
+ 0 setgray
+ -33 454 a Fi(Currying)34 b(is)h(not)g(the)g(same)f(as)h(residuation,)k
+(because)-33 557 y(the)23 b(result)g(of)g(currying)g(is)g(a)g(function,)h
+(not)f Fj(>)p Fi(.)-33 744 y(In)g(curryed)f(form,)571 744 y
+ 1. 0. 0. setrgbcolor
+
+Ff(f\(a)49 b(=>)h(X,b)f(=>)g(Y\))1368 744 y
+ 0 setgray
+ 23 w Fi(is:)-33
+762 y
+ 1. 0. 0. setrgbcolor
+ 169 x Ff(f\(a)g(=>)g(X\))h(&)f(@\(b)h(=>)f(Y\))1013 931
+y
+ 0 setgray
+ -33 1118 a Fi(but)23 b(also:)-33 1119 y
+ 1. 0. 0. setrgbcolor
+ 185 x Ff(f\(b)49
+b(=>)g(Y\))h(&)f(@\(a)h(=>)f(X\))1013 1304 y
+ 0 setgray
+ -33 1322 a
+ 0. 1. 0. setrgbcolor
+ 169
+x Fi(Argument)24 b(order)e(is)h(irrelevant!)1013 1491 y
+ 0 setgray
+ -33
+1509 a
+ 1. 0. 1. setrgbcolor
+ 197 x Ff(>)49 b(f\(X,Y,Z\))g(->)g([X,Y,Z].)-33 1810
+y(***)g(Yes)-33 1914 y(>)g(A=f\(a,3)g(=>)g(c\)?)-33 2018 y(***)g(Yes)-33
+2121 y(A)g(=)h(f\(a,3)f(=>)g(c\).)-33 2225 y(--1>)g(A=f\(2)g(=>)g(b\)?)-33
+2329 y(***)g(Yes)-33 2433 y(A)g(=)h([a,b,c].)-33 2478 y
+ 0 setgray
+ 1933
+2731 2 2647 v -118 2733 2054 2 v 1934 2766 35 2650 v -85 2766
+2054 35 v eop
+%%Page: 26 27
+26 26 bop 1884 2801 80 2 v 1884 2859 2 58 v 1898 2846 a Fk(26)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 62 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 75 x Fo(Functional)29
+b(variables)1662 218 y
+ 0 setgray
+ -33 294 a
+ 1. 0. 0. setrgbcolor
+ 161 x Fi(Functional)24 b(variables)f(are)g
+(allowed.)1174 455 y
+ 0 setgray
+ -33 642 a Fi(That)c(is,)i(a)f(functional)h(expression)e
+(may)g(have)h(a)g(variable)-33 746 y(where)j(a)g(root)g(symbol)g(is)g
+(expected.)-33 764 y
+ 0. 0. 1. setrgbcolor
+ 222 x Ff(map\(F,[]\))48 b(->)h([].)-33
+1090 y(map\(F,[H|T]\))e(->)j([F\(H\)|map\(F,T\)].)-33 1165
+y
+ 0 setgray
+ -33 1165 a
+ 1. 0. 0. setrgbcolor
+ 220 x Ff(>)f(L=M\(F,[1,2,3,4]\)?)-33 1489 y(***)g(Yes)-33
+1592 y(F)g(=)h(@,)f(L)h(=)g(@,)f(M)h(=)f(@~.)-33 1696 y(--1>)g(M=map?)-33
+1800 y(***)g(Yes)-33 1904 y(F)g(=)h(@~~~~,)f(L)g(=)h([@,@,@,@],)e(M)h(=)h
+(map.)-33 2008 y(----2>)e(F=)i(+\(2=>1\)?)-33 2111 y(***)f(Yes)-33
+2215 y(F)g(=)h(+\(2)f(=>)h(1\),)f(L)g(=)h([2,3,4,5],)e(M)i(=)f(map.)-33
+2319 y(------3>)-33 2378 y
+ 0 setgray
+ 1933 2731 2 2647 v -118 2733 2054
+2 v 1934 2766 35 2650 v -85 2766 2054 35 v eop
+%%Page: 27 28
+27 27 bop 1884 2802 80 2 v 1884 2859 2 57 v 1898 2846 a Fk(27)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 61 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 75 x Fo(Functions)1662
+218 y
+ 0 setgray
+ -33 455 a Fi(Residuation,)26 b(currying,)f(and)h(functional)g
+(variables)f(give)-33 559 y(functions)e(extreme)g(flexibility:)-33
+577 y
+ 1. 0. 0. setrgbcolor
+ 223 x Ff(quadruple)48 b(->)h(*\(2=>4\).)-33 1007 y(pick_arg\({5;3;7}\))
+o(.)-33 1215 y(pick_func\({quadru)o(ple;f)o(act}\).)-33 1422
+y(test)g(:-)g(R=F\(A\),)365 1526 y(pick_arg\(A\),)365 1630
+y(pick_func\(F\),)365 1734 y(write\("function)e(",F,)664 1837
+y(")j(applied)e(to)i(",A,)664 1941 y(")g(is)f(",R\),)365 2045
+y(nl,)365 2149 y(fail.)-33 2208 y
+ 0 setgray
+ 1933 2731 2 2647 v -118 2733
+2054 2 v 1934 2766 35 2650 v -85 2766 2054 35 v eop
+%%Page: 28 29
+28 28 bop 1884 2801 80 2 v 1884 2859 2 58 v 1898 2846 a Fk(28)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 62 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 75 x Fo(Functions)1662
+218 y
+ 0 setgray
+ -33 294 a
+ 1. 0. 1. setrgbcolor
+ 215 x Ff(>)49 b(test?)-33 613 y(function)f(*\(2)h(=>)h(4\))f
+(applied)g(to)g(5)h(is)f(20)-33 717 y(function)f(fact)h(applied)f(to)i(5)g
+(is)f(120)-33 820 y(function)f(*\(2)h(=>)h(4\))f(applied)g(to)g(3)h(is)f(12)
+-33 924 y(function)f(fact)h(applied)f(to)i(3)g(is)f(6)-33 1028
+y(function)f(*\(2)h(=>)h(4\))f(applied)g(to)g(7)h(is)f(28)-33
+1132 y(function)f(fact)h(applied)f(to)i(7)g(is)f(5040)-33 1235
+y(***)g(No)-33 1295 y
+ 0 setgray
+ 1933 2731 2 2647 v -118 2733 2054 2 v
+1934 2766 35 2650 v -85 2766 2054 35 v eop
+%%Page: 29 30
+29 29 bop 1884 2801 80 2 v 1884 2859 2 58 v 1898 2846 a Fk(29)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 62 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 79 x Fo(Quote)28
+b(and)i(eval)1662 222 y
+ 0 setgray
+ -33 458 a Fi(LIFE's)c(functions)g(use)745
+458 y
+ 1. 0. 0. setrgbcolor
+ Fi(eager)957 458 y
+ 0 setgray
+ 26 w Fi(evaluation.)33 b(This)26 b(can)f(be)-33
+562 y(prevented)e(using)g(a)h(quoting)g(operator)1277 562 y
+ 1. 0. 0. setrgbcolor
+
+Ff(`)1327 562 y
+ 0 setgray
+ Fi(.)1373 562 y
+ 1. 0. 1. setrgbcolor
+ -33 790 a Ff(>)49 b(X)h(=1+2?)-33
+894 y(***)f(Yes)-33 998 y(X)g(=)h(3.)-33 1102 y(--1>)f(Y=`\(1+2\)?)-33
+1205 y(***)g(Yes)-33 1309 y(X)g(=)h(3,)f(Y)h(=)g(1)f(+)h(2)-33
+1368 y
+ 0 setgray
+ 170 x Fi(Dually,)j(a)47 b(function)g(called)966 1538
+y
+ 1. 0. 0. setrgbcolor
+ Ff(eval)1166 1538 y
+ 0 setgray
+ 46 w Fi(may)g(be)g(used)f(to)-33 1641
+y(compute)23 b(the)h(result)f(of)g(a)g(quoted)h(form.)1323
+1641 y
+ 1. 0. 1. setrgbcolor
+ -33 1870 a Ff(----2>)48 b(Z=eval\(Y\)?)-33 1973 y(***)h(Yes)-33
+2077 y(X)g(=)h(3,)f(Y)h(=)g(1)f(+)h(2,)f(Z)h(=)f(3.)-33 2136
+y
+ 0 setgray
+ 170 x Fi(Note)23 b(that)327 2306 y
+ 1. 0. 1. setrgbcolor
+ Ff(eval)527 2306 y
+ 0 setgray
+ 549
+2306 a
+ 0. 1. 0. setrgbcolor
+ Fi(does)g(not)g(modify)1134 2306 y
+ 0 setgray
+ 24 w Fi(the)h(quoted)f(form.)-33
+2492 y(Another)c(function)g(called)821 2492 y
+ 1. 0. 0. setrgbcolor
+ Ff(evalin)1121
+2492 y
+ 0 setgray
+ 17 w Fi(works)f(like)1517 2492 y
+ 1. 0. 1. setrgbcolor
+ Ff(eval)1717 2492 y
+ 0 setgray
+
+18 w Fi(but)-33 2596 y(evaluates)g(the)g(expression)f(side-effecting)i(it)f
+(``in-place.'')p 1933 2731 2 2647 v -118 2733 2054 2 v 1934
+2766 35 2650 v -85 2766 2054 35 v eop
+%%Page: 30 31
+30 30 bop 1884 2801 80 2 v 1884 2859 2 58 v 1898 2846 a Fk(30)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 62 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v 1933 2731 V -118 2733
+2054 2 v 1934 2766 35 2650 v -85 2766 2054 35 v eop
+%%Page: 31 32
+31 31 bop 1884 2801 80 2 v 1884 2859 2 58 v 1898 2846 a Fk(31)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 62 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 75 x Fo(Arbitr-Arity)1662
+228 y
+ 0 setgray
+ -33 465 a Fi(In)23 b(LIFE)257 465 y
+ 1. 0. 0. setrgbcolor
+ Fi(everything)g(is)g(a)h
+Fh( )s Fi(-term!)1092 465 y
+ 0 setgray
+ -33 652 a Fi(This)17 b(can)h(be)h(exploited)g(to)
+f(great)h(benefit)g(to)f(express)f(that)-33 755 y(some)37 b(predicates)g(or)g
+(functions)g(take)g(an)h(unspecified)-33 859 y(number)23 b(of)g(arguments.)
+-33 877 y
+ 0. 1. 0. setrgbcolor
+ 223 x Ff(S:sum)48 b(->)i(add\(features\(S\),S\).)-33
+1307 y(add\([H|T],V\))d(->)j(V.H+add\(T,V\).)-33 1411 y(add\([],V\))e(->)h
+(0.)-33 1483 y
+ 0 setgray
+ -33 1483 a
+ 1. 0. 1. setrgbcolor
+ 223 x Ff(>)g(X)h(=)f(sum\(1,2,3,4\)?)-33
+1810 y(***)g(Yes)-33 1914 y(X)g(=)h(10.)-33 2017 y(--1>)f
+(Y=sum\(1,2,3,4,5\)?)-33 2121 y(***)g(Yes)-33 2225 y(X)g(=)h(10,)f(Y)h(=)f
+(15.)-33 2329 y(----2>)-33 2388 y
+ 0 setgray
+ 1933 2731 2 2647 v -118 2733
+2054 2 v 1934 2766 35 2650 v -85 2766 2054 35 v eop
+%%Page: 32 33
+32 32 bop 1884 2801 80 2 v 1884 2859 2 58 v 1898 2846 a Fk(32)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 62 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 79 x Fo(Constrained)29
+b(sorts)1662 220 y
+ 0 setgray
+ -33 457 a Fi(One)41 b(can)h(attach)609 457
+y
+ 1. 0. 0. setrgbcolor
+ Fi(properties)978 457 y
+ 0 setgray
+ 41 w Fi(to)g(sorts:)1393 457 y
+ 0. 1. 0. setrgbcolor
+ Fi(attributes)h(or)
+-33 560 y(arbitrary)c(relational)j(or)d(functional)j(dependency)e(con-)-33
+664 y(straints)235 664 y
+ 0 setgray
+ Fi(.)-33 851 y(These)33 b(properties)g(will)i(be)e
+(verified)h(during)g(execution,)-33 955 y(and)23 b(also)g(inherited)i(by)e
+(subsorts.)1116 955 y
+ 1. 0. 1. setrgbcolor
+ -33 1183 a Ff(>)49 b(::)h(person\(age)e(=>)h(int\).)-33
+1287 y(***)g(Yes)-33 1391 y(>)g(man)g(<|)h(person.)-33 1494
+y(***)f(Yes)-33 1598 y(>)g(A=man?)-33 1702 y(***)g(Yes)-33
+1806 y(A)g(=)h(man\(age)e(=>)i(int\).)-33 1910 y(--1>)-33 1956
+y
+ 0 setgray
+ 1933 2731 2 2647 v -118 2733 2054 2 v 1934 2766 35 2650 v
+-85 2766 2054 35 v eop
+%%Page: 33 34
+33 33 bop 1884 2801 80 2 v 1884 2859 2 58 v 1898 2846 a Fk(33)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 62 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 79 x Fo(Constrained)29
+b(sorts)1662 220 y
+ 0 setgray
+ -33 298 a
+ 0. 0. 1. setrgbcolor
+ 213 x Ff(::)49 b(vehicle\(make)f(=>)h(string,)
+515 614 y(number_of_wheels)d(=>)k(int\).)-33 822 y(::)f(car\(number_of_wheel)
+o(s)e(=>)j(4\).)-33 1029 y(car)f(<|)g(vehicle.)-33 1101 y
+ 0 setgray
+ -33
+1101 a
+ 1. 0. 1. setrgbcolor
+ 223 x Ff(>)g(X=car?)-33 1428 y(***)g(Yes)-33 1532 y(X)g(=)h(car\(make)
+e(=>)i(string,)365 1636 y(number_of_wheels)d(=>)i(4\).)-33
+1739 y(--1>)-33 1799 y
+ 0 setgray
+ 1933 2731 2 2647 v -118 2733 2054 2
+v 1934 2766 35 2650 v -85 2766 2054 35 v eop
+%%Page: 34 35
+34 34 bop 1884 2801 80 2 v 1884 2859 2 58 v 1898 2846 a Fk(34)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 62 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 79 x Fo(Constrained)29
+b(sorts)1662 220 y
+ 0 setgray
+ 1685 220 a
+ 1. 0. 0. setrgbcolor
+ -33 498 a Ff(man)49 b(:=)g(person\(gender)f(=>)
+h(male\).)-33 560 y
+ 0 setgray
+ 166 x Fi(is)23 b(sugaring)g(for:)534 726
+y
+ 0. 1. 0. setrgbcolor
+ -33 955 a Ff(man)49 b(<|)g(person.)-33 1059 y(::)g(man\(gender)f(=>)h
+(male\).)-33 1121 y
+ 0 setgray
+ -33 1121 a
+ 1. 0. 0. setrgbcolor
+ 220 x Ff(tree)g(:=)g({)h(leaf)f(;)g
+(node\(left)g(=>)g(tree,)1062 1445 y(right)g(=>)h(tree\))f(}.)-33
+1519 y
+ 0 setgray
+ 166 x Fi(is)23 b(sugaring)g(for:)534 1685 y
+ 0. 1. 0. setrgbcolor
+ -33 1914
+a Ff(leaf)49 b(<|)g(tree.)-33 2017 y(node)g(<|)g(tree.)-33
+2121 y(::)g(node\(left)f(=>)i(tree,)e(right)h(=>)h(tree\).)-33
+2184 y
+ 0 setgray
+ 1933 2731 2 2647 v -118 2733 2054 2 v 1934 2766 35 2650
+v -85 2766 2054 35 v eop
+%%Page: 35 36
+35 35 bop 1884 2801 80 2 v 1884 2859 2 58 v 1898 2846 a Fk(35)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 62 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 79 x Fo(Constrained)29
+b(sorts)1662 220 y
+ 0 setgray
+ -33 296 a
+ 0. 0. 1. setrgbcolor
+ 196 x Fb(::)43 b(rectangle\(lo)q(ng_)q(sid)q(e)i
+(=>)e(L:real,)517 584 y(short_side)j(=>)d(S:real,)517 675 y(area)h(=>)f
+(L*S\).)-33 858 y(square)h(:=)f(rectangle\(s)q(ide)j(=>)d(S,)813
+949 y(long_side)j(=>)d(S,)813 1040 y(short_side)j(=>)d(S\).)-33
+1115 y
+ 1. 0. 1. setrgbcolor
+ 200 x Fb(>)f(R=rectangl)q(e\(a)q(rea)k(=>)d(16,)559
+1406 y(short_side)j(=>)d(4\)?)-33 1498 y(***)g(Yes)-33 1589
+y(R)f(=)h(rectangle\(a)q(rea)j(=>)d(16,)559 1680 y(long_side)j(=>)d(4,)559
+1771 y(short_side)j(=>)d(4\).)-33 1863 y(--1>)g(R=square?)-33
+1954 y(***)g(Yes)-33 2045 y(R)f(=)h(square\(area)j(=>)d(16,)432
+2137 y(long_side)j(=>)d(_A:)g(4,)432 2228 y(short_side)j(=>)d(_A,)432
+2319 y(side)h(=>)f(_A\).)-33 2411 y(----2>)-33 2465 y
+ 0 setgray
+ -33 2465
+a
+ 0 setgray
+ 1933 2731 2 2647 v -118 2733 2054 2 v 1934 2766 35 2650 v
+-85 2766 2054 35 v eop
+%%Page: 36 37
+36 36 bop 1884 2801 80 2 v 1884 2859 2 58 v 1898 2846 a Fk(36)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 62 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 79 x Fo(Constrained)29
+b(sorts)1662 220 y
+ 0 setgray
+ -33 296 a
+ 0. 0. 1. setrgbcolor
+ 196 x Fb(::)43 b(devout\(faith)j(=>)d(F,)g
+(pray_to)i(=>)e(X\))9 584 y(|)g(holy_figure\()q(F,X)q(\).)-33
+766 y(holy_figure\()q(mus)q(lim)q(,al)q(lah)q(\).)-33 858 y(holy_figure\()q
+(jew)q(ish)q(,ya)q(hve)q(h\).)-33 949 y(holy_figure\()q(chr)q(ist)q(ian)q
+(,je)q(sus)q(_ch)q(ris)q(t\))q(.)-33 1024 y
+ 1. 0. 1. setrgbcolor
+ 200 x Fb(>)f(X=devout?)-33
+1315 y(***)h(Yes)-33 1406 y(X)f(=)h(devout\(fait)q(h)i(=>)e(muslim,)432
+1498 y(pray_to)i(=>)e(allah\).)-33 1589 y(--1>)g(;)-33 1680
+y(***)g(Yes)-33 1771 y(X)f(=)h(devout\(fait)q(h)i(=>)e(jewish,)432
+1863 y(pray_to)i(=>)e(yahveh\).)-33 1954 y(--1>)g(;)-33 2045
+y(***)g(Yes)-33 2137 y(X)f(=)h(devout\(fait)q(h)i(=>)e(christian,)432
+2228 y(pray_to)i(=>)e(jesus_chris)q(t\))q(.)-33 2319 y(--1>)g(;)-33
+2411 y(***)g(No)-33 2465 y
+ 0 setgray
+ -33 2465 a
+ 0 setgray
+ 1933 2731 2 2647 v -118
+2733 2054 2 v 1934 2766 35 2650 v -85 2766 2054 35 v eop
+%%Page: 37 38
+37 37 bop 1884 2801 80 2 v 1884 2859 2 58 v 1898 2846 a Fk(37)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 62 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 79 x Fo(Constrained)29
+b(sorts)1662 220 y
+ 0 setgray
+ -33 320 a Fi(Impromptu)23 b(demons:)728
+320 y
+ 1. 0. 1. setrgbcolor
+ -33 527 a Fb(>)42 b(::)h(I:int)h(|)f(write\(I,")i("\).)-33
+618 y(***)e(Yes)-33 709 y(>)f(A=5*7?)-33 801 y(5)g(7)h(35)-33
+892 y(***)g(Yes)-33 983 y(A)f(=)h(35.)-33 1075 y(--1>)g(B=fact\(5\)?)-33
+1166 y(5)f(1)h(4)g(1)f(3)h(1)g(2)f(1)h(1)g(1)f(0)h(1)g(1)f(2)h(6)g(24)g(120)
+-33 1257 y(***)g(Yes)-33 1349 y(A)f(=)h(35,)g(B)g(=)g(120.)-33
+1440 y(----2>)-33 1477 y
+ 0. 0. 1. setrgbcolor
+ 211 x Fb(>)f(::)h(C:cons)i(|)d(write\(C.1\))q(,)j
+(nl.)-33 1780 y(***)e(Yes)-33 1871 y(>)f(A=[a,b,c,d)q(])j(?)-33
+1962 y(d)-33 2054 y(c)-33 2145 y(b)-33 2236 y(a)-33 2328 y(***)e(Yes)-33
+2419 y(A)f(=)h([a,b,c,d].)-33 2476 y
+ 0 setgray
+ -33 2476 a
+ 0 setgray
+ 1933 2731 2
+2647 v -118 2733 2054 2 v 1934 2766 35 2650 v -85 2766 2054
+35 v eop
+%%Page: 38 39
+38 38 bop 1884 2801 80 2 v 1884 2859 2 58 v 1898 2846 a Fk(38)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 62 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 79 x Fo(Constrained)29
+b(sorts)1662 220 y
+ 0 setgray
+ -33 444 a Fi(Recursive)d(sorts)g(can)h(also)h(be)g
+(defined.)37 b(For)27 b(example,)-33 536 y(the)c(\(built-in\))h(list)f(sort)g
+(is)g(defined)h(as:)1226 536 y
+ 0. 0. 1. setrgbcolor
+ -33 751 a Fb(list)43 b(:=)g({[])h(;)e
+([@|list]}.)-33 808 y
+ 0 setgray
+ 172 x Fi(But)25 b(there)g(is)g(a)487
+980 y
+ 0. 1. 0. setrgbcolor
+ Fi(safe)644 980 y
+ 0 setgray
+ 25 w Fi(form)g(of)g(recursion)f(and)i(an)1601
+980 y
+ 1. 0. 0. setrgbcolor
+ Fi(unsafe)1850 980 y
+ 0 setgray
+ -33 1083 a Fi(one:)-33 1189 y
+ 0. 1. 0. setrgbcolor
+ 21
+1312 a Fj(\017)f Fi(safe)30 b(recursion:)641 1312 y
+ 0 setgray
+ 38 w Fi(the)i(recursive)d
+(occurrence)h(of)h(the)89 1416 y(sort)22 b(is)h(in)h(a)490
+1416 y
+ 0. 0. 1. setrgbcolor
+ Fi(strictly)e(more)h(specific)1237 1416 y
+ 0 setgray
+ 23 w Fi(sort.)-33
+1454 y
+ 1. 0. 0. setrgbcolor
+ 21 1561 a Fj(\017)i Fi(unsafe)40 b(recursion:)743 1561
+y
+ 0 setgray
+ 56 w Fi(the)g(recursive)f(occurrence)f(of)89 1665 y(the)23
+b(sort)f(is)h(in)h(an)675 1665 y
+ 0. 0. 1. setrgbcolor
+ Fi(equal)g(or)f(more)g(general)1486
+1665 y
+ 0 setgray
+ 24 w Fi(sort.)p 1933 2731 2 2647 v -118 2733 2054 2
+v 1934 2766 35 2650 v -85 2766 2054 35 v eop
+%%Page: 39 40
+39 39 bop 1884 2801 80 2 v 1884 2859 2 58 v 1898 2846 a Fk(39)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 62 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 79 x Fo(Constrained)29
+b(sorts)1662 220 y
+ 0 setgray
+ -33 444 a Fi(Example)24 b(of)f(unsafe)g(recursion:)1065
+444 y
+ 1. 0. 0. setrgbcolor
+ -33 660 a Fb(::)43 b(person\(best_)q(fri)q(end)j(=>)d(person\).)-33
+726 y
+ 0 setgray
+ 162 x Fi(This)22 b(loops)i(for)f(ever...)-33 1063 y(Temporary)d
+(workaround)844 1063 y
+ 1. 1. 0. setrgbcolor
+ Fi(\(hmm...)j(hack!\))1375 1063 y
+ 0 setgray
+ 22
+w Fi(is)e(to)h(specify:)-33 1154 y
+ 1. 0. 0. setrgbcolor
+ 216 x Fb(>)42 b(delay_chec)q(k\(p)q(ers)q
+(on\))q(?)-33 1436 y
+ 0 setgray
+ 162 x Fi(That)26 b(will)h(prevent)f(checking)g(the)g
+(definition)i(of)1552 1598 y
+ 1. 0. 0. setrgbcolor
+ Ff(person)1852 1598 y
+ 0 setgray
+ -33 1702
+a Fi(if)23 b(it)h(has)f(no)g(attributes.)p 1933 2731 2 2647
+v -118 2733 2054 2 v 1934 2766 35 2650 v -85 2766 2054 35 v
+eop
+%%Page: 40 41
+40 40 bop 1884 2801 80 2 v 1884 2859 2 58 v 1898 2846 a Fk(40)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 62 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 79 x Fo(Constrained)29
+b(sorts)1662 220 y
+ 0 setgray
+ -33 298 a
+ 1. 0. 1. setrgbcolor
+ 200 x Fb(::)43 b(P:person\(bes)q(t_f)q(rie)q(nd)
+j(=>)d(Q:person\))9 589 y(|)g(get_along\(P,)q(Q\).)-33 681
+y(***)g(Yes)-33 772 y(>)f(delay_chec)q(k\(p)q(ers)q(on\))q(?)-33
+863 y(***)h(Yes)-33 955 y(>)f(cleopatra)k(:=)d(person\(nose)j(=>)d(pretty,)
+898 1046 y(occupation)j(=>)d(queen\).)-33 1137 y(***)g(Yes)-33
+1229 y(>)f(julius)j(:=)e(person\(last_)q(nam)q(e)i(=>)e(caesar\).)-33
+1320 y(***)g(Yes)-33 1411 y(>)f(get_along\()q(cle)q(opa)q(tra)q(,ju)q(liu)q
+(s\).)-33 1503 y(***)h(Yes)-33 1594 y(>)f(A=person?)-33 1685
+y(***)h(Yes)-33 1777 y(A)f(=)h(person.)-33 1868 y(--1>)g(A=@\(nose)i(=>)e
+(pretty\)?)-33 1959 y(***)g(Yes)-33 2051 y(A)f(=)h(cleopatra\(b)q(est)q(_fr)q
+(ien)q(d)i(=>)e(julius,)559 2142 y(nose)h(=>)f(pretty,)559
+2233 y(occupation)j(=>)d(queen\).)-33 2305 y
+ 0 setgray
+ 1933 2731 2 2647
+v -118 2733 2054 2 v 1934 2766 35 2650 v -85 2766 2054 35 v
+eop
+%%Page: 41 42
+41 41 bop 1884 2802 80 2 v 1884 2859 2 57 v 1898 2846 a Fk(41)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 61 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 79 x Fo(Classes)27
+b(and)i(Instances)1662 220 y
+ 0 setgray
+ -33 457 a Fi(It)23 b(is)g(important)h(to)g
+(relate)g(LIFE's)f(concepts)g(to)g(concepts)-33 560 y(that)c(are)g
+(empirically)i(known)e(in)h(O-O)e(programming,)j(like)-33 664
+y(that)i(of)220 664 y
+ 1. 0. 0. setrgbcolor
+ Fi(class)410 664 y
+ 0 setgray
+ 23 w Fi(and)594 664
+y
+ 1. 0. 0. setrgbcolor
+ Fi(instance)903 664 y
+ 0 setgray
+ Fi(.)-33 665 y
+ 1. 0. 0. setrgbcolor
+ 186 x Fi(Classes)263
+851 y
+ 0 setgray
+ 22 w Fi(are)g(declared)g(by)g(sort)g(definitions:)1462
+851 y
+ 0. 1. 0. setrgbcolor
+ -33 1079 a Ff(::)49 b(class\(field1=>value)o(1,)415 1183
+y(field2=>value2,)415 1287 y(...\).)-33 1346 y
+ 0 setgray
+ 169 x Fi(Like)22
+b(a)210 1515 y
+ 1. 0. 0. setrgbcolor
+ Ff(struct)510 1515 y
+ 0 setgray
+ Fi(,)f(this)h(adds)h(fields)g(to)f(a)h
+(class)e(definition.)-33 1702 y(To)14 b(say)g(that)h Ff(class1)f
+Fi(inherits)h(all)h(properties)f(of)g Ff(class2)p Fi(:)-33
+1806 y
+ 0. 1. 0. setrgbcolor
+ 228 x Ff(class1)48 b(<|)i(class2.)-33 2093 y
+ 0 setgray
+ 1933 2731
+2 2647 v -118 2733 2054 2 v 1934 2766 35 2650 v -85 2766 2054
+35 v eop
+%%Page: 42 43
+42 42 bop 1884 2802 80 2 v 1884 2859 2 57 v 1898 2846 a Fk(42)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 61 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 79 x Fo(Classes)27
+b(and)i(Instances)1662 220 y
+ 0 setgray
+ -33 298 a
+ 1. 0. 0. setrgbcolor
+ 159 x Fi(Instances)323
+457 y
+ 0 setgray
+ 17 w Fi(are)18 b(created)g(by)878 457 y
+ 0. 0. 1. setrgbcolor
+ Fi(mentioning)i(the)f(class)e
+(name)1850 457 y
+ 0 setgray
+ -33 560 a Fi(in)23 b(the)h(program.)f(For)g(example,)g
+(executing:)1457 560 y
+ 1. 0. 1. setrgbcolor
+ -33 789 a Ff(>)49 b(X=int?)-33 835 y
+ 0 setgray
+
+182 x Fi(creates)32 b(an)h(instance)h(of)f(the)h(class)1213
+1017 y
+ 1. 0. 0. setrgbcolor
+ Ff(int)1363 1017 y
+ 0 setgray
+ Fi(.)53 b(Each)33 b(men-)-33 1121
+y(tion)40 b(of)249 1121 y
+ 1. 0. 0. setrgbcolor
+ Ff(int)399 1121 y
+ 0 setgray
+ 40 w Fi(creates)f(a)h(fresh)g
+(instance.)73 b(Therefore,)-33 1225 y(executing:)368 1225 y
+ 1. 0. 1. setrgbcolor
+
+-33 1453 a Ff(>)49 b(X=int,)g(Y=int?)-33 1512 y
+ 0 setgray
+ 169 x Fi(creates)20
+b(two)411 1681 y
+ 0. 0. 1. setrgbcolor
+ Fi(different)j(instances)1084 1681 y
+ 0 setgray
+ 21 w
+Fi(of)f(the)g(class)1543 1681 y
+ 1. 0. 0. setrgbcolor
+ Ff(int)1693 1681 y
+ 0 setgray
+ 21 w Fi(in)h
+Ff(X)-33 1785 y Fi(and)g Ff(Y)p Fi(.)g(We)h(can)f(do:)667 1785
+y
+ 1. 0. 1. setrgbcolor
+ -33 2013 a Ff(>)49 b(X=int,)g(Y=int,)g(X=56,)f(Y=23?)-33
+2072 y
+ 0 setgray
+ 170 x Fi(This)19 b(would)i(not)g(be)f(possible)h(if)1014
+2242 y
+ 1. 0. 0. setrgbcolor
+ Ff(X)1064 2242 y
+ 0 setgray
+ 20 w Fi(and)1242 2242 y
+ 1. 0. 0. setrgbcolor
+ Ff(Y)1292 2242
+y
+ 0 setgray
+ 20 w Fi(were)f(the)g(same)-33 2345 y(instance.)p 1933 2731
+2 2647 v -118 2733 2054 2 v 1934 2766 35 2650 v -85 2766 2054
+35 v eop
+%%Page: 43 44
+43 43 bop 1884 2801 80 2 v 1884 2859 2 58 v 1898 2846 a Fk(43)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 62 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 79 x Fo(Classes)27
+b(and)i(Instances)1662 220 y
+ 0 setgray
+ -33 457 a Fi(Wild)21 b(LIFE)g(assumes)f(that)g
+(mentioning)j(a)d(class)g(name)h(in)-33 560 y(the)j(program)440
+560 y
+ 1. 0. 0. setrgbcolor
+ Fi(always)694 560 y
+ 0 setgray
+ 24 w Fi(creates)g(a)g(fresh)g(instance)h(that)f(is)
+-33 664 y(different)g(from)f(all)h(other)f(instances)g(of)g(the)h(class.)-33
+851 y(For)e(example:)474 851 y
+ 1. 0. 1. setrgbcolor
+ -33 1079 a Ff(>)49 b(X=23,)g(Y=23?)-33
+1138 y
+ 0 setgray
+ 170 x Fi(creates)22 b(two)414 1308 y
+ 0. 0. 1. setrgbcolor
+ Fi(different)i(instances)1088
+1308 y
+ 0 setgray
+ 23 w Fi(of)f(the)h(class)1554 1308 y
+ 1. 0. 0. setrgbcolor
+ Ff(23)1654 1308
+y
+ 0 setgray
+ Fi(.)-33 1494 y(If)f(we)g(have)g(the)h(function)f(defined)i(as:)1250
+1494 y
+ 0. 1. 0. setrgbcolor
+ -33 1723 a Ff(f\(A,A\))48 b(->)i(1.)-33 1782 y
+ 0 setgray
+ 169 x
+Fi(then)24 b(the)g(call)440 1951 y
+ 1. 0. 1. setrgbcolor
+ Ff(f\(X,Y\))740 1951 y
+ 0 setgray
+ 22
+w Fi(will)901 1951 y
+ 1. 0. 0. setrgbcolor
+ Fi(not)1016 1951 y
+ 0 setgray
+ 25 w Fi(fire,)g(since)g
+Ff(X)f Fi(and)i Ff(Y)e Fi(are)-33 2055 y(different)h(instances.)p
+1933 2731 2 2647 v -118 2733 2054 2 v 1934 2766 35 2650 v -85
+2766 2054 35 v eop
+%%Page: 44 45
+44 44 bop 1884 2802 80 2 v 1884 2859 2 57 v 1898 2846 a Fk(44)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 61 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 79 x Fo(Classes)27
+b(and)i(Instances)1662 220 y
+ 0 setgray
+ -33 457 a Fi(To)i(make)330 457
+y
+ 1. 0. 1. setrgbcolor
+ Ff(f\(X,Y\))630 457 y
+ 0 setgray
+ 30 w Fi(fire,)j Ff(X)e Fi(and)g Ff(Y)f
+Fi(must)h(be)f(the)1647 457 y
+ 0. 1. 0. setrgbcolor
+ Fi(same)1850 457 y
+ 0 setgray
+ -33 560 a
+Fi(instance.)-33 747 y(In)21 b(Wild)i(LIFE,)g(the)f(only)g(way)f(to)h(do)g
+(this)f(is)h(to)g(unify)g(them)-33 851 y(explicitly:)326 851
+y
+ 1. 0. 1. setrgbcolor
+ -33 1079 a Ff(>)49 b(X=23,)g(Y=23,)g(X=Y,)g(write\(f\(X,Y\)\)?)-33
+1138 y
+ 0 setgray
+ 170 x Fi(will)24 b(write)303 1308 y
+ 1. 0. 0. setrgbcolor
+ Ff(1)353 1308 y
+ 0 setgray
+
+23 w Fi(\()p Fg(i.e.)p Fi(,)g(the)f(function)1013 1308 y
+ 1. 0. 0. setrgbcolor
+ Ff(f)1063
+1308 y
+ 0 setgray
+ 23 w Fi(will)h(fire\).)p 1933 2731 2 2647 v -118 2733
+2054 2 v 1934 2766 35 2650 v -85 2766 2054 35 v eop
+%%Page: 45 46
+45 45 bop 1884 2801 80 2 v 1884 2859 2 58 v 1898 2846 a Fk(45)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 62 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 75 x Fo(Hamming)29
+b(numbers)1662 228 y
+ 0 setgray
+ -33 311 a
+ 1. 0. 1. setrgbcolor
+ 187 x Fb(mult_list\(F,)q(N,[)q(H|T)q(]\))46
+b(->)305 589 y(cond\(R:\(F*)q(H\))g(=<)d(N,)517 680 y([R|mult_lis)q(t\(F)q
+(,N,)q(T\)])q(,)517 772 y([]\).)-33 863 y(merge\(L,[]\))j(->)d(L.)-33
+954 y(merge\([],L\))j(->)d(L.)-33 1046 y(merge\(L1:[H1)q(|T1)q(],L)q(2:[)q
+(H2|)q(T2])q(\))i(->)305 1137 y(cond\(H1)g(=:=)e(H2,)517 1228
+y([H1|merge\(T)q(1,T)q(2\)])q(,)517 1320 y(cond\(H1)i(>)d(H2,)729
+1411 y([H2|merge\(L1)q(,T2)q(\)])q(,)729 1502 y([H1|merge\(T1)q(,L2)q(\)])q
+(\)\).)-33 1594 y(hamming\(N\))j(->)305 1685 y(S:[1|merge)q(\(mu)q(lt_)q(lis)
+q(t\(2)q(,N,)q(S\))q(,)771 1776 y(merge\(mult_)q(lis)q(t\()q(3,N)q(,S\))q(,)
+1025 1868 y(mult_list\()q(5,N)q(,S\))q(\)\)])q(.)-33 1941 y
+ 0 setgray
+
+-33 1941 a
+ 1. 0. 0. setrgbcolor
+ 198 x Fb(>)d(H=hamming\()q(26\))q(?)-33 2230 y(H)g(=)h
+([1,2,3,4,5,)q(6,8)q(,9,)q(10,)q(12,)q(15,)q(16,)q(18)q(,20)q(,24)q(,25)q(])
+-33 2321 y(***)g(Yes)-33 2413 y(>)-33 2465 y
+ 0 setgray
+ 1933 2731 2 2647
+v -118 2733 2054 2 v 1934 2766 35 2650 v -85 2766 2054 35 v
+eop
+%%Page: 46 47
+46 46 bop 1884 2801 80 2 v 1884 2859 2 58 v 1898 2846 a Fk(46)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 62 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 79 x Fo(Quick)28
+b(Sort)1662 222 y
+ 0 setgray
+ -33 301 a
+ 1. 0. 1. setrgbcolor
+ 182 x Fa(q_sort\(L,order)33 b(=>)h(O\))71
+558 y(->)h(undlist\(dqsort\(L,order)d(=>)i(O\)\).)-33 707 y(undlist\(X\\Y\))f
+(->)h(X)h(|)g(Y=[].)-33 857 y(dqsort\([]\))e(->)i(L\\L.)-33
+932 y(dqsort\([H|T],order)d(=>)j(O\))71 1006 y(->)g(\(L1\\L2\))106
+1081 y(|)g(\(Less,More\)=split\(H,T,\([],)o([]\),ord)o(er)d(=>)j(O\),)176
+1156 y(\(L1\\[H|L3]\)=dqsort\(Less,or)o(der)d(=>)i(O\),)176
+1230 y(\(L3\\L2\))138 b(=dqsort\(More,order)33 b(=>)h(O\).)-33
+1380 y(split\(@,[],P\))f(->)h(P.)-33 1455 y(split\(X,[H|T],\(Less,More)o
+(\),order)d(=>)k(O\))71 1529 y(->)g(cond\(O\(H,X\),)350 1604
+y(split\(X,T,\([H|Less],More\),or)o(der)d(=>)j(O\),)350 1679
+y(split\(X,T,\(Less,[H|More]\),or)o(der)d(=>)j(O\)\).)-33 1807
+y
+ 0 setgray
+ 1933 2731 2 2647 v -118 2733 2054 2 v 1934 2766 35 2650 v
+-85 2766 2054 35 v eop
+%%Page: 47 48
+47 47 bop 1884 2802 80 2 v 1884 2859 2 57 v 1898 2846 a Fk(47)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 61 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 79 x Fo(SEND+MORE=MONEY)
+1662 220 y
+ 0 setgray
+ -33 298 a
+ 1. 0. 1. setrgbcolor
+ 200 x Fb(solve)44 b(:-)221 589 y(\045)e(M=0)i(is)f
+(uninterestin)q(g:)390 681 y(M=1,)221 772 y(\045)f(Arithmetic)k(constraints)q
+(:)390 863 y(C3)d(+)g(S)f(+)h(M)g(=)f(O)h(+)g(10*M,)390 955
+y(C2)g(+)g(E)f(+)h(O)g(=)f(N)h(+)g(10*C3,)390 1046 y(C1)g(+)g(N)f(+)h(R)g(=)f
+(E)h(+)g(10*C2,)602 1137 y(D)f(+)h(E)g(=)f(Y)h(+)g(10*C1,)221
+1229 y(\045)f(Disequalit)q(y)j(constraint)q(s:)390 1320 y(diff_list\([)q(S,E)
+q(,N,)q(D,M)q(,O,)q(R,)q(Y]\))q(,)221 1411 y(\045)d(Generate)j(binary)g
+(digits:)390 1503 y(C1=carry,)390 1594 y(C2=carry,)390 1685
+y(C3=carry,)221 1777 y(\045)d(Generate)j(decimal)g(digits:)390
+1868 y(S=decimal,)h(E=decimal,)390 1959 y(N=decimal,)g(D=decimal,)390
+2051 y(O=decimal,)g(R=decimal,)390 2142 y(Y=decimal,)-33 2211
+y
+ 0 setgray
+ 1933 2731 2 2647 v -118 2733 2054 2 v 1934 2766 35 2650 v
+-85 2766 2054 35 v eop
+%%Page: 48 49
+48 48 bop 1884 2801 80 2 v 1884 2859 2 58 v 1898 2846 a Fk(48)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 62 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 79 x Fo(SEND+MORE=MONEY)
+1662 220 y
+ 0 setgray
+ -33 179 a
+ 1. 0. 1. setrgbcolor
+ 221 380 a Fb(\045)42 b(Print)i(the)g(result:)390
+471 y(nl,)f(write\(")i(SEND)86 b(",S,E,N,D\))q(,)45 b(nl,)559
+563 y(write\("+MO)q(RE)h(+",M,O,R,E\))q(,)f(nl,)559 654 y(write\("---)q(--)h
+(-----"\),nl,)559 745 y(write\("MON)q(EY)g(",M,O,N,E,Y)q(\),)g(nl,)221
+837 y(\045)c(Fail)i(to)f(iterate:)390 928 y(fail.)-33 1111
+y(decimal)h(->)f({0;1;2;3;4)q(;5;)q(6;7)q(;8;)q(9}.)-33 1202
+y(carry)h(->)f({0;1}.)-33 1385 y(diff_list\([])q(\).)-33 1476
+y(diff_list\([H)q(|T])q(\))i(:-)305 1567 y(generate_d)q(iff)q(s\(H)q(,T\))q
+(,)305 1659 y(diff_list\()q(T\),)305 1750 y(H=<9,)305 1841
+y(H>=0.)-33 2024 y(generate_dif)q(fs\()q(H,[)q(]\).)-33 2115
+y(generate_dif)q(fs\()q(H,[)q(A|T)q(]\))h(:-)305 2207 y(generate_d)q(iff)q
+(s\(H)q(,T\))q(,)305 2298 y(A=\\=H.)-33 2443 y
+ 0 setgray
+ 1933 2731 2
+2647 v -118 2733 2054 2 v 1934 2766 35 2650 v -85 2766 2054
+35 v eop
+%%Page: 49 50
+49 49 bop 1884 2801 80 2 v 1884 2859 2 58 v 1898 2846 a Fk(49)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 62 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 75 x Fo(Dictionary)1662
+228 y
+ 0 setgray
+ 1685 228 a
+ 1. 0. 1. setrgbcolor
+ -33 494 a Fb(delay_check\()q(tre)q(e\)?)-33
+676 y(::)43 b(tree\(name)i(=>)e(string,)305 768 y(def)h(=>)f(string,)305
+859 y(left)h(=>)f(tree,)305 950 y(right)h(=>)f(tree\).)-33
+1133 y(contains\(tre)q(e\(n)q(ame)j(=>)d(N,def)h(=>)f(D\),N,D\).)-33
+1224 y(contains\(T:t)q(ree)q(\(na)q(me)j(=>)d(N\),Name,Def)q(\))136
+1316 y(:-)g(cond\(N)h($>)f(Name,)475 1407 y(contains\(T.l)q(eft)q(,)88
+b(Name,)44 b(Def\),)475 1498 y(contains\(T.r)q(igh)q(t,)i(Name,)e(Def\)\).)
+-33 1558 y
+ 0 setgray
+ 1933 2731 2 2647 v -118 2733 2054 2 v 1934 2766
+35 2650 v -85 2766 2054 35 v eop
+%%Page: 50 51
+50 50 bop 1884 2801 80 2 v 1884 2859 2 58 v 1898 2846 a Fk(50)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 62 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 75 x Fo(Dictionary)1662
+228 y
+ 0 setgray
+ 1685 228 a
+ 1. 0. 1. setrgbcolor
+ -33 494 a Fb(test_diction)q(ary)46 b(:-)305
+585 y(CN)d(=)g("cat",)h(CD)f(=)g("furry)h(feline",)305 676
+y(DN)f(=)g("dog",)h(DD)f(=)g("furry)h(canine",)-33 768 y(\045)e(Insert)j(cat)
+e(definition)305 859 y(contains\(T)q(,CN)q(,CD)q(\),)-33 950
+y(\045)f(Insert)j(dog)e(definition)305 1042 y(contains\(T)q(,DN)q(,DD)q(\),)
+-33 1133 y(\045)f(Look)i(up)f(cat)g(definition)305 1224 y(contains\(T)q(,CN)q
+(,De)q(f\),)305 1316 y(nl,write\(")q(A)i(",CN,")g(is)e(a)f(",Def\),nl)q(,!.)
+-33 1372 y
+ 0 setgray
+ -33 1372 a
+ 1. 0. 0. setrgbcolor
+ 214 x Fb(>)g(test_dicti)q(ona)q(ry?)-33
+1768 y(A)g(cat)i(is)f(a)f(furry)i(feline)-33 1951 y(***)f(Yes)-33
+2009 y
+ 0 setgray
+ 1933 2731 2 2647 v -118 2733 2054 2 v 1934 2766 35 2650
+v -85 2766 2054 35 v eop
+%%Page: 51 52
+51 51 bop 1884 2801 80 2 v 1884 2859 2 58 v 1898 2846 a Fk(51)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 62 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 75 x Fo(Primes)1662
+218 y
+ 0 setgray
+ -33 176 a
+ 1. 0. 1. setrgbcolor
+ 202 x Fb(prime)44 b(:=)85 b(P:int)390 470 y(|)43
+b(factors\(P\))i(=)e(one.)-33 652 y(factors\(N\))i(->)e(cond\(N)i(<)d(2,)559
+744 y({},)559 835 y(factors_fr)q(om\()q(N,2)q(\)\).)-33 1018
+y(factors_from)q(\(N:)q(int)q(,P:)q(int)q(\))j(->)305 1109
+y(cond\(P*P)g(>)e(N,)517 1200 y(one,)517 1292 y(cond\(R:\(N/P)q(\))i(=:=)f
+(floor\(R\),)729 1383 y(many,)729 1474 y(factors_from)q(\(N,)q(P)i(+)c
+(1\)\)\).)-33 1657 y(primes_to\(N:)q(int)q(\))j(:-)305 1748
+y(write\(int_)q(to\()q(N\))h(&)c(prime\),)305 1840 y(nl,)i(fail.)-33
+2022 y(int_to\(N:int)q(\))h(->)305 2114 y(cond\(N)g(<)d(1,)517
+2205 y({},)517 2296 y({1;1)i(+)e(int_to\(N-1)q(\)}\))q(.)-33
+2442 y
+ 0 setgray
+ 1933 2731 2 2647 v -118 2733 2054 2 v 1934 2766 35 2650
+v -85 2766 2054 35 v eop
+%%Page: 52 53
+52 52 bop 1884 2801 80 2 v 1884 2859 2 58 v 1898 2846 a Fk(52)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 62 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 75 x Fo(Primes)1662
+218 y
+ 0 setgray
+ 1685 218 a
+ 1. 0. 1. setrgbcolor
+ -33 484 a Fb(>)42 b(primes_to\()q(30\))q(?)-33
+575 y(2:)h(prime)-33 667 y(3:)g(prime)-33 758 y(5:)g(prime)-33
+849 y(7:)g(prime)-33 941 y(11:)g(prime)-33 1032 y(13:)g(prime)-33
+1123 y(17:)g(prime)-33 1215 y(19:)g(prime)-33 1306 y(23:)g(prime)-33
+1397 y(29:)g(prime)-33 1580 y(***)g(No)-33 1671 y(>)-33 1717
+y
+ 0 setgray
+ 1933 2731 2 2647 v -118 2733 2054 2 v 1934 2766 35 2650 v
+-85 2766 2054 35 v eop
+%%Page: 53 54
+53 53 bop 1884 2801 80 2 v 1884 2859 2 58 v 1898 2846 a Fk(53)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 62 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 79 x Fo(PERT)29
+b(Scheduling)1662 230 y
+ 0 setgray
+ -33 465 a Fi(Define)24 b(the)f(class)f(of)i(activity)
+e(objects:)1259 465 y
+ 1. 0. 1. setrgbcolor
+ -33 681 a Fb(::)43 b(A:activity\()j(duration)f(=>)e
+(D:real,)602 773 y(earlyStart)i(=>)e(earlyCalc)q(\(R\))q(,)602
+864 y(lateStart)87 b(=>)43 b({1e500;re)q(al})q(,)602 955 y(prerequisite)q(s)i
+(=>)e(R:{[];lis)q(t})j(\))9 1047 y(|)d(!,)g(lateCalc\(A,R)q(\).)-33
+1103 y
+ 0 setgray
+ 159 x Fi(Wait)22 b(until)h(the)f(value)g(is)g(an)g(integer)g(before)g
+(assigning)h(it:)-33 1354 y
+ 1. 0. 1. setrgbcolor
+ 216 x Fb(assign\(A,B:i)q(nt\))46
+b(->)d(succeed)i(|)d(A<-B.)-33 1629 y
+ 0 setgray
+ 1933 2731 2 2647 v -118
+2733 2054 2 v 1934 2766 35 2650 v -85 2766 2054 35 v eop
+%%Page: 54 55
+54 54 bop 1884 2801 80 2 v 1884 2859 2 58 v 1898 2846 a Fk(54)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 62 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 79 x Fo(PERT)29
+b(Scheduling)1662 230 y
+ 0 setgray
+ -33 465 a Fi(Pass)22 b(1:)i(Calculate)g(the)f
+(earliest)h(time)g(that)f(A)h(can)f(start.)1849 465 y
+ 1. 0. 1. setrgbcolor
+ -33 681
+a Fb(earlyCalc\([])q(\))45 b(->)e(0.)-33 773 y(earlyCalc\([B)q(|Li)q(stO)q
+(fAc)q(ts])q(\))i(->)305 864 y(max\(B.earl)q(ySt)q(art)q(+B.)q(dur)q(ati)q
+(on)q(,)475 955 y(earlyCalc\(Li)q(stO)q(fAc)q(ts\))q(\).)-33
+1014 y
+ 0 setgray
+ 157 x Fi(Pass)27 b(2:)33 b(Calculate)c(the)f(latest)g(time)h(that)f
+(A's)g(prerequi-)-33 1262 y(sites)22 b(can)h(start)g(and)g(still)h(finish)g
+(before)g(A)f(starts.)1609 1262 y
+ 1. 0. 1. setrgbcolor
+ -33 1478 a Fb(lateCalc\(A,[)q(]\))46
+b(->)d(succeed.)-33 1570 y(lateCalc\(A,[)q(B:a)q(cti)q(vit)q(y|L)q(ist)q(OfA)
+q(cts)q(]\))136 1661 y(->)g(lateCalc\(A,)q(Lis)q(tOf)q(Act)q(s\))178
+1752 y(|)g(assign\(LSB:)q(\(B.)q(lat)q(eSt)q(art)q(\),)263
+1844 y(min\(LSB,)i(A.earlyStar)q(t-B)q(.du)q(ra)q(tio)q(n\)\))q(.)-33
+1903 y
+ 0 setgray
+ 1933 2731 2 2647 v -118 2733 2054 2 v 1934 2766 35 2650
+v -85 2766 2054 35 v eop
+%%Page: 55 56
+55 55 bop 1884 2801 80 2 v 1884 2859 2 58 v 1898 2846 a Fk(55)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 62 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 79 x Fo(PERT)29
+b(Scheduling)1662 230 y
+ 0 setgray
+ -33 466 a Fi(A)21 b(sample)g(input)h(for)f(the)g
+(PERT)g(scheduler:)h(any)f(permu-)-33 570 y(tation)h(of)g(the)g(specified)g
+(order)f(of)h(activities)g(would)g(work,)-33 674 y(illustrating)32
+b(that)f(calculations)g(in)g(LIFE)g(do)g(not)f(depend)-33 778
+y(on)23 b(order)g(of)g(execution.)-33 779 y
+ 1. 0. 1. setrgbcolor
+ 210 x Fa(schedule)33
+b(:-)-33 1064 y(A1=activity\(duration=>10)o(\),)-33 1139 y
+(A2=activity\(duration=>20)o(\),)-33 1214 y(A3=activity\(duration=>30)o(\),)
+-33 1288 y(A4=activity\(duration=>18)o(,prerequ)o(isites=)o(>[A1,A2])o(\),)
+-33 1363 y(A5=activity\(duration=>8)e(,prerequisites=>[A2,A3]\),)-33
+1438 y(A6=activity\(duration=>3)g(,prerequisites=>[A1,A4]\),)-33
+1512 y(A7=activity\(duration=>4)g(,prerequisites=>[A5,A6]\),)-33
+1587 y(visualize\([A1,A2,A3,A4,A)o(5,A6,A7])o(\).)-33 1653
+y
+ 0 setgray
+ 1933 2731 2 2647 v -118 2733 2054 2 v 1934 2766 35 2650 v
+-85 2766 2054 35 v eop
+%%Page: 56 57
+56 56 bop 1884 2801 80 2 v 1884 2859 2 58 v 1898 2846 a Fk(56)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 62 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 79 x Fo(PERT)29
+b(Scheduling)1662 230 y
+ 0 setgray
+ 1685 230 a
+ 1. 0. 0. setrgbcolor
+ -33 479 a Fc(>)g(schedule?)-33
+540 y(Activity)g(1:)g(**********)624 600 y(----------)-33 660
+y(Activity)g(2:)g(********************)325 720 y(--------------------)-33
+780 y(Activity)g(3:)g(******************************)325 840
+y(------------------------------)-33 901 y(Activity)g(4:)627
+b(******************)923 961 y(------------------)-33 1021
+y(Activity)29 b(5:)926 b(********)1312 1081 y(--------)-33
+1141 y(Activity)29 b(6:)1165 b(***)1461 1202 y(---)-33 1262
+y(Activity)29 b(7:)1255 b(****)-33 1322 y(***)29 b(Yes)-33
+1382 y(>)-33 1484 y
+ 0 setgray
+ 1933 2731 2 2647 v -118 2733 2054 2 v 1934
+2766 35 2650 v -85 2766 2054 35 v eop
+%%Page: 57 58
+57 57 bop 1884 2801 80 2 v 1884 2859 2 58 v 1898 2846 a Fk(57)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 62 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 75 x Fo(Encapsulated)28
+b(programming)1662 228 y
+ 0 setgray
+ -33 465 a Fi(Create)34 b(a)g(routine)h(that)g
+(behaves)f(like)h(a)f(process)f(with)-33 569 y(encapsulated)j(data.)62
+b(The)36 b(caller)h(cannot)f(access)e(the)-33 672 y(routine's)22
+b(local)h(data)f(except)g(through)g(the)h(access)d(func-)-33
+776 y(tions)j(\(``methods''\))h(provided)g(by)f(the)g(routine.)-33
+950 y(Initialization:)446 950 y
+ 1. 0. 1. setrgbcolor
+ -33 1166 a Fb(new_counter\()q(C\))46
+b(:-)d(counter\(C,0\))q(.)-33 1233 y
+ 0 setgray
+ 149 x Fi(Access)21 b(predicate:)645
+1382 y
+ 1. 0. 1. setrgbcolor
+ -33 1598 a Fb(send\(X,C\))45 b(:-)e(C=[X|C2],)i(C<-C2.)-33
+1654 y
+ 0 setgray
+ 1933 2731 2 2647 v -118 2733 2054 2 v 1934 2766 35 2650
+v -85 2766 2054 35 v eop
+%%Page: 58 59
+58 58 bop 1884 2801 80 2 v 1884 2859 2 58 v 1898 2846 a Fk(58)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 62 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 75 x Fo(Encapsulated)28
+b(programming)1662 228 y
+ 0 setgray
+ 45 w Fi(The)-33 369 y(counter:)290
+369 y
+ 1. 0. 1. setrgbcolor
+ -33 585 a Fb(counter\([inc)q(|S])q(,V\))263 676 y(->)43
+b(counter\(S,V)q(+1\))q(.)-33 768 y(counter\([set)q(\(X\))q(|S])q(,V\))263
+859 y(->)g(counter\(S,X)q(\).)-33 950 y(counter\([see)q(\(X\))q(|S])q(,V\))
+263 1042 y(->)g(counter\(S,V)q(\))i(|)e(X=V.)-33 1133 y(counter\([sto)q(p|S)q
+(],V)q(\))263 1224 y(->)g(true)305 1316 y(|)g(write\("Coun)q(ter)j
+(stopped."\))q(.)-33 1407 y(counter\([],V)q(\))263 1498 y(->)d(true)305
+1590 y(|)g(write\("Coun)q(ter)j(end-of-str)q(eam)q(."\))q(.)-33
+1681 y(counter\([_|S)q(],V)q(\))263 1772 y(->)d(counter\(S,V)q(\))305
+1864 y(|)g(write\("Unkn)q(own)j(message."\))q(,)f(nl.)-33 1923
+y
+ 0 setgray
+ 1933 2731 2 2647 v -118 2733 2054 2 v 1934 2766 35 2650 v
+-85 2766 2054 35 v eop
+%%Page: 59 60
+59 59 bop 1884 2801 80 2 v 1884 2859 2 58 v 1898 2846 a Fk(59)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 62 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 75 x Fo(Encapsulated)28
+b(programming)1662 228 y
+ 0 setgray
+ -33 461 a Fi(Access)e(to)h(the)h(process)e(is)h(by)g
+(a)h(logical)h(variable.)36 b(The)-33 552 y(internal)45 b(state)f(of)h(the)f
+(process)f(is)h(the)h(value)g(of)f(the)-33 644 y(counter,)23
+b(which)g(is)g(held)h(in)g(the)f(second)g(argument.)1702 644
+y
+ 1. 0. 1. setrgbcolor
+ -33 859 a Fb(>)42 b(new_counte)q(r\(C)q(\)?)-33 951 y(***)h(Yes)-33
+1042 y(C)f(=)h(@~.)-33 1133 y(--1>)g(send\(inc,C)q(\)?)-33
+1225 y(***)g(Yes)-33 1316 y(C)f(=)h(@~.)-33 1407 y(----2>)h(send\(inc,C\))q
+(?)-33 1499 y(***)f(Yes)-33 1590 y(C)f(=)h(@~.)-33 1681 y(------3>)i
+(send\(see\(X\),)q(C\)?)-33 1773 y(***)e(Yes)-33 1864 y(C)f(=)h(@~,)g(X)g(=)g
+(2.)-33 1955 y(--------4>)-33 2001 y
+ 0 setgray
+ 183 x Fi(This)24 b(creates)f(a)i(new)g
+(counter)f(object)h(\(with)f(initial)j(value)-33 2287 y(0\))43
+b(which)i(is)f(accessed)f(through)h Ff(C)p Fi(.)g(The)h(counter)e(is)-33
+2391 y(incremented)23 b(twice)h(and)f(then)h(its)f(value)g(is)g(accessed.)p
+1933 2731 2 2647 v -118 2733 2054 2 v 1934 2766 35 2650 v -85
+2766 2054 35 v eop
+%%Page: 60 61
+60 60 bop 1884 2801 80 2 v 1884 2859 2 58 v 1898 2846 a Fk(60)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 62 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 75 x Fo(Tiny)29
+b(linguistics)1662 228 y
+ 0 setgray
+ -33 465 a Fi(A)23 b(simple)h(term)f(expansion)h
+(facility:)-33 483 y
+ 1. 0. 1. setrgbcolor
+ 223 x Ff(op\(1200,xfx,)47 b(-->)i(\)?)-33
+913 y(\(A)g(-->)g(B\))h(:-)116 1017 y(Rule)f(=)h(\()f
+(gram\(A&@\(L:[]\),In,Out)o(\))564 1121 y(:-)h(expand\(B,In,Out,L\))c(\),)116
+1224 y(assert\(Rule\).)-33 1432 y(expand\(\(A,B\),In,O)o(ut,Hi)o(story\))116
+1536 y(->)j(gram\(A,In,Out2\),)265 1640 y(expand\(B,Out2,Out,H2\))d(|)265
+1743 y(History)j(<-)g([A|H2].)-33 1951 y(expand\(A,In,Out,H)o(\))116
+2055 y(->)g(gram\(A,In,Out\))166 2158 y(|)g(H)h(<-)g([A].)-33
+2230 y
+ 0 setgray
+ 1933 2731 2 2647 v -118 2733 2054 2 v 1934 2766 35 2650
+v -85 2766 2054 35 v eop
+%%Page: 61 62
+61 61 bop 1884 2801 80 2 v 1884 2859 2 58 v 1898 2846 a Fk(61)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 62 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 75 x Fo(Tiny)29
+b(linguistics)1662 228 y
+ 0 setgray
+ -33 465 a Fi(The)23 b(main)h(call)f(is:)589
+465 y
+ 0. 1. 0. setrgbcolor
+ -33 693 a Ff(gram\(Analysis,Ins)o(tream)o(,Lefto)o(ver\))-33
+755 y
+ 0 setgray
+ -33 755 a
+ 1. 0. 1. setrgbcolor
+ 220 x Ff(dynamic\(gram\)?)-33 1183 y(gram\(A:@\(X\),[X|T])o
+(,T\))47 b(:-)i(X)h(:=<)f(A.)-33 1390 y(analyse\(P\))f(:-)365
+1494 y(gram\(A,P,[]\),)365 1598 y(pretty_write\(A\),nl,n)o(l,)365
+1702 y(fail.)-33 1761 y
+ 0 setgray
+ 1933 2731 2 2647 v -118 2733 2054 2
+v 1934 2766 35 2650 v -85 2766 2054 35 v eop
+%%Page: 62 63
+62 62 bop 1884 2801 80 2 v 1884 2859 2 58 v 1898 2846 a Fk(62)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 62 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 75 x Fo(Tiny)29
+b(linguistics)1662 228 y
+ 0 setgray
+ -33 465 a Fi(A)23 b(tiny)g(French)g(grammar:)-33
+483 y
+ 1. 0. 1. setrgbcolor
+ 210 x Fb(phrase)44 b(-->)f(sujet,)432 784 y(verbe_intr)q(ans)q(iti)q
+(f_?)-33 876 y(phrase)h(-->)f(sujet,)432 967 y(verbe_tran)q(sit)q(if_)q(,)432
+1058 y(complement)q(_d_)q(obj)q(et)j(?)-33 1150 y(phrase)e(-->)f(sujet,)432
+1241 y(pronom_,)432 1332 y(verbe_tran)q(sit)q(if_)q(?)-33 1424
+y(phrase)h(-->)f(sujet,)432 1515 y(verbe_tran)q(sit)q(if_)q(ind)q(ire)q(ct)q
+(_,)432 1606 y(complement)q(_d_)q(obj)q(et_)q(ind)q(ir)q(ect)j(?)-33
+1698 y(phrase)e(-->)f(sujet,)432 1789 y(verbe_etre)q(_,)432
+1880 y(adjectif_?)-33 1959 y
+ 0 setgray
+ 1933 2731 2 2647 v -118 2733 2054
+2 v 1934 2766 35 2650 v -85 2766 2054 35 v eop
+%%Page: 63 64
+63 63 bop 1884 2801 80 2 v 1884 2859 2 58 v 1898 2846 a Fk(63)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 62 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 75 x Fo(Tiny)29
+b(linguistics)1662 228 y
+ 0 setgray
+ -33 314 a
+ 1. 0. 1. setrgbcolor
+ 192 x Fb(complement_d)q(_ob)q(jet)46
+b(-->)d(groupe_nom)q(in)q(al)j(?)-33 598 y(complement_d)q(_ob)q(jet)q(_in)q
+(dir)q(ect)348 689 y(-->)d(conjonction)q(_,)517 780 y(groupe_nomi)q(nal)j(?)
+-33 963 y(sujet)e(-->)f(groupe_nomi)q(nal)j(?)-33 1146 y(groupe_nomin)q(al)g
+(-->)d(article_,)771 1237 y(nom_commun_)q(?)-33 1328 y(groupe_nomin)q(al)j
+(-->)d(article_,)771 1420 y(nom_commun_)q(,)771 1511 y(adjectif_po)q(stf)q
+(ix)q(e_?)-33 1602 y(groupe_nomin)q(al)j(-->)d(article_,)771
+1694 y(adjectif_pr)q(efi)q(xe)q(_,)771 1785 y(nom_commun_)q(?)-33
+1876 y(groupe_nomin)q(al)j(-->)d(nom_propre_)q(?)-33 1955 y
+ 0 setgray
+
+1933 2731 2 2647 v -118 2733 2054 2 v 1934 2766 35 2650 v -85
+2766 2054 35 v eop
+%%Page: 64 65
+64 64 bop 1884 2801 80 2 v 1884 2859 2 58 v 1898 2846 a Fk(64)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 62 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 75 x Fo(Tiny)29
+b(linguistics)1662 228 y
+ 0 setgray
+ -33 465 a Fi(Higher)23 b(classes)f(of)h(words:)894
+465 y
+ 1. 0. 1. setrgbcolor
+ -33 693 a Ff(adjectif_postfixe)o(_)47 b(<|)i(adjectif_.)-33
+797 y(adjectif_prefixe_)d(<|)k(adjectif_.)-33 901 y(article_indefini_)c(<|)k
+(article_.)-33 1004 y(nom_propre_)d(<|)j(etre_anime_.)-33 1108
+y(verbe_etre_)d(<|)j(verbe_transitif_.)-33 1179 y
+ 0 setgray
+ 1933 2731
+2 2647 v -118 2733 2054 2 v 1934 2766 35 2650 v -85 2766 2054
+35 v eop
+%%Page: 65 66
+65 65 bop 1884 2801 80 2 v 1884 2859 2 58 v 1898 2846 a Fk(65)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 62 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 75 x Fo(Tiny)29
+b(linguistics)1662 228 y
+ 0 setgray
+ -33 462 a Fi(A)23 b(lexicon)g(of)h(word)f(sorts:)848
+462 y
+ 1. 0. 1. setrgbcolor
+ -33 678 a Fb(a)42 b(<|)h(conjonctio)q(n_.)-33 769 y(a)f(<|)h
+(verbe_tran)q(sit)q(if_)q(.)-33 861 y(anglais)h(<|)f(adjectif_p)q(ost)q(fix)q
+(e_.)-33 952 y(anglais)h(<|)f(nom_commun)q(_.)-33 1043 y(animal)h(<|)f
+(etre_anime_)q(.)-33 1135 y(apres)h(<|)f(conjonction_)q(.)-33
+1226 y(article)h(<|)f(nom_commun)q(_.)-33 1317 y(belle)h(<|)f(adjectif_pre)q
+(fix)q(e_.)-33 1409 y(belle)h(<|)f(nom_commun_.)-33 1500 y(blanc)h(<|)f
+(adjectif_pos)q(tfi)q(xe_)q(.)-33 1591 y(blanche)h(<|)f(adjectif_p)q(ost)q
+(fix)q(e_.)-33 1683 y(blanche)h(<|)f(femme.)i(\045)d(Special!)-33
+1774 y(...)-33 1865 y(femme)i(<|)f(personne.)-33 1957 y(fille)h(<|)f
+(personne.)-33 2048 y(francais)i(<|)e(adjectif_pos)q(tfi)q(xe_)q(.)-33
+2139 y(francais)i(<|)e(nom_commun_.)-33 2231 y(garcon)h(<|)f(personne_.)-33
+2297 y
+ 0 setgray
+ 1933 2731 2 2647 v -118 2733 2054 2 v 1934 2766 35 2650
+v -85 2766 2054 35 v eop
+%%Page: 66 67
+66 66 bop 1884 2801 80 2 v 1884 2859 2 58 v 1898 2846 a Fk(66)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 62 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 75 x Fo(Tiny)29
+b(linguistics)1662 228 y
+ 0 setgray
+ -33 462 a Fi(A)23 b(lexicon)g(of)h(word)f(sorts:)848
+462 y
+ 1. 0. 1. setrgbcolor
+ -33 678 a Fb(...)-33 769 y(la)43 b(<|)g(article_.)-33
+861 y(la)g(<|)g(pronom_.)-33 952 y(le)g(<|)g(article_.)-33
+1043 y(le)g(<|)g(pronom_.)-33 1135 y(les)g(<|)g(pronom_.)-33
+1226 y(...)-33 1317 y(noir)g(<|)g(adjectif_p)q(ost)q(fix)q(e_.)-33
+1409 y(noir)g(<|)g(homme.)i(\045)d(Special!)-33 1500 y(noire)i(<|)f
+(adjectif_pos)q(tfi)q(xe_)q(.)-33 1591 y(...)-33 1683 y(porte)h(<|)f
+(nom_commun_.)-33 1774 y(porte)h(<|)f(verbe_transi)q(tif)q(_.)-33
+1865 y(...)-33 1957 y(voile)h(<|)f(nom_commun_.)-33 2048 y(voile)h(<|)f
+(verbe_transi)q(tif)q(_.)-33 2114 y
+ 0 setgray
+ 1933 2731 2 2647 v -118
+2733 2054 2 v 1934 2766 35 2650 v -85 2766 2054 35 v eop
+%%Page: 67 68
+67 67 bop 1884 2801 80 2 v 1884 2859 2 58 v 1898 2846 a Fk(67)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 62 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 75 x Fo(Tiny)29
+b(linguistics)1662 228 y
+ 0 setgray
+ -33 306 a
+ 0. 1. 0. setrgbcolor
+ 167 x Fa(demo)34 b(:-)h
+(analyse\([la,femme,blanch)o(e,porte)o(,le,voil)o(e]\).)-33
+547 y(demo)f(:-)h(analyse\([richard,est,un,)o(noir,bl)o(anc]\).)-33
+622 y(demo)f(:-)h(analyse\([richard,est,noi)o(r]\).)-33 674
+y
+ 0 setgray
+ -33 674 a
+ 1. 0. 0. setrgbcolor
+ 180 x Fa(>)f(demo?)-33 929 y(phrase\([sujet\([groupe_no)o(minal)
+594 1004 y(\([article_\(la\),)664 1079 y(nom_commun_\(femme\),)664
+1153 y(adjectif_postfixe_\(blanche\))o(]\)]\),)246 1228 y
+(verbe_transitif_\(porte\),)246 1303 y(complement_d_objet)385
+1378 y(\([groupe_nominal)594 1452 y(\([article_\(le\),)664
+1527 y(nom_commun_\(voile\)]\)]\)]\))-33 1676 y(phrase\([sujet\([groupe_no)o
+(minal\([n)o(om_prop)o(re_\(rich)o(ard\)]\)]\))o(,)246 1751
+y(verbe_transitif_\(est\),)246 1826 y(complement_d_objet)385
+1901 y(\([groupe_nominal)594 1975 y(\([article_\(un\),)664
+2050 y(nom_commun_\(noir\),)664 2125 y(adjectif_postfixe_\(blanc\)]\))o
+(]\)]\))-33 2274 y(phrase\([sujet\([groupe_no)o(minal\([n)o(om_prop)o
+(re_\(rich)o(ard\)]\)]\))o(,)246 2349 y(verbe_etre_\(est\),)246
+2424 y(adjectif_\(noir\)]\))-33 2481 y
+ 0 setgray
+ 1933 2731 2 2647 v -118
+2733 2054 2 v 1934 2766 35 2650 v -85 2766 2054 35 v eop
+%%Page: 68 69
+68 68 bop 1884 2801 80 2 v 1884 2859 2 58 v 1898 2846 a Fk(68)p
+1961 2859 V 1884 2861 80 2 v 1962 2877 18 62 v 1900 2877 80
+18 v -118 84 2054 2 v -118 2731 2 2647 v -33 167 a
+ 0. 0. 1. setrgbcolor
+ 79 x Fo(Conclusion)1662
+220 y
+ 0 setgray
+ -33 451 a Fi(LIFE)35 b(is)f(still)i(an)f(experimental)h(language.)60
+b(Neverthe-)-33 554 y(less,)31 b(it)f(offers)f(conveniences)g(meant)h(to)g
+(reconcile)g(dif-)-33 658 y(ferent)23 b(programming)h(styles.)-33
+845 y(It)f(is)g(particularly)g(suited)h(for:)931 845 y
+ 1. 0. 1. setrgbcolor
+ 21 1064
+a Fj(\017)h Fi(natural)e(linguistics)21 1207 y Fj(\017)i Fi(constrained)e
+(graphics)21 1349 y Fj(\017)i Fi(expert)d(systems)-33 1400
+y
+ 0 setgray
+ 168 x Fi(There)h(are)g(other)g(feature)g(to)h(complement)g(it)f(with)h
+(like:)1817 1568 y
+ 0. 0. 1. setrgbcolor
+ 21 1788 a Fj(\017)h Fi(other)14 b(CLP)i(constraint)e
+(domains)i(\(arithmetic,)h(boolean,)89 1892 y(finite)24 b(domains,)g
+(intervals\))21 2034 y Fj(\017)h Fi(better)d(language)h(features)f
+(\(extensional)h(sorts,)e(par-)89 2138 y(tial)i(features,)f(lexical)g
+(scoping,)h(method)f(encapsula-)89 2241 y(tion,)i(etc...\))-33
+2292 y
+ 0 setgray
+ -33 2292 a
+ 0. 1. 0. setrgbcolor
+ 169 x Fi(This)e(is)i(just)f(a)g(beginning...)878
+2461 y
+ 0 setgray
+ 1933 2731 2 2647 v -118 2733 2054 2 v 1934 2766 35 2650
+v -85 2766 2054 35 v eop
+%%Trailer
+end
+userdict /end-hook known{end-hook}if
+%%EOF

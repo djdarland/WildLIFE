@@ -1,0 +1,58 @@
+%  File:    /usr/bloom2/slang/plummer/life/happy.life
+%  Author:  Hassan Ait-Kaci
+%  Created: Fri Oct  9 13:14:17 1987
+%  Updated: Mon Nov 14 12:40:46 1988
+%  Purpose: Login Example in LIFE.
+%  Copyright Information: Proprietary and Confidential
+%                         MCC (1987)
+
+
+
+%	peter, paul and mary are students, and students are people.
+
+peter <| student.
+paul  <| student.
+mary  <| student.
+
+student <| person.
+
+
+%	grades are either goodgrades or badgrades.  
+% 	a and b are goodgrades, while c, d and f are badgrades.
+
+goodgrade <| grade.
+badgrade  <| grade.
+
+a <| goodgrade.
+b <| goodgrade.
+
+c <| badgrade.
+d <| badgrade.
+f <| badgrade.
+
+%	Goodgrades are goodthings
+
+goodgrade <| goodthing.
+
+
+%	Every person likes themself.
+%	Every person likes goodthings.
+%	peter likes mary.
+
+likes(X:person,X).
+likes(person,goodthing).
+likes(peter,mary).
+
+
+%	peter got a c, paul an f and mary an a.
+
+got(peter,c).
+got(paul,f).
+got(mary,a).
+
+
+%	A person is happy if they got something that they like, or,
+%	if they like someone who got a goodthing.
+
+happy(X:person) :- got(X,Y),likes(X,Y).
+happy(X:person) :- likes(X,Y),got(Y,goodthing).

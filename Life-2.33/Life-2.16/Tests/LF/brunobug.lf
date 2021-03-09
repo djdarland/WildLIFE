@@ -1,0 +1,94 @@
+% The Brunobug saga: a work in six fits
+% Final fix: 15.2.94
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Fit the original (From Bruno, 3.2.94):
+
+:: titi(arg => 1).
+:: pb(action => Action).
+
+foo(X,Y) -> @(X,Y).
+
+% Was buggy: X = foo(foo(titi,Y:titi), pb(action => @(Y)))?
+% Was buggy: X = foo(foo(_,Y:titi), pb(action => @(Y)))?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Fit the second:
+
+foo_a(X) -> t(X).
+:: titi_a(1).
+:: s_a(_).
+
+p_a(pair(foo_a(Y:titi_a), s_a(B:@(Y)))).
+
+% Was buggy: p_a(X)?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Fit the third:
+
+foo_b(X) -> t(X).
+:: titi_b(1).
+:: s_b(_).
+
+% Was buggy: X=pair(foo_b(Y:titi_b), s_b(B:@(Y)))? 
+% X=pair(foo_b(Y:titi_b), s_b(Y))?
+
+b_1(pair(foo_b(Y:titi_b), s_b(B:@(Y)))).
+b_2(pair(foo_b(Y:titi_b), s_b(Y))).
+
+% Was buggy: b_1(X)?
+% b_2(X)?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Fit the fourth:
+
+foo_c(X,Y) -> @(X,Y).
+:: titi_c(1).
+:: p_c(_).
+
+% Was buggy: X=foo_c(foo_c(A,Y:titi_c), p_c(B:@(Y)))? 
+% X=foo_c(foo_c(A,Y:titi_c), p_c(Y))?
+
+% Z=p_c(B:@(Y)), X=foo_c(A,Y:titi_c)?
+% X=foo_c(A,Y:titi_c), Z=p_c(B:@(Y))?
+
+% X=foo_c(p_c(@(Y)), foo_c(_,Y:titi_c))?
+% X=foo_c(p_c(@(Y)), foo_c(_,@(Y:titi_c)))?
+% X=foo_c(p_c(Y), foo_c(_,Y:titi_c))?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Fit the fifth:
+
+foo_d(X,Y) -> @(X,Y).
+:: titi_d(1).
+:: p_d(@(_)).
+
+% Was buggy: X = foo_d(foo_d(_,Y:titi_d), p_d(@(@(Y))))?
+% Was buggy: X = foo_d(foo_d(_,Y:titi_d), p_d(@(Y)))?    
+% X = foo_d(foo_d(_,Y:titi_d), p_d(Y))?
+
+d_1(foo_d(foo_d(_,Y:titi_d), p_d(@(@(Y))))).
+d_2(foo_d(foo_d(_,Y:titi_d), p_d(@(Y)))).
+d_3(foo_d(foo_d(_,Y:titi_d), p_d(Y))).
+
+% d_1(X)?
+% d_2(X)?
+% d_3(X)?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Fit the sixth:
+
+foo_e(X,Y) -> @(X,Y).
+:: titi_e(1).
+:: p_e(2=>_). % This removes the bug!
+
+% X=foo_e(foo_e(_,Y:titi_e), p_e(@(Y)))?
+% X=foo_e(foo_e(_,Y:titi_e), p_e(Y))?
+
+e_1(foo_e(foo_e(_,Y:titi_e), p_e(@(Y)))).
+e_2(foo_e(foo_e(_,Y:titi_e), p_e(Y))).
+
+% e_1(X)?
+% e_2(X)?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

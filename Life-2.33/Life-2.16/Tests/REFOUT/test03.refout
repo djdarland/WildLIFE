@@ -1,0 +1,163 @@
+
+*** Yes
+> > 
+% '[' is undefined.
+
+% ']' is undefined.
+
+% '(' is undefined.
+
+% ')' is undefined.
+
+% '{' is undefined.
+
+% '}' is undefined.
+
+% '?' is undefined.
+
+% ':' is undefined.
+
+% 'end_of_file' is undefined.
+
+% '::' is undefined.
+
+% '< . >' is undefined.
+
+% '< ? >' is undefined.
+
+% '*** ERROR ***' is undefined.
+
+built_in <| @.
+list <| built_in.
+string <| built_in.
+real <| built_in.
+bool <| built_in.
+
+% 'stream' is undefined.
+
+% 'time' is undefined.
+
+% 'input_file' is undefined.
+
+% 'xf' is undefined.
+
+% 'yf' is undefined.
+
+% 'fx' is undefined.
+
+% 'fy' is undefined.
+
+% 'xfx' is undefined.
+
+% 'xfy' is undefined.
+
+% 'yfx' is undefined.
+
+% '<NULL PSI TERM>' is undefined.
+
+% '1' is undefined.
+
+% '2' is undefined.
+
+% '3' is undefined.
+
+% 'year' is undefined.
+
+% 'month' is undefined.
+
+% 'day' is undefined.
+
+% 'hour' is undefined.
+
+% 'minute' is undefined.
+
+% 'second' is undefined.
+
+% 'weekday' is undefined.
+
+% 'aborthook' is undefined.
+
+% 'event' is undefined.
+
+% 'keyboard_event' is undefined.
+
+% 'button_event' is undefined.
+
+% 'expose_event' is undefined.
+
+% 'destroy_event' is undefined.
+
+% 'configure_event' is undefined.
+
+% 'motion_event' is undefined.
+
+% 'enter_event' is undefined.
+
+% 'leave_event' is undefined.
+
+% 'misc_event' is undefined.
+
+% 'display' is undefined.
+
+% 'drawable' is undefined.
+
+% 'window' is undefined.
+
+% 'pixmap' is undefined.
+
+% 'graphic_context' is undefined.
+
+% 'display_list' is undefined.
+
+% '(' is undefined.
+
+% ')' is undefined.
+
+% '(' is undefined.
+
+% ')' is undefined.
+
+% '#' is undefined.
+
+% '=>' is undefined.
+
+% 'query' is undefined.
+
+% 'declaration' is undefined.
+
+% 'error' is undefined.
+
+% 'copy_rules' is undefined.
+
+% 'load_module' is undefined.
+
+% 'load_path' is undefined.
+
+% 'load_suffixes' is undefined.
+
+% 'loaded_file' is undefined.
+
+% 'precedence' is undefined.
+
+% 'kind' is undefined.
+
+% 'functions' is undefined.
+
+% 'preds' is undefined.
+
+% 'first_value' is undefined.
+
+% 'for' is undefined.
+
+% 'replacing' is undefined.
+
+% 'file' is undefined.
+
+% 'in_clauses' is undefined.
+
+% 'out_clauses' is undefined.
+
+% 'symbol' is undefined.
+
+*** Yes
+> 

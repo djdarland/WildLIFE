@@ -1,0 +1,61 @@
+
+*** Yes
+> > 
+*** Yes
+A = user#hello.
+--1> 
+*** Yes
+A = user#hello.
+secret--1> 
+*** Yes
+A = user#hello, V = "secret".
+secret----2> 
+*** Yes
+A = user#hello, V = "secret".
+secret----2> 
+*** Yes
+A = user#hello, V = "secret".
+secret----2> 
+*** Yes
+A = user#hello, V = "secret".
+secret----2> 
+*** Yes
+A = user#hello, 
+P = secret#prison(door => secret#guarded,secret#entrance => secret#tunnel), 
+V = "secret".
+
+secret------3> 
+*** Yes
+A = user#hello, 
+F = [secret#door,secret#entrance], 
+P = secret#prison(door => secret#guarded,secret#entrance => secret#tunnel), 
+V = "secret".
+
+secret--------4> 
+*** Yes
+A = user#hello, 
+F = [secret#door,secret#entrance], 
+P = secret#prison(door => secret#guarded,secret#entrance => secret#tunnel), 
+V = "secret".
+
+--------4> 
+*** Yes
+A = user#hello, 
+F = [secret#door,secret#entrance], 
+P = secret#prison(door => secret#guarded,secret#entrance => secret#tunnel), 
+V = "secret".
+
+--------4> 
+*** Yes
+A = user#hello, 
+F = [secret#door,secret#entrance], 
+P = secret#prison(door => secret#guarded,secret#entrance => secret#tunnel), 
+V = "secret".
+
+--------4> 
+*** No
+------3> 
+*** No
+----2> 
+*** No
+--1> 

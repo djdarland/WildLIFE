@@ -1,0 +1,25 @@
+2a3,26
+> > > 
+> get_struct reg(U1) plus/5
+> unify_variable reg(U2)
+> unify_variable reg(U3)
+> unify_variable reg(U4)
+> unify_variable reg(U5)
+> unify_const a
+> get_struct reg(U4) t/2
+> unify_const f
+> unify_const g
+> get_struct reg(U5) t/2
+> unify_value reg(U2)
+> unify_variable reg(U6)
+> get_struct reg(U6) g/1
+> unify_variable reg(U7)
+> 
+> 
+> get_const reg(U1) l
+> 
+> 
+> *** Yes
+> J = reg(@), V = reg(@), X = reg(@), Y = reg(@).
+> --1> 
+> *** No

@@ -1,0 +1,1367 @@
+8c8
+< 	set_extension(ms,dos)
+---
+> 	ms.dos
+12c12
+< 	set_extension(wild.fun,life)
+---
+> 	wild.life
+16c16
+< 	remove_path(/a/b/c/d)
+---
+> 	d
+20c20
+< 	remove_path(a)
+---
+> 	a
+27c27
+< testing: ad_remove_all(a,[a,b,c,a,d,e,a])
+---
+> testing: ad_remove_all(_A: a,[_A,b,c,_A,d,e,_A])
+43c43
+< testing: gen_make_set([a,repeat,c,e,repeat,d,a,repeat,b,c],test => ` ===)
+---
+> testing: gen_make_set([a,_A: repeat,c,e,_A,d,a,_A,b,c],test => ` ===)
+47c47
+< testing: gen_make_set([a,repeat,c,e,repeat,d,a,repeat,b,c],test => ` :==)
+---
+> testing: gen_make_set([a,_A: repeat,c,e,_A,d,a,_A,b,c],test => ` :==)
+66a67,1404
+> testing: term_size(_A: [a,b,c|_A])
+> 	6
+> 
+> *** Yes
+> > > 
+> *** Yes
+> X = @.
+> --1>  No manual entry for ,
+>  No manual entry for [
+>  No manual entry for ]
+>  No manual entry for {
+>  No manual entry for }
+>  No manual entry for .
+>  No manual entry for !
+>  No manual entry for :
+>  No manual entry for {}
+>  No manual entry for end_of_file
+>  No manual entry for =
+>  No manual entry for <-
+>  No manual entry for ->
+>  No manual entry for ;
+>  No manual entry for -
+>  No manual entry for :-
+>  No manual entry for `
+>  No manual entry for |
+>  No manual entry for @
+>  No manual entry for ::
+>  No manual entry for apply
+>  No manual entry for bool
+>  No manual entry for bool_pred
+>  No manual entry for built_in
+>  No manual entry for call_once
+>  No manual entry for disj
+>  No manual entry for false
+>  No manual entry for cond
+>  No manual entry for int
+>  No manual entry for cons
+>  No manual entry for nil
+>  No manual entry for string
+>  No manual entry for real
+>  No manual entry for succeed
+>  No manual entry for true
+>  No manual entry for time
+>  No manual entry for op
+>  No manual entry for load
+>  No manual entry for dynamic
+>  No manual entry for static
+>  No manual entry for delay_check
+>  No manual entry for non_strict
+>  No manual entry for input_file
+>  No manual entry for call_handler
+>  No manual entry for xf
+>  No manual entry for yf
+>  No manual entry for fx
+>  No manual entry for fy
+>  No manual entry for xfx
+>  No manual entry for xfy
+>  No manual entry for yfx
+>  No manual entry for assert
+>  No manual entry for asserta
+>  No manual entry for clause
+>  No manual entry for retract
+>  No manual entry for setq
+>  No manual entry for print_codes
+>  No manual entry for get
+>  No manual entry for put
+>  No manual entry for open_in
+>  No manual entry for open_out
+>  No manual entry for set_input
+>  No manual entry for set_output
+>  No manual entry for exists_file
+>  No manual entry for close
+>  No manual entry for simple_load
+>  No manual entry for put_err
+>  No manual entry for chdir
+>  No manual entry for write
+>  No manual entry for writeq
+>  No manual entry for pretty_write
+>  No manual entry for pretty_writeq
+>  No manual entry for write_canonical
+>  No manual entry for page_width
+>  No manual entry for print_depth
+>  No manual entry for parse
+>  No manual entry for read
+>  No manual entry for read_token
+>  No manual entry for ops
+>  No manual entry for write_err
+>  No manual entry for writeq_err
+>  No manual entry for nonvar
+>  No manual entry for var
+>  No manual entry for is_function
+>  No manual entry for is_predicate
+>  No manual entry for is_sort
+>  No manual entry for *
+>  No manual entry for +
+>  No manual entry for /
+>  No manual entry for //
+>  No manual entry for mod
+>  No manual entry for /\
+>  No manual entry for \/
+>  No manual entry for \
+>  No manual entry for >>
+>  No manual entry for <<
+>  No manual entry for floor
+>  No manual entry for ceiling
+>  No manual entry for exp
+>  No manual entry for log
+>  No manual entry for cos
+>  No manual entry for sin
+>  No manual entry for tan
+>  No manual entry for sqrt
+>  No manual entry for <
+>  No manual entry for =<
+>  No manual entry for >
+>  No manual entry for >=
+>  No manual entry for =\=
+>  No manual entry for =:=
+>  No manual entry for and
+>  No manual entry for or
+>  No manual entry for not
+>  No manual entry for xor
+>  No manual entry for ===
+>  No manual entry for \===
+>  No manual entry for features
+>  No manual entry for feature_values
+>  No manual entry for root_sort
+>  No manual entry for strip
+>  No manual entry for copy_pointer
+>  No manual entry for has_feature
+>  No manual entry for <<-
+>  No manual entry for &
+>  No manual entry for copy_term
+>  No manual entry for :=<
+>  No manual entry for :<
+>  No manual entry for :>=
+>  No manual entry for :>
+>  No manual entry for :==
+>  No manual entry for :><
+>  No manual entry for :\=<
+>  No manual entry for :\<
+>  No manual entry for :\>=
+>  No manual entry for :\>
+>  No manual entry for :\==
+>  No manual entry for :\><
+>  No manual entry for is_value
+>  No manual entry for is_number
+>  No manual entry for is_persistent
+>  No manual entry for children
+>  No manual entry for parents
+>  No manual entry for least_sorts
+>  No manual entry for subsort
+>  No manual entry for glb
+>  No manual entry for lub
+>  No manual entry for str2psi
+>  No manual entry for psi2str
+>  No manual entry for int2str
+>  No manual entry for asc
+>  No manual entry for chr
+>  No manual entry for eval
+>  No manual entry for evalin
+>  No manual entry for print_variables
+>  No manual entry for get_choice
+>  No manual entry for set_choice
+>  No manual entry for exists_choice
+>  No manual entry for <|
+>  No manual entry for :=
+>  No manual entry for abort
+>  No manual entry for halt
+>  No manual entry for repeat
+>  No manual entry for fail
+>  No manual entry for implies
+>  No manual entry for undo
+>  No manual entry for trace
+>  No manual entry for step
+>  No manual entry for verbose
+>  No manual entry for maxint
+>  No manual entry for cpu_time
+>  No manual entry for quiet
+>  No manual entry for real_time
+>  No manual entry for local_time
+>  No manual entry for statistics
+>  No manual entry for gc
+>  No manual entry for system
+>  No manual entry for getenv
+>  No manual entry for rlist
+>  No manual entry for residuate
+>  No manual entry for mresiduate
+>  No manual entry for tprove
+>  No manual entry for strcon
+>  No manual entry for strlen
+>  No manual entry for substr
+>  No manual entry for random
+>  No manual entry for initrandom
+>  No manual entry for set_module
+>  No manual entry for open_module
+>  No manual entry for public
+>  No manual entry for private
+>  No manual entry for display_modules
+>  No manual entry for trace_input
+>  No manual entry for substitute
+>  No manual entry for current_module
+>  No manual entry for module_name
+>  No manual entry for combined_name
+>  No manual entry for aborthook
+>  No manual entry for global
+>  No manual entry for persistent
+>  No manual entry for display_persistent
+>  No manual entry for alias
+>  No manual entry for private_feature
+>  No manual entry for split_double
+>  No manual entry for string_address
+>  No manual entry for deref_length
+>  No manual entry for argv
+>  No manual entry for public_symbols
+>  No manual entry for begin_raw
+>  No manual entry for get_raw
+>  No manual entry for put_raw
+>  No manual entry for end_raw
+>  No manual entry for in_raw
+>  No manual entry for window_flag
+>  No manual entry for reset_window_flag
+>  No manual entry for #
+>  No manual entry for $<
+>  No manual entry for $>
+>  No manual entry for $>=
+>  No manual entry for $\==
+>  No manual entry for =>
+>  No manual entry for ^
+>  No manual entry for \+
+>  No manual entry for $==
+>  No manual entry for $=<
+>  No manual entry for query
+>  No manual entry for declaration
+>  No manual entry for error
+>  No manual entry for abs
+>  No manual entry for append
+>  No manual entry for bagof
+>  No manual entry for beep
+>  No manual entry for bi_load_path
+>  No manual entry for copy_rules
+>  No manual entry for display_module_status
+>  No manual entry for genint
+>  No manual entry for inherited_modules
+>  No manual entry for init
+>  No manual entry for length
+>  No manual entry for life_ext
+>  No manual entry for list
+>  No manual entry for listing
+>  No manual entry for load_module
+>  No manual entry for load_path
+>  No manual entry for load_suffixes
+>  No manual entry for loaded_file
+>  No manual entry for map
+>  No manual entry for maprel
+>  No manual entry for max
+>  No manual entry for member
+>  No manual entry for min
+>  No manual entry for module
+>  No manual entry for nl
+>  No manual entry for nl_err
+>  No manual entry for open
+>  No manual entry for open_modules
+>  No manual entry for pause
+>  No manual entry for project
+>  No manual entry for reduce
+>  No manual entry for run
+>  No manual entry for str
+>  No manual entry for strval
+>  No manual entry for import
+>  No manual entry for bestof
+> In module: built_ins,
+> 
+>  reconsult(File1,File2,...) ?
+> 
+>   input: File1, File2,... : strings (file names)
+> 
+>   reconsult(File1,File2,...) is a facility offered to avoid restarting 
+>   Wild_Life each time you make a minor modification to a file. It works 
+>   properly in 90% of the cases, but there are some limitations. 
+> 
+>   1) reconsult may only be used with expand_load(true).
+>   2) reconsult retracts the definitions of the functions and predicates 
+>      occurring in the previous version of the file, then reloads the 
+>      file, reexecuting the queries and directives. 
+> 
+>   3) Warnings:
+> 
+>      - if a function or predicate was defined across multiple files,
+>        the whole definition is retracted, not only the rules that 
+>        appeared in the reconsulted file.
+>      - Sort declarations are never retracted. It means that the sort 
+>        hierarchy can be only be extended.
+>      - Some directives have non-retractable side-effects: 
+>        public,private,private_feature,dynamic,static,non_strict,
+>        strict,op,global,persistent.
+>      - If a query in the file asserts rules, these rules are not 
+>        retracted when reconsulting the file. This should anyway never 
+>        occur: use expanders, and end your rules with a dot.
+> 
+>   4) Files are identified by the complete name (path included) used 
+>      to load them. It means that you may have problems if you don't 
+>      use the same name to load and reconsult the file.
+>   
+> 
+>  No manual entry for import_clauses
+>  No manual entry for associate_expanders
+>  No manual entry for quiet_associate_expanders
+>  No manual entry for add_expanders_a
+>  No manual entry for add_expanders_z
+>  No manual entry for remove_expanders
+>  No manual entry for term_expansion
+>  No manual entry for term_xpand
+>  No manual entry for expand_load
+>  No manual entry for load_exp
+>  No manual entry for import_exp
+>  No manual entry for new_suffix
+> In module: built_ins,
+> 
+>  add_man(X,S) ?
+> 
+>   input: X is a symbol name, or a list of symbol names;
+>          S is a string containing the information describing X. 
+> 
+>   add_man stores the information describing its first argument. 
+>   
+> 
+> In module: built_ins,
+> 
+>  man X ?
+> 
+>   input: X is a symbol name.
+> 
+>   "man" reads information about X stored by "add_man",
+>   and writes it on the standard output. 
+>   
+> 
+>  No manual entry for acc_info
+>  No manual entry for pred_info
+>  No manual entry for pass_info
+>  No manual entry for clear_acc_def
+>  No manual entry for is_passed
+>  No manual entry for is_acc
+>  No manual entry for expandable
+>  No manual entry for get_acc_info
+>  No manual entry for get_pass_info
+>  No manual entry for list_of_accs
+>  No manual entry for dcg
+>  No manual entry for check_expansion_flag
+>  No manual entry for set_error_expander
+>  No manual entry for reset_error_expander
+>  No manual entry for non_expanded_warning
+>  No manual entry for std_expander
+>  No manual entry for comma
+>  No manual entry for clauses
+>  No manual entry for context
+>  No manual entry for code
+>  No manual entry for define
+>  No manual entry for macro
+>  No manual entry for -->
+>  No manual entry for :--
+>  No manual entry for grammars_expander
+>  No manual entry for accumulators_expander
+>  No manual entry for with
+>  No manual entry for is
+>  No manual entry for insert
+>  No manual entry for inv
+>  No manual entry for glob
+>  No manual entry for acc_auto
+>  No manual entry for in
+>  No manual entry for out
+>  No manual entry for set_C
+>  No manual entry for reset_C
+>  No manual entry for check_expansion
+>  No manual entry for meta
+> In module: expanders,
+> 
+> Head :-& Tail.
+> 
+>       This expander lets the user write a list traversal in one clause.
+> 
+>       ex:
+>       foo(X) :-& process(X).
+> 
+>          is translated into:
+> 
+>       foo([]) :- !.
+>       foo([X|Tail]) :-
+>           process(X),
+>           foo(Tail).
+> 
+>       The "list" argument is always the first one. The expanded predicate may
+>       have other arguments: they are passed to the recursive call.
+> 
+>       ex:
+>       add_feats(X,Term) :-& Term.X = @.
+> 
+>          is translated into:
+> 
+>       add_feats([]) :- !.
+>       add_feats([X|Tail],Term) :- Term.X = @, add_feats(Tail,Term).
+> 
+> 
+>       Rules may end with "." only if at least one option of expand load is 
+>       true. Otherwise, they must end with "?".
+> 
+>  No manual entry for pred_list_expander
+> In module: expanders,
+> 
+> Head ->& Tail.
+> 
+>       This expander maps 'Tail' on a list.
+> 
+>       ex:
+>       foo(X) ->& process(X).
+> 
+>          is translated into:
+> 
+>       foo([X|Tail]) -> [process(X)|foo(Tail)].
+>       foo([]) -> [].
+> 
+>       The "list" argument is always the first one. The expanded predicate may
+>       have other arguments: they are passed to the recursive call.
+> 
+>       ex:
+>       map_plus(X,Val) ->&  X + Val.
+> 
+>          is translated into:
+> 
+>       map_plus([X|Tail],Val) ->  [X+Val|map_plus(Tail,Val)].
+>       map_plus([]) -> [].
+> 
+>       Rules may end with "." only if at least one option of expand load is 
+>       true. Otherwise, they must end with "?".
+> 
+> In module: control,
+> 
+>  catch(X), throw(X): control utilities.
+> 
+>   throw(X) causes backtracking to the choice point created before the 
+>   call to catch(X).
+> 
+>   X is bound to a choice point. It may be convenient to use a global (non
+>   persistent) variable to store it.
+>   
+> 
+> In module: control,
+> 
+>  catch(X), throw(X): control utilities.
+> 
+>   throw(X) causes backtracking to the choice point created before the 
+>   call to catch(X).
+> 
+>   X is bound to a choice point. It may be convenient to use a global (non
+>   persistent) variable to store it.
+>   
+> 
+> In module: files,
+> 
+>  NewName = set_extension(FileName,Extension)?
+> 
+>   input: Filename:string, Extension:string
+> 
+>   output: NewName:string
+> 
+>   Changes the extension of a UNIX filename to 'Extension'.
+> 
+>   Examples:
+> 
+>   set_extension("charley.pl","lf")  -> "charley.lf"
+>   set_extension("long","hair") -> "long.hair"
+>   set_extension("~/a.b/c","d") -> "~/a.b/c.d"
+>   
+> 
+> In module: files,
+> 
+>  NewName = remove_extension(FileName)?
+> 
+>   input: Filename:string
+> 
+>   output: NewName:string
+> 
+>   removes the extension of a UNIX filename.
+> 
+>   Examples:
+> 
+>     remove_extension("charley.pl")  -> "charley"
+>     remove_extension("long") -> "long"
+>     remove_extension("~/a.b/c") -> "~/a.b/c"
+>   
+> 
+> In module: files,
+> 
+>  File = remove_path(CompleteName)?
+> 
+>   input: CompleteName:string
+> 
+>   output: File:string
+> 
+>   Removes the UNIX path from a file name.
+> 
+>   Examples:
+> 
+>   remove_path("/user/loud_mouth/noises/hello.au") -> "hello.au".
+>   remove_path("clap.au") -> "clap.au".
+>   
+> 
+> In module: io,
+> 
+>  writeln(args...):
+>        input: a variable numbers of arguments
+> 
+>        outputs its arguments on the standard output using "write", 
+>        followed by a new line.
+> 
+> In module: sets,
+> 
+>  gen_member(Elt,Set,test => Test) -> Res
+> 
+>        input: Elt: any psi term. 
+>               Set: a set of terms.
+>               Test: the test used for checking membership. Must be a boolean 
+>                     function of two arguments
+> 
+>        output: Res: a boolean.
+> 
+>        Tests if Elt belongs to set, using Test.
+> 
+> In module: sets,
+> 
+>  gen_union(Set1,Set2,test => Test) -> Set3
+> 
+>        input: Set1 and Set2: sets. 
+>               Test: the test used for checking equality between members of the
+>                     two sets. Must be a boolean function of two arguments
+> 
+>        output: Set3: a set.
+> 
+>        Set3 is Set1 union Set2
+> 
+> In module: sets,
+> 
+>  gen_make_set(List,test => Test) -> Set
+> 
+>        input: List: list;
+>               Test: the test used for checking equality between members of the
+>                     set. Must be a boolean function of two arguments
+> 
+>        output: Set: a set.
+> 
+>        Set is list with no redundant element.
+> 
+> In module: sets,
+> 
+>  gen_intersect(Set1,Set2,test => Test) -> Set3
+> 
+>        input: Set1 and Set2: sets. 
+>               Test: the test used for checking equality between members of the
+>                     two sets. Must be a boolean function of two arguments
+> 
+>        output: Set3: a set.
+> 
+>        Set3 is the intersection of the two sets Set1 and Set2
+> 
+> In module: sets,
+> 
+>  gen_difference(Set1,Set2,test => Test) -> Set3
+> 
+>        input: Set1 and Set2: sets. 
+>               Test: the test used for checking equality between members of the
+>                     two sets. Must be a boolean function of two arguments
+> 
+>        output: Set3: a set.
+> 
+>        Set3 is  Set1 - (Set1 inter Set2)
+> 
+> In module: sets,
+> 
+>  gen_member_and_rest(Elt,Set1,Rest,test => Test) -> Bool
+> 
+>        input: Set1,Rest: sets.
+>               Elt: any psi term.
+>               Test: the test used for checking equality between Elt and the
+>                     members of Set1.
+>                     Must be a boolean function of two arguments.
+> 
+>        output: Rest: a set.
+>                Bool: a boolean.
+> 
+>        Bool is true if Elt belongs to Set1, false otherwise. If Bool is true, 
+>        Rest is bound to a set containing the elements of Set1 minus the
+>        recognised occurrence of Elt.
+> 
+> In module: sets,
+> 
+>  gen_remove(Elt,Set,test => Test) -> Set2
+> 
+>        input: Elt: any psi term. 
+>               Set: a set of terms.
+>               Test: the test used for checking membership. Must be a boolean 
+>                     function of two arguments
+> 
+>        output: Set2: a set.
+> 
+>        Set2 is Set1 with no occurrence of Elt
+> 
+> In module: sets,
+> 
+>  gen_remove_all(Elt,Set,test => Test) -> Set2
+> 
+>        input: Elt: any psi term. 
+>               Set: a set of terms.
+>               Test: Any test (boolean function of two arguments)
+> 
+>        output: Set2: a set.
+> 
+>        Set2 is Set1 with no elt Elt2  such that Test(Elt,Elt2) is true
+> 
+> In module: sets,
+> 
+>  gen_insert(Elt,Set,test => Test) -> Set2
+> 
+>        input: Elt: any psi term. 
+>               Set: a set of terms.
+>               Test: the test used for checking membership. Must be a boolean 
+>                     function of two arguments
+> 
+>        output: Set2: a set.
+> 
+>        Elt is added to Set to form Set2 if it was not present in Set.
+> 
+> In module: sets,
+> 
+>  gen_order_included(Set1,Set2,test => Test) -> Res
+> 
+>        input: Set1,Set2: sets. 
+>               Test: the test used for checking membership. Must be a boolean 
+>                     function of two arguments
+> 
+>        output: Res: result
+> 
+>        Res is true(true) if Set1 is strictly included in Set2,
+>               true       if Set1 has the exactly the same elements as Set2,
+>               false otherwise.
+> 
+>        Set1 and Set2 are supposed to be ordered in the same way.
+> 
+> In module: sets,
+> 
+>  gen_included(Set1,Set2,test => Test) -> Res
+> 
+>        input: Set1,Set2: sets. 
+>               Test: the test used for checking membership. Must be a boolean 
+>                     function of two arguments
+> 
+>        output: Res: result
+> 
+>        Res is true(true) if Set1 is strictly included in Set2,
+>               true       if Set1 has the exactly the same elements as Set2,
+>               false otherwise.
+> 
+> In module: sets,
+> 
+>  gen_part(Set1,Set2,Inter,Rest1,Rest2,test => Test)
+> 
+>           input: Set1,Set2: sets;
+>                  Test: the test used for checking membership. Must be a boolean 
+>                        function of two arguments.
+>           output: Inter,Rest1,Rest2: sets
+> 
+>           Inter is the intersection of Set1 and Set2;
+>           Rest1 is Set1 \ Inter.
+>           Rest2 is Set2 \ Inter.
+> 
+> In module: sets,
+> 
+>  sort_member(Elt,Set) -> Res
+> 
+>        input: Elt: any psi term. 
+>               Set: a set of terms.
+> 
+>        output: Res: a boolean.
+> 
+>        Tests if Elt belongs to set, using :==.
+> 
+> In module: sets,
+> 
+>  sort_union(Set1,Set2) -> Set3
+> 
+>        input: Set1 and Set2: sets. 
+> 
+>        output: Set3: a set.
+> 
+>        Set3 is Set1 union Set2.
+>        The test that checks the identity of two elements is :== .
+> 
+> In module: sets,
+> 
+>  sort_make_set(Set1) -> Set2
+> 
+>        input: Set1: sets. 
+> 
+>        output: Set2: a set.
+> 
+>        Gets rid of redundant elements in Set1.
+>        The test that checks the identity of two elements is :== .
+> 
+> In module: sets,
+> 
+>  sort_intersect(Set1,Set2) -> Set3
+> 
+>        input: Set1 and Set2: sets. 
+> 
+>        output: Set3: a set.
+> 
+>        Set3 is the intersection of the two sets Set1 and Set2.
+>        The test that checks the identity of two elements is :== .
+> 
+> In module: sets,
+> 
+>  sort_difference(Set1,Set2) -> Set3
+> 
+>        input: Set1 and Set2: sets. 
+> 
+>        output: Set3: a set.
+> 
+>        Set3 is  Set1 - (Set1 inter Set2).
+>        The test that checks the identity of two elements is :== .
+> 
+> In module: sets,
+> 
+>  sort_member_and_rest(Elt,Set1,Rest) -> Bool
+> 
+>        input: Set1,Rest: sets.
+>               Elt: any psi term.
+> 
+>        output: Rest: a set.
+>                Bool: a boolean.
+> 
+>        Bool is true if Elt belongs to Set1, false otherwise. If Bool is true, 
+>        Rest is bound to a set containing the elements of Set1 minus the
+>        recognised occurrence of Elt.
+>        The test that checks the identity of two elements is :== .
+> 
+> In module: sets,
+> 
+>  sort_remove(Elt,Set) -> Set2
+> 
+>        input: Elt: any psi term. 
+>               Set: a set of terms.
+> 
+>        output: Set2: a set.
+> 
+>        Set2 is Set1 with no occurrence of Elt.
+>        The test that checks the identity of two elements is :== .
+> 
+> In module: sets,
+> 
+>  sort_insert(Elt,Set) -> Set2
+> 
+>        input: Elt: any psi term. 
+>               Set: a set of terms.
+>        output: Set2: a set.
+> 
+>        Elt is added to Set to form Set2 if no element of the same sort was
+>        present in Set.
+>        The test that checks the identity of two elements is :== .
+> 
+> In module: sets,
+> 
+>  sort_order_included(Set1,Set2) -> Res
+> 
+>        input: Set1,Set2: sets. 
+> 
+>        output: Res: result
+> 
+>        Res is true(true) if Set1 is strictly included in Set2,
+>               true       if Set1 has the exactly the same elements as Set2,
+>               false otherwise.
+> 
+>        Set1 and Set2 are supposed to be ordered in the same way.
+>        The test that checks the identity of two elements is :== .
+> 
+> In module: sets,
+> 
+>  sort_included(Set1,Set2) -> Res
+> 
+>        input: Set1,Set2: sets. 
+> 
+>        output: Res: result
+> 
+>        Res is true(true) if Set1 is strictly included in Set2,
+>               true       if Set1 has the exactly the same elements as Set2,
+>               false otherwise.
+>        The test that checks the identity of two elements is :== .
+> 
+> In module: sets,
+> 
+>  sort_part(Set1,Set2,Inter,Rest1,Rest2)
+> 
+>           input: Set1,Set2: sets;
+> 
+>           output: Inter,Rest1,Rest2: sets
+> 
+>           Inter is the intersection of Set1 and Set2;
+>           Rest1 is Set1 \ Inter.
+>           Rest2 is Set2 \ Inter.
+>           The test that checks the identity of two elements is :== .
+> 
+> In module: sets,
+> 
+>  ad_member(Elt,Set) -> Res
+> 
+>        input: Elt: any psi term. 
+>               Set: a set of terms.
+> 
+>        output: Res: a boolean.
+> 
+>        Tests if Elt belongs to set, using ===.
+> 
+> In module: sets,
+> 
+>  ad_union(Set1,Set2) -> Set3
+> 
+>        input: Set1 and Set2: sets. 
+> 
+>        output: Set3: a set.
+> 
+>        Set3 is Set1 union Set2.
+>        The test that checks the identity of two elements is === .
+> 
+> In module: sets,
+> 
+>  ad_make_set(Set1) -> Set2
+> 
+>        input: Set1: sets. 
+> 
+>        output: Set2: a set.
+> 
+>        Gets rid of redundant elements in Set1.
+>        The test that checks the identity of two elements is === .
+> 
+> In module: sets,
+> 
+>  ad_intersect(Set1,Set2) -> Set3
+> 
+>        input: Set1 and Set2: sets. 
+> 
+>        output: Set3: a set.
+> 
+>        Set3 is the intersection of the two sets Set1 and Set2.
+>        The test that checks the identity of two elements is === .
+> 
+> In module: sets,
+> 
+>  ad_difference(Set1,Set2) -> Set3
+> 
+>        input: Set1 and Set2: sets. 
+> 
+>        output: Set3: a set.
+> 
+>        Set3 is  Set1 - (Set1 inter Set2).
+>        The test that checks the identity of two elements is === .
+> 
+> In module: sets,
+> 
+>  ad_member_and_rest(Elt,Set1,Rest) -> Bool
+> 
+>        input: Set1,Rest: sets.
+>               Elt: any psi term.
+> 
+>        output: Rest: a set.
+>                Bool: a boolean.
+> 
+>        Bool is true if Elt belongs to Set1, false otherwise. If Bool is true, 
+>        Rest is bound to a set containing the elements of Set1 minus the
+>        recognised occurrence of Elt.
+>        The test that checks the identity of two elements is === .
+> 
+> In module: sets,
+> 
+>  ad_remove(Elt,Set) -> Set2
+> 
+>        input: Elt: any psi term. 
+>               Set: a set of terms.
+> 
+>        output: Set2: a set.
+> 
+>        Set2 is Set1 with no occurrence of Elt.
+>        The test that checks the identity of two elements is === .
+> 
+> In module: sets,
+> 
+>  ad_insert(Elt,Set) -> Set2
+> 
+>        input: Elt: any psi term. 
+>               Set: a set of terms.
+>        output: Set2: a set.
+> 
+>        Elt is added to Set to form Set2 if it was not already present in
+>        Set.
+>        The test that checks the identity of two elements is === .
+> 
+> In module: sets,
+> 
+>  ad_order_included(Set1,Set2) -> Res
+> 
+>        input: Set1,Set2: sets. 
+> 
+>        output: Res: result
+> 
+>        Res is true(true) if Set1 is strictly included in Set2,
+>               true       if Set1 has the exactly the same elements as Set2,
+>               false otherwise.
+> 
+>        Set1 and Set2 are supposed to be ordered in the same way.
+>        The test that checks the identity of two elements is === .
+> 
+> In module: sets,
+> 
+>  ad_included(Set1,Set2) -> Res
+> 
+>        input: Set1,Set2: sets. 
+> 
+>        output: Res: result
+> 
+>        Res is true(true) if Set1 is strictly included in Set2,
+>               true       if Set1 has the exactly the same elements as Set2,
+>               false otherwise.
+>        The test that checks the identity of two elements is === .
+> 
+> In module: sets,
+> 
+>  ad_part(Set1,Set2,Inter,Rest1,Rest2)
+> 
+>           input: Set1,Set2: sets;
+> 
+>           output: Inter,Rest1,Rest2: sets
+> 
+>           Inter is the intersection of Set1 and Set2;
+>           Rest1 is Set1 \ Inter.
+>           Rest2 is Set2 \ Inter.
+> 
+>           The test that checks the identity of two elements is === .
+> 
+> In module: sets,
+> 
+> pick(Term,List)?
+> 
+>          input: List
+>          output: Term, List
+> 
+>          Enumerates all the possible values of 'Term' in 'List' and removes
+>          them from the list.
+> 
+>          Useful when several variables have to have mutually different values
+>          from a single domain.
+> 
+> In module: lists,
+> 
+>  sort_remove_all(Sort,List) -> List2
+> 
+>   input: Sort: sort. 
+>          List: a list of terms.
+>   output: List2: a list.
+> 
+>   List2 is List1 with no element of sort Sort
+> 
+> In module: lists,
+> 
+>  ad_remove_all(Elt,List) -> List2
+> 
+>   input: Elt: any psi term. 
+>          List: a list of terms.
+>   output: List2: a list.
+> 
+>   List2 is List1 with no element unified with Elt
+> 
+> In module: lists,
+> 
+>  gen_quicksort(List,order => Order) -> List2.
+> 
+>   input: List: a list of elements.
+>          Order: an order on these elements (a boolean function).
+>   output: List2: a list.
+> 
+>   List2 is the ordered version of List1.
+> 
+> In module: structures,
+> 
+>  Structural Comparison Operators:
+> 
+>   +>=,+=<,+>,+<,+><,==,+\>=,+\=<,+\>,+\<,+\><,\==
+> 
+>   All these operators are of type xfx, precedence 600.
+>   They are implemented as boolean functions.
+> 
+>   They all have two arguments that may be any psi-term.
+>   They never residuate.
+> 
+>   The usual naming conventions for comparison operators are preserved
+>   here. For example:
+> 
+>   X +>= Y returns true if X is structurally greater or identical to Y,  
+>                   false otherwise.
+> 
+>   X == Y returns true if X is structurally identical to Y,   
+>                  false otherwise.
+>   
+> 
+> In module: structures,
+> 
+>  Structural Comparison Operators:
+> 
+>   +>=,+=<,+>,+<,+><,==,+\>=,+\=<,+\>,+\<,+\><,\==
+> 
+>   All these operators are of type xfx, precedence 600.
+>   They are implemented as boolean functions.
+> 
+>   They all have two arguments that may be any psi-term.
+>   They never residuate.
+> 
+>   The usual naming conventions for comparison operators are preserved
+>   here. For example:
+> 
+>   X +>= Y returns true if X is structurally greater or identical to Y,  
+>                   false otherwise.
+> 
+>   X == Y returns true if X is structurally identical to Y,   
+>                  false otherwise.
+>   
+> 
+> In module: structures,
+> 
+>  Structural Comparison Operators:
+> 
+>   +>=,+=<,+>,+<,+><,==,+\>=,+\=<,+\>,+\<,+\><,\==
+> 
+>   All these operators are of type xfx, precedence 600.
+>   They are implemented as boolean functions.
+> 
+>   They all have two arguments that may be any psi-term.
+>   They never residuate.
+> 
+>   The usual naming conventions for comparison operators are preserved
+>   here. For example:
+> 
+>   X +>= Y returns true if X is structurally greater or identical to Y,  
+>                   false otherwise.
+> 
+>   X == Y returns true if X is structurally identical to Y,   
+>                  false otherwise.
+>   
+> 
+> In module: structures,
+> 
+>  Structural Comparison Operators:
+> 
+>   +>=,+=<,+>,+<,+><,==,+\>=,+\=<,+\>,+\<,+\><,\==
+> 
+>   All these operators are of type xfx, precedence 600.
+>   They are implemented as boolean functions.
+> 
+>   They all have two arguments that may be any psi-term.
+>   They never residuate.
+> 
+>   The usual naming conventions for comparison operators are preserved
+>   here. For example:
+> 
+>   X +>= Y returns true if X is structurally greater or identical to Y,  
+>                   false otherwise.
+> 
+>   X == Y returns true if X is structurally identical to Y,   
+>                  false otherwise.
+>   
+> 
+> In module: structures,
+> 
+>  Structural Comparison Operators:
+> 
+>   +>=,+=<,+>,+<,+><,==,+\>=,+\=<,+\>,+\<,+\><,\==
+> 
+>   All these operators are of type xfx, precedence 600.
+>   They are implemented as boolean functions.
+> 
+>   They all have two arguments that may be any psi-term.
+>   They never residuate.
+> 
+>   The usual naming conventions for comparison operators are preserved
+>   here. For example:
+> 
+>   X +>= Y returns true if X is structurally greater or identical to Y,  
+>                   false otherwise.
+> 
+>   X == Y returns true if X is structurally identical to Y,   
+>                  false otherwise.
+>   
+> 
+> In module: structures,
+> 
+>  Structural Comparison Operators:
+> 
+>   +>=,+=<,+>,+<,+><,==,+\>=,+\=<,+\>,+\<,+\><,\==
+> 
+>   All these operators are of type xfx, precedence 600.
+>   They are implemented as boolean functions.
+> 
+>   They all have two arguments that may be any psi-term.
+>   They never residuate.
+> 
+>   The usual naming conventions for comparison operators are preserved
+>   here. For example:
+> 
+>   X +>= Y returns true if X is structurally greater or identical to Y,  
+>                   false otherwise.
+> 
+>   X == Y returns true if X is structurally identical to Y,   
+>                  false otherwise.
+>   
+> 
+> In module: structures,
+> 
+>  Structural Comparison Operators:
+> 
+>   +>=,+=<,+>,+<,+><,==,+\>=,+\=<,+\>,+\<,+\><,\==
+> 
+>   All these operators are of type xfx, precedence 600.
+>   They are implemented as boolean functions.
+> 
+>   They all have two arguments that may be any psi-term.
+>   They never residuate.
+> 
+>   The usual naming conventions for comparison operators are preserved
+>   here. For example:
+> 
+>   X +>= Y returns true if X is structurally greater or identical to Y,  
+>                   false otherwise.
+> 
+>   X == Y returns true if X is structurally identical to Y,   
+>                  false otherwise.
+>   
+> 
+> In module: structures,
+> 
+>  Structural Comparison Operators:
+> 
+>   +>=,+=<,+>,+<,+><,==,+\>=,+\=<,+\>,+\<,+\><,\==
+> 
+>   All these operators are of type xfx, precedence 600.
+>   They are implemented as boolean functions.
+> 
+>   They all have two arguments that may be any psi-term.
+>   They never residuate.
+> 
+>   The usual naming conventions for comparison operators are preserved
+>   here. For example:
+> 
+>   X +>= Y returns true if X is structurally greater or identical to Y,  
+>                   false otherwise.
+> 
+>   X == Y returns true if X is structurally identical to Y,   
+>                  false otherwise.
+>   
+> 
+> In module: structures,
+> 
+>  Structural Comparison Operators:
+> 
+>   +>=,+=<,+>,+<,+><,==,+\>=,+\=<,+\>,+\<,+\><,\==
+> 
+>   All these operators are of type xfx, precedence 600.
+>   They are implemented as boolean functions.
+> 
+>   They all have two arguments that may be any psi-term.
+>   They never residuate.
+> 
+>   The usual naming conventions for comparison operators are preserved
+>   here. For example:
+> 
+>   X +>= Y returns true if X is structurally greater or identical to Y,  
+>                   false otherwise.
+> 
+>   X == Y returns true if X is structurally identical to Y,   
+>                  false otherwise.
+>   
+> 
+> In module: structures,
+> 
+>  Structural Comparison Operators:
+> 
+>   +>=,+=<,+>,+<,+><,==,+\>=,+\=<,+\>,+\<,+\><,\==
+> 
+>   All these operators are of type xfx, precedence 600.
+>   They are implemented as boolean functions.
+> 
+>   They all have two arguments that may be any psi-term.
+>   They never residuate.
+> 
+>   The usual naming conventions for comparison operators are preserved
+>   here. For example:
+> 
+>   X +>= Y returns true if X is structurally greater or identical to Y,  
+>                   false otherwise.
+> 
+>   X == Y returns true if X is structurally identical to Y,   
+>                  false otherwise.
+>   
+> 
+> In module: structures,
+> 
+>  Structural Comparison Operators:
+> 
+>   +>=,+=<,+>,+<,+><,==,+\>=,+\=<,+\>,+\<,+\><,\==
+> 
+>   All these operators are of type xfx, precedence 600.
+>   They are implemented as boolean functions.
+> 
+>   They all have two arguments that may be any psi-term.
+>   They never residuate.
+> 
+>   The usual naming conventions for comparison operators are preserved
+>   here. For example:
+> 
+>   X +>= Y returns true if X is structurally greater or identical to Y,  
+>                   false otherwise.
+> 
+>   X == Y returns true if X is structurally identical to Y,   
+>                  false otherwise.
+>   
+> 
+> In module: structures,
+> 
+>  Structural Comparison Operators:
+> 
+>   +>=,+=<,+>,+<,+><,==,+\>=,+\=<,+\>,+\<,+\><,\==
+> 
+>   All these operators are of type xfx, precedence 600.
+>   They are implemented as boolean functions.
+> 
+>   They all have two arguments that may be any psi-term.
+>   They never residuate.
+> 
+>   The usual naming conventions for comparison operators are preserved
+>   here. For example:
+> 
+>   X +>= Y returns true if X is structurally greater or identical to Y,  
+>                   false otherwise.
+> 
+>   X == Y returns true if X is structurally identical to Y,   
+>                  false otherwise.
+>   
+> 
+> In module: terms,
+> 
+> add_features(List,Term)?
+> 
+>   input : Term: a psi-term;
+>           List: a list of feature names
+>   output: Term
+> 
+>   The features in List are added to Term
+> 
+> In module: terms,
+> 
+> share_features(List,Term1,Term2)?
+> 
+>   input : Term1,Term2: psi-terms;
+>           List: a list of feature names
+>   output: Term1,Term2
+> 
+>   After execution, the features in List are shared by Term1 and Term2
+> 
+> In module: terms,
+> 
+> remove_feature(Term,Feature)?
+> 
+>   input : Term,Feature
+>   output: Term
+> 
+>   Removes 'Feature' from 'Term' if present.
+> 
+> In module: terms,
+> 
+> N=term_size(Term)?
+> 
+>   input : Term
+>   output: N
+> 
+>   Counts the number of nodes in a given psi-term.
+> 
+> In module: times,
+> 
+> start_timer(?Timer,+String),print_timer(Timer),reset_timer(Timer)
+> 
+>          Simple timing utilities.
+> 
+>          Example use:
+> 
+>              start_timer(X,"CPU time is now:"),
+>              ...,
+>              print_timer(X),
+>              reset_timer(X),
+>              ...,
+>              print_timer(X).
+> 
+> In module: times,
+> 
+> start_timer(?Timer,+String),print_timer(Timer),reset_timer(Timer)
+> 
+>          Simple timing utilities.
+> 
+>          Example use:
+> 
+>              start_timer(X,"CPU time is now:"),
+>              ...,
+>              print_timer(X),
+>              reset_timer(X),
+>              ...,
+>              print_timer(X).
+> 
+> In module: times,
+> 
+> start_timer(?Timer,+String),print_timer(Timer),reset_timer(Timer)
+> 
+>          Simple timing utilities.
+> 
+>          Example use:
+> 
+>              start_timer(X,"CPU time is now:"),
+>              ...,
+>              print_timer(X),
+>              reset_timer(X),
+>              ...,
+>              print_timer(X).
+> 
+> 
+> *** Yes
+> X = @.
+> --1> 

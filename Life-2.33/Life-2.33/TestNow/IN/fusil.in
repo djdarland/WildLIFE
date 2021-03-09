@@ -1,0 +1,2 @@
+X=fusil(1),nl,write(X),fail ?
+X=fusil(2),nl,write(X),fail ?

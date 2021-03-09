@@ -1,0 +1,10 @@
+%% I get @ for A on last line instead of 123 in handbook
+fact(0) -> 1.
+fact(N:int) -> N * fact(N - 1).
+A=fact(B)?
+B=real?
+B=5?
+
+A=123,B=6?
+
+

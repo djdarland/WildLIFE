@@ -1,0 +1,6 @@
+
+*** Yes
+> > > 
+*** Yes
+G = m_cons(@,m_cons(@,m_cons(@,m_nil))).
+--1> 

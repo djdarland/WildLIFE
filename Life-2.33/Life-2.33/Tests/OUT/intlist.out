@@ -1,0 +1,18 @@
+
+*** Yes
+> > 
+*** Yes
+X = [1,2,3].
+--1> 
+*** Yes
+X = int_cons(1,int_cons(2,int_cons(3,int_nil))).
+----2> 
+*** Yes
+X = int_cons(1,int_cons(2,int_cons(3,int_nil))), Y = 3.
+------3> 
+*** Yes
+X = int_cons(_A: 1,int_cons(_B: 2,int_cons(_C: 3,int_nil))), 
+Y = 3, 
+Z = [_A,_B,_C|X].
+
+--------4> 

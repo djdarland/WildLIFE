@@ -1,0 +1,287 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Copyright 1992 Digital Equipment Corporation
+% All Rights Reserved
+%
+% A self-contained LIFE program for solving the N-queens problem,
+%    including an X interface for showing solutions.
+%
+%
+% The N-queens problem:
+%    place N queens on an NxN chessboard so that no two queens
+%    are in the same row, or same column, or same diagonal.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%
+% Notes:
+%
+% 1. Type "queens?" to start the program.
+%
+% 2. By default, the program finds solutions for the 8-queens problem.
+%    To find solutions for a different number of queens, for example
+%    4 queens, type "queens(4)?".
+%
+% 3. The program will stop after drawing the X-window and the chessboard
+%    before finding the first solution. Use backtracking thereafter to
+%    get each solution.
+%
+% 4. Backtracking may be done either in the usual manner by typing ";"
+%    at the Wild_LIFE prompt, or else by clicking any mouse button or
+%    typing any key while the pointer is in the X-window.
+%
+% 5. The program employs a "generate-then-test" strategy, that is,
+%    a position for each queen is generated then tested against the
+%    positions of already placed queens. Therefore, this program does
+%    not differ logically from its straight Prolog counterpart.
+%
+% 6. On an 8x8 board, the program draws a capital Greek letter Psi for
+%    a queen. On any other size board, the program draws a solid oval.
+%    If your system has the MIT chess font "chs-s50", you can obtain a
+%    real queen on an 8x8 board by making the following two changes:
+%    a) change the string
+%    "-*-symbol-*-*-*-*-*-240-*-*-*-*-*-*"
+%    to be "chs-s50" in the call: setq_font (chessfont, "...")
+%    b) change the string "Y" to be "b"
+%	in the call: setq (queensymbol, "Y")
+%
+
+module("queens") ?
+public(queens) ?
+
+import("xtools") ?
+
+queens :-
+	(
+	    C1 = get_choice,
+	    same_size(L:[push_button(text => "quit",
+			             action => (set_choice(C1),fail)),
+			 text_field_button(offset => -5,text => N:"8",
+			                   action => t_act(Choice))]),
+            create_box(Panel:panel(title => "Queens") containing
+	                                              vl_list L),
+	    play_queens(Choice,N,Panel)
+	;
+	    succeed
+	).
+
+t_act(Choice) :- 
+	set_choice(Choice),
+	fail.
+
+play_queens(Choice,N,Panel) :-
+	(
+	    Choice <- get_choice,
+	    parse(N) = M,
+	    draw_window (M,Panel,QueensWindow), 
+	    (
+		succeed	%% stop before finding the first solution
+	    ;
+	        place_queens ([], interval(1,M), interval(1,M), QueensWindow)
+	    )
+	;
+	    play_queens(Choice,N,Panel,QueensWindow)
+	).
+
+
+%
+%    Draw the board
+%    
+
+draw_board(Window) :-
+xFillRectangle(Window,X:scale(0),X,L,L,color => q_white),
+	draw_squares (0,Window),
+	xDrawRectangle (Window,
+			U : unit, U,
+			L : scale(n-1), L,
+			linewidth => 8),
+	xDrawRectangle (Window,
+			U, U,
+			L, L,
+			linewidth => 1,
+			color => q_white).
+
+draw_squares (n) :- !.
+draw_squares (Y,Window)    :-
+	(
+	    draw_row ((Y+1) mod 2,Y,Window),fail
+	;
+	    draw_squares (Y+1,Window)
+	).
+
+draw_row ({N:n;N+1}) :- !.
+draw_row (X,Y,Window) :-
+	xFillRectangle (Window,
+			scale(X), scale(Y),
+			U:unit, U,
+			color => q_black),
+	draw_row (X+2,Y,Window).
+
+
+
+
+%
+%    Place a queen: take an empty row X and choose an empty column Y.
+%    Check whether this X and Y clashes on a diagonal with any of the
+%    already placed queens. If no clash, draw a queen at X,Y and repeat the
+%    procedure with the other empty rows and columns. If there is a clash,
+%    then backtrack first through the values for Y then through the values
+%    for X.
+%
+
+place_queens (Queens, [], []).
+place_queens (Queens, [X|Rows], Cols, Window) :-
+	choose_one (Y, from => Cols, rest => RestCols),
+	check_diagonals (X, Y, Queens),
+	draw_queen (X,Y,Window),
+	place_queens ([(X,Y)|Queens], Rows, RestCols,Window).
+
+
+
+
+check_diagonals (X, Y, []) :- !.
+check_diagonals (X, Y, [(X1,Y1)|Queens]) :-
+        X+Y =\= X1+Y1,
+        X-Y =\= X1-Y1,
+	check_diagonals (X, Y, Queens).
+
+
+
+
+%
+%    Draw a queen: the first disjunction draws a queen at row X, column Y;
+%    the second disjunction erases her.
+%    
+
+draw_queen (X,Y,Window) :-
+	(
+	  cond (N:n =:= 8,
+		xDrawString (Window,
+			     X1 : (scale(A:(X-1)) + 0.22 * U:unit),
+			     Y1 : (scale(B:(Y-1)) + 0.65 * U),
+			     queensymbol,
+			     font  => ChessFont:chessfont,
+			     color => QueenColor:queencolor),
+		xFillOval   (Window,
+			     X2 : (scale(A) + O:offset),
+			     Y2 : (scale(B) + O),
+			     H  : (unit - 2*O),
+			     H,
+			     color => QueenColor))
+	;
+	  cond (N =:= 8,
+		xDrawString (Window,
+			     X1,
+			     Y1,
+			     queensymbol,
+			     font  => ChessFont,
+			     color => BoardColor:boardcolor(A,B)),
+		xFillOval   (Window,
+			     X2,
+			     Y2,
+			     H,
+			     H,
+			     color => BoardColor)),
+	  fail
+	).
+
+
+
+
+
+%
+%    Global variables and auxiliary routines:
+%	- various parameters for the size of the board and queens
+%         depending on the number of queens (n)
+%       - the color of the board at row X, column Y.
+%	- a distribution of integers in a given interval
+%	  biased towards the center of the interval.
+%	- a nondeterministic routine for choosing an element from a list.
+%
+
+persistent(n) ?
+
+global(offset <- 5) ?
+unit      -> floor(2 * (100 / S:n * log(1+S))).
+scale (N) -> unit * (N+1).
+
+
+boardcolor (X,Y) ->
+	cond (((X+Y) mod 2) =:= 0, q_white, q_black).
+
+
+interval (From, To) ->
+	cond (From < To,
+	      append (interval(From+1,To-1), [From,To]),
+	      cond (From =:= To, [From], [])).
+    
+
+choose_one (from => []) :- !, fail.
+choose_one (H, from => [H|T], rest => T).
+choose_one (X, from => [H|T], rest => [H|L]) :- 
+	choose_one (X, from => T, rest => L).
+
+
+
+
+%
+%    The X interface:
+%	- draw the window
+%       - get the colors of the board and queens, and the chess font
+%	- the event handler
+%
+
+global(event_mask <- xExposureMask \/ xButtonPressMask \/ xKeyPressMask) ?
+
+resize_window(Window,NW,NH) :-
+	xResizeWindowPixmap(Window,NW,NH),
+	xSetWindowWidth(Window,NW),
+	xSetWindowHeight(Window,NH).
+
+
+draw_window (N,Panel,QueensWindow) :-
+	n <<- N,
+	xCreateWindow (default_display,
+		       X0:(Panel.width + 10),5,
+		       W:scale(N + 1),W,
+		       QueensWindow,
+		       color => xWhite,
+		       border => 0,
+		       parent => Window:(Panel.window),
+		       eventmask => event_mask),
+	resize_window(Window, X0 + W, max(W,Panel.height)),
+	draw_board(QueensWindow),	    
+	event_handler(QueensWindow).
+
+%
+%    If a keyboard or mouse event arrives, the event_handler fails,
+%    making the program backtrack.
+%
+
+event_handler(Window) -> 
+	handle_event (xGetEvent (Window,
+			         eventmask => event_mask),
+		      Window).
+
+handle_event (expose_event,Window) -> true |
+	xRefreshWindow (Window), event_handler(Window).
+
+
+
+
+%
+%    Actions executed when the file is loaded
+%
+
+n <<- 8 ?
+
+global(q_white <- new_color(180, 224, 201)),
+global(q_black <- new_color(19, 123, 103) ),
+global(queencolor <- new_color(204, 125, 50)),
+global(chessfont <- new_font("-*-symbol-*-*-*-*-*-240-*-*-*-*-*-*")),
+global(queensymbol <- "Y") ?
+			%% If your system has the MIT chess font "chs-s50"
+			%% installed, change the previous two lines to
+			%%	load_font(Chessfont, "chs-s50"),
+			%%	global(queensymbol <- "b").

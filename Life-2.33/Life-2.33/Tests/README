@@ -1,0 +1,89 @@
+Richard Meyer							Feb. 15th 1994
+
+
+
+
+			Test-Suite for Wild-LIFE
+			========================
+
+
+-----------------------------------------------------------------------------
+Revision 6/15/2016 Dennis J. Darland
+
+I have added work.sh, check_edit_all, check_edit and editdiffs.sh
+
+Run the script check_edit_all (derived from check_all), it generates 
+editdiffs.sh which in combination with the others permits easier inspection of 
+the differences in the various files. I have not gotten very far in examining 
+the differences. I had mistakenly thought .lf files should be deleted, but
+empty .lf file with .in input are signicant. They have been restored.
+
+It is assumed wild_life is in ~/binx
+-------------------------------------------------------------------------------
+
+
+
+
+
+
+If you want to check that the Wild-LIFE interpreter has been correctly compiled
+and conforms to expected behaviour, then run the script: 'check_all'.  This will
+generate the log file 'check.log' containing a list of all test files and
+which ones failed.
+
+The test-suite consists of more than 300 LIFE programs of all sizes and
+complexities.  The "check" script runs the programs and compares both the
+output and error messages to the 'reference' data. This suite is run each time
+a change is made to the system to ensure that nothing has been broken or that
+all differences in behaviour are explainable and correct.
+
+The largest failing of the test suite is that it cannot check programs that
+use the X interface.
+
+Certain files may have unavoidably different output depending on your system.
+In most cases this is benign. We have made sure that no absolute path names
+or CPU times are compared.  Notable differences are:
+
+  - Floating point calculations: NaN, Infinity etc... may not be supported
+    or may be displayed differently (for example, as NAN or INF or Inf).
+
+  - Word size: on Alpha (and other 64-bit CPUs) some of the tests which check
+    the encoding of the type hierarchy produce codes of different lengths. This
+    test-suite is configured for a 32-bit system.
+
+  - Differences due to asynchrony between the stdin input to the tests (which
+    is echoed to stdout) and the stdout output from the tests.  This
+    occasionally shows itself as slight reordering of the characters in the
+    output.
+
+As a result, do not be surprised if the following tests result in different
+output on an Alpha:
+
+  babcode.lf
+  caret.lf
+  t.lf
+  t8104.lf
+  z_gctoken1.lf
+
+
+Directories & files:
+
+LF		: source of test programs
+IN		: terminal input to test programs
+
+OUT		: stdout of last test run
+REFOUT		: reference output
+REFDIFF		: difference between output and reference output
+
+ERR		: stderr of last run
+REFERR		: reference error output
+ERRDIFF		: difference between error output and reference error output
+
+FILES		: auxiliary files used by certain tests
+
+check		: script to run one or several tests
+approve		: script to approve the output of a test
+showdiff	: script to display the differences graphically
+check_all	: script to run all the tests
+check.log	: log of all tests (created by "check_all")
+README		: don't read this file if you don't have an occurs-check ;o)

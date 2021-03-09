@@ -1,0 +1,191 @@
+
+*** Yes
+--1> 
+*** No
+> 
+blic(main) ?
+
+D = getenv("SLDIR"), chdir(D) ?
+
+load("c_public_terms")?
+load("sl_public_terms")?
+load("sl_utils")?
+load("sl_parser")?
+
+open("c_public_terms")?
+open("sl_public_terms")?
+open("sl_parser")?
+open("sl_utils")?
+load("rl_overload")?
+
+'*rule*'("variable_length",
+         @,
+         @) :- is_list_member("declaration",
+                              @), (parse_mode :== prefix, @ :== local_declaration), !, '*rule_name*' <<- ref("variable_length"), @ = @ .scope, @ = @ .left_brace, @ = @ .right_brace,(@ .file :\== @ .file, !, error_msg("Braces around a block must be in the same file",
+                                                                                                                                                                                                                         @) ; strlen(@ .name .id) =< sqrt(@ .line - @ .line), !, error_msg("Variable name is too short",
+                                                                                                                                                                                                                                                                                           @ .name) ; succeed) ; succeed.
+
+'*rule*'("extern_in_c_file",
+         @,
+         @) :- is_list_member("declaration",
+                              @), (parse_mode :== prefix, @ :== external_declaration), !, '*rule_name*' <<- ref("extern_in_c_file"),((@ .type .store_class :== extern, file_extension(@ .name .file) :== "c"), !, error_msg("No declaration in a .c file accessed out of the .c file",
+                                                                                                                                                                                                                            @ .name) ; succeed) ; succeed.
+
+'*rule*'("block_alignment",
+         @,
+         @) :- is_list_member("alignment",
+                              @), ((parse_mode :== prefix, is_not_token(@)),((@ :== if, ! ; @ :== while), ! ; @ :== for)), !, '*rule_name*' <<- ref("block_alignment"), @ = @,(@ :== {while;
+                                                                                                                                                                                      for}, !, @ = @ .keyword, @ = @ .body,(@ :== block, !, test_alignment(@,
+                                                                                                                                                                                                                                                           @) ; succeed) ; @ :== if, !, @ = @ .keyword, @ = @ .then_body, (@ :== block, !, test_alignment(@,
+                                                                                                                                                                                                                                                                                                                                                          @) ; succeed), @ = @ .else_body,(@ :\== nothing, !, @ = @ .else_keyword,(@ :== block, !, test_alignment(@,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                  @) ; succeed) ; succeed) ; succeed) ; succeed.
+
+test_alignment(@,
+               @) :- @ = @ .left_brace, @ = @ .right_brace, (@ .white_spaces :\== " ", !, error_msg("There must be one space between brace and condition",
+                                                                                                    @) ; succeed),(@ .column :\== @ .column, !, error_msg("Brace must be aligned with first character of instruction",
+                                                                                                                                                          @) ; succeed).
+
+'*rule*'("nested_typedef",
+         @,
+         @) :- is_list_member("type_definition",
+                              @), (parse_mode :== prefix, @ :== type_definition), !, '*rule_name*' <<- ref("nested_typedef"), @ = @ .type,((@ :== protected_type, @ .type :== protected_type), !, error_msg("Only one level of nested parentheses allowed around type definitions",
+                                                                                                                                                                                                            @ .name) ; succeed) ; succeed.
+
+'*rule*'("contiguous_nested_typedef",
+         @,
+         @) :- is_list_member("type_definition",
+                              @), (parse_mode :== prefix, @ :== type_definition), !, '*rule_name*' <<- ref("contiguous_nested_typedef"), @ = @ .type,(((@ :== protected_type, @ .type :== protected_type), @ .left_parenthesis .next :== "("), !, error_msg("Only one level of contiguous nested parentheses allowed around type definitions",
+                                                                                                                                                                                                                                                            @ .name) ; succeed) ; succeed.
+
+'*rule*'("assignment_style",
+         @,
+         @) :- is_list_member("operator",
+                              @), (parse_mode :== prefix, is_assignment_operator(@)), !, '*rule_name*' <<- ref("assignment_style"),((@ .white_spaces :\== " ", ! ; @ .next .white_spaces :\== " "), !, error_msg("Assignment operators must be preceded and followed by a single space",
+                                                                                                                                                                                                                 @) ; succeed) ; succeed.
+
+'*rule*'("adjacent_operators",
+         @,
+         @) :- is_list_member("operator",
+                              @), ((parse_mode :== prefix, is_operator(@)), is_token(@)), !, '*rule_name*' <<- ref("adjacent_operators"),((is_operator(@ .previous), @ .white_spaces :== ""), !, error_msg("Two operators cannot be adjacent",
+                                                                                                                                                                                                           @) ; succeed) ; succeed.
+
+'*rule*'("uninitialized_variable",
+         @,
+         @) :- is_list_member("semantics",
+                              @), is_expression(@), !, '*rule_name*' <<- ref("uninitialized_variable"), @ = @ .mode, (parse_mode :== prefix, !, @ = @,(@ :== special, !,(@ .operator :== "?", !, verify_init(@ .condition), verify_init(@ .then), verify_init(@ .else) ; @ :== protected_expression, !, verify_init(@ .expression) ; @ :== function_call, !, verify_init(@ .call), verify_init_args(@ .arguments .first_argument) ; @ :== array_reference, !, verify_init(@ .array), verify_init(@ .index) ; verify_init(@ .expression)) ; @ :== infix, !, @ = base_expression(@ .left_expression), ((@ .operator :== "=", @ :== identifier), !, set_feature(uninit_marked,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             true,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             @) ; verify_init(@ .left_expression)), verify_init(@ .right_expression) ; @ :== {prefix;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              postfix}, !, verify_init(@ .expression) ; succeed) ; succeed),(((parse_mode :== postfix, @ :== infix), @ .operator :== "="), !, @ = base_expression(@ .left_expression),(@ :== identifier, !, @ = declaration_of(@ .id),(@ :== local_declaration, !, set_initialized_variable(@ .id,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            current_instruction .scope) ; succeed) ; succeed) ; succeed) ; succeed.
+
+verify_init(@) :- @ :== identifier, !,(has_feature(uninit_marked,
+                                                   @), !, succeed ; @ = first_mention_of(@ .id),(@ :== nothing, !, error_msg("Variable may be uninitialized",
+                                                                                                                             @) ; succeed)) ; succeed.
+
+verify_init_args(@) :- @ :\== nothing, !, verify_init(@ .expression), verify_init_args(@ .next) ; succeed.
+
+set_initialized_variable(@,
+                         @) :- @ = @,(@ :== then_body, !, @ = @ .instruction, (has_feature(then_init_variables,
+                                                                                           @), !, succeed ; set_feature(then_init_variables,
+                                                                                                                        variables,
+                                                                                                                        @)), set_feature(@,
+                                                                                                                                         init,
+                                                                                                                                         @ .then_init_variables) ; @ :== else_body, !, @ = @ .instruction, (has_feature(else_init_variables,
+                                                                                                                                                                                                                        @), !, succeed ; set_feature(else_init_variables,
+                                                                                                                                                                                                                                                     variables,
+                                                                                                                                                                                                                                                     @)), set_feature(@,
+                                                                                                                                                                                                                                                                      init,
+                                                                                                                                                                                                                                                                      @ .else_init_variables) ; @ :== {for;
+                                                                                                                                                                                                                                                                                                       {while;
+                                                                                                                                                                                                                                                                                                        do_while}}, !, (has_feature(init_variables,
+                                                                                                                                                                                                                                                                                                                                    @), !, succeed ; set_feature(init_variables,
+                                                                                                                                                                                                                                                                                                                                                                 variables,
+                                                                                                                                                                                                                                                                                                                                                                 @)), set_feature(@,
+                                                                                                                                                                                                                                                                                                                                                                                  init,
+                                                                                                                                                                                                                                                                                                                                                                                  @ .init_variables) ; @ :== block, !, @ = @ .block_declarations .local_declarations,(has_feature(@,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  @), !, set_feature(init,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     true,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @ .@) ; set_initialized_variable(@,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      @ .scope)) ; @ :== {nothing;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          function_body}, !, succeed ; set_initialized_variable(@,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                @ .scope) ; succeed).
+
+'*rule*'("propagate_init",
+         @,
+         @) :- is_list_member("semantics",
+                              @), ((@ :== if, is_not_token(@)), parse_mode :== postfix), !, '*rule_name*' <<- ref("propagate_init"), @ = intersect_init_variables(@), set_initialized_variables(@,
+                                                                                                                                                                                                @ .scope) ; succeed.
+
+set_initialized_variables(@,
+                          @) :- @ :== [], !, succeed ; set_initialized_variable(@ .first_element,
+                                                                                @), set_initialized_variables(@ .tail,
+                                                                                                              @).
+
+intersect_init_variables(@) -> @ | (has_feature(then_init_variables,
+                                                @), !,(has_feature(else_init_variables,
+                                                                   @), !, @ = intersection(features_list(@ .then_init_variables),
+                                                                                           features_list(@ .else_init_variables)) ; @ = features_list(@ .then_init_variables)) ; has_feature(else_init_variables,
+                                                                                                                                                                                             @), !, @ = features_list(@ .else_init_variables) ; @ = []), cond(@ :== @,
+                                                                                                                                                                                                                                                              @ = unknown).
+
+intersection(@,
+             @) -> @ | (@ :== [], !, @ = [] ; @ = @ .first_element, @ = intersection(@ .tail,
+                                                                                     @),(member(@,
+                                                                                                @), !, @ = newlist(@,
+                                                                                                                   @) ; @ = @)), cond(@ :== @,
+                                                                                                                                      @ = unknown).
+
+base_expression(@) -> @ | (@ :== protected_expression, !, @ = base_expression(@ .expression) ; @ = @), cond(@ :== @,
+                                                                                                            @ = unknown).
+
+is_expression(@) -> @ | (has_feature(mode,
+                                     @), !, @ = true ; @ = false), cond(@ :== @,
+                                                                        @ = unknown).
+
+first_mention_of(@) -> @ | (current_block :== nothing, !, @ = external ; @ = search_mention_of(@,
+                                                                                               current_block)), cond(@ :== @,
+                                                                                                                     @ = unknown).
+
+search_mention_of(@,
+                  @) -> @ | (@ = @,(@ :== block, !, @ = @ .block_declarations .local_declarations,(has_feature(@,
+                                                                                                               @), !,((@ .@ .initialization :\== nothing, ! ; has_feature(init,
+                                                                                                                                                                          @ .@)), !, @ = init ; @ = nothing) ; @ = search_mention_of(@,
+                                                                                                                                                                                                                                     @ .scope)) ; @ :== then_body, !, @ = @ .instruction,((has_feature(then_init_variables,
+                                                                                                                                                                                                                                                                                                       @), has_feature(@,
+                                                                                                                                                                                                                                                                                                                       @ .then_init_variables)), !, @ = init ; @ = search_mention_of(@,
+                                                                                                                                                                                                                                                                                                                                                                                     @ .scope)) ; @ :== else_body, !, @ = @ .instruction,((has_feature(else_init_variables,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                       @), has_feature(@,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                       @ .else_init_variables)), !, @ = init ; @ = search_mention_of(@,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @ .scope)) ; @ :== {for;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         {while;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          do_while}}, !,((has_feature(init_variables,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      @), has_feature(@,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      @ .init_variables)), !, @ = init ; @ = search_mention_of(@,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               @ .scope)) ; @ :== {nothing;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   function_body}, !, @ = external ; search_mention_of(@,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       @ .scope) ; succeed)), cond(@ :== @,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   @ = unknown).
+
+declaration_of(@) -> @ | (current_block :== nothing, !, @ = nothing ; @ = search_declaration(current_block .block_declarations,
+                                                                                             @)), cond(@ :== @,@ = unknown).
+
+search_declaration(@,
+                   @) -> @ | ((@ :== block_declarations, !, @ = @ .local_declarations ; @ = nothing),(@ :== nothing, !, @ = nothing ; has_feature(@,
+                                                                                                                                                  @), !, @ = @ .@ ; @ = search_declaration(@ .parent_declarations,
+                                                                                                                                                                                           @))), cond(@ :== @,
+                                                                                                                                                                                                      @ = unknown).
+
+M : main :- 
+                  sl_parse(strip(M)),writeln, writeln("Style checking : "), writeln("----------------"), writeln, scan_tree({(operator, type_definition, alignment, declaration, variable_length)}), writeln, writeln("Uninitialized variables : "), writeln("-------------------------"), writeln, scan_tree(semantics).
+
+'*superlint_rules*' <<- ["variable_length",
+ "extern_in_c_file",
+ "block_alignment",
+ "nested_typedef",
+ "contiguous_nested_typedef",
+ "assignment_style",
+ "adjacent_operators",
+ "uninitialized_variable",
+ "propagate_init",
+ "main"] ?
+

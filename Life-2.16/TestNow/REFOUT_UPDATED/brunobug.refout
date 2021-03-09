@@ -1,0 +1,123 @@
+
+*** Yes
+> > 
+*** Yes
+X = @(@(titi(arg => 1),Y),pb(action => @(Y))), Y = titi(arg => 1).
+--1> 
+*** No
+> 
+*** Yes
+X = @(@(@,Y),pb(action => @(Y))), Y = titi(arg => 1).
+--1> 
+*** No
+> 
+*** Yes
+X = pair(t(_A: titi_a(1)),s_a(@(_A))).
+--1> 
+*** No
+> 
+*** Yes
+B = @(Y), X = pair(t(Y),s_b(B)), Y = titi_b(1).
+--1> 
+*** No
+> 
+*** Yes
+X = pair(t(Y),s_b(Y)), Y = titi_b(1).
+--1> 
+*** No
+> 
+*** Yes
+X = pair(t(_A: titi_b(1)),s_b(@(_A))).
+--1> 
+*** No
+> 
+*** Yes
+X = pair(t(_A: titi_b(1)),s_b(_A)).
+--1> 
+*** No
+> 
+*** Yes
+A = @, B = @(Y), X = @(@(A,Y),p_c(B)), Y = titi_c(1).
+--1> 
+*** No
+> 
+*** Yes
+A = @, X = @(@(A,Y),p_c(Y)), Y = titi_c(1).
+--1> 
+*** No
+> 
+*** Yes
+A = @, B = @(Y), X = @(A,Y), Y = titi_c(1), Z = p_c(B).
+--1> 
+*** No
+> 
+*** Yes
+A = @, B = @(Y), X = @(A,Y), Y = titi_c(1), Z = p_c(B).
+--1> 
+*** No
+> 
+*** Yes
+X = @(p_c(@(Y)),@(@,Y)), Y = titi_c(1).
+--1> 
+*** No
+> 
+*** Yes
+X = @(p_c(@(Y)),@(@,@(Y))), Y = titi_c(1).
+--1> 
+*** No
+> 
+*** Yes
+X = @(p_c(Y),@(@,Y)), Y = titi_c(1).
+--1> 
+*** No
+> 
+*** Yes
+X = @(@(@,Y),p_d(@(@(Y)))), Y = titi_d(1).
+--1> 
+*** No
+> 
+*** Yes
+X = @(@(@,Y),p_d(@(Y))), Y = titi_d(1).
+--1> 
+*** No
+> 
+*** Yes
+X = @(@(@,Y),p_d(Y)), Y = titi_d(1).
+--1> 
+*** No
+> 
+*** Yes
+X = @(@(@,_A: titi_d(1)),p_d(@(@(_A)))).
+--1> 
+*** No
+> 
+*** Yes
+X = @(@(@,_A: titi_d(1)),p_d(@(_A))).
+--1> 
+*** No
+> 
+*** Yes
+X = @(@(@,_A: titi_d(1)),p_d(_A)).
+--1> 
+*** No
+> 
+*** Yes
+X = @(@(@,Y),p_e(@(Y),@)), Y = titi_e(1).
+--1> 
+*** No
+> 
+*** Yes
+X = @(@(@,Y),p_e(Y,@)), Y = titi_e(1).
+--1> 
+*** No
+> 
+*** Yes
+X = @(@(@,_A: titi_e(1)),p_e(@(_A),@)).
+--1> 
+*** No
+> 
+*** Yes
+X = @(@(@,_A: titi_e(1)),p_e(_A,@)).
+--1> 
+*** No
+> 

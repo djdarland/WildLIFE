@@ -1,0 +1,125 @@
+1a2,121
+> Style checking : 
+> ----------------
+> 
+> :-< Rule nested_typedef : FILES/testsl.c, line 14 near 'PTR'
+>     Only one level of nested parentheses allowed around type definitions
+> :-< Rule contiguous_nested_typedef : FILES/testsl.c, line 14 near 'PTR'
+>     Only one level of contiguous nested parentheses allowed around type definitions
+> :-< Rule adjacent_operators : FILES/testsl.c, line 14 near '*'
+>     Two operators cannot be adjacent
+> :-< Rule extern_in_c_file : FILES/testsl.c, line 17 near 'external_name'
+>     No declaration in a .c file accessed out of the .c file
+> :-< Rule adjacent_operators : FILES/testsl.c, line 20 near '~'
+>     Two operators cannot be adjacent
+> :-< Rule adjacent_operators : FILES/testsl.c, line 20 near '~'
+>     Two operators cannot be adjacent
+> :-< Rule adjacent_operators : FILES/testsl.c, line 22 near '~'
+>     Two operators cannot be adjacent
+> :-< Rule adjacent_operators : FILES/testsl.c, line 22 near '~'
+>     Two operators cannot be adjacent
+> :-< Rule adjacent_operators : FILES/testsl.c, line 26 near '~'
+>     Two operators cannot be adjacent
+> :-< Rule adjacent_operators : FILES/testsl.c, line 28 near '*'
+>     Two operators cannot be adjacent
+> :-< Rule adjacent_operators : FILES/testsl.c, line 30 near '*'
+>     Two operators cannot be adjacent
+> :-< Rule nested_typedef : FILES/testsl.c, line 33 near 'strange_ptr'
+>     Only one level of nested parentheses allowed around type definitions
+> :-< Rule adjacent_operators : FILES/testsl.c, line 36 near '*'
+>     Two operators cannot be adjacent
+> :-< Rule adjacent_operators : FILES/testsl.c, line 36 near '*'
+>     Two operators cannot be adjacent
+> :-< Rule variable_length : FILES/testsl.c, line 38 near 'a'
+>     Variable name is too short
+> :-< Rule variable_length : FILES/testsl.c, line 39 near 'b'
+>     Variable name is too short
+> :-< Rule adjacent_operators : FILES/testsl.c, line 39 near '~'
+>     Two operators cannot be adjacent
+> :-< Rule variable_length : FILES/testsl.c, line 40 near 'c'
+>     Variable name is too short
+> :-< Rule assignment_style : FILES/testsl.c, line 66 near '='
+>     Assignment operators must be preceded and followed by a single space
+> :-< Rule adjacent_operators : FILES/testsl.c, line 66 near '++'
+>     Two operators cannot be adjacent
+> :-< Rule adjacent_operators : FILES/testsl.c, line 66 near '--'
+>     Two operators cannot be adjacent
+> :-< Rule block_alignment : FILES/testsl.c, line 67 near '{'
+>     There must be one space between brace and condition
+> :-< Rule block_alignment : FILES/testsl.c, line 84 near '{'
+>     There must be one space between brace and condition
+> :-< Rule adjacent_operators : FILES/testsl.c, line 67 near '++'
+>     Two operators cannot be adjacent
+> :-< Rule variable_length : FILES/testsl.c, line 68 near 'i'
+>     Variable name is too short
+> :-< Rule variable_length : FILES/testsl.c, line 69 near 'j'
+>     Variable name is too short
+> :-< Rule adjacent_operators : FILES/testsl.c, line 73 near '*'
+>     Two operators cannot be adjacent
+> :-< Rule assignment_style : FILES/testsl.c, line 74 near '='
+>     Assignment operators must be preceded and followed by a single space
+> :-< Rule adjacent_operators : FILES/testsl.c, line 74 near '++'
+>     Two operators cannot be adjacent
+> :-< Rule adjacent_operators : FILES/testsl.c, line 79 near '*'
+>     Two operators cannot be adjacent
+> :-< Rule assignment_style : FILES/testsl.c, line 79 near '+='
+>     Assignment operators must be preceded and followed by a single space
+> :-< Rule nested_typedef : FILES/testsl.c, line 85 near 'Nested_type'
+>     Only one level of nested parentheses allowed around type definitions
+> :-< Rule contiguous_nested_typedef : FILES/testsl.c, line 85 near 'Nested_type'
+>     Only one level of contiguous nested parentheses allowed around type definitions
+> :-< Rule variable_length : FILES/testsl.c, line 89 near 'new_c'
+>     Variable name is too short
+> :-< Rule variable_length : FILES/testsl.c, line 101 near 's'
+>     Variable name is too short
+> :-< Rule assignment_style : FILES/testsl.c, line 103 near '+='
+>     Assignment operators must be preceded and followed by a single space
+> :-< Rule assignment_style : FILES/testsl.c, line 107 near '='
+>     Assignment operators must be preceded and followed by a single space
+> :-< Rule adjacent_operators : FILES/testsl.c, line 113 near '*'
+>     Two operators cannot be adjacent
+> :-< Rule variable_length : FILES/testsl.c, line 115 near 'i'
+>     Variable name is too short
+> :-< Rule variable_length : FILES/testsl.c, line 115 near 'j'
+>     Variable name is too short
+> :-< Rule variable_length : FILES/testsl.c, line 115 near 'k'
+>     Variable name is too short
+> :-< Rule variable_length : FILES/testsl.c, line 115 near 'm'
+>     Variable name is too short
+> :-< Rule variable_length : FILES/testsl.c, line 116 near 'l'
+>     Variable name is too short
+> :-< Rule adjacent_operators : FILES/testsl.c, line 116 near '*'
+>     Two operators cannot be adjacent
+> :-< Rule adjacent_operators : FILES/testsl.c, line 123 near '*'
+>     Two operators cannot be adjacent
+> :-< Rule assignment_style : FILES/testsl.c, line 126 near '='
+>     Assignment operators must be preceded and followed by a single space
+> 
+> Uninitialized variables : 
+> -------------------------
+> 
+> :-< Rule uninitialized_variable : FILES/testsl.c, line 79 near 'F'
+>     Variable may be uninitialized
+> :-< Rule uninitialized_variable : FILES/testsl.c, line 103 near 'new_c'
+>     Variable may be uninitialized
+> :-< Rule uninitialized_variable : FILES/testsl.c, line 119 near 'j'
+>     Variable may be uninitialized
+> :-< Rule uninitialized_variable : FILES/testsl.c, line 123 near 'k'
+>     Variable may be uninitialized
+> :-< Rule uninitialized_variable : FILES/testsl.c, line 127 near 'j'
+>     Variable may be uninitialized
+> :-< Rule uninitialized_variable : FILES/testsl.c, line 129 near 'j'
+>     Variable may be uninitialized
+> :-< Rule uninitialized_variable : FILES/testsl.c, line 131 near 'm'
+>     Variable may be uninitialized
+> :-< Rule uninitialized_variable : FILES/testsl.c, line 134 near 'm'
+>     Variable may be uninitialized
+> :-< Rule uninitialized_variable : FILES/testsl.c, line 135 near 'k'
+>     Variable may be uninitialized
+> 
+> *** Yes
+> --1> 
+3c123
+< > > 
+---
+> > 

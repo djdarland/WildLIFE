@@ -1,0 +1,23 @@
+
+*** Yes
+> > 
+*** Yes
+A = real.
+--1> 
+*** Yes
+A = real.
+--1> 
+b(real & int,@) :-
+        succeed.
+
+*** Yes
+A = real.
+--1> 
+*** Yes
+A = real, C = int, D = @.
+----2> 
+*** No
+A = real.
+--1> 
+*** No
+> > 

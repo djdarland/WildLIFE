@@ -1,0 +1,37 @@
+
+*** Yes
+> > loading done
+*** Yes
+> > > > 
+*** Yes
+X = ww(a => 1,b => 2), Y = ww(a => 1,b => 2).
+--1> > > > 
+*** Yes
+B = person(wife(name => S),id => S), S = string.
+--1> 
+*** Yes
+A = person(wife(name => _A: string),id => _A), 
+B = person(wife(name => S),id => S), 
+S = string.
+
+----2> > > > |    |    
+*** Yes
+N = person(father => person(id => name(last => X)),
+           id => name(first => string,last => X)), 
+X = string.
+
+--1> 
+*** Yes
+M = person(father => person(id => name(last => _A: string)),
+           id => name(first => string,last => _A)), 
+N = person(father => person(id => name(last => X)),
+           id => name(first => string,last => X)), 
+X = string.
+
+----2> 
+*** No
+N = person(father => person(id => name(last => X)),
+           id => name(first => string,last => X)), 
+X = string.
+
+--1> --1> --1> --1> --1> --1> --1> --1> --1> --1> 

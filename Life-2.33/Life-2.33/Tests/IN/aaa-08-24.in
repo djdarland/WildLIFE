@@ -1,0 +1,4 @@
+X=1?
+F=parse("X+3.",S), G=eval(F)?
+
+F=parse("X+3",S,V)?

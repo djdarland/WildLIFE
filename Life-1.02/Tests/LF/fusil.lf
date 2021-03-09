@@ -1,0 +1,3 @@
+   fusil(T:int) -> true   |  (T=1, !, write("youpi") ; write("tant pis")).
+   fusil(X) -> false.
+

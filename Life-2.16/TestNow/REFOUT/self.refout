@@ -1,0 +1,20 @@
+
+*** Yes
+> > '=X,writeq(X),write(X)?'=X,writeq(X),write(X)?
+*** Yes
+X = '=X,writeq(X),write(X)?'.
+--1> > "=X,writeq(X),write(X)?"=X,writeq(X),write(X)?
+*** Yes
+X = "=X,writeq(X),write(X)?".
+--1> > X: (writeq(X), write("?"))?
+*** Yes
+X = (writeq(X), write("?")).
+--1> > X: write(X)
+*** Yes
+X = write(X).
+--1> > X: (write(X), put(63))?
+*** Yes
+X = (write(X), put(63)).
+--1> > _A: (self :- write(_A), write(.)).
+*** Yes
+> 

@@ -1,0 +1,226 @@
+29,31c29,31
+< p(a,a,c,4,5,6)
+< p(b,b,c,4,5,6)
+< p(a,a,c,4,5,6)
+---
+> p(_A: a,_A,c,4,5,6)
+> p(_A: b,_A,c,4,5,6)
+> p(_A: a,_A,c,4,5,6)
+32a33,249
+> _A: p(a(7),b(8),_A)
+> _A: p(b(7),b(8),_A)
+> _A: p(a(7),b(8),_A)
+> 
+> ouch(int,real,string,cons,[])
+> ouch(int,real,string,cons,[])
+> ouch(int,real,string,cons,[])
+> 
+> ouch(1,2.4,abc,[a,b],[])
+> ouch(1,2.4,abc,[b,b],[])
+> ouch(1,2.4,abc,[a,b],[])
+> 
+> p(a => 1,b => 2,c => 3)
+> p(b => 2,c => 3)
+> p(a => 1,b => 2,c => 3)
+> 
+> p(a => a,b => b,c => c)
+> p(b => b,c => c)
+> p(a => a,b => b,c => c)
+> 
+> p([1,2,3])
+> p([1,2,3])
+> p([1,2,3])
+> 
+> 
+> *** No
+> > 
+> 
+> 
+> *** Substituting: int with real ***
+> p(a,b,c,1,2,3)
+> p(a,b,c,1,2,3)
+> p(a,b,c,1,2,3)
+> 
+> p(_A: a,_A,c,4,5,6)
+> p(_A: a,_A,c,4,5,6)
+> p(_A: a,_A,c,4,5,6)
+> 
+> _A: p(a(7),b(8),_A)
+> _A: p(a(7),b(8),_A)
+> _A: p(a(7),b(8),_A)
+> 
+> ouch(int,real,string,cons,[])
+> ouch(real,real,string,cons,[])
+> ouch(int,real,string,cons,[])
+> 
+> ouch(1,2.4,abc,[a,b],[])
+> ouch(1,2.4,abc,[a,b],[])
+> ouch(1,2.4,abc,[a,b],[])
+> 
+> p(a => 1,b => 2,c => 3)
+> p(a => 1,b => 2,c => 3)
+> p(a => 1,b => 2,c => 3)
+> 
+> p(a => a,b => b,c => c)
+> p(a => a,b => b,c => c)
+> p(a => a,b => b,c => c)
+> 
+> p([1,2,3])
+> p([1,2,3])
+> p([1,2,3])
+> 
+> 
+> *** No
+> > 
+> 
+> 
+> *** Substituting: int with string ***
+> p(a,b,c,1,2,3)
+> p(a,b,c,1,2,3)
+> p(a,b,c,1,2,3)
+> 
+> p(_A: a,_A,c,4,5,6)
+> p(_A: a,_A,c,4,5,6)
+> p(_A: a,_A,c,4,5,6)
+> 
+> _A: p(a(7),b(8),_A)
+> _A: p(a(7),b(8),_A)
+> _A: p(a(7),b(8),_A)
+> 
+> ouch(int,real,string,cons,[])
+> ouch(string,real,string,cons,[])
+> ouch(int,real,string,cons,[])
+> 
+> ouch(1,2.4,abc,[a,b],[])
+> ouch(1,2.4,abc,[a,b],[])
+> ouch(1,2.4,abc,[a,b],[])
+> 
+> p(a => 1,b => 2,c => 3)
+> p(a => 1,b => 2,c => 3)
+> p(a => 1,b => 2,c => 3)
+> 
+> p(a => a,b => b,c => c)
+> p(a => a,b => b,c => c)
+> p(a => a,b => b,c => c)
+> 
+> p([1,2,3])
+> p([1,2,3])
+> p([1,2,3])
+> 
+> 
+> *** No
+> > 
+> 
+> 
+> *** Substituting: cons with joke ***
+> p(a,b,c,1,2,3)
+> p(a,b,c,1,2,3)
+> p(a,b,c,1,2,3)
+> 
+> p(_A: a,_A,c,4,5,6)
+> p(_A: a,_A,c,4,5,6)
+> p(_A: a,_A,c,4,5,6)
+> 
+> _A: p(a(7),b(8),_A)
+> _A: p(a(7),b(8),_A)
+> _A: p(a(7),b(8),_A)
+> 
+> ouch(int,real,string,cons,[])
+> ouch(int,real,string,joke,[])
+> ouch(int,real,string,cons,[])
+> 
+> ouch(1,2.4,abc,[a,b],[])
+> ouch(1,2.4,abc,joke(a,joke(b,[])),[])
+> ouch(1,2.4,abc,[a,b],[])
+> 
+> p(a => 1,b => 2,c => 3)
+> p(a => 1,b => 2,c => 3)
+> p(a => 1,b => 2,c => 3)
+> 
+> p(a => a,b => b,c => c)
+> p(a => a,b => b,c => c)
+> p(a => a,b => b,c => c)
+> 
+> p([1,2,3])
+> p(joke(1,joke(2,joke(3,[]))))
+> p([1,2,3])
+> 
+> 
+> *** No
+> > 
+> 
+> 
+> *** Substituting: [] with cons ***
+> p(a,b,c,1,2,3)
+> p(a,b,c,1,2,3)
+> p(a,b,c,1,2,3)
+> 
+> p(_A: a,_A,c,4,5,6)
+> p(_A: a,_A,c,4,5,6)
+> p(_A: a,_A,c,4,5,6)
+> 
+> _A: p(a(7),b(8),_A)
+> _A: p(a(7),b(8),_A)
+> _A: p(a(7),b(8),_A)
+> 
+> ouch(int,real,string,cons,[])
+> ouch(int,real,string,cons,cons)
+> ouch(int,real,string,cons,[])
+> 
+> ouch(1,2.4,abc,[a,b],[])
+> ouch(1,2.4,abc,[a,b|cons],cons)
+> ouch(1,2.4,abc,[a,b],[])
+> 
+> p(a => 1,b => 2,c => 3)
+> p(a => 1,b => 2,c => 3)
+> p(a => 1,b => 2,c => 3)
+> 
+> p(a => a,b => b,c => c)
+> p(a => a,b => b,c => c)
+> p(a => a,b => b,c => c)
+> 
+> p([1,2,3])
+> p([1,2,3|cons])
+> p([1,2,3])
+> 
+> 
+> *** No
+> > 
+> 
+> 
+> *** Substituting: 1 with blah ***
+> p(a,b,c,1,2,3)
+> p(a,b,c,1,2,3)
+> p(a,b,c,1,2,3)
+> 
+> p(_A: a,_A,c,4,5,6)
+> p(_A: a,_A,c,4,5,6)
+> p(_A: a,_A,c,4,5,6)
+> 
+> _A: p(a(7),b(8),_A)
+> _A: p(a(7),b(8),_A)
+> _A: p(a(7),b(8),_A)
+> 
+> ouch(int,real,string,cons,[])
+> ouch(blah,real,string,cons,[])
+> ouch(int,real,string,cons,[])
+> 
+> ouch(1,2.4,abc,[a,b],[])
+> ouch(1,2.4,abc,[a,b],[])
+> ouch(1,2.4,abc,[a,b],[])
+> 
+> p(a => 1,b => 2,c => 3)
+> p(a => 1,b => 2,c => 3)
+> p(a => 1,b => 2,c => 3)
+> 
+> p(a => a,b => b,c => c)
+> p(a => a,b => b,c => c)
+> p(a => a,b => b,c => c)
+> 
+> p([1,2,3])
+> p([1,2,3])
+> p([1,2,3])
+> 
+> 
+> *** No
+> > 

@@ -1,0 +1,74 @@
+
+f(A) -> A.
+f2(A) -> A+A.
+h(s(A)) -> A.
+g(s) -> 1.
+
+w(A) :- nl, write(A," ").
+ws(A) :- write(A," ").
+
+main :-
+	write("*** A"),
+	w(0), (A=f(s(1+2)), ws(A), fail; succeed),
+	w(1), (A=f(s(t(1+2))), ws(A), fail; succeed),
+	w(2), (A=f(s({1;2})), ws(A), fail; succeed),
+	w(3), (A=f(s(t({1;2}))), ws(A), fail; succeed),
+
+	nl, w("*** B"),
+	w(4), (A=s(s(1+2)), ws(A), fail; succeed),
+	w(5), (A=[1+2,3+4], ws(A), fail; succeed),
+	w(6), (A=[[1+2],[3+4]], ws(A), fail; succeed),
+	w(7), (A=s([1+2,3+4]), ws(A), fail; succeed),
+	w(8), (A=s(1+2,3+4), ws(A), fail; succeed),
+	w(9), (A=[s(1+2),t(3+4)], ws(A), fail; succeed),
+
+	nl, w("*** B1"),
+	w(0), (A=[1+2,3+4]& @(1+2,3+4), ws(A), fail; succeed),
+        w(1), (A=f([1+2,3+4]), ws(A), fail; succeed),
+	w(2), (A=f(B,B:[1+2,3+4]), write(A),ws(B), fail; succeed),
+
+	nl, w("*** C"),
+	w(3), (A=s(s({1;2})), ws(A), fail; succeed),
+	w(4), (A=[{1;2},{3;4}], ws(A), fail; succeed),
+	w(5), (A=s([{1;2},{3;4}]), ws(A), fail; succeed),
+	w(6), (A=s({1;2},{3;4}), ws(A), fail; succeed),
+	w(7), (A=[s({1;2}),t({3;4})], ws(A), fail; succeed),
+
+	nl, w("*** D"),
+	w(8), (A=f2(f2(1+2)), ws(A), fail; succeed),
+	w(9), (A=f2(f2({1;2})), ws(A), fail; succeed),
+
+	nl, w("*** E"),
+	w(0), (A=h(s({1;2})), ws(A), fail; succeed),
+	w(1), (A=s(f({1;2})), ws(A), fail; succeed),
+	w(2), (A=s(f(f({1;2}))), ws(A), fail; succeed),
+	w(3), (A=f(f({1;2})), ws(A), fail; succeed),
+
+	nl, w("*** F"),
+	w(4), (A=s(g(t,{})), ws(A), fail; succeed),
+	w(5), (A=s(g(s,{})), ws(A), fail; succeed),
+	w(6), (A=s(g(t,t({}))), ws(A), fail; succeed),
+	w(7), (A=s(g(s,t({}))), ws(A), fail; succeed),
+	w(8), (A=g(t,{}), ws(A), fail; succeed),
+	w(9), (A=g(s,{}), ws(A), fail; succeed),
+	w(0), (A=g(t,t({})), ws(A), fail; succeed),
+	w(1), (A=g(s,t({})), ws(A), fail; succeed),
+
+	nl, w("*** G"),
+        w(2), (A={{1;2};{3;4}}, ws(A), fail; succeed),
+	w(3), ((A={1;2};A={3;4}), ws(A), fail; succeed),
+        w(4), (A={{1;2};3}, ws(A), fail; succeed),
+        w(5), (A={{1;2;3};4;5;6}, ws(A), fail; succeed),
+        w(6), (A={1;2;{3;4;{5;6}}}, ws(A), fail; succeed),
+        w(7), (A={{{1;2};{3;4};{5;6}};{{7;8};{9;10};11;12;13};14;15},
+               ws(A),fail;succeed),
+	succeed.
+
+	% (A=s(g(t,inf)), write(A), fail; succeed),
+	% (A=s(g(t,t(inf))), write(A), fail; succeed),
+	% (A=g(t,inf), write(A), nl, fail; succeed),
+	% (A=g(t,t(inf)), write(A), nl, fail; succeed),
+	% (A=s(g(s,inf)), write(A), nl, fail; succeed),
+	% (A=s(g(s,t(inf))), write(A), nl, fail; succeed),
+	% (A=g(s,inf), write(A), nl, fail; succeed),
+

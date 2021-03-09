@@ -1,0 +1,13 @@
+% Encapsulated object-oriented process without streams:
+
+main(C) :- counter(C,0).
+
+putt(X,C) :- C=[X|C2], C<-C2.
+
+counter([inc|S],V) -> counter(S,V+1).
+counter([show|S],V) -> counter(S,V) | write(V), nl.
+counter([set(X)|S],V) -> counter(S,X).
+counter([see(X)|S],V) -> counter(S,V) | X=V.
+counter([stop|S],V) -> true | write("counter closed with stop.").
+counter([_|S],V) -> counter(S,V) | write("message not understood."), nl.
+counter(nil,V) -> true | write("counter closed with end-of-stream.").

@@ -1,0 +1,3 @@
+A = 1872?
+B = \A?
+write(A, " bitwise negated = ",B)?

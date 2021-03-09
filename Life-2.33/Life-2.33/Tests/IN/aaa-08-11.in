@@ -1,0 +1,4 @@
+A=features(thing(a,b,c,
+		 next => computer,
+		 age => 16,
+		 apple => worms))?

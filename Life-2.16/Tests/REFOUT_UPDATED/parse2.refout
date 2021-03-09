@@ -1,0 +1,13 @@
+
+*** Yes
+> > 
+*** Yes
+F = f(X,g(Y,X)), Status = declaration, X = @, Y = @.
+--1> 
+*** No
+> 
+*** Yes
+F = (X = 2), S = error, V = true, X = @.
+--1> 
+*** No
+> 

@@ -1,0 +1,453 @@
+1,452d0
+< 
+< *** Yes
+< > > *** Tracing is turned on.
+< 
+< *** Yes
+< > T0000 C00   PVR: entering check_out with status 0 and term @ = current_module
+< T0000 C00   PVR: entering check_out with status 0 and term current_module
+< T0000 C00   PVR: entering check_out with status 4 and term @
+< T0001 C00  prove built-in @ = current_module
+< T0002 C00  unify @ with current_module
+< T0002 C00   setting up function call current_module
+< T0003 C00   evaluate current_module
+< T0004 C00   unify @ with "user"
+< T0005 C00  unify @ with "user"
+< 
+< *** Yes
+< X = "user".
+< --1> T0000 C01   PVR: entering check_out with status 4 and term module("charley")
+< T0001 C01  prove module("charley")
+< T0001 C01  current choice point is f5ff0590
+< T0002 C02   unify "charley" with @
+< T0003 C02    PVR: entering check_out with status 0 and term "charley" :< string
+< T0004 C02    PVR: entering check_out with status 0 and term bool_pred("charley" :< string)
+< T0004 C02    PVR: entering check_out with status 0 and term "charley" :< string
+< T0005 C02   prove built-in bool_pred("charley" :< string)
+< T0005 C02    setting up function call "charley" :< string
+< T0005 C02     PVR: entering check_out with status 4 and term string
+< T0005 C02     PVR: entering check_out with status 4 and term "charley"
+< T0006 C02    evaluate "charley" :< string
+< T0007 C02    unify @ with true
+< T0007 C02    PVR: entering check_out with status 0 and term bool_pred(true)
+< T0007 C02    PVR: entering check_out with status 4 and term true
+< T0008 C02   prove built-in bool_pred(true)
+< T0010 C01   cut all choice points back to f5ff0590
+< T0011 C01    PVR: entering check_out with status 4 and term set_module("charley")
+< T0012 C01   prove built-in set_module("charley")
+< T0013 C01    PVR: entering check_out with status 0 and term setq(open_modules,[])
+< T0013 C01    PVR: entering check_out with status 4 and term []
+< T0013 C01    PVR: entering check_out with status 0 and term open_modules
+< T0014 C01   prove built-in setq(open_modules,[])
+< T0015 C01    PVR: entering check_out with status 0 and term setq(inherited_modules,[])
+< T0015 C01    PVR: entering check_out with status 4 and term []
+< T0015 C01    PVR: entering check_out with status 0 and term inherited_modules
+< T0016 C01   prove built-in setq(inherited_modules,[])
+< T0017 C01    PVR: entering check_out with status 4 and term open("syntax")
+< T0018 C01   prove open("syntax")
+< T0018 C01    PVR: entering check_out with status 0 and term open_list(features(open("syntax"),"built_ins"),open("syntax"))
+< T0018 C01    PVR: entering check_out with status 4 and term open("syntax")
+< T0018 C01    PVR: entering check_out with status 0 and term features(open("syntax"),"built_ins")
+< T0019 C01    setting up function call features(open("syntax"),"built_ins")
+< T0019 C01     PVR: entering check_out with status 4 and term "built_ins"
+< T0019 C01     PVR: entering check_out with status 4 and term open("syntax")
+< T0020 C01    evaluate features(open("syntax"),"built_ins")
+< T0021 C01    unify @ with [1]
+< T0021 C01    PVR: entering check_out with status 0 and term open_list([1],open("syntax"))
+< T0021 C01    PVR: entering check_out with status 4 and term open("syntax")
+< T0021 C01    PVR: entering check_out with status 4 and term [1]
+< T0022 C01   prove open_list([1],open("syntax"))
+< T0022 C01   current choice point is f5ff0590
+< T0023 C02    unify [1] with []
+< T0023 C01    backtracking
+< T0023 C01    PVR: entering check_out with status 0 and term open_list([1],open("syntax"))
+< T0023 C01    PVR: entering check_out with status 4 and term open("syntax")
+< T0023 C01    PVR: entering check_out with status 4 and term [1]
+< T0024 C01   prove open_list([1],open("syntax"))
+< T0025 C01     unify [1] with [@|@]
+< T0026 C01      unify 1 with @
+< T0027 C01     unify [] with @
+< T0028 C01    unify open("syntax") with @
+< T0029 C01     PVR: entering check_out with status 0 and term open_one(open("syntax") .1)
+< T0029 C01     PVR: entering check_out with status 0 and term open("syntax") .1
+< T0030 C01     setting up function call open("syntax") .1
+< T0030 C01      PVR: entering check_out with status 4 and term 1
+< T0030 C01      PVR: entering check_out with status 4 and term open("syntax")
+< T0031 C01     evaluate open("syntax") .1
+< T0032 C01     unify @ with "syntax"
+< T0032 C01     PVR: entering check_out with status 0 and term open_one("syntax")
+< T0032 C01     PVR: entering check_out with status 4 and term "syntax"
+< T0033 C01    prove open_one("syntax")
+< T0033 C01    current choice point is f5ff0590
+< T0034 C02     unify "syntax" with string
+< T0036 C01     cut all choice points back to f5ff0590
+< T0037 C01      PVR: entering check_out with status 4 and term open_module("syntax")
+< T0038 C01     prove built-in open_module("syntax")
+< T0038 C01     PVR: entering check_out with status 0 and term setq(open_modules,["syntax"|open_modules])
+< T0038 C01     PVR: entering check_out with status 0 and term ["syntax"|open_modules]
+< T0038 C01     PVR: entering check_out with status 0 and term open_modules
+< T0038 C01     PVR: entering check_out with status 4 and term "syntax"
+< T0038 C01     PVR: entering check_out with status 0 and term open_modules
+< T0039 C01    prove built-in setq(open_modules,["syntax"|open_modules])
+< T0039 C01     setting up function call open_modules
+< T0040 C01     evaluate open_modules
+< T0041 C01       result of open_modules is []
+< T0042 C01      PVR: entering check_out with status 4 and term []
+< T0043 C01     unify [] with @
+< T0043 C01     PVR: entering check_out with status 0 and term setq(open_modules,["syntax"])
+< T0043 C01     PVR: entering check_out with status 4 and term ["syntax"]
+< T0043 C01     PVR: entering check_out with status 0 and term open_modules
+< T0044 C01    prove built-in setq(open_modules,["syntax"])
+< T0044 C01    PVR: entering check_out with status 4 and term open_list([],open("syntax"))
+< T0045 C01   prove open_list([],open("syntax"))
+< T0045 C01   current choice point is f5ff0590
+< T0046 C02    unify [] with []
+< T0047 C01   cut all choice points back to f5ff0590
+< T0048 C01    PVR: entering check_out with status 4 and term open("built_ins")
+< T0049 C01   prove open("built_ins")
+< T0049 C01    PVR: entering check_out with status 0 and term open_list(features(open("built_ins"),"built_ins"),open("built_ins"))
+< T0049 C01    PVR: entering check_out with status 4 and term open("built_ins")
+< T0049 C01    PVR: entering check_out with status 0 and term features(open("built_ins"),"built_ins")
+< T0050 C01    setting up function call features(open("built_ins"),"built_ins")
+< T0050 C01     PVR: entering check_out with status 4 and term "built_ins"
+< T0050 C01     PVR: entering check_out with status 4 and term open("built_ins")
+< T0051 C01    evaluate features(open("built_ins"),"built_ins")
+< T0052 C01    unify @ with [1]
+< T0052 C01    PVR: entering check_out with status 0 and term open_list([1],open("built_ins"))
+< T0052 C01    PVR: entering check_out with status 4 and term open("built_ins")
+< T0052 C01    PVR: entering check_out with status 4 and term [1]
+< T0053 C01   prove open_list([1],open("built_ins"))
+< T0053 C01   current choice point is f5ff0590
+< T0054 C02    unify [1] with []
+< T0054 C01    backtracking
+< T0054 C01    PVR: entering check_out with status 0 and term open_list([1],open("built_ins"))
+< T0054 C01    PVR: entering check_out with status 4 and term open("built_ins")
+< T0054 C01    PVR: entering check_out with status 4 and term [1]
+< T0055 C01   prove open_list([1],open("built_ins"))
+< T0056 C01     unify [1] with [@|@]
+< T0057 C01      unify 1 with @
+< T0058 C01     unify [] with @
+< T0059 C01    unify open("built_ins") with @
+< T0060 C01     PVR: entering check_out with status 0 and term open_one(open("built_ins") .1)
+< T0060 C01     PVR: entering check_out with status 0 and term open("built_ins") .1
+< T0061 C01     setting up function call open("built_ins") .1
+< T0061 C01      PVR: entering check_out with status 4 and term 1
+< T0061 C01      PVR: entering check_out with status 4 and term open("built_ins")
+< T0062 C01     evaluate open("built_ins") .1
+< T0063 C01     unify @ with "built_ins"
+< T0063 C01     PVR: entering check_out with status 0 and term open_one("built_ins")
+< T0063 C01     PVR: entering check_out with status 4 and term "built_ins"
+< T0064 C01    prove open_one("built_ins")
+< T0064 C01    current choice point is f5ff0590
+< T0065 C02     unify "built_ins" with string
+< T0067 C01     cut all choice points back to f5ff0590
+< T0068 C01      PVR: entering check_out with status 4 and term open_module("built_ins")
+< T0069 C01     prove built-in open_module("built_ins")
+< T0069 C01     PVR: entering check_out with status 0 and term setq(open_modules,["built_ins"|open_modules])
+< T0069 C01     PVR: entering check_out with status 0 and term ["built_ins"|open_modules]
+< T0069 C01     PVR: entering check_out with status 0 and term open_modules
+< T0069 C01     PVR: entering check_out with status 4 and term "built_ins"
+< T0069 C01     PVR: entering check_out with status 0 and term open_modules
+< T0070 C01    prove built-in setq(open_modules,["built_ins"|open_modules])
+< T0070 C01     setting up function call open_modules
+< T0071 C01     evaluate open_modules
+< T0072 C01       result of open_modules is ["syntax"]
+< T0073 C01      PVR: entering check_out with status 4 and term ["syntax"]
+< T0074 C01     unify ["syntax"] with @
+< T0074 C01     PVR: entering check_out with status 0 and term setq(open_modules,["built_ins","syntax"])
+< T0074 C01     PVR: entering check_out with status 4 and term ["built_ins","syntax"]
+< T0074 C01     PVR: entering check_out with status 0 and term open_modules
+< T0075 C01    prove built-in setq(open_modules,["built_ins","syntax"])
+< T0075 C01    PVR: entering check_out with status 4 and term open_list([],open("built_ins"))
+< T0076 C01   prove open_list([],open("built_ins"))
+< T0076 C01   current choice point is f5ff0590
+< T0077 C02    unify [] with []
+< T0078 C01   cut all choice points back to f5ff0590
+< T0078 C01   PVR: entering check_out with status 4 and term open("x")
+< T0079 C01  prove open("x")
+< T0079 C01   PVR: entering check_out with status 0 and term open_list(features(open("x"),"built_ins"),open("x"))
+< T0079 C01   PVR: entering check_out with status 4 and term open("x")
+< T0079 C01   PVR: entering check_out with status 0 and term features(open("x"),"built_ins")
+< T0080 C01   setting up function call features(open("x"),"built_ins")
+< T0080 C01    PVR: entering check_out with status 4 and term "built_ins"
+< T0080 C01    PVR: entering check_out with status 4 and term open("x")
+< T0081 C01   evaluate features(open("x"),"built_ins")
+< T0082 C01   unify @ with [1]
+< T0082 C01   PVR: entering check_out with status 0 and term open_list([1],open("x"))
+< T0082 C01   PVR: entering check_out with status 4 and term open("x")
+< T0082 C01   PVR: entering check_out with status 4 and term [1]
+< T0083 C01  prove open_list([1],open("x"))
+< T0083 C01  current choice point is f5ff0590
+< T0084 C02   unify [1] with []
+< T0084 C01   backtracking
+< T0084 C01   PVR: entering check_out with status 0 and term open_list([1],open("x"))
+< T0084 C01   PVR: entering check_out with status 4 and term open("x")
+< T0084 C01   PVR: entering check_out with status 4 and term [1]
+< T0085 C01  prove open_list([1],open("x"))
+< T0086 C01    unify [1] with [@|@]
+< T0087 C01     unify 1 with @
+< T0088 C01    unify [] with @
+< T0089 C01   unify open("x") with @
+< T0090 C01    PVR: entering check_out with status 0 and term open_one(open("x") .1)
+< T0090 C01    PVR: entering check_out with status 0 and term open("x") .1
+< T0091 C01    setting up function call open("x") .1
+< T0091 C01     PVR: entering check_out with status 4 and term 1
+< T0091 C01     PVR: entering check_out with status 4 and term open("x")
+< T0092 C01    evaluate open("x") .1
+< T0093 C01    unify @ with "x"
+< T0093 C01    PVR: entering check_out with status 0 and term open_one("x")
+< T0093 C01    PVR: entering check_out with status 4 and term "x"
+< T0094 C01   prove open_one("x")
+< T0094 C01   current choice point is f5ff0590
+< T0095 C02    unify "x" with string
+< T0097 C01    cut all choice points back to f5ff0590
+< T0098 C01     PVR: entering check_out with status 4 and term open_module("x")
+< T0099 C01    prove built-in open_module("x")
+< T0099 C01    PVR: entering check_out with status 0 and term setq(open_modules,["x"|open_modules])
+< T0099 C01    PVR: entering check_out with status 0 and term ["x"|open_modules]
+< T0099 C01    PVR: entering check_out with status 0 and term open_modules
+< T0099 C01    PVR: entering check_out with status 4 and term "x"
+< T0099 C01    PVR: entering check_out with status 0 and term open_modules
+< T0100 C01   prove built-in setq(open_modules,["x"|open_modules])
+< T0100 C01    setting up function call open_modules
+< T0101 C01    evaluate open_modules
+< T0102 C01      result of open_modules is ["built_ins","syntax"]
+< T0103 C01     PVR: entering check_out with status 4 and term ["built_ins","syntax"]
+< T0104 C01    unify ["built_ins","syntax"] with @
+< T0104 C01    PVR: entering check_out with status 0 and term setq(open_modules,["x","built_ins","syntax"])
+< T0104 C01    PVR: entering check_out with status 4 and term ["x","built_ins","syntax"]
+< T0104 C01    PVR: entering check_out with status 0 and term open_modules
+< T0105 C01   prove built-in setq(open_modules,["x","built_ins","syntax"])
+< T0105 C01   PVR: entering check_out with status 4 and term open_list([],open("x"))
+< T0106 C01  prove open_list([],open("x"))
+< T0106 C01  current choice point is f5ff0590
+< T0107 C02   unify [] with []
+< T0108 C01  cut all choice points back to f5ff0590
+< 
+< *** Yes
+< X = "user".
+< charley--1> T0000 C01    PVR: entering check_out with status 0 and term "user" = current_module
+< T0000 C01    PVR: entering check_out with status 0 and term current_module
+< T0000 C01    PVR: entering check_out with status 4 and term "user"
+< T0001 C01   prove built-in "user" = current_module
+< T0002 C01   unify "user" with current_module
+< T0002 C01    setting up function call current_module
+< T0003 C01    evaluate current_module
+< T0004 C01    unify @ with "charley"
+< T0005 C01   unify "user" with "charley"
+< T0005 C00   backtracking
+< 
+< *** No
+< charley--1> T0000 C01    PVR: entering check_out with status 4 and term module("user")
+< T0001 C01   prove module("user")
+< T0001 C01   current choice point is f5ff05f0
+< T0002 C02    unify "user" with @
+< T0003 C02     PVR: entering check_out with status 0 and term "user" :< string
+< T0004 C02     PVR: entering check_out with status 0 and term bool_pred("user" :< string)
+< T0004 C02     PVR: entering check_out with status 0 and term "user" :< string
+< T0005 C02    prove built-in bool_pred("user" :< string)
+< T0005 C02     setting up function call "user" :< string
+< T0005 C02      PVR: entering check_out with status 4 and term string
+< T0005 C02      PVR: entering check_out with status 4 and term "user"
+< T0006 C02     evaluate "user" :< string
+< T0007 C02     unify @ with true
+< T0007 C02     PVR: entering check_out with status 0 and term bool_pred(true)
+< T0007 C02     PVR: entering check_out with status 4 and term true
+< T0008 C02    prove built-in bool_pred(true)
+< T0010 C01    cut all choice points back to f5ff05f0
+< T0011 C01     PVR: entering check_out with status 4 and term set_module("user")
+< T0012 C01    prove built-in set_module("user")
+< T0013 C01     PVR: entering check_out with status 0 and term setq(open_modules,[])
+< T0013 C01     PVR: entering check_out with status 4 and term []
+< T0013 C01     PVR: entering check_out with status 0 and term open_modules
+< T0014 C01    prove built-in setq(open_modules,[])
+< T0015 C01     PVR: entering check_out with status 0 and term setq(inherited_modules,[])
+< T0015 C01     PVR: entering check_out with status 4 and term []
+< T0015 C01     PVR: entering check_out with status 0 and term inherited_modules
+< T0016 C01    prove built-in setq(inherited_modules,[])
+< T0017 C01     PVR: entering check_out with status 4 and term open("syntax")
+< T0018 C01    prove open("syntax")
+< T0018 C01     PVR: entering check_out with status 0 and term open_list(features(open("syntax"),"built_ins"),open("syntax"))
+< T0018 C01     PVR: entering check_out with status 4 and term open("syntax")
+< T0018 C01     PVR: entering check_out with status 0 and term features(open("syntax"),"built_ins")
+< T0019 C01     setting up function call features(open("syntax"),"built_ins")
+< T0019 C01      PVR: entering check_out with status 4 and term "built_ins"
+< T0019 C01      PVR: entering check_out with status 4 and term open("syntax")
+< T0020 C01     evaluate features(open("syntax"),"built_ins")
+< T0021 C01     unify @ with [1]
+< T0021 C01     PVR: entering check_out with status 0 and term open_list([1],open("syntax"))
+< T0021 C01     PVR: entering check_out with status 4 and term open("syntax")
+< T0021 C01     PVR: entering check_out with status 4 and term [1]
+< T0022 C01    prove open_list([1],open("syntax"))
+< T0022 C01    current choice point is f5ff05f0
+< T0023 C02     unify [1] with []
+< T0023 C01     backtracking
+< T0023 C01     PVR: entering check_out with status 0 and term open_list([1],open("syntax"))
+< T0023 C01     PVR: entering check_out with status 4 and term open("syntax")
+< T0023 C01     PVR: entering check_out with status 4 and term [1]
+< T0024 C01    prove open_list([1],open("syntax"))
+< T0025 C01      unify [1] with [@|@]
+< T0026 C01       unify 1 with @
+< T0027 C01      unify [] with @
+< T0028 C01     unify open("syntax") with @
+< T0029 C01      PVR: entering check_out with status 0 and term open_one(open("syntax") .1)
+< T0029 C01      PVR: entering check_out with status 0 and term open("syntax") .1
+< T0030 C01      setting up function call open("syntax") .1
+< T0030 C01       PVR: entering check_out with status 4 and term 1
+< T0030 C01       PVR: entering check_out with status 4 and term open("syntax")
+< T0031 C01      evaluate open("syntax") .1
+< T0032 C01      unify @ with "syntax"
+< T0032 C01      PVR: entering check_out with status 0 and term open_one("syntax")
+< T0032 C01      PVR: entering check_out with status 4 and term "syntax"
+< T0033 C01     prove open_one("syntax")
+< T0033 C01     current choice point is f5ff05f0
+< T0034 C02      unify "syntax" with string
+< T0036 C01      cut all choice points back to f5ff05f0
+< T0037 C01       PVR: entering check_out with status 4 and term open_module("syntax")
+< T0038 C01      prove built-in open_module("syntax")
+< T0038 C01      PVR: entering check_out with status 0 and term setq(open_modules,["syntax"|open_modules])
+< T0038 C01      PVR: entering check_out with status 0 and term ["syntax"|open_modules]
+< T0038 C01      PVR: entering check_out with status 0 and term open_modules
+< T0038 C01      PVR: entering check_out with status 4 and term "syntax"
+< T0038 C01      PVR: entering check_out with status 0 and term open_modules
+< T0039 C01     prove built-in setq(open_modules,["syntax"|open_modules])
+< T0039 C01      setting up function call open_modules
+< T0040 C01      evaluate open_modules
+< T0041 C01        result of open_modules is []
+< T0042 C01       PVR: entering check_out with status 4 and term []
+< T0043 C01      unify [] with @
+< T0043 C01      PVR: entering check_out with status 0 and term setq(open_modules,["syntax"])
+< T0043 C01      PVR: entering check_out with status 4 and term ["syntax"]
+< T0043 C01      PVR: entering check_out with status 0 and term open_modules
+< T0044 C01     prove built-in setq(open_modules,["syntax"])
+< T0044 C01     PVR: entering check_out with status 4 and term open_list([],open("syntax"))
+< T0045 C01    prove open_list([],open("syntax"))
+< T0045 C01    current choice point is f5ff05f0
+< T0046 C02     unify [] with []
+< T0047 C01    cut all choice points back to f5ff05f0
+< T0048 C01     PVR: entering check_out with status 4 and term open("built_ins")
+< T0049 C01    prove open("built_ins")
+< T0049 C01     PVR: entering check_out with status 0 and term open_list(features(open("built_ins"),"built_ins"),open("built_ins"))
+< T0049 C01     PVR: entering check_out with status 4 and term open("built_ins")
+< T0049 C01     PVR: entering check_out with status 0 and term features(open("built_ins"),"built_ins")
+< T0050 C01     setting up function call features(open("built_ins"),"built_ins")
+< T0050 C01      PVR: entering check_out with status 4 and term "built_ins"
+< T0050 C01      PVR: entering check_out with status 4 and term open("built_ins")
+< T0051 C01     evaluate features(open("built_ins"),"built_ins")
+< T0052 C01     unify @ with [1]
+< T0052 C01     PVR: entering check_out with status 0 and term open_list([1],open("built_ins"))
+< T0052 C01     PVR: entering check_out with status 4 and term open("built_ins")
+< T0052 C01     PVR: entering check_out with status 4 and term [1]
+< T0053 C01    prove open_list([1],open("built_ins"))
+< T0053 C01    current choice point is f5ff05f0
+< T0054 C02     unify [1] with []
+< T0054 C01     backtracking
+< T0054 C01     PVR: entering check_out with status 0 and term open_list([1],open("built_ins"))
+< T0054 C01     PVR: entering check_out with status 4 and term open("built_ins")
+< T0054 C01     PVR: entering check_out with status 4 and term [1]
+< T0055 C01    prove open_list([1],open("built_ins"))
+< T0056 C01      unify [1] with [@|@]
+< T0057 C01       unify 1 with @
+< T0058 C01      unify [] with @
+< T0059 C01     unify open("built_ins") with @
+< T0060 C01      PVR: entering check_out with status 0 and term open_one(open("built_ins") .1)
+< T0060 C01      PVR: entering check_out with status 0 and term open("built_ins") .1
+< T0061 C01      setting up function call open("built_ins") .1
+< T0061 C01       PVR: entering check_out with status 4 and term 1
+< T0061 C01       PVR: entering check_out with status 4 and term open("built_ins")
+< T0062 C01      evaluate open("built_ins") .1
+< T0063 C01      unify @ with "built_ins"
+< T0063 C01      PVR: entering check_out with status 0 and term open_one("built_ins")
+< T0063 C01      PVR: entering check_out with status 4 and term "built_ins"
+< T0064 C01     prove open_one("built_ins")
+< T0064 C01     current choice point is f5ff05f0
+< T0065 C02      unify "built_ins" with string
+< T0067 C01      cut all choice points back to f5ff05f0
+< T0068 C01       PVR: entering check_out with status 4 and term open_module("built_ins")
+< T0069 C01      prove built-in open_module("built_ins")
+< T0069 C01      PVR: entering check_out with status 0 and term setq(open_modules,["built_ins"|open_modules])
+< T0069 C01      PVR: entering check_out with status 0 and term ["built_ins"|open_modules]
+< T0069 C01      PVR: entering check_out with status 0 and term open_modules
+< T0069 C01      PVR: entering check_out with status 4 and term "built_ins"
+< T0069 C01      PVR: entering check_out with status 0 and term open_modules
+< T0070 C01     prove built-in setq(open_modules,["built_ins"|open_modules])
+< T0070 C01      setting up function call open_modules
+< T0071 C01      evaluate open_modules
+< T0072 C01        result of open_modules is ["syntax"]
+< T0073 C01       PVR: entering check_out with status 4 and term ["syntax"]
+< T0074 C01      unify ["syntax"] with @
+< T0074 C01      PVR: entering check_out with status 0 and term setq(open_modules,["built_ins","syntax"])
+< T0074 C01      PVR: entering check_out with status 4 and term ["built_ins","syntax"]
+< T0074 C01      PVR: entering check_out with status 0 and term open_modules
+< T0075 C01     prove built-in setq(open_modules,["built_ins","syntax"])
+< T0075 C01     PVR: entering check_out with status 4 and term open_list([],open("built_ins"))
+< T0076 C01    prove open_list([],open("built_ins"))
+< T0076 C01    current choice point is f5ff05f0
+< T0077 C02     unify [] with []
+< T0078 C01    cut all choice points back to f5ff05f0
+< T0078 C01    PVR: entering check_out with status 4 and term open("x")
+< T0079 C01   prove open("x")
+< T0079 C01    PVR: entering check_out with status 0 and term open_list(features(open("x"),"built_ins"),open("x"))
+< T0079 C01    PVR: entering check_out with status 4 and term open("x")
+< T0079 C01    PVR: entering check_out with status 0 and term features(open("x"),"built_ins")
+< T0080 C01    setting up function call features(open("x"),"built_ins")
+< T0080 C01     PVR: entering check_out with status 4 and term "built_ins"
+< T0080 C01     PVR: entering check_out with status 4 and term open("x")
+< T0081 C01    evaluate features(open("x"),"built_ins")
+< T0082 C01    unify @ with [1]
+< T0082 C01    PVR: entering check_out with status 0 and term open_list([1],open("x"))
+< T0082 C01    PVR: entering check_out with status 4 and term open("x")
+< T0082 C01    PVR: entering check_out with status 4 and term [1]
+< T0083 C01   prove open_list([1],open("x"))
+< T0083 C01   current choice point is f5ff05f0
+< T0084 C02    unify [1] with []
+< T0084 C01    backtracking
+< T0084 C01    PVR: entering check_out with status 0 and term open_list([1],open("x"))
+< T0084 C01    PVR: entering check_out with status 4 and term open("x")
+< T0084 C01    PVR: entering check_out with status 4 and term [1]
+< T0085 C01   prove open_list([1],open("x"))
+< T0086 C01     unify [1] with [@|@]
+< T0087 C01      unify 1 with @
+< T0088 C01     unify [] with @
+< T0089 C01    unify open("x") with @
+< T0090 C01     PVR: entering check_out with status 0 and term open_one(open("x") .1)
+< T0090 C01     PVR: entering check_out with status 0 and term open("x") .1
+< T0091 C01     setting up function call open("x") .1
+< T0091 C01      PVR: entering check_out with status 4 and term 1
+< T0091 C01      PVR: entering check_out with status 4 and term open("x")
+< T0092 C01     evaluate open("x") .1
+< T0093 C01     unify @ with "x"
+< T0093 C01     PVR: entering check_out with status 0 and term open_one("x")
+< T0093 C01     PVR: entering check_out with status 4 and term "x"
+< T0094 C01    prove open_one("x")
+< T0094 C01    current choice point is f5ff05f0
+< T0095 C02     unify "x" with string
+< T0097 C01     cut all choice points back to f5ff05f0
+< T0098 C01      PVR: entering check_out with status 4 and term open_module("x")
+< T0099 C01     prove built-in open_module("x")
+< T0099 C01     PVR: entering check_out with status 0 and term setq(open_modules,["x"|open_modules])
+< T0099 C01     PVR: entering check_out with status 0 and term ["x"|open_modules]
+< T0099 C01     PVR: entering check_out with status 0 and term open_modules
+< T0099 C01     PVR: entering check_out with status 4 and term "x"
+< T0099 C01     PVR: entering check_out with status 0 and term open_modules
+< T0100 C01    prove built-in setq(open_modules,["x"|open_modules])
+< T0100 C01     setting up function call open_modules
+< T0101 C01     evaluate open_modules
+< T0102 C01       result of open_modules is ["built_ins","syntax"]
+< T0103 C01      PVR: entering check_out with status 4 and term ["built_ins","syntax"]
+< T0104 C01     unify ["built_ins","syntax"] with @
+< T0104 C01     PVR: entering check_out with status 0 and term setq(open_modules,["x","built_ins","syntax"])
+< T0104 C01     PVR: entering check_out with status 4 and term ["x","built_ins","syntax"]
+< T0104 C01     PVR: entering check_out with status 0 and term open_modules
+< T0105 C01    prove built-in setq(open_modules,["x","built_ins","syntax"])
+< T0105 C01    PVR: entering check_out with status 4 and term open_list([],open("x"))
+< T0106 C01   prove open_list([],open("x"))
+< T0106 C01   current choice point is f5ff05f0
+< T0107 C02    unify [] with []
+< T0108 C01   cut all choice points back to f5ff05f0
+< 
+< *** Yes
+< X = "user".
+< --1> T0000 C01     PVR: entering check_out with status 4 and term halt
+< T0001 C01    prove built-in halt
+< 

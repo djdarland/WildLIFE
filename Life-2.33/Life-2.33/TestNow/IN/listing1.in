@@ -1,0 +1,15 @@
+
+listing(non_strict,dynamic,delay_check,
+	assert,asserta,retract,clause,
+	load,load_2,load_3,
+	load_path,life_ext,
+	listing,listing_2,listing_3,listing_4,
+	listing_4a,listing_5,listing_6,
+	op,op,op_2,op_3,call_handler,
+	nl,(\+),bagof,reduce,map,maprel,append,length,
+	nil,cons,car,cdr,
+	repeat,where,and,or,(not),xor,
+        int2str,num,str,strval,
+        $==,$\==,$<,$=<,$>,$>=,
+        set,setq,
+	^,pwr,max,min)?

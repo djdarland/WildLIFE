@@ -1,0 +1,66 @@
+1
+2
+3
+ball caught
+
+
+testing: set_extension(ms,dos)
+	set_extension(ms,dos)
+
+
+testing: set_extension(wild.fun,life)
+	set_extension(wild.fun,life)
+
+
+testing: remove_path(/a/b/c/d)
+	remove_path(/a/b/c/d)
+
+
+testing: remove_path(a)
+	remove_path(a)
+
+
+testing: sort_remove_all(x,[a,b,c,x,d,e,x])
+	[a,b,c,d,e]
+
+
+testing: ad_remove_all(a,[a,b,c,a,d,e,a])
+	[b,c,d,e]
+
+
+testing: gen_quicksort([abc,def,123,h,bruno,richard,peter],order => ` $>)
+	[richard,peter,h,def,bruno,abc,123]
+
+
+testing: gen_member(a,[b,c,d,e,a],test => ` :==)
+	true
+
+
+testing: gen_union([a,b,c],[d,e,f,b],test => ` :==)
+	[a,c,d,e,f,b]
+
+
+testing: gen_make_set([a,repeat,c,e,repeat,d,a,repeat,b,c],test => ` ===)
+	[a,c,e,d,a,repeat,b,c]
+
+
+testing: gen_make_set([a,repeat,c,e,repeat,d,a,repeat,b,c],test => ` :==)
+	[e,d,a,repeat,b,c]
+
+
+testing: gen_intersect([a,b,c,d,3,4],[e,b,c,a,5,6,3],test => ` :==)
+	[a,b,c,3]
+
+
+testing: gen_difference([a,b,c,d,e,f],[f,b,a],test => ` :==)
+	[c,d,e]
+
+
+testing: gen_difference([f,b,a],[a,b,c,d,e,f],test => ` :==)
+	[]
+
+
+testing: term_size(p(a,b,c))
+	4
+
+

@@ -1,0 +1,3 @@
+repeat,genint>10000?
+write(genint,genint,genint)?
+

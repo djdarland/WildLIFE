@@ -1,0 +1,67 @@
+35d34
+< bytedata <| built_in.
+81c80
+< % 'process_no_children' is undefined.
+---
+> % 'event' is undefined.
+83c82
+< % 'process_exited' is undefined.
+---
+> % 'keyboard_event' is undefined.
+85c84
+< % 'process_signaled' is undefined.
+---
+> % 'button_event' is undefined.
+87c86
+< % 'process_stopped' is undefined.
+---
+> % 'expose_event' is undefined.
+89c88,110
+< % 'process_continued' is undefined.
+---
+> % 'destroy_event' is undefined.
+> 
+> % 'configure_event' is undefined.
+> 
+> % 'motion_event' is undefined.
+> 
+> % 'enter_event' is undefined.
+> 
+> % 'leave_event' is undefined.
+> 
+> % 'misc_event' is undefined.
+> 
+> % 'display' is undefined.
+> 
+> % 'drawable' is undefined.
+> 
+> % 'window' is undefined.
+> 
+> % 'pixmap' is undefined.
+> 
+> % 'graphic_context' is undefined.
+> 
+> % 'display_list' is undefined.
+109,110d129
+< % 'begin_raw' is undefined.
+< 
+113,118d131
+< % 'end_raw' is undefined.
+< 
+< % 'get_raw' is undefined.
+< 
+< % 'in_raw' is undefined.
+< 
+126,137d138
+< 
+< % 'put_raw' is undefined.
+< 
+< % 'reset_window_flag' is undefined.
+< 
+< % 'window_flag' is undefined.
+< 
+< % '(' is undefined.
+< 
+< % ')' is undefined.
+< 
+< % 'ftruncate' is undefined.

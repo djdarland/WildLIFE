@@ -1,0 +1,21 @@
+%
+%	Cut and Backtracking
+%
+%
+%	1st program
+%
+p(X) ?
+;
+;
+%
+%	2nd program
+%
+r(X)?
+;
+%
+%	3rd program
+%
+s(X)?
+;
+;
+;

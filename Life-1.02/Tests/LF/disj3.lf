@@ -1,0 +1,5 @@
+:: x | write(aa).
+:: y | write(bb).
+:: z | write(cc).
+:: w | write(dd).
+:: q | write(ee).

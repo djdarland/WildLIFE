@@ -1,0 +1,6 @@
+print_list([]) :- !.
+print_list([H|T]) :-  write(H),
+                      nl,
+                      print_list(T).
+
+print_list([a,b,c])?

@@ -1,0 +1,223 @@
+
+*** Yes
+
+*** Yes
+> > Added debugging code to predicate 'p': level=goal, verbose=true, clauses=6
+
+*** Yes
+--1> 
+*** No
+> <CALL> p(@): entry call
+<GOAL> p#1.1: @ = one
+<SUCC> p#1: succeeds
+
+X=one
+p#1.1: @ = two
+<SUCC> p#1: succeeds
+
+X=two
+<REDO> p: try clause #2
+<GOAL> p#2.1: succeed
+<SUCC> p#2: succeeds
+
+X=three
+<REDO> p: try clause #3
+<GOAL> p#3.1: real~ = @
+<GOAL> p#3.2: real~ = real~
+<GOAL> p#3.3: real~ = 6
+<SUCC> p#3: succeeds
+
+X=4
+<REDO> p: try clause #4
+<GOAL> p#4.1: @ = five
+<SUCC> p#4: succeeds
+
+X=five
+<REDO> p#4: retry disjunction
+<GOAL> p#4.1: @ = six
+<SUCC> p#4: succeeds
+
+X=six
+<REDO> p: try clause #5
+<GOAL> p#5.1: p(@)
+<CALL> p(@): entry call
+<GOAL> p#1.1: @ = one
+<SUCC> p#1: succeeds
+<CUT!> p#5.2: cut!
+<GOAL> p#5.3: @ = VIII
+<SUCC> p#5: succeeds
+
+X=VIII
+p#5.3: @ = IX
+<SUCC> p#5: succeeds
+
+X=IX
+<FAIL> p#5: fails and alternatives cut
+
+*** No
+> > > Added debugging code to predicate 'app': level=clause, verbose=false, clauses=2
+
+*** Yes
+--1> 
+*** No
+> > <CALL> app: entry call
+<CUT!> app#1: cut!
+<CALL> app: entry call
+<CUT!> app#1: cut!
+<CALL> app: entry call
+<CUT!> app#1: cut!
+<CALL> app: entry call
+<REDO> app: try clause #2
+<SUCC> app#2: succeeds
+<SUCC> app#1: succeeds
+<SUCC> app#1: succeeds
+<SUCC> app#1: succeeds
+
+*** Yes
+R = [4,5,6].
+--1> <FAIL> app: fails
+<FAIL> app#1: fails and alternatives cut
+<FAIL> app#1: fails and alternatives cut
+<FAIL> app#1: fails and alternatives cut
+
+*** No
+> > > > > > Debug: restored original clauses for predicate 'app'
+Added debugging code to predicate 'app': level=goal, verbose=true, clauses=2
+
+*** Yes
+> > <CALL> app([1,2,3],@,[1,2,3,4,5,6]): entry call
+<CUT!> app#1.1: cut!
+<GOAL> app#1.2: app([2,3],@,[2,3,4,5,6])
+<CALL> app([2,3],@,[2,3,4,5,6]): entry call
+<CUT!> app#1.1: cut!
+<GOAL> app#1.2: app([3],@,[3,4,5,6])
+<CALL> app([3],@,[3,4,5,6]): entry call
+<CUT!> app#1.1: cut!
+<GOAL> app#1.2: app([],@,[4,5,6])
+<CALL> app([],@,[4,5,6]): entry call
+<REDO> app: try clause #2
+<GOAL> app#2.1: succeed
+<SUCC> app#2: succeeds
+<SUCC> app#1: succeeds
+<SUCC> app#1: succeeds
+<SUCC> app#1: succeeds
+
+*** Yes
+R = [4,5,6].
+--1> <FAIL> app([],@,[4,5,6]): fails
+<FAIL> app#1: fails and alternatives cut
+<FAIL> app#1: fails and alternatives cut
+<FAIL> app#1: fails and alternatives cut
+
+*** No
+> > > > > Added debugging code to function 'append': level=clause, verbose=true, clauses=2
+
+*** Yes
+--1> 
+*** No
+> > <EVAL> append([],[d,e,f]): clause #2, result=[d,e,f]
+<EVAL> append([c],[d,e,f]): clause #1, result=[c,d,e,f]
+<EVAL> append([b,c],[d,e,f]): clause #1, result=[b,c,d,e,f]
+<EVAL> append([a,b,c],[d,e,f]): clause #1, result=[a,b,c,d,e,f]
+
+*** Yes
+A = [a,b,c,d,e,f].
+--1> 
+*** No
+> > > 
+*** Yes
+A = @, G = @~, H = @~.
+--1> 
+*** Yes
+A = @, C = @, G = [a,b|@], H = @~.
+----2> <EVAL> append([b|@~],[hello]): clause #1, result=[b|@]
+<EVAL> append([a,b|@~],[hello]): clause #1, result=[a,b|@]
+
+*** Yes
+A = [a,b|@], C = @~, G = [a,b|@~], H = [hello].
+------3> <EVAL> append([],[hello]): clause #2, result=[hello]
+<EVAL> append([e],[hello]): clause #1, result=[e,hello]
+<EVAL> append([d,e],[hello]): clause #1, result=[d,e,hello]
+
+*** Yes
+A = [a,b,d,e,hello], C = [d,e], G = [a,b,d,e], H = [hello].
+--------4> 
+*** No
+------3> 
+*** No
+----2> 
+*** No
+--1> 
+*** No
+> > > Debug: restored original clauses for function 'append'
+Added debugging code to function 'append': level=goal, verbose=true, clauses=2
+
+*** Yes
+> > > <PATT> append([a,b,c],[d,e,f]): pattern matches clause #1
+<PATT> append([b,c],[d,e,f]): pattern matches clause #1
+<PATT> append([c],[d,e,f]): pattern matches clause #1
+<PATT> append([],[d,e,f]): pattern matches clause #2
+<EVAL> append([],[d,e,f]): clause #2, result=[d,e,f]
+<EVAL> append([c],[d,e,f]): clause #1, result=[c,d,e,f]
+<EVAL> append([b,c],[d,e,f]): clause #1, result=[b,c,d,e,f]
+<EVAL> append([a,b,c],[d,e,f]): clause #1, result=[a,b,c,d,e,f]
+
+*** Yes
+A = [a,b,c,d,e,f].
+--1> 
+*** No
+> > > 
+*** Yes
+A = @, G = @~, H = @~.
+--1> 
+*** Yes
+A = @, C = @, G = [a,b|@], H = @~.
+----2> <PATT> append([a,b|@],[hello]): pattern matches clause #1
+<PATT> append([b|@],[hello]): pattern matches clause #1
+<EVAL> append([b|@~],[hello]): clause #1, result=[b|@]
+<EVAL> append([a,b|@~],[hello]): clause #1, result=[a,b|@]
+
+*** Yes
+A = [a,b|@], C = @~, G = [a,b|@~], H = [hello].
+------3> <PATT> append([d,e],[hello]): pattern matches clause #1
+<PATT> append([e],[hello]): pattern matches clause #1
+<PATT> append([],[hello]): pattern matches clause #2
+<EVAL> append([],[hello]): clause #2, result=[hello]
+<EVAL> append([e],[hello]): clause #1, result=[e,hello]
+<EVAL> append([d,e],[hello]): clause #1, result=[d,e,hello]
+
+*** Yes
+A = [a,b,d,e,hello], C = [d,e], G = [a,b,d,e], H = [hello].
+--------4> 
+*** No
+------3> 
+*** No
+----2> 
+*** No
+--1> 
+*** No
+> > > Debug: restored original clauses for function 'append'
+
+*** Yes
+> 
+*** Yes
+A = [a,b,c,d,e,f].
+--1> 
+*** No
+> > > > Added debugging code to function 'f': level=clause, verbose=true, clauses=2
+<EVAL> f(merci_arnaud,a): clause #1, result=a(merci_arnaud)
+<EVAL> f(merci_arnaud,b): clause #2, result=b(merci_arnaud)
+<FAIL> f(merci_arnaud,c): fails
+Debug: restored original clauses for function 'f'
+Added debugging code to function 'f': level=goal, verbose=true, clauses=2
+<PATT> f(merci_arnaud,a): pattern matches clause #1
+<EVAL> f(merci_arnaud,a): clause #1, result=a(merci_arnaud)
+<PATT> f(merci_arnaud,b): pattern matches clause #2
+<EVAL> f(merci_arnaud,b): clause #2, result=b(merci_arnaud)
+<FAIL> f(merci_arnaud,c): fails
+Debug: restored original clauses for function 'f'
+Added debugging code to function 'f': level=fail, verbose=true, clauses=2
+<FAIL> f(merci_arnaud,c): fails
+
+*** No
+> 

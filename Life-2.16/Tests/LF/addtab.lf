@@ -1,0 +1,41 @@
+
+dec -> {0;1;2;3;4;5;6;7;8;9}.
+
+digits(A,[A:0,1,2,3,4,5,6,7,8,9]) :- !.
+digits(A,[0,A:1,2,3,4,5,6,7,8,9]) :- !.
+digits(A,[0,1,A:2,3,4,5,6,7,8,9]) :- !.
+digits(A,[0,1,2,A:3,4,5,6,7,8,9]) :- !.
+digits(A,[0,1,2,3,A:4,5,6,7,8,9]) :- !.
+digits(A,[0,1,2,3,4,A:5,6,7,8,9]) :- !.
+digits(A,[0,1,2,3,4,5,A:6,7,8,9]) :- !.
+digits(A,[0,1,2,3,4,5,6,A:7,8,9]) :- !.
+digits(A,[0,1,2,3,4,5,6,7,A:8,9]) :- !.
+digits(A,[0,1,2,3,4,5,6,7,8,A:9]) :- !.
+
+sum(A,B,S,0) :- S:(A+B)<10, !.
+sum(A,B,(A+B-10),1).
+
+% Create a table of one digit additions with
+% coreferences for all identical values.
+addtab :- 
+	sum(A:dec,B:dec,S,C),
+	digits(A,D),
+	digits(B,D),
+	digits(S,D),
+	digits(C,D),
+	assert((add(A,B,S,C))),
+	fail.
+addtab.
+
+addtab?
+
+diff(X,X) -> false.
+diff(_,_) -> true.
+
+alldiff(A,B,C,D) :-
+	diff(A,B),
+	diff(A,C),
+	diff(A,D),
+	diff(B,C),
+	diff(B,D),
+	diff(C,D).

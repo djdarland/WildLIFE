@@ -1,0 +1,6 @@
+father(john,harry).
+father(john,charles).
+father(harry,michael).
+grandfather(A,B)?
+
+

@@ -1,0 +1,6 @@
+display_persistent?
+
+A<<-p(a,b,c)?
+A.4=e?
+A.4<-hello?
+A.4<<-goodbye?

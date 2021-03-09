@@ -1,0 +1,11 @@
+prime := I:int | length(factors(I))=1.
+
+factors(N:int) -> cond(N<0,
+                       {},
+                       factorize(N,2)).
+
+factorize(N,P) -> cond(P*P>N,
+                       [N],
+                       cond(R:(N/P)=:=floor(R),
+                            [P|factorize(R,P)],
+                            factorize(N,P+1))).

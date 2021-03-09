@@ -1,0 +1,5 @@
+p(X,X).
+p(Y,s(Y)).
+_A=bagof((X,Y),p(X,Y))?
+;
+

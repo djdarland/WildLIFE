@@ -1,0 +1,22 @@
+%
+%		Wild_life testing
+%
+%		Infinity and NaN
+%
+%
+
+testInfinity(X) :-
+                     ( nl, write(exp(X)) ; 
+                       nl, write(exp(-1*X)) ; 
+                       nl, write(log(X)) ; 
+                       nl, write(sqrt(X)) ;
+                       nl ,write(12*X+342)),
+                     fail.
+testInfinity.
+                               
+testNaN :- ( nl, write(cos(1e10)) ; 
+             nl, write(cos(cos(1e10))) ; 
+             nl ,write(1e310 - 1e310) ; 
+             nl ,write(cos(1e310)) ),
+            fail.
+testNaN.

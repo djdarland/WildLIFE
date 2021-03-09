@@ -1,0 +1,59 @@
+
+*** Yes
+> > 
+*** Yes
+A = prime~~.
+--1> 
+*** Yes
+A = 11: prime.
+----2> > 
+*** Yes
+B = prime~~.
+--1> 
+*** No
+B = prime~~.
+--1> > 2: prime
+3: prime
+5: prime
+7: prime
+11: prime
+13: prime
+17: prime
+19: prime
+23: prime
+29: prime
+31: prime
+37: prime
+41: prime
+43: prime
+47: prime
+53: prime
+59: prime
+61: prime
+67: prime
+71: prime
+73: prime
+79: prime
+83: prime
+89: prime
+97: prime
+
+*** No
+> 2: prime
+3: prime
+5: prime
+7: prime
+11: prime
+13: prime
+17: prime
+19: prime
+23: prime
+29: prime
+31: prime
+37: prime
+41: prime
+43: prime
+47: prime
+
+*** No
+> 

@@ -1,0 +1,36 @@
+
+*** Yes
+> > 
+*** Yes
+A = real~, B = real~, C = real~.
+--1> 
+*** Yes
+A = 23, B = real~, C = real~.
+--1> 
+*** Yes
+A = 23, B = 45, C = 1.95652.
+--1> 
+*** No
+A = 23, B = real~, C = real~.
+--1> 
+*** Yes
+A = 23, B = 1035, C = 45.
+--1> 
+*** No
+A = 23, B = real~, C = real~.
+--1> 
+*** No
+A = real~, B = real~, C = real~.
+--1> 
+*** Yes
+A = real~, B = 45, C = real~.
+--1> 
+*** Yes
+A = 11, B = 45, C = 4.09091.
+--1> 
+*** No
+A = real~, B = 45, C = real~.
+--1> 
+*** Yes
+A = 0.978261, B = 45, C = 46.
+--1> > 

@@ -1,0 +1,6 @@
+
+*** Yes
+> > X: (write(X), put(63))?
+*** Yes
+X = (write(X), put(63)).
+--1> 

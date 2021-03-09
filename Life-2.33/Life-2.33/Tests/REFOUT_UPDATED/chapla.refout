@@ -1,0 +1,72 @@
+
+*** Yes
+> > > > > > |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |     This attribute is inherited
+ This attribute is inherited
+ This attribute is inherited
+ This attribute is inherited
+ This attribute is inherited
+ This attribute is synthesized
+
+*** Yes
+A1 = attribute(direction => inh,
+               occurrences => [A1_1,A1_2,A1_4,A1_5,A1_6,A1_7]), 
+A1_1 = position(attrib => A1,pos => 1,share => [A1_2]), 
+A1_2 = position(attrib => A1,pos => 2,share => [A1_1]), 
+A1_4 = position(attrib => A1,pos => 0,share => [A1_5,A3_4]), 
+A1_5 = position(attrib => A1,pos => 1,share => [A1_4]), 
+A1_6 = position(attrib => A1,pos => 2,share => [R1_2,R1_2,A2_6,A2_7,A3_7]), 
+A1_7 = position(attrib => A2,pos => 3,share => []), 
+A2 = attribute(direction => inh,
+               occurrences => [A2_1,A2_2,A2_3,A2_4,A2_5,A2_6,A2_7]), 
+A2_1 = position(attrib => A2,pos => 1,share => [R1_1,A2_2]), 
+A2_2 = position(attrib => A2,pos => 2,share => [A2_1]), 
+A2_3 = position(attrib => A2,pos => 0,share => [A3_3]), 
+A2_4 = position(attrib => A2,pos => 0,share => [A2_5]), 
+A2_5 = position(attrib => A2,pos => 1,share => [A2_4]), 
+A2_6 = position(attrib => A2,pos => 2,share => [R1_2,R1_2,A1_6,A2_7,A3_7]), 
+A2_7 = position(attrib => A2,pos => 3,share => [R1_2,R1_2,A1_6,A2_6,A3_7]), 
+A3 = attribute(direction => inh,
+               occurrences => [A3_1,A3_2,A3_3,A3_4,A3_5,A3_7]), 
+A3_1 = position(attrib => A3,pos => 1,share => [R3_1]), 
+A3_2 = position(attrib => A3,pos => 2,share => [R3_1]), 
+A3_3 = position(attrib => A3,pos => 0,share => [A2_3]), 
+A3_4 = position(attrib => A3,pos => 0,share => [A1_4,A3_5]), 
+A3_5 = position(attrib => A3,pos => 1,share => [A3_4]), 
+A3_7 = position(attrib => A3,pos => 3,share => [R1_2,R1_2,A1_6,A2_6,A2_7]), 
+Pgm = program(attributes => [A1,A2,A3,R1,R2,R3],
+              positions => [R1_1,
+                            R2_1,
+                            R3_1,
+                            A1_1,
+                            A2_1,
+                            A3_1,
+                            A1_2,
+                            A2_2,
+                            A3_2,
+                            A2_3,
+                            A3_3,
+                            A1_4,
+                            A2_4,
+                            A3_4,
+                            A1_5,
+                            A2_5,
+                            A3_5,
+                            R1_2,
+                            R2_2,
+                            R3_2,
+                            A1_6,
+                            A2_6,
+                            A1_7,
+                            A2_7,
+                            A3_7]), 
+R1 = attribute(direction => inh,occurrences => [R1_1,R1_2]), 
+R1_1 = position(attrib => R1,pos => 0,share => [A2_1]), 
+R1_2 = position(attrib => R1,pos => 1,share => [R2_2,A1_6,A2_6,A2_7,A3_7]), 
+R2 = attribute(direction => inh,occurrences => [R2_1,R2_2]), 
+R2_1 = position(attrib => R2,pos => 0,share => [A3_1]), 
+R2_2 = position(attrib => R2,pos => 1,share => [R1_2,A1_6,A2_6,A2_7,A3_7]), 
+R3 = attribute(direction => syn,occurrences => [R3_1,R3_2]), 
+R3_1 = position(attrib => R3,pos => 0,share => [A3_2]), 
+R3_2 = position(attrib => R3,pos => 1,share => []).
+
+--1> 

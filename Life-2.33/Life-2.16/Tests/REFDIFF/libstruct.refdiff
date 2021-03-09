@@ -1,0 +1,100 @@
+19c19
+< testing: (@, @)+>=(@, @)
+---
+> testing: (@, @)+>=(C, C)
+25c25
+< testing: (@, @)+>=(@, @)
+---
+> testing: (C, C)+>=(@, @)
+31c31
+< testing: [@|@] +>= [@,@]
+---
+> testing: [@|@] +>= [C,C]
+37c37
+< testing: [@|@] +>= [@|@]
+---
+> testing: [C|C] +>= [@|@]
+70c70
+< testing: (@, @)+>(@, @)
+---
+> testing: (@, @)+>(C, C)
+76c76
+< testing: (@, @)+>(@, @)
+---
+> testing: (C, C)+>(@, @)
+82c82
+< testing: [@|@] +> [@|@]
+---
+> testing: [@|@] +> [C|C]
+88c88
+< testing: [@|@] +> [@|@]
+---
+> testing: [C|C] +> [@|@]
+121c121
+< testing: (@, @)==(@, @)
+---
+> testing: (@, @)==(C, C)
+127c127
+< testing: (@, @)==(@, @)
+---
+> testing: (C, C)==(@, @)
+133c133
+< testing: [@|@] == [@,@]
+---
+> testing: [@|@] == [C,C]
+139c139
+< testing: [@|@] == [@|@]
+---
+> testing: [C|C] == [@|@]
+186c186
+< testing: (@, @)+=<(@, @)
+---
+> testing: (@, @)+=<(C, C)
+192c192
+< testing: (@, @)+=<(@, @)
+---
+> testing: (C, C)+=<(@, @)
+198c198
+< testing: [@|@] +=< [@,@]
+---
+> testing: [@|@] +=< [C,C]
+204c204
+< testing: [@|@] +=< [@|@]
+---
+> testing: [C|C] +=< [@|@]
+237c237
+< testing: (@, @)+<(@, @)
+---
+> testing: (@, @)+<(C, C)
+243c243
+< testing: (@, @)+<(@, @)
+---
+> testing: (C, C)+<(@, @)
+249c249
+< testing: [@|@] +< [@,@]
+---
+> testing: [@|@] +< [C,C]
+255c255
+< testing: [@|@] +< [@|@]
+---
+> testing: [C|C] +< [@|@]
+288c288
+< testing: (@, @)+><(@, @)
+---
+> testing: (@, @)+><(C, C)
+294c294
+< testing: (@, @)+><(@, @)
+---
+> testing: (C, C)+><(@, @)
+300c300
+< testing: [@|@] +>< [@,@]
+---
+> testing: [@|@] +>< [C,C]
+306c306
+< testing: [@|@] +>< [@|@]
+---
+> testing: [C|C] +>< [@|@]
+393c393
+< testing: f(b,c) +>< f(@,@)
+---
+> testing: f(b,c) +>< f(X,X)

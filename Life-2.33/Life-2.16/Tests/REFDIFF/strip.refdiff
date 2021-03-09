@@ -1,0 +1,40 @@
+8c8
+< A = s(q,w,e), B = @(q,w,e).
+---
+> A = s(_A: q,_B: w,_C: e), B = @(_A,_B,_C).
+11c11
+< A = s(q,w,e,qq), B = @(q,w,e).
+---
+> A = s(_A: q,_B: w,_C: e,qq), B = @(_A,_B,_C).
+13a14
+> A = s(_A: q,_B: w,_C: e), B = @(_A,_B,_C).
+16c17
+< A = s(q,w,e), B = @(q,w,e,qq).
+---
+> A = s(_A: q,_B: w,_C: e), B = @(_A,_B,_C,qq).
+18a20
+> A = s(_A: q,_B: w,_C: e), B = @(_A,_B,_C).
+29a32
+> A = s, B = @.
+34a38
+> A = s, B = @.
+40c44
+< A = s(q,w,e), B = s(q,w,e).
+---
+> A = s(_A: q,_B: w,_C: e), B = s(_A,_B,_C).
+43c47
+< A = s(q,w,e,qq), B = s(q,w,e).
+---
+> A = s(_A: q,_B: w,_C: e,qq), B = s(_A,_B,_C).
+45a50
+> A = s(_A: q,_B: w,_C: e), B = s(_A,_B,_C).
+48c53
+< A = s(q,w,e), B = s(q,w,e,qq).
+---
+> A = s(_A: q,_B: w,_C: e), B = s(_A,_B,_C,qq).
+50a56
+> A = s(_A: q,_B: w,_C: e), B = s(_A,_B,_C).
+61a68
+> A = s, B = s.
+66a74
+> A = s, B = s.

@@ -1,0 +1,14 @@
+39,44c39,44
+< merge(@,[]) -> @.
+< merge([],@) -> @.
+< merge([@|@],
+<       [@|@]) -> cond(@ =:= @,
+<                      [@|merge(@,@)],
+<                      cond(@ > @,[@|merge([@|@],@)],[@|merge(@,[@|@])])).
+---
+> merge(_A,[]) -> _A.
+> merge([],_A) -> _A.
+> merge(_A: [_B|_C],
+>       _D: [_E|_F]) -> cond(_B =:= _E,
+>                            [_B|merge(_C,_F)],
+>                            cond(_B > _E,[_E|merge(_A,_F)],[_B|merge(_C,_D)])).

@@ -1,0 +1,593 @@
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%
+%              INTERFACE MODULE FOR THE SCANNING OF THE TREE
+%              ---------------------------------------------
+%
+%
+%  AUTHOR : Arnaud Venet                        CREATION : September 20th 1993
+%  ------                                       --------
+%
+%
+%                            ---------------                        
+%                    
+%                   Last modification : March 3rd 1994 
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  (C) Digital Equipment Corporation 1993 - 1994
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+
+
+
+module("c_public_terms") ?
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+public(nothing, first, next, previous, last) ?
+
+
+public(identifier, number, integer, characters, characters_string, 
+       id, white_spaces, file, line, column, octal, decimal,
+       hexadecimal, float, long, double) ?
+
+
+public(
+  toplevel,
+  top_declarations,
+  block_declarations,
+  first_declaration,
+  external_declarations,
+  type_definitions,
+  struct_definitions,
+  union_definitions,
+  enum_definitions,
+  struct_declarations,
+  union_declarations,
+  enum_declarations,
+  struct_declaration,
+  union_declaration,
+  enum_declaration,
+  function_definitions,
+  external_declaration,
+  local_declarations,
+  local_declaration,
+  files,
+  files_number,
+  file_info,
+  first_token,
+  scope,
+  function_head,
+  function_body,
+  function_name,
+  type,
+  name,
+  initialization,
+  separator,
+  type_definition,
+  keyword,
+  struct_definition,
+  struct,
+  enum_definition,
+  enum,
+  union_definition,
+  union,
+  body,
+  left_brace,
+  right_brace,
+  left_parenthesis,
+  right_parenthesis,
+  left_bracket,
+  right_bracket,
+  struct_body,
+  union_body,
+  enum_body,
+  type_alias,
+  store_class,
+  qualification,
+  fields,
+  field,
+  enumerators,
+  enumerator,
+  first_member,
+  first_argument,
+  protected_type,
+  protected_expression,
+  pointer,
+  to,
+  star,
+  qualification,
+  array,
+  of,
+  dimensions,
+  dimensions_number,
+  dimension,
+  size,
+  tag,
+  anonymous_tag,
+  colon,
+  function,
+  return_type,
+  parameters,
+  vararg,
+  suspension_points,
+  parameter,
+  label_parameter,
+  label,
+  function_definition,
+  old,
+  modern,
+  parameters_declarations,
+  parameter_declaration,
+  parameter,
+  struct_name,
+  union_name,
+  enum_name,
+  block,
+  local_declarations,
+  instructions,
+  expression,
+  expression_instruction,
+  semi_colon,
+  labeled_instruction,
+  case,
+  condition,
+  default,
+  if,
+  then_body,
+  then_keyword,
+  else_body,
+  switch,
+  while,
+  switch,
+  do_while,
+  do_keyword,
+  while_keyword,
+  for,
+  step,
+  first_semi_colon,
+  second_semi_colon,
+  continue,
+  break,
+  goto,
+  return,
+  value,
+  void_instruction,
+  setting,
+  postfix,
+  infix,
+  prefix,
+  special,
+  then,
+  else,
+  array_reference,
+  index,
+  cast,
+  function_call,
+  call,
+  argument,
+  arguments,
+  arguments_number,
+  operator,
+  mode,
+  left_expression,
+  right_expression,
+  sequence,
+  complex_initialization,
+  parent_declarations,
+  first_element,
+  tail) ?
+
+
+public(extern, const, volatile, static, auto, pointer, void, int, float,
+       double, long_int, long_double, typedef, short_int, short, long, char) ?
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+public('*protected_project*', '*protected_has_feature*') ?
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+public(syntactic_tree) ?
+
+
+persistent(syntactic_tree) ?
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+'*protected_project*'(Feature, Node) -> TheContent
+  | (
+      has_feature(Feature, Node, What),
+      !
+    ;
+      Feature :== first_element,
+      Node :=< list,
+      Node :\== [],
+      !,
+      What = Node.1
+    ;
+      Feature :== tail,
+      Node :=< list,
+      Node :\== [],
+      !,
+      What = Node.2
+    ;
+      Feature :== first_declaration,
+      !,
+      (
+        has_feature(external_declarations, Node, Declarations),
+        LNames = features(Declarations, current_module),
+        LNames :\== [],
+        !,
+        LNames = [Name | @],
+        What = search_first_from(Declarations.Name)
+      ;
+        has_feature(local_declarations, Node, Declarations),
+        LNames = features(Declarations, current_module),
+        LNames :\== [],
+        !,
+        LNames = [Name | @],
+        What = search_first_from(Declarations.Name)
+      ;
+        Node :== external_declarations,
+        LNames = features(Node, current_module),
+        LNames :\== [],
+        !,
+        LNames = [Name | @],
+        What = search_first_from(Node.Name)
+      ;
+        Node :== local_declarations,
+        LNames = features(Node, current_module),
+        LNames :\== [],
+        !,
+        LNames = [Name | @],
+        What = search_first_from(Node.Name)
+      ;
+        Node :== parameters_declarations,
+        LNames = features(Node, current_module),
+        LNames :\== [],
+        !,
+        LNames = [Name | @],
+        What = search_first_from(Node.Name)
+      ;
+        has_feature(type_definitions, Node, TypeDefinitions),
+        LNames = features(TypeDefinitions, current_module),
+        LNames :\== [],
+        !,
+        LNames = [Name | @],
+        What = search_first_from(Node.type_definitions.Name)
+      ;
+        has_feature(struct_definitions, Node, Structures),
+        LNames = features(Structures, current_module),
+        LNames :\== [],
+        !,
+        LNames = [Name | @],
+        What = search_first_from(Node.struct_definitions.Name)
+      ;
+        has_feature(union_definitions, Node, Unions),
+        LNames = features(Unions, current_module),
+        LNames :\== [],
+        !,
+        LNames = [Name | @],
+        What = search_first_from(Node.union_definitions.Name)
+      ;
+        has_feature(enum_definitions, Node, Enumerations),
+        LNames = features(Enumerations, current_module),
+        LNames :\== [],
+        !,
+        LNames = [Name | @],
+        What = search_first_from(Node.enum_definitions.Name)
+      ;
+        has_feature(struct_declarations, Node, Structures),
+        LNames = features(Structures, current_module),
+        LNames :\== [],
+        !,
+        LNames = [Name | @],
+        What = search_first_from(Node.struct_declarations.Name)
+      ;
+        has_feature(union_declarations, Node, Unions),
+        LNames = features(Unions, current_module),
+        LNames :\== [],
+        !,
+        LNames = [Name | @],
+        What = search_first_from(Node.union_declarations.Name)
+      ;
+        has_feature(enum_declarations, Node, Enumerations),
+        LNames = features(Enumerations, current_module),
+        LNames :\== [],
+        !,
+        LNames = [Name | @],
+        What = search_first_from(Node.enum_declarations.Name)
+      ;
+        has_feature(function_definitions, Node, FunctionDefinitions),
+        LNames = features(FunctionDefinitions, current_module),
+        LNames :\== [],
+        !,
+        LNames = [Name | @],
+        What = search_first_from(Node.function_definitions.Name)
+      ;
+        What = nothing
+      )
+    ;
+      Feature :== function_name,
+      Node :== {function_head; function_body},
+      !,
+      What :== Node.1
+    ;
+      Feature :== parent_declarations,
+      Node :== parameters_declarations,
+      !,
+      What = top_declarations
+    ;
+      Feature :== {left_expression; right_expression},
+      has_feature(mode, Node),
+      !,
+      cond(Feature :== left_expression,
+        What = Node.1,
+        What = Node.2
+      )
+    ;
+      Feature :== expression,
+      has_feature(mode, Node, Mode),
+      Mode :== {postfix; prefix},
+      !,
+      What = Node.1
+    ;
+      Feature :== expression,
+      Node :== {protected_expression; argument},
+      !,
+      What = Node.1
+    ;
+      Node :== pointer,
+      Feature :== store_class,
+      !,
+      What = '*protected_project*'(Feature, Node.to)
+    ;
+      Node :== array,
+      Feature :== {store_class; qualification},
+      !,
+      What = '*protected_project*'(Feature, Node.of)
+    ;
+      Node :== protected_type,
+      Feature :== {store_class; qualification},
+      !,
+      What = '*protected_project*'(Feature, Node.1)
+    ;
+      Node :== function,
+      Feature :== {store_class; qualification},
+      !,
+      What = '*protected_project*'(Feature, Node.return_type)
+    ;
+      Node :== {fields; enumerators},
+      Feature :== first_member,
+      !,
+      LNames = features(Node, current_module),
+      LNames = [Name | @],
+      What = search_first_from(Node.Name)
+    ;
+      Node :== arguments,
+      Feature :== first_argument,
+      !,
+      cond(Node.arguments_number > 0,
+        What = Node.1,
+        What = nothing
+      )
+    ;
+      Feature :== id,
+      Node :== identifier,
+      !,
+      What = Node.1
+    ;
+      Feature :== value,
+      Node :== integer,
+      !,
+      What = Node.1
+    ;
+      Feature :== string,
+      Node :== characters_string,
+      !,
+      What = Node.1
+    ;
+      Feature :== char,
+      Node :== character,
+      !,
+      What = Node.1
+    ;
+      Feature :== num,
+      Node :== number,
+      !,
+      What = Node.1
+    ;
+      Feature :== first,
+      !,
+      has_feature(previous, Node),
+      What = search_first_from(Node)
+    ;
+      Feature :== last,
+      !,
+      has_feature(next, Node),
+      What = search_last_from(Node)
+    ;
+      Node :== protected_type,
+      Feature :== type,
+      !,
+      What = Node.1
+    ;
+      Node :== parameter_declaration,
+      Feature :== parameter,
+      !,
+      What = Node.1
+    ;
+      Node :== expression_instruction,
+      Feature :== expression,
+      !,
+      What = Node.1
+    ;
+      Feature :== name,
+      Node :== {struct_name; union_name; enum_name},
+      !,
+      What = Node.1
+    ;
+      Feature :== body,
+      Node :== {struct; union; enum},
+      !,
+      What = Node.1
+    ;
+      write_err(">>> superlint : feature '", Feature, 
+                "' does not exist for node '", root_sort(Node), "'"),
+      nl_err,
+      halt
+    ),
+    (
+      is_symbolic(What),
+      !,
+      copy_and_convert_token(What, in => TheContent)
+    ;
+      TheContent = What
+    ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+%%%'*protected_has_feature*'(Feature, What, Content) :-
+%%%  has_feature(Feature, What, Content, current_module).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+key_words -> ['auto', 'break', 'case', 'char', 'const', 'continue', 'default',
+              'do', 'double', 'else', 'enum', 'extern', 'float', 'for', 'goto',
+              'if', 'int', 'long', 'register', 'return', 'short', 'signed',
+              'sizeof', 'static', 'struct', 'switch', 'typedef', 'union',
+              'unsigned', 'void', 'volatile', 'while',
+              identifier, number, integer, characters, characters_string].
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+persistent(keywords_table) ?
+
+
+
+init_keywords_table([Keyword | Keywords]) :-
+  !,
+  keywords_table.Keyword <<- true,
+  init_keywords_table(Keywords).
+
+
+init_keywords_table([]).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+init_keywords_table(key_words) ?
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+is_symbolic(What) :-
+  What :\>< string,
+  What :\== nothing,
+  has_feature(file, What),
+  (
+    has_feature(What, keywords_table),
+    !,
+    fail
+  ;
+    succeed
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+copy_and_convert_token(What, in => Copy) :-
+  Copy <<- psi2str(What),
+  Copy.file <<- What.file,
+  Copy.line <<- What.line,
+  Copy.column <<- What.column,
+  Copy.white_spaces <<- What.white_spaces,
+  Copy.previous <<- What.previous,
+  Copy.next <<- What.next.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+search_first_from(What) -> TheFirst
+  | (
+      What.previous :== nothing,
+      !,
+      TheFirst = What
+    ; 
+      TheFirst = search_first_from(What.previous)
+    ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+search_last_from(What) -> TheLast
+  | (
+      What.next :== nothing,
+      !,
+      TheLast = What
+    ; 
+      TheLast = search_last_from(What.next)
+    ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+
+
+
+
+
+
+
+

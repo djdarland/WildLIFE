@@ -1,0 +1,695 @@
+Testing interpreter: ~/bin/wild_life
+Date: Wed Jun 15 01:36:37 CDT 2016
+
+addtab.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+andor5.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+anyorder.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+append.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+apply.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+arnaud_bug.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+assert1.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+assert2.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+assert3.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+assert4.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+babel.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+bagof1.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+bagof2.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+bagof5.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+bigstr.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+bk_assign.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+boites1.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+boites2.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+brunobug.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+bruno_disj.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+call1.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+cb.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+chapla.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+charcode.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+chart_parser1.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+chart_parser2.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+clause.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+compose2.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+compose.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+comp_struct.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+condpred.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+copy1.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+copy2.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+copyfile.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+curry1.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+curry3.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+cut2.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+cut3.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+cycles1.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+cycles2.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+debug.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+delay2.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+delay.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+dichotomy.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+dict.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+disequality1.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+disequality2.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+disequality3.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+disequality4.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+disequality5.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+disequality6.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+disequality7.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+disequality8.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+disequality9.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+disj1.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+disj2.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+disj3.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+disj4.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+disj5.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+dissolve.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+dynstat.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+encapsulate.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+eoftest.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+eratosthenes.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+example.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+extest.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+fact.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+factorize.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+fail.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+feat_order.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+feature_module.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+features1.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+featval.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+funcself.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+function2.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+fusil.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+gauss.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+gctest.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+glblub.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+global2.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+global3.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+global.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+glob_gc.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+glob_test2.lf
+          *** output does not match reference ***
+          ***  errors do not match reference  ***
+grammars.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+hamming.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+hanoi.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+inherit.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+intabs.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+intdiv2.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+intdiv3.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+intlist.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+inttrace.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+isatest.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+junk.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+lazyinherit.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+lazy.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+lefun1.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+lefun2.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+libstruct.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+libtest.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+listing1.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+listing2.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+loadquery.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+long.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+machine.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+magic.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+makestr.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+manual2.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+manual3.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+manual5.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+manual6.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+manual7.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+manual8.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+many_types.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+matrix.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+module_test1a.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+module_test1.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+module_test2.lf
+          *** output matches reference ***
+          ***  errors do not match reference  ***
+module_test3.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+module_test4.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+module_test5.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+mort.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+n2.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+nesting.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+nicetest.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+nl.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+nofour.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+nonstrict2.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+nonstrict3.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+nonstrict4.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+nonstrict5.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+nonvar.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+numeric.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+order.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+overload.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+parser.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+part.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+peep.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+pers2.lf
+          *** output matches reference ***
+          ***  errors do not match reference  ***
+persistent2.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+persistent.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+person1.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+person2.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+posint.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+power.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+preparser.lf
+          *** output does not match reference ***
+          ***  errors do not match reference  ***
+prime.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+print2.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+printvar.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+profiler2.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+profiler3.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+project1.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+project3.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+psi2str.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+puke.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+put_get.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+pyth2.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+pyth.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+qsort1.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+qsort2.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+random.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+resid1.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+retract1.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+retract2.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+retract3.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+retract4.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+retract5.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+retract6.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+retract7.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+rmzero.sh~
+          ***  no such test file  ***
+rootsort2.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+rootsort.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+schedule1.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+schedule2.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+school.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+self.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+share.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+simp_eqn.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+smalltwente.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+smm.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+soap.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+sortcycle1.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+sortcycle2.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+sortcycle4.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+sortcycle5.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+str2psi.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+strbug.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+streams.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+subs.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+subsort.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+t3201.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+t3202.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+t3203.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+t3204.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+t3205.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+t3206.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+t3207.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+t4105.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+t4202.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+t4502.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+t4505.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+t8101.lf
+          *** output matches reference ***
+          ***  errors do not match reference  ***
+t8102.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+t8103.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+t8104.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+t8105.lf
+          *** output does not match reference ***
+          ***  errors do not match reference  ***
+termsize.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+test00.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+test03.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+test04.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+testprof.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+testslc.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+testsl.lf
+          *** output does not match reference ***
+          ***  errors do not match reference  ***
+titi.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+t.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+tri_ins.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+two_bugs.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+unary.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+volanski1.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+wambruno.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+wam.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+wlife.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+z_comb.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+z_gcsimp.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+z_gctoken1.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+z_gctoken2.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+z_maurice.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+z_power_4.lf
+          *** output matches reference ***
+          ***  errors match reference  ***
+z_pyth_gc.lf
+          *** output does not match reference ***
+          ***  errors match reference  ***
+
+Test finished: Wed Jun 15 01:37:05 CDT 2016
+

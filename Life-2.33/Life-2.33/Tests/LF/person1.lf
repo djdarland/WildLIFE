@@ -1,0 +1,5 @@
+
+:: person(age => A:int,yob => Y:int,today => A+Y).
+
+:: human( age => A:int, yob => Y:int, today => T:int) | T=A+Y.
+

@@ -1,0 +1,10 @@
+ab <| a.
+ab <| b.
+
+bc <| b.
+bc <| c.
+
+ac <| a.
+ac <| c.
+
+g(X,t(r(X)),s(X)) -> 1.

@@ -1,0 +1,20 @@
+op(500,xfy,\)?
+
+subst(List, SubList, NewSubList, NewList) :-
+	app(Front, Back, List),		% non-deterministically split
+					% the original list into Front
+					% and Back, such that
+	app(SubList, Rest, Back),	% Back begins with SubList,
+	app(NewSubList, Rest, NewBack),	% then construct the new 
+					% list by undoing the previous
+					% steps with NewSubList
+	app(Front, NewBack, NewList).	% in place of SubList
+
+app([], L, L).
+app([H|T], L, [H|R]) :- app(T, L, R).
+
+
+dlist([],S\S).
+dlist([H|T],[H|S]\E) :- dlist(T,S\E).
+
+

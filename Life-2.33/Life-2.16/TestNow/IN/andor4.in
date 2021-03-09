@@ -1,0 +1,14 @@
+A = and(B)?
+B=A(2=>C)?
+C=false?
+
+
+B=A(2=>false)?
+.
+A = and(2=>B)?
+B=A(C)?
+B=false?
+
+
+B=A(false)?
+.

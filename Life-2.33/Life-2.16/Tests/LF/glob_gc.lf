@@ -1,0 +1,49 @@
+% Test the interaction between the GC and global/persistent terms.
+
+non_strict(c_for)?
+non_strict(c_while)?
+non_strict(c_equal)?
+non_strict(if)?
+
+for(A,B,C,D) :- execute(A),while(B,(C,D)).
+
+while(A,B) :- execute(A),execute(B),!,while(A,B).
+while.
+
+if(A,B) :- execute(A),!,execute(B).
+if.
+
+P:print :- Q=eval(P),write&strip(Q).
+
+execute((A,B)) :- !,execute(A),execute(B).
+execute(A=B) :- !,eval(A)=eval(B).
+execute(A) :- A.
+
+c_equal(A,B) :- eval(A)<<-eval(B).
+
+less_than(A,B) :- eval(A) < eval(B).
+
+persistent(program)?
+
+global(i,n,sum,init_value)?
+
+program <<- `( (
+
+	c_equal(n,init_value),
+
+	c_equal(sum,1),
+
+	for(c_equal(i,0),
+            less_than(i,n),
+	    c_equal(i,i+1),
+	    (c_equal(sum,sum+i),
+	     if(i mod 50=0,(print(i,"->",sum),nl)))),
+
+        print("done"),
+
+        nl) ) ?
+
+test(N) :- init_value <- N, execute(program).
+
+
+

@@ -1,0 +1,104 @@
+
+*** Yes
+> > 
+*** Yes
+S = s(anaphora_in => _A,
+      anaphora_out => [_B: n(class => _C: code(eating_habit => comp),
+                             number => _D: singular)|_A],
+      form => statement,
+      parsetree => tree(label => ss,
+                        lhs => tree(label => np,
+                                    lhs => tree(label => snp,
+                                                lhs => tree(label => ssnp,
+                                                            lhs => _B))),
+                        rhs => tree(label => vp,
+                                    lhs => tree(label => svp,
+                                                lhs => iv(number => _D,
+                                                          subject => _C,
+                                                          tense => present))))).
+
+--1> 
+*** Yes
+S = ss(anaphora_in => _A,
+       anaphora_out => [_B: n(class => _C: code(eating_habit => comp),
+                              number => _D: singular)|_A],
+       form => statement,
+       parsetree => tree(label => ss,
+                         lhs => tree(label => np,
+                                     lhs => tree(label => snp,
+                                                 lhs => tree(label => ssnp,
+                                                             lhs => _B))),
+                         rhs => tree(label => vp,
+                                     lhs => tree(label => svp,
+                                                 lhs => iv(number => _D,
+                                                           subject => _C,
+                                                           tense => present))))).
+
+--1> 
+*** No
+> 
+*** Yes
+S = s(anaphora_in => _A,
+      anaphora_out => [_B: n(class => _C: food,number => singular),
+                       _D: pn(class => _E: human(eating_habit => omnivore),
+                              gender => male,
+                              number => _F: singular)|_A],
+      form => statement,
+      parsetree => tree(label => ss,
+                        lhs => tree(label => np,lhs => tree(label => snp,lhs => _D)),
+                        rhs => tree(label => vp,
+                                    lhs => tree(label => svp,
+                                                lhs => tv(number => _F,
+                                                          object => _C,
+                                                          subject => _E,
+                                                          tense => present),
+                                                rhs => tree(label => np,
+                                                            lhs => tree(label => snp,
+                                                                        lhs => tree(label => ssnp,
+                                                                                    lhs => _B))))))).
+
+--1> 
+*** Yes
+S = ss(anaphora_in => _A,
+       anaphora_out => [_B: n(class => _C: food,number => singular),
+                        _D: pn(class => _E: human(eating_habit => omnivore),
+                               gender => male,
+                               number => _F: singular)|_A],
+       form => statement,
+       parsetree => tree(label => ss,
+                         lhs => tree(label => np,lhs => tree(label => snp,lhs => _D)),
+                         rhs => tree(label => vp,
+                                     lhs => tree(label => svp,
+                                                 lhs => tv(number => _F,
+                                                           object => _C,
+                                                           subject => _E,
+                                                           tense => present),
+                                                 rhs => tree(label => np,
+                                                             lhs => tree(label => snp,
+                                                                         lhs => tree(label => ssnp,
+                                                                                     lhs => _B))))))).
+
+--1> 
+*** No
+> > > 
+*** No
+> > 
+*** Yes
+S = s(anaphora_in => _A,
+      anaphora_out => [_B: pn(class => _C: dog(eating_habit => carnivore),
+                              number => _D: singular)|_A],
+      form => statement,
+      parsetree => tree(label => ss,
+                        lhs => tree(label => np,
+                                    lhs => tree(label => snp,lhs => _B)),
+                        rhs => tree(label => vp,
+                                    lhs => tree(label => svp,
+                                                lhs => iv(number => _D,
+                                                          subject => _C,
+                                                          tense => present))))).
+
+--1> 
+*** No
+> > 
+*** No
+> > 

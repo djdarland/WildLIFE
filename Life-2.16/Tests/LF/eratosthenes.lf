@@ -1,0 +1,27 @@
+   global(sieve)?
+   global(limit)?
+
+   main :-
+      write("N=?"),
+      read_token(limit & int),
+      next_prime(2),
+      nl.
+
+   remove_multiples(P,M) :-
+      cond(M<limit,
+           (sieve.M<-multiple_of(P),remove_multiples(P,M+P))).
+
+   next_prime(P) :-
+      P<limit,
+      !,
+      SP=sieve.P,
+      ( SP=prime(P),
+        !,
+        write(P,' '),
+        remove_multiples(P,2*P)
+      ;
+        succeed
+      ),
+      next_prime(P+1).
+
+   next_prime(P).

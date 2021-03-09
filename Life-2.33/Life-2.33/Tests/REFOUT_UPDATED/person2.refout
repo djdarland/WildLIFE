@@ -1,0 +1,9 @@
+
+*** Yes
+> > 
+*** Yes
+X = [_A: person(spouse => _B: person(spouse => _A)),_B].
+--1> > 
+*** Yes
+X = [_A: married_person(spouse => _B: married_person(spouse => _A)),_B].
+--1> > 

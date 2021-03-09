@@ -1,0 +1,5 @@
+2c2,3
+< *** Syntax error: ',' expected in argument list (or extra ',') (near line 17)
+---
+> *** Syntax error: ',' expected in argument list (near line 17)
+> *** Syntax error: ')' (near line 17)

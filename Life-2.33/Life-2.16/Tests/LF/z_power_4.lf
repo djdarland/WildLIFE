@@ -1,0 +1,31 @@
+% The real test is power_4(10), but this takes a *long* time.
+% I am satisfied with power_4(9) for now.
+% Written by Bruno Dumant.
+
+foo_4(0,Counter,X,X+1) :- !.
+foo_4(N,0,_,Y) :- !,
+        N > 0,
+        ( foo_4(R:(N-1),3,result,X1),
+          foo_4(R,3,X1,X2),
+          foo_4(R,3,X2,X3),
+          foo_4(R,3,X3,X4), setq(result,X4), fail ; Y = result).
+foo_4(N,P,X,Y) :-
+        N > 0,
+        foo_4(R:(N-1),C:(P-1),X,X1),
+        foo_4(R,C,X1,X2),
+        foo_4(R,C,X2,X3),
+        foo_4(R,C,X3,Y).
+
+%
+% power_4(N) computes 4^N additions.
+%
+
+power_4(N) :- setq(result,0), foo_4(N,_,0,X), write(X).
+
+
+% non_strict(setq)?
+% 
+% setq(X,V) :- Value = eval(V), retract((X->@)), !, assert((X->Value)).
+% setq(X,V) :- dynamic(X), Value = eval(V), assert((X->Value)).
+% 
+

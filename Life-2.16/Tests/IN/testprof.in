@@ -1,0 +1,108 @@
+
+
+%%%
+%%%  Test session for module 'profiler'.
+%%%
+
+
+profile(verif, app, testapp, f, g, h, level=>goal)?
+
+
+%%% Testing predicates
+%%% ------------------
+
+testapp?
+
+write_stats(app, testapp)?
+
+app(A, B, [1,2,3])?
+;
+;
+;
+;
+
+app(1)?
+
+write_stats(app)?
+
+clear_stats?
+
+verif(true)?
+
+verif(false)?
+
+write_stats(verif, verbosity=>verbose)?
+
+
+%%% Testing functions
+%%% -----------------
+
+X = f(2)?
+
+X = f("rien")?
+
+X = f(1.324)?
+
+X = g("something")?
+
+X = g(0)?
+
+X = g(1)?
+
+X = g(3.2)?
+
+write_stats(f, g)?
+
+X = h(3)?
+
+X = h("rien")?
+
+X = h(1.5)?
+
+write_stats(f, g, h)?
+
+
+%%% Testing handling of explicit failures
+%%% -------------------------------------
+
+profile(app, level=>clause)?
+
+app(1.5)?
+
+app([1,2], [3], A)?
+
+write_stats(app)?
+
+
+%%% Testing cut
+%%% -----------
+
+profile(q, level=>clause)?
+
+q?
+;
+;
+
+write_stats(q)?
+
+clear_stats(q)?
+
+write_stats(q, verbosity=>verbose)?
+
+q?
+;
+;
+
+write_stats(q, verbosity=>verbose)?
+
+%%%
+%%%  End of test session
+%%%
+
+
+
+
+
+
+
+

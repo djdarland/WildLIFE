@@ -1,0 +1,13 @@
+
+*** Yes
+> > 
+*** Yes
+F = f(@,g(@,@)), Status = declaration, X = @, Y = @.
+--1> 
+*** No
+> 
+*** Yes
+F = (@ = 2), S = error, V = true, X = @.
+--1> 
+*** No
+> 

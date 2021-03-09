@@ -1,0 +1,32 @@
+% Copyright 1992 Digital Equipment Corporation
+% All Rights Reserved
+
+% Dictionary program in Life.
+% Author: Peter Van Roy
+
+% Insert, look up, or check a definition in an ordered binary tree
+
+module("dictionary") ?
+public(dictionary) ?
+
+delay_check(tree)?
+:: tree(name => string,def => string,left => tree,right => tree).
+
+contains(tree(name => N,def => D),Name,Def) :-
+        Name = N, Def = D.
+
+contains(tree(name => N,left => L),Name,Def) :-
+        N $> Name,
+        contains(L, Name, Def).
+
+contains(tree(name => N,right => R),Name,Def) :-
+        N $=< Name,
+        contains(R,Name,Def).
+
+dictionary :-
+        CN = "cat", CD = "furry feline",
+        DN = "dog", DD = "furry canine",
+        contains(T,CN,CD),  % Insert cat definition
+        contains(T,DN,DD),  % Insert dog definition
+        contains(T,CN,Def), % Look up cat definition
+        write("A ",CN," is a ",Def),nl,!.

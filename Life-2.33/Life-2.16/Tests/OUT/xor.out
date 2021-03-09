@@ -1,0 +1,129 @@
+
+*** Yes
+> > 
+*** Yes
+A = true.
+--1> 
+*** No
+> 
+*** Yes
+A = false.
+--1> 
+*** No
+> 
+*** Yes
+A = false.
+--1> 
+*** No
+> 
+*** Yes
+A = true.
+--1> > 
+*** Yes
+A = bool~, B = bool~, C = bool~.
+--1> 
+*** Yes
+A = true, B = bool~, C = bool~.
+----2> 
+*** No
+--1> 
+*** Yes
+A = false, B = bool, C = bool.
+----2> 
+*** No
+--1> 
+*** Yes
+A = bool~, B = true, C = bool~.
+----2> 
+*** No
+--1> 
+*** Yes
+A = bool, B = false, C = bool.
+----2> 
+*** No
+--1> 
+*** Yes
+A = bool~, B = bool~, C = true.
+----2> 
+*** No
+--1> 
+*** Yes
+A = bool, B = bool, C = false.
+----2> 
+*** No
+--1> > 
+*** Yes
+A = bool~, B = bool~, C = bool~.
+--1> 
+*** Yes
+A = false, B = bool, C = bool.
+----2> 
+*** No
+--1> 
+*** Yes
+A = bool, B = false, C = bool.
+----2> 
+*** No
+--1> 
+*** Yes
+A = bool, B = bool, C = false.
+----2> 
+*** No
+--1> 
+*** Yes
+A = false, B = bool, C = bool.
+----2> 
+*** No
+--1> 
+*** Yes
+A = bool, B = false, C = bool.
+----2> 
+*** No
+--1> 
+*** Yes
+A = bool, B = bool, C = false.
+----2> 
+*** No
+--1> 
+*** Yes
+A = false, B = true, C = true.
+----2> 
+*** No
+--1> > 
+*** Yes
+A = bool~, B = bool~, C = bool~, D = bool~, E = bool~.
+--1> 
+*** Yes
+A = bool~, B = bool~, C = true, D = bool~, E = bool~.
+----2> 
+*** Yes
+A = bool~, B = bool~, C = true, D = true, E = bool~.
+------3> 
+*** No
+----2> 
+*** No
+--1> 
+*** Yes
+A = true, B = bool~, C = bool~, D = bool~, E = bool~.
+----2> 
+*** No
+--1> 
+*** Yes
+A = false, B = bool~, C = bool~, D = bool~, E = bool~.
+----2> 
+*** Yes
+A = false, B = false, C = bool~, D = bool~, E = bool~.
+------3> 
+*** Yes
+A = false, B = false, C = false, D = bool, E = bool.
+--------4> 
+*** Yes
+A = false, B = false, C = false, D = true, E = true.
+----------5> 
+*** No
+--------4> 
+*** Yes
+A = false, B = false, C = false, D = false, E = false.
+----------5> 
+*** No
+--------4> > 

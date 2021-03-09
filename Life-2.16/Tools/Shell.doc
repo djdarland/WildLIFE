@@ -1,0 +1,224 @@
+#	$Id: Shell.doc,v 1.2 1994/12/08 23:48:08 duchier Exp $	
+
+
+  NAME
+
+    shell - an interactive user interface for LIFE offering command line
+            editing, a history mechanism, and user rebinding of keys.
+
+
+  USAGE
+
+    First, make sure that the directory containing the shell and parser
+    is part of your load_path. If it is, do
+
+        expand_load(true) ?
+	load ("shell") ?
+
+    to load the shell. The query
+
+    	shell ?
+
+    then runs the shell.
+
+
+  DESCRIPTION
+
+    The shell provides an interface which looks very much like that of 
+    the Wild_LIFE interpreter, except for minor syntactic changes to the
+    prompt and output messages. Thus, you can execute queries, enter 
+    definitions, backtrack, return to previous levels or to the top level,
+    as you would with the interpreter. In addition, the shell offers the
+    following facilities:
+
+    - command line editing using arrow keys and (by default) Emacs keystrokes
+    - a history mechanism, allowing to step up/down through previously
+      typed commands
+    - saving of the history between LIFE sessions. Upon start-up, the
+      shell restores the history from the previous session, and upon leaving, 
+      saves the current history.
+    - the user can rebind keys as he or she wishes.
+    - Unix commands can be entered directly from the shell by enclosing them in
+      string quotes, eg "ls" lists the current directory, "csh" runs a new Unix
+      C-shell.
+
+    ****  Note that multiple line input is NOT yet handled.  ****
+          (See Limitations below)
+      
+
+  EDITING COMMANDS AND KEYBINDINGS
+
+    This section lists the names of the editing commands, their default
+    keybindings (usually those of Emacs), and a brief description of each
+    command.
+
+    We use the Emacs standard notation for keys. For control characters, we
+    write, for example, "C-a" to mean "Control-a". There is no distinction
+    between "C-a" and "C-A"; they are the same character. For Meta characters,
+    we write, for example, "M-a" to mean "Meta-a". Note that "M-a" and "M-A"
+    are not the same character. All Meta characters can be entered with a two
+    character sequence starting with ESC. Thus, "M-a" is equivalent to "ESC a".
+    This is useful for terminals that do not have a special Meta key,
+    or that cannot send Meta (i.e., 8 bit) characters. (Note: Even if your
+    terminal has a Meta key, you may have to do something like "stty pass8"
+    to get it to pass 8 bit characters).
+
+
+      beginning_of_line					C-a
+	Move to the beginning of the line
+
+      end_of_line					C-e
+	Move to the end of the line
+
+      forward_char					C-f, right arrow
+	Move forward one character
+
+      backward_char					C-b, left arrow
+	Move backward one character
+
+      forward_word					M-f, M-F
+	Move forward one word
+
+      backward_word					M-b, M-B
+	Move backward one word
+
+      next_line						C-n, down arrow
+	Get the next history line
+
+      previous_line					C-p, up arrow
+	Get the previous history line
+
+      beginning_of_history				M-<
+	Get the first history line
+
+      end_of_history					M->
+	Get the last history line
+
+      transpose_chars					C-t
+	Transpose the two characters before and at the cursor
+
+      delete_backward_char				DEL
+	Delete the character before the cursor
+
+      delete_char					C-d
+	Delete the character at the cursor
+
+      kill_line						C-k
+	Kill to the end of the line
+
+      kill_entire_line					C-w
+	Kill the entire line from the beginning
+
+      kill_word						M-d, M-D
+	Kill forward to the end of the next word
+
+      backward_kill_word				M-DEL
+	Kill back to the beginning of the previous word
+
+      rewrite_line					C-l
+	Rewrite the line (useful after garbage collection messages)
+
+      describe_key_briefly				C-h c <key>
+	Print the name of the routine that <key> is bound to
+	and rewrite the line.
+
+      write_history
+	Write the history to the file ".life-history" in the
+	current directory.
+
+      interrupt
+	Leave the shell and return to Wild_LIFE.
+
+      quit
+	Leave the shell and Wild_LIFE, after writing the history.
+
+
+  CHANGING KEYBINDINGS
+
+    To change a keybinding, use the routine "global_set_key".
+    For example, to change the keybinding for "C-d" from the
+    default action of deleting the character at the cursor to
+    that of leaving the shell and Wild_LIFE, do
+
+	global_set_key ("\C-d", quit) ?
+
+    To have this keybinding every time you run the shell, put
+    the query in the file ".life-keymap" in your current directory.
+    To have this keybinding during just the current invocation of the
+    shell, execute the query at the prompt.
+
+    Key names are written as strings. The prefix "\C-" is used for control
+    characters. The following special characters are also recognized:
+	"\t"	TAB
+	"\b"	DEL
+	"\n"	RET
+	"\r"	RET
+
+    However, currently, multiple keys cannot be rebound (for example, "\C-hc"),
+    nor can Meta characters ("\M-a"), nor escape-prefixed characters ("\ea"). 
+
+
+  GLOBAL PARAMETERS
+
+    The user may change the number of lines saved in the history list,
+    and the name of the history file, by changing the values (using setq)
+    of "history_limit" and "history_file", respectively. For example,
+    these are the default settings of these constants:
+
+	setq (history_limit, 100) ?
+	setq (history_file, ".life-history")?
+
+    Changes to these constants must be done before the shell is run.
+
+
+  LIMITATIONS
+
+    There are many things that remain to be implemented:
+
+    - ****  Multiple line input is not yet handled.  ****
+
+    - Verbose mode does not work under the shell.
+
+    - Multiple keys cannot yet be rebound (for example, "\C-hc"), nor
+      can Meta characters ("\M-a"), nor escape-prefixed characters ("\ea").
+
+    - The yank facility (C-y under Emacs) is not yet implemented.
+
+    - Killing and copying of regions (C-w, M-w) is not yet implemented.
+
+    - Command name completion (using the TAB key as in Emacs) is not
+      yet implemented.
+    
+    - The quoting mechanism for keys (as in Emacs) is not yet implemented.
+
+    - The "pretty" printer is still rather primitive.
+
+    - Tracing mode still has some idiosyncracies: it outputs spurious
+      lines on failure and on aborting, and it does not output anything
+      during X events.
+
+
+  FILES
+
+    When the shell is started, it looks for the following two files,
+    if they exist, in the *current* directory.
+
+    .life-history   	Contains the history of commands saved from the
+                        previous LIFE session. Note that this file is read
+                        in specially; it is not loaded.
+
+    .life-keymap    	Contains queries to remap keys. 
+                        Since this file is loaded in the usual sense, it can,
+                        in fact, contain any LIFE code.
+
+    
+    The code for the shell is in one single file: shell.lf
+
+    The shell also uses the LIFE parser and tokenizer: see the documentation
+    for those files.
+
+  
+  AUTHOR
+
+    Kathleen Milsted
+

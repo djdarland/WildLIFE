@@ -1,0 +1,434 @@
+module("x_mathwiz")?
+public(mathwiz)?
+
+import("xtools_utils")?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Borrow sorting routine:
+
+import("lists")?
+
+sort(L) -> gen_quicksort(L,order=> >).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+persistent(target, seed, best) ?
+persistent(stop_point, first_sol) ?
+persistent(start_time) ?
+
+dynamic(solvable, unsolvable) ?
+
+find(Ls, Show, Time) :-
+	Nums = copy_term(feature_values(seed)),
+	cond(Show ,
+	     resolve1(Nums, copy_term(target), Ls.moves),
+	     resolve2(6, Nums, [], Ls)).
+
+resolve1(L, Target, Moves) :-
+	choose(A, L, L1),
+	choose1(B, L1),
+	findop(A, B, Op, C),
+	Moves = [A, Op, B, C | R],
+	cond( abs(Target - C) =:= 0,
+	      R = [],
+	      resolve1([C|L], Target, R)).
+
+resolve2(2, [A, B], Moves, Ls) :-
+	!,
+	New_moves = append(Moves, [A, Op, B, C]),
+	findop(A, B, Op, C),
+	Diff = abs(target - C),
+	cond( Diff < best,
+	      ( best <<- copy_term(Diff),
+		cond(cpu_time - start_time > 10,
+		     time_display(New_moves, Ls),
+		     display(New_moves, Ls)))
+	    ),
+	cond( Diff =:= 0, time_display(New_moves, Ls), fail ).
+
+resolve2(N, L) :-
+	N > 3,
+	unsolvable(L),
+	!,
+	fail.
+
+resolve2(N, L, Moves, Ls) :-
+	New_moves = append(Moves, [A, Op, B, C]),
+	choose(A, L, L1),
+	choose1(B, L1),
+	findop(A, B, Op, C),
+	Diff = abs(target - C),
+	cond( Diff < best,
+	      ( best <<- copy_term(Diff),
+		cond(cpu_time - start_time > 10,
+		     time_display(New_moves, Ls),
+		     display(New_moves, Ls)))
+	    ),
+	cond( Diff =:= 0,
+	      time_display(New_moves, Ls),
+	      res2(N-1, [C|L], New_moves, Ls)
+	    ).
+
+res2(N, NL, Moves, Ls) :-
+	resolve2(N, NL, Moves, Ls),
+	asserta(solvable(NL)).
+res2(N, NL) :-
+	N > 3,
+	\+solvable(NL),
+	asserta(unsolvable(NL)),
+	fail.
+
+findop(A, B, (+), A+B).
+findop(A, B, (-), C) :-
+	A > B, A =\= B*2, C = A - B
+    ;
+	A < B, B =\= A*2, C = B - A
+    ;
+	B =:= 1, !, fail
+    ;
+	A =:= 1, !, fail.
+
+findop(A, B, (*), A*B).
+findop(A, B, (/), C) :- A mod B =:= 0, !, A =\= B*B, C = A/B.
+findop(A, B, (/), C) :- B mod A =:= 0, B =\= A*A, C = B/A.
+
+choose(X, L:[X|T], T) :- L <- T.
+choose(X, [H|T], R) :- choose(X, T, R).
+
+choose1(X, L:[X|T]) :- L <- T.
+choose1(X, [@|T]) :- choose1(X, T).
+
+insert(C, L:[H | T]) -> cond(C >= H, [C|L], [H|insert(C,T)]).
+insert(C, []) -> [C].
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% THE GRAPHICAL INTERFACE %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+import("xtools") ?
+import("xtools_utils")?
+
+% The necessary widgets:
+
+s_box <| frame.
+s_box <| field.
+s_box <| text_box.
+
+:: s_box(frame_state => true,
+	 text => " ").
+
+slot_box := s_box(font_id => z_font,
+		  offset => d_border).
+
+time_box := s_box(font_id => z_font,
+		  text_color_id => z_color).
+
+l_box := text_box(offset => -d_border,
+		  font_id => title_font).
+
+p_button := push_button(font_id => z_font).
+
+n_box := text_field_button(number => N:int,
+			   text => T:"     ",
+			   action => set_number(N,T),
+			   offset => 0,
+			   font_id => title_font,
+			   text_color_id => z_color).
+
+% Colors and fonts
+
+color('Blue') -> blue.
+color('Green') -> green.
+color('Ivory') -> wheat.
+color('Red') -> red.
+color('Yellow') -> yellow.
+
+def_color(main_colors, r, red)?
+def_color(main_colors, i, wheat)?
+def_color(main_colors, g, green)?
+def_color(main_colors, b, blue)?
+def_color(main_colors, y, yellow)?
+def_color(main_colors, z_color, 'blue violet')?
+
+def_font(z_font,
+	 new_font(cond(life_demo#using_demo_fonts,
+		       "terminal_bold_narrow18",
+		       "-adobe-helvetica-bold-r-narrow--17-120-100-100-p-72-*")))?
+
+def_font(title_font,
+	 new_font(cond(life_demo#using_demo_fonts,
+		       "terminal_bold_narrow28",
+		       "-adobe-helvetica-bold-r-narrow--25-180-100-100-p-116-*")))?
+
+% The control and display panel:
+
+mathwiz :-
+	(
+	    C = get_choice,
+	    Q = p_button(text => "QUIT",
+			 action => (set_choice(C),fail)),
+
+	    G = p_button(text => "SOLVE",
+			 action => (solve(Ls),
+				    reset_state(M,false))),
+
+	    M = p_button(text => "MORE",
+			 action => more(TB, SB, Ss)),
+
+	    A = p_button(text => "ANIMATE",
+			 action => (animate(Ls),
+				    reset_state(R,false),
+				    reset_state(M,false))),
+
+	    P = p_button(text => "RANDOM",
+			 action => random_pick([B0|Bs])),
+
+	    S = p_button(text => "STOP",
+			 action => stop),
+
+	    R = p_button(text => "RESET",
+			 action => reset_all([TB, SB|Ss])),
+
+	    same_size([Q,G,M,A,P,S,R]),
+
+	    B0 = n_box(number=>0, width => 2*W, height => H),
+	    B1 = n_box(number=>1, width => W,   height => H),
+	    B2 = n_box(number=>2),
+	    B3 = n_box(number=>3),
+	    B4 = n_box(number=>4),
+	    B5 = n_box(number=>5),
+	    B6 = n_box(number=>6),
+
+	    same_size(Bs:[B1,B2,B3,B4,B5,B6]),
+
+	    Num_boxes = frame_box(vc_list [B0,
+					   v_box(10),
+					   ht_list [B1,h_box(10),
+						    B2,h_box(10),
+						    B3],
+					   v_box(10),
+					   ht_list [B4,h_box(10),
+						    B5,h_box(10),
+						    B6]
+					  ],
+				  padding => 10),
+
+	    S1 = slot_box(width => 200,height => 20),
+	    S2 = slot_box,
+	    S3 = slot_box,
+	    S4 = slot_box,
+	    S5 = slot_box,
+
+	    same_size(Ss:[S1,S2,S3,S4,S5]),
+
+	    Sol_boxes = frame_box(padding => 10,
+				  vl_list Ss),
+
+	    TitleBox = fancy_text_box(text => "Math Wizard",
+				      font => title_font,
+				      colors => [r,i,g,b,y]),
+	    
+	    TimeBox = padded_box
+	      (padding => 10,
+	       hc_list [text_box(text => "Total Time",
+				 font_id => z_font),
+			frame_box(TB:time_box(width => 120,
+					      height => 50,
+					      text => " "),
+				  padding => 3)
+		       ]
+		 ),
+
+	    StatusBox = padded_box
+	      (padding => 10,
+	       hc_list [text_box(text => "Status",
+				 font_id => z_font),
+			frame_box(SB:time_box(width => 120,
+					      height => 50,
+					      text => " "),
+				  padding => 3)
+		       ]
+		 ),
+
+	    Panel = panel(title => "Le compte est bon!...")
+	      containing
+	      padded_box(padding => 20,
+			 ht_list [vl_list [Q, v_box(10),
+					   P, v_box(10),
+					   G, v_box(10),
+					   M, v_box(10),
+					   A, v_box(10),
+					   S, v_box(10),
+					   R
+					  ],
+				  vr_list [TitleBox,
+					   v_box(30),
+					   ht_list
+					     [h_box(10),
+					      Num_boxes,
+					      h_box(10),Sol_boxes],
+					   v_box(20),
+					   ht_list
+					     [TimeBox, h_box(30),
+					      StatusBox]
+					  ]
+				 ]),
+
+	    create_box(Panel),
+
+	    Ls = @(timebox => TB, morebox=>M, stopbox=>S, statusbox => SB)
+	      & map(boxify, Ss)
+	;
+	    succeed
+	).
+	
+boxify(X) -> @(box => X).
+
+% Actions for the control panel buttons:
+
+random_pick(Bs) :- choose_random, random_pick2(Bs).
+
+random_pick2([B|Bs]) :- !, random_set(B), random_pick2(Bs).
+random_pick2([]).
+
+choose_random :- !,
+	L = [1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,25,50,75,100],
+	seed.1 <<- remove_nth(L, random(24)),
+	seed.2 <<- remove_nth(L, random(23)),
+	seed.3 <<- remove_nth(L, random(22)),
+	seed.4 <<- remove_nth(L, random(21)),
+	seed.5 <<- remove_nth(L, random(20)),
+	seed.6 <<- remove_nth(L, random(19)),
+	target <<- 100 + random(900).
+
+remove_nth(L:[H|T], 0) -> H | L <- T.
+remove_nth([@|T], N) -> remove_nth(T, N-1).
+
+random_set(B:@(number => 0)) :-
+	!, reset_text(B,psi2str(target)).
+random_set(B:@(number => N:int))
+	:- !, reset_text(B,psi2str(seed.N)).
+
+set_number(0,T:string) :- !, target <<- parse(T).
+set_number(N,T:string) :- !, seed.N <<- parse(T).
+
+persistent(is_reset)?
+is_reset <<- true?
+
+solve(Ls) :-
+	cond(is_reset,
+	     succeed,
+	     reset_all(Ls)),
+	is_reset <<- false,
+	first_sol <<- true,
+	best <<- 1000,
+	Ls.moves <- @,
+	reset_text(Ls.statusbox,"Solving..."),
+	(
+	    stop_point <<- get_choice,
+	    solution(Ls, false)
+	;
+	    reset_state(Ls.stopbox, false),   % reached by STOP only
+	    reset_boxes([Ls.statusbox, Ls.timebox]) 
+	).
+
+animate(Ls) :-
+	cond(is_reset, succeed, reset_all(Ls)),
+	is_reset <<- false,
+	first_sol <<- true,
+	best <<- 1000,
+	Ls.moves <- @,
+	reset_text(Ls.statusbox,"Animating..."),
+	(
+	    stop_point <<- get_choice,
+	    display_moves(Ls),
+	    solution(Ls, true)
+	;
+	    reset_state(Ls.stopbox, false),   % reached by STOP only
+	    reset_boxes([Ls.timebox, Ls.statusbox])
+	).
+
+more(TB, SB, Ss) :-
+	reset_text(SB, "Retrying..."),
+	reset_text(TB, " "),
+	reset_boxes(Ss),
+	first_sol <<- false,
+	try_more,
+	beep,
+	reset_text(SB, "NO MORE!").
+
+stop :-
+	cond(is_value(stop_point),
+	     (set_choice(stop_point), fail),
+	     succeed).
+
+reset_all(L) :- cond(is_reset, succeed,
+		     (
+			 clean_cache,
+			 reset_text(L.timebox, " "),
+			 reset_boxes(L)
+		     )).
+
+reset_boxes([H|T]) :- !, reset_text(H," "), reset_boxes(T).
+reset_boxes([]).
+
+clean_cache :- retract(unsolvable(@)), fail.
+clean_cache :- retract(solvable(@)), fail.
+clean_cache.
+
+display_moves(L) :- display(L.moves, L).
+
+time_display(Moves, Ls) :-
+	reset_text(Ls.timebox,
+		   strcon(psi2str(cpu_time-start_time), " ms")),
+	display(Moves, Ls).
+
+display([A,O,B,C|T], [@(box=>Box)|Boxes]) -> true | 
+	reset_text(Box,textify(A,O,B,C)),
+	display(T, Boxes).
+display([], Boxes) -> true |
+	clear_boxes(Boxes).
+
+clear_boxes([@(box => Box) | Boxes]) :-
+	!,
+	reset_text(Box, " "),
+	clear_boxes(Boxes).
+clear_boxes([]).
+
+textify(A, (-), B, C) ->
+	cond( A < B, 
+	      strcat(psi2str(B), " - ", psi2str(A), " = ", psi2str(C)),
+	      strcat(psi2str(A), " - ", psi2str(B), " = ", psi2str(C))).
+	      
+textify(A, (/), B, C) ->
+	cond( A < B, 
+	      strcat(psi2str(B), " / ", psi2str(A), " = ", psi2str(C)),
+	      strcat(psi2str(A), " / ", psi2str(B), " = ", psi2str(C))).
+	      
+	       
+textify(A, Op, B, C) ->
+	strcat(psi2str(A), " ", psi2str(Op), " ", psi2str(B),
+	       " = ", psi2str(C)).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% PUTTING TOGETHER THE SOLVER AND THE GRAPHICAL INTERFACE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+persistent(try_more)?
+try_more <<- succeed?
+
+solution(Ls, Show) :-
+	try_more <<- fail,
+	start_time <<- cpu_time,
+	find(Ls, Show, copy_term(start_time)),
+	Time = cpu_time-start_time,
+	reset_text(Ls.statusbox, "Solved!"),
+	reset_text(Ls.timebox, strcon(psi2str(Time)," ms")).
+
+solution(list(statusbox => SB, timebox => TB)) :-
+	reset_text(SB, (cond(first_sol, "Impossible", "No more!"))),
+	reset_text(TB, strcon(psi2str(cpu_time-start_time)," ms")),
+	is_reset <<- false,
+	beep, beep,
+	try_more <<- succeed.
+

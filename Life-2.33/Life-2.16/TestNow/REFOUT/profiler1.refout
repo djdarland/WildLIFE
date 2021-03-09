@@ -1,0 +1,98 @@
+
+*** Yes
+> > 
+*** Yes
+> 
+*** Yes
+> 
+*** Yes
+> 
+*** Yes
+
+Type 'profile_help ?' to get some help about the profiler
+
+
+*** Yes
+> Profile : Added profiling code to function 'fact' at call level
+Profile : Added profiling code to predicate 'app' at call level
+
+*** Yes
+--1> 
+*** No
+> 
+*** Yes
+A = 120.
+--1> 
+*** No
+> 
+Profiling statistics for functions :
+----------------------------------
+
+  *Tries*     Match      %Eval    Successes  %Tot.fail   functions
+     6         ---        ---         6          0       fact
+
+   Tries     *Match*     %Eval    Successes  %Tot.fail   functions
+
+
+*** Yes
+> 
+Profiling statistics for predicates :
+-----------------------------------
+
+  *Tries*    Entries    Success   %Tot.fail %Expl.fail   predicates
+     0         ---         0         ---        ---      app
+
+  *Tries*    Entries    Success   %Tot.fail %Expl.fail   predicates
+
+   Tries    *Entries*   Success   %Tot.fail %Expl.fail   predicates
+
+   Tries     Entries   *Success*  %Tot.fail %Expl.fail   predicates
+
+
+*** Yes
+> 
+*** Yes
+A = [], B = [1,2,3].
+--1> 
+*** Yes
+A = [1], B = [2,3].
+--1> 
+Profiling statistics for predicates :
+-----------------------------------
+
+  *Tries*    Entries    Success   %Tot.fail %Expl.fail   predicates
+     2         ---         3          0          0       app
+
+  *Tries*    Entries    Success   %Tot.fail %Expl.fail   predicates
+
+   Tries    *Entries*   Success   %Tot.fail %Expl.fail   predicates
+
+   Tries     Entries   *Success*  %Tot.fail %Expl.fail   predicates
+
+
+*** Yes
+A = [1], B = [2,3].
+--1> 
+*** Yes
+A = [1,2], B = [3].
+--1> 
+*** Yes
+A = [1,2,3], B = [].
+--1> 
+*** No
+> 
+Profiling statistics for predicates :
+-----------------------------------
+
+  *Tries*    Entries    Success   %Tot.fail %Expl.fail   predicates
+     4         ---        10        100          0       app
+
+  *Tries*    Entries    Success   %Tot.fail %Expl.fail   predicates
+
+   Tries    *Entries*   Success   %Tot.fail %Expl.fail   predicates
+
+   Tries     Entries   *Success*  %Tot.fail %Expl.fail   predicates
+
+
+*** Yes
+> 

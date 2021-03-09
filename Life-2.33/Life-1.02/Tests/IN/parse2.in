@@ -1,0 +1,4 @@
+F=parse("f(X,g(Y,X)).",Status)?
+
+F=parse("X=2",S,V)?
+

@@ -1,0 +1,15 @@
+
+*** Yes
+> > > > > 
+*** Yes
+> 
+*** Yes
+> 
+*** Yes
+> 
+*** Yes
+R = rectangle(area => 16,length => 4,width => 4).
+--1> 
+*** Yes
+R = square(area => 16,length => 4,side => 4,width => 4).
+----2> 

@@ -1,0 +1,71 @@
+echo "-----------"
+echo "files wild life"
+echo "-----------"
+echo "1 ee1 - edit any .h file next to (below) 1.02 version"
+echo "2 ee2 - edit any .c file next to (below) 1.02 version"
+echo "3 ee3 - diff any .h file - with 1.02 version"
+echo "4 ee4 - diff any .c file - with 1.02 version"
+echo "110 make"
+echo "111 make OUTPUT"
+echo "112 test ./wildlife on djd_pitch.lf"
+echo "113 djd_pitch OUTPUT"
+echo "114 gdb ./wildlife"
+echo "115 rm *.o"
+echo "116 Run and View Test Suite"
+echo "117 Only View Test Suite"
+echo "118 Run and View One (current) Test"
+echo "119 Run wild_life interactively"
+
+echo "777 NOTES_DJD.txt"
+echo "888 NOTES_HAK.txt"
+echo "999 quit"
+echo "select"
+read select
+while [ $select -ne 999 ]
+do 
+case $select in
+1) ./ee1 ;;
+2) ./ee2 ;;
+3) ./ee3 ;;
+4) ./ee4 ;;
+
+110) make >djd1 2>djd2;;
+111) $EDITOR djd1 djd2 & ;;
+112) ./pitch.sh;;
+113) $EDITOR pitch/pitch.out pitch/pitch.errout & ;;
+114) gdb ./wild_life;;
+115) rm *.o;;
+116) ./ts.sh 1;;
+117) ./ts2.sh;;
+118) ./tsnow.sh;;
+119)  wild_life;;
+777) $EDITOR NOTES_DJD.txt & ;;
+888) $EDITOR NOTES_HAK.txt & ;;
+
+esac
+
+echo "-----------"
+echo "files wild life"
+echo "-----------"
+echo "1 ee1 - edit any .h file next to (below) 1.02 version"
+echo "2 ee2 - edit any .c file next to (below) 1.02 version"
+echo "3 ee3 - diff any .h file - with 1.02 version"
+echo "4 ee4 - diff any .c file - with 1.02 version"
+echo "110 make"
+echo "111 make OUTPUT"
+echo "112 test ./wildlife on djd_pitch.lf"
+echo "113 djd_pitch OUTPUT"
+echo "114 gdb ./wildlife"
+echo "115 rm *.o"
+echo "116 Run and View Test Suite"
+echo "117 Only View Test Suite"
+echo "118 Run and View One (current) Test"
+echo "119 Run wild_life interactively"
+
+echo "777 NOTES_DJD.txt"
+echo "888 NOTES_HAK.txt"
+echo "999 quit"
+echo "select"
+read select
+
+done

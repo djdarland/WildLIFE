@@ -1,0 +1,58 @@
+% A generic peephole optimizer.
+
+% This rewrites patterns in an input list to patterns in an output list.
+% Closure is done.
+
+% Example input:
+% > peep([a,b,c,a,a,t],Out)?
+% One peephole pass done with 3 changes.
+% One peephole pass done with 0 changes.
+% 
+% *** Yes
+% Out = [c,a,t].
+% --1>
+
+import("accumulators")?
+
+% Accumulator declarations:
+acc_info(in,     X,Out,In,acc_pred=>(Out=[X|In]))?
+acc_info(out,    X,Out,In,acc_pred=>(Out=[X|In]))?
+acc_info(changes,X,In,Out,acc_pred=>(Out=In+X))?
+
+pred_info([peep_loop,peep_one], [in,out,changes])?
+% pred_info(peep_one,  [in,out,changes])?
+
+% Closure calculation of peepholer:
+peep(In, Out) :--
+	peep_loop
+	    with (in(In,[]), out(Mid,[]), changes(0,C)),
+	write("One peephole pass done with ",C," changes."), nl,
+	cond(C=:=0, Out=Mid, peep(Mid,Out))?
+
+peep_loop :--
+	% Deep magic (a brownie point if you figure out what this does !):
+	% This continues peepholing with the result of peep_one:
+	peep_one with (glob(in) = in => inv(out)),
+	!,
+	1+changes,
+	peep_loop?
+peep_loop :-- [] is in, !, [] is out?
+peep_loop :-- I+in, I+out, peep_loop?
+
+% Sample set of peephole rules:
+peep_one :-- 	% Rewrite a,b => c.
+	a+in,
+	b+in,
+	!,
+	c+out?
+peep_one :--	% Rewrite X,X => X. (This unifies adjacent elements, if possible).
+	X+in,
+	X+in,
+	!,
+	X+out?
+peep_one :--	% Rewrite X,Y => X. (This does not unify adjacent elements).
+	X+in,
+	Y+in,
+	{X===Y},
+	!,
+	X+out?

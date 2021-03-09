@@ -1,0 +1,36 @@
+131a132,142
+> A = (c_equal(n,
+>              init_value), c_equal(sum,
+>                                   1), for(c_equal(i,0),
+>                                           less_than(i,n),
+>                                           c_equal(i,i + 1),
+>                                           (c_equal(sum,
+>                                                    sum + i), if(i mod 50 = 0,
+>                                                                 (print(i,
+>                                                                        "->",
+>                                                                        sum), nl)))), print("done"), nl).
+> 
+133a145,155
+> A = (c_equal(n,
+>              init_value), c_equal(sum,
+>                                   1), for(c_equal(i,0),
+>                                           less_than(i,n),
+>                                           c_equal(i,i + 1),
+>                                           (c_equal(sum,
+>                                                    sum + i), if(i mod 50 = 0,
+>                                                                 (print(i,
+>                                                                        "->",
+>                                                                        sum), nl)))), print("done"), nl).
+> 
+135a158,168
+> A = (c_equal(n,
+>              init_value), c_equal(sum,
+>                                   1), for(c_equal(i,0),
+>                                           less_than(i,n),
+>                                           c_equal(i,i + 1),
+>                                           (c_equal(sum,
+>                                                    sum + i), if(i mod 50 = 0,
+>                                                                 (print(i,
+>                                                                        "->",
+>                                                                        sum), nl)))), print("done"), nl).
+> 

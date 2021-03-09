@@ -1,0 +1,3 @@
+*** Error: cannot use '<-' on persistent value in  $@ <- hello
+
+*** Abort

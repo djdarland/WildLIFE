@@ -1,0 +1,23 @@
+10c10
+< A = [list,string,real,bool,bytedata].
+---
+> A = [list,string,real,bool].
+106,110d105
+<      process_no_children,
+<      process_exited,
+<      process_signaled,
+<      process_stopped,
+<      process_continued,
+136d130
+<      begin_raw,
+138,140d131
+<      end_raw,
+<      get_raw,
+<      in_raw,
+145,150d135
+<      put_raw,
+<      reset_window_flag,
+<      window_flag,
+<      (,
+<      ),
+<      ftruncate,

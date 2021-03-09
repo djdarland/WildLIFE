@@ -1,0 +1,20 @@
+
+:: X:a | w("A:", root_sort(X)).
+
+:: X:b | w("B:", root_sort(X)).
+
+:: X:c | w("C:", root_sort(X)).
+
+:: X:d | w("D:", root_sort(X)).
+
+:: X:e | w("E:", root_sort(X)).
+
+b <| e.
+b <| a.
+
+c <| a.
+
+d <| b.
+d <| c.
+
+w(X,Y) :- write(X,Y), nl.

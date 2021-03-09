@@ -1,0 +1,7 @@
+foo := X | write(X).
+:: X:bar | write(X).
+X=foo?
+.
+X=bar?
+.
+listing(foo,bar)?

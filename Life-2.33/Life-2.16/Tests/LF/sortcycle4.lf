@@ -1,0 +1,25 @@
+% Between *** is not cyclic
+f <| k.
+c <| h.
+h <| k.
+i <| m.
+g <| j.
+g <| k.
+c <| l.
+d <| e.
+k <| o.
+c <| d.
+e <| j.
+a <| b.
+n <| q.
+l <| o.
+j <| o.
+m <| p.
+b <| d.
+d <| f.
+e <| i.
+n <| r.
+c <| g.
+j <| n.
+f <| j.
+% ***

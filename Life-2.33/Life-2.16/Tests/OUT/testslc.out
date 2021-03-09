@@ -1,0 +1,30 @@
+module("superlint") ?
+
+public(main) ?
+
+D = getenv("SLDIR"), chdir(D) ?
+
+load("c_public_terms")?
+load("sl_public_terms")?
+load("sl_utils")?
+load("sl_parser")?
+
+open("c_public_terms")?
+open("sl_public_terms")?
+open("sl_parser")?
+open("sl_utils")?
+load("rl_overload")?
+
+'*rule*'("variable_length",
+         @,
+         @) :- is_list_member("declaration",
+                              @), (parse_mode :== prefix, @ :== local_declaration), !, '*rule_name*' <<- ref("variable_length"), @ = @ .scope, @ = @ .left_brace, @ = @ .right_brace,(@ .file :\== @ .file, !, error_msg("Braces around a block must be in the same file",
+                                                                                                                                                                                                                         @) ; strlen(@ .name .id) =< sqrt(@ .line - @ .line), !, error_msg("Variable name is too short",
+                                                                                                                                                                                                                                                                                           @ .name) ; succeed) ; succeed.
+
+'*rule*'("extern_in_c_file",
+         @,
+         @) :- is_list_member("declaration",
+                              @), (parse_mode :== prefix, @ :== external_declaration), !, '*rule_name*' <<- ref("extern_in_c_file"),((@ .type .store_class :== extern, file_extension(@ .name .file) :== "c"), !, error_msg("No declaration in a .c file accessed out of the .c file",
+                                                                                                                                                                                                                            @ .name) ; succeed) ; succeed.
+

@@ -1,0 +1,16 @@
+
+:: _A: positive | _A > 0.
+positive <| int.
+
+:: _A: zero | _A = 0.
+zero <| @.
+
+*** Yes
+> > 
+*** No
+> 
+*** Yes
+> 
+*** Yes
+A = 0: zero.
+--1> 

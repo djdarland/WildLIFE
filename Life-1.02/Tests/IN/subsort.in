@@ -1,0 +1,10 @@
+testnum(2)?
+testnum(int)?
+testnum(3.2)?
+testreal(string)?
+testreal(1)?
+testreal(4.0)?
+testFile(terminal, file)?
+testFile(seqFile, file)?
+testFile(mouse_event, event)?
+

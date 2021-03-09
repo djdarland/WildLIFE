@@ -1,0 +1,38 @@
+% FILE. . . . . /_/udir4/_/hassan/life/quick_sort
+% EDIT BY . . . Hassan Ait-Kaci
+% ON MACHINE. . Prlp22
+% STARTED ON. . Wed Jan 8 11:02:17 1990
+
+% Last modified on Tue Feb 18 12:26:12 MET 1992 by mezhoud
+
+q_sort([H|T]) 	->
+		append(L1,[H|L2]) | 
+ 			LM=split(H,T,couple(left=>[],right=>[])),
+               		L1= q_sort(l(LM)),
+               		L2= q_sort(r(LM)).
+q_sort([]) 	-> [].
+
+split(X,[H|T],C)->
+               	cond(H<X	,
+             		split(X,T,ll(C,[H|l(C)])),
+             		split(X,T,rr(C,[H|r(C)]))
+		    ).
+split(@,[],C) 	-> C.
+
+
+%%%%%%%%%%%%%%%%%%%%   data structure COUPLE %%%%%%%%%%%%%
+
+%couple ( left	=>  X:@,
+%        right	=> Y:@ ).
+
+l(couple( left	=> X:@,
+          right	=> Y:@ ))-> X.
+
+r(couple( left	=> X:@,
+          right	=> Y:@ ))-> Y.
+
+ll(C:couple, X:@)->	couple( left  => X:@,
+                                 right=> r(C) ).
+
+rr(C:couple, X:@)->  	couple( left => l(C),
+                                right => X:@  ).

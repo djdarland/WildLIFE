@@ -1,0 +1,13 @@
+main(0,0)?
+main(1,0)?
+main(0,1)?
+main(1,1)?
+main(1,2)?
+main(2,1)?
+main(2,2)?
+main(2,3)?
+main(3,2)?
+main(3,3)?
+main(3,4)?
+main(4,3)?
+main(4,4)?

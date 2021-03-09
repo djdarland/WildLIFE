@@ -1,0 +1,15 @@
+A=5?
+B=9?
+C= -(44)?
+D=9?
+cond(A>B,write("5>9"),write("9>=5"))?
+cond(A>=B,write("5>9"),write("9>5"))?
+cond(A<B,write("5<9"),write("9>=5"))?
+cond(A>B,write("5=<9"),write("9>5"))?
+cond(A=:=B,write("5=:=9"),write("not 9=:=5"))?
+cond(B=:=D,write("9=:=9"),write("not 9=:=9"))?
+cond(A>B and B=:=D,write("5>9 and 9 =:= 9"),write("not (5>9 and 9=:=9"))?
+cond(A<B and B=:=D,write("5<9 and 9 =:= 9"),write("not (5<9 and 9=:=9"))?
+cond(not(A>B and B=:=D),write("not(5>9 and 9 =:= 9)"),write("(5>9 and 9=:=9)"))?
+cond(A>B or B>A,write("5>9 or 9>5"),write("not (5>9 or 9>5)"))?
+cond(D>B or B>D,write("9>9 or 9>9"),write("not (9>9 or 9<9)"))?

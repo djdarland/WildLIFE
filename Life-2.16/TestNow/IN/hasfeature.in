@@ -1,0 +1,23 @@
+A=has_feature(@,S)?
+
+S."@"=2?
+A=has_feature(@,S)?
+.
+A=s(q,w,e,f=>r)?
+has_feature(1,A)?
+
+has_feature("1",A)?
+
+has_feature(4,A)?
+X=str2psi("2")?
+has_feature(X,A)?
+
+
+X=str2psi("4")?
+has_feature(X,A)?
+.
+A = s(q,w,e,f => r)?
+has_feature(f,A)?
+
+has_feature(e,A)?
+.

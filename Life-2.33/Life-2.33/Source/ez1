@@ -1,0 +1,3 @@
+$EDITOR def_glob.h $1.c
+
+ 

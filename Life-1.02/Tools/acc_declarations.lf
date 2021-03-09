@@ -1,0 +1,187 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%                   EXPANDING ACCUMULATORS AND HIDDEN ARGUMENTS.
+%
+% This file contains all the declarations used by the preprocessor
+%
+% Copyright 1992-1994 Digital Equipment Corporation
+% All Rights Reserved
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%	$Id: acc_declarations.lf,v 1.2 1994/12/08 23:49:07 duchier Exp $	
+
+module("acc_declarations") ?
+
+public(acc_info,pred_info,pass_info,
+       clear_acc_def,
+       is_passed,is_acc,expandable,
+       get_acc_info,get_pass_info,list_of_accs,
+       dcg,
+       check_expansion_flag,
+       set_error_expander,reset_error_expander,
+       non_expanded_warning) ?
+
+persistent(accumulators) ?
+persistent(passed_arguments) ?
+persistent(predicates_info) ?
+persistent(check_expansion_flag) ?
+
+check_expansion_flag <<- false ?
+
+%%% accumulator declaration
+
+non_strict(acc_info) ?
+
+associate_expanders(acc_info,acc_info_expander) ?
+acc_info_expander(X,in_clauses => In,out_clauses => In) :-
+	X.
+
+
+acc_info(Acc,Term,In,Out,
+	 acc_pred => Acc_pred, 
+	 in_name => InName, out_name => OutName,
+	 in_start => InStart, out_start => OutStart) :-
+	AS = psi2str(Acc),
+	InName = {strcon("in_",AS);@},
+	OutName = {strcon("out_",AS);@},
+	!,
+	cond( has_feature(Acc,accumulators),
+	      overriding_warning(Acc)
+	    ),
+	accumulators.Acc <<- @(Acc,Term,In,Out,
+			       acc_pred => Acc_pred, 
+			       in_name => InName, out_name => OutName, 
+			       in_start => InStart,
+			       out_start => OutStart).
+
+
+X:get_acc_info(Acc) :-
+	cond( has_feature(Acc,accumulators,AccInfo),
+	      X = copy_term(AccInfo),
+	      fail
+	    ).
+
+is_acc(Acc) -> has_feature(Acc,accumulators).
+
+
+
+%%% pred_info
+
+pred_info(X,Y) :-
+	cond( X :< list,
+	      pred_list_info(X,Y),
+	      pred_info2(X,Y)
+	    ).
+pred_list_info([A|B],Y) :-
+	!,
+	pred_info2(A,Y),
+	pred_list_info(B,Y).
+pred_list_info([]).
+
+pred_info2(X,Y) :-
+	( check_expansion_flag,!,
+	  remove_expanders(X,error_expander),
+	  add_expanders_a(X,error_expander)
+	;
+	  succeed
+	),
+	cond( Y :< list,
+	      acc_list_info(Y,combined_name(X)),
+	      predicates_info.combined_name(X).Y <<- true
+	    ).
+
+acc_list_info([A|B],X) :-
+	!,
+	predicates_info.X.A <<- true,
+	acc_list_info(B,X).
+acc_list_info([]).
+
+
+associate_expanders(pred_info,pred_info_expander) ?
+pred_info_expander(X,in_clauses => In,out_clauses => In) :-
+	X.
+
+expandable(X) -> has_feature(combined_name(X),predicates_info).
+
+
+%%% pass_info
+
+non_strict(pass_info) ?
+pass_info(P,X,V,start=>I,acc_pred => Pred) :-
+	passed_arguments.P <<- @(P,X,V,start => I,acc_pred => Pred).
+
+X:get_pass_info(P) :- cond( has_feature(P,passed_arguments,PassInfo),
+			    X = copy_term(PassInfo),
+			    fail
+			  ).
+
+associate_expanders(pass_info,pass_info_expander) ?
+pass_info_expander(X,in_clauses => In,out_clauses => In) :-
+	X.
+
+is_passed(Pass) -> has_feature(Pass,passed_arguments).
+
+%%% Utilities
+
+%%% clear_acc_def: retract '*acc_info*' declarations...
+
+clear_acc_def(X) :-
+	cond( X :< list,
+	    maprel(clear_one_def,X),
+	    clear_one_def(X)
+	).
+
+clear_one_def(X) :-
+	accumulators.X <<- @(false).
+
+list_of_accs(PredName,Bool) -> L |
+	AllAccs = cond( has_feature(combined_name(PredName),
+				    predicates_info,Accs),
+			Accs,
+			@),
+	F = features(AllAccs,current_module),
+	cond(Bool,
+	     cond( has_feature(dcg,AllAccs),
+		   L = F,
+		   L = [dcg|F]
+		 ),
+	     L = F
+	    ).
+
+
+%%% Dealing with forgotten expansions:
+
+error_expander(A,file => File,line => Line,
+	       in_clauses => [A|Out],out_clauses => Out) :-
+	non_expanded_warning(A,File,Line).
+
+
+set_error_expander :-
+	maprel(set_check_exp,features(predicates_info,current_module)).
+
+
+reset_error_expander :-
+	maprel(reset_check_exp,features(predicates_info,current_module)).
+
+
+set_check_exp(A) :-
+	remove_expanders(A,error_expander),
+	add_expanders_a(A,error_expander).
+
+reset_check_exp(A) :-
+	remove_expanders(A,error_expander).
+
+%%%
+
+overriding_warning(Acc) :- quiet,!.
+overriding_warning(Acc) :-
+	write_err("*** Warning: overriding previous declaration",
+		  " of accumulator ",Acc),
+	nl_err.
+
+non_expanded_warning(A,File,Line) :- quiet,!.
+non_expanded_warning(A,File,Line) :-
+	write_err("*** Warning: ",root_sort(A)),nl_err,
+	write_err("             is not expanded in file ",File,
+		  " near line ",Line,"."),
+	nl_err.

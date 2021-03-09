@@ -1,0 +1,17 @@
+A=stu?
+B=emp?
+A=B?
+;
+;
+;
+
+A:emp=stu?
+;
+
+A:staff=faculty?
+A=stu?
+A=person?
+A=employee?
+
+
+

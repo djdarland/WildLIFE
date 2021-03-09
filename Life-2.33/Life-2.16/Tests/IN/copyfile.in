@@ -1,0 +1,10 @@
+@=system("rm -f FILES/copyfile.1")?
+@=system("rm -f FILES/copyfile.2")?
+.
+open_out("FILES/copyfile.1",S),writeq(X:s(X,1,2.2,"34")),write("."),nl,close(S),fail?
+
+
+copy_file("FILES/copyfile.1","FILES/copyfile.2")?
+
+
+open_in("FILES/copyfile.2",S),read(P),close(S),writeq(P),nl,fail?

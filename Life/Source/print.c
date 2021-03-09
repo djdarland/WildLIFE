@@ -1116,7 +1116,7 @@ long depth;
 {
   long v;
   /* char *s="nnn"; 18.5 */
-  char s[4];
+  char s[22];  // modified 3/8/2021 to prevent overflow - compiler warning
   ptr_module module;
 
   

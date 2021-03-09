@@ -1,0 +1,40 @@
+6/13/2016
+Changed abort_life() in built_ins.c to exit instead of returning to top level.
+See INSTALL in main directory.
+
+3/6/2015
+Have this working in cygwin now.
+My big problem I had - but which fortunately didn't take long to find
+was when I used tar to get files from Linux port, Linux is case sensitive
+but cygwin (windows) is not thus some files were overwritten.
+I went back to Linux- got rid of a lot of files (usually ones in all CAPS
+had been from OS/2 port. Also got rid off anything else no longer useful.
+There are still the hard coded paths mentioned below.
+Also cleaned up warnings in regexp subdirectory. For some
+reason had to run make in that directory with cygwin but not Linux.
+I have not done anything to make configure or to use distribution Makefile work.
+Identical code works for Linux & cygwin - this surprised me!!!!! 
+
+
+Last Year (2014)
+
+
+There are some paths that you will need to change.
+One in the Makefile
+And three  in .setup_djd1
+All contain "dennis"
+I made those copies so as to preserve the originals.
+As it was crashing I commented parts out to locate problems.
+I think about all is back to original but haven't tested that.
+Also I copied some things manually to /usr/local - but changed nothing there.
+I was using ./t.sh to compile - as I added some include files I am not sure
+Makefile represents all dependencies.
+I think I should change the release to 2.00, but info.c has only commented out
+changes - otherwise it is harder to compare Tests output.
+The files in all CAPS are the old OS2 port.
+I drastically changed the allocation of the gamma_table. The <| declarations
+in bi1.lf were crashing & I tracked it down to that. It seemed the table was
+used before allocated. It is just allocated now to a fixed size at the
+beginning - I think it was intended to be dynamic.
+new_pitch.lf is a port of a prolog program I wrote to play a card game I liked
+in my youth,'

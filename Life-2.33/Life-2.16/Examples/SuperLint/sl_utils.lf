@@ -1,0 +1,1291 @@
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%
+%                         UTILITIES FOR SUPERLINT
+%                         -----------------------
+%
+%  
+%
+%
+%  AUTHOR : Arnaud Venet                     CREATION : September 7th 1993
+%  ------                                    --------
+%
+%
+%                             ---------------                        
+%
+%                    
+%                   Last modification : February 19th 1994
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  (C) Digital Equipment Corporation 1993 - 1994
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+
+
+
+module("sl_utils") ?
+
+
+public(is_list_member,
+       scan_tree,
+       error_msg, 
+       '*superlint_rules*', 
+       '*rule_name*',
+       display_rules, yes, no,
+       is_token, is_not_token,
+       is_operator, 
+       is_assignment_operator, 
+       is_logical_operator,
+       is_arithmetic_operator, 
+       is_relation_operator, 
+       is_conditional_operator,
+       is_unary_operator, 
+       is_struct_reference,
+       is_assignment,
+       features_list,
+       newlist,
+       writeln,
+       expand_type,
+       parse_tree,
+       basename,
+       file_extension,
+       current_declaration,
+       current_block,
+       current_instruction,
+       parse_mode,
+       string2id) ?
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+persistent('*superlint_rules*') ?
+
+
+persistent('*display_rules*') ?
+
+
+persistent('*rule_name*') ?
+
+
+persistent(the_current_declaration) ?
+
+
+persistent(the_current_block) ?
+
+
+persistent(the_current_instruction) ?
+
+
+persistent(parse_mode) ?
+
+
+'*display_rules*' <<- yes ?
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+load("c_public_terms") ?
+
+
+open("c_public_terms") ?
+
+
+load("sl_public_terms") ?
+
+
+open("sl_public_terms") ?
+
+
+load("sl_overload") ?
+
+
+load("sl_io_utils") ?
+
+
+load("expand_type") ?
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+the_current_declaration <<- ref(nothing) ?
+
+
+the_current_block <<- ref(nothing) ?
+
+
+the_current_instruction <<- ref(nothing) ?
+
+
+current_declaration -> the_current_declaration.1.
+
+
+current_block -> the_current_block.1.
+
+
+current_instruction -> the_current_instruction.1.
+
+
+parse_mode <<- prefix ?
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+is_list_member(X, Y) :-
+  (
+    Y = ["common"],
+    !
+  ;
+    member(X, Y),
+    !
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+scan_tree(Domain, Rules) :-
+  cond(Domain :== @,
+    TheDomain = ["common"],
+    TheDomain = transform_domain(Domain)
+  ),
+  cond(Rules :== @,
+    TheRules = '*superlint_rules*',
+    TheRules = map(psi2str, Rules)
+  ),
+  V <<- verify_rules,
+  V'syntax#.'1 <<- @,
+  V'syntax#.'2 <<- TheRules,
+  V'syntax#.'3 <<- TheDomain,
+  parse_tree(V, syntactic_tree).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict(transform_domain) ?
+
+
+transform_domain((A, B)) -> [psi2str(A) | transform_domain(B)].
+
+
+transform_domain(A) -> [psi2str(A)].
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+string2id(String:string) -> str2psi(String).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+assignment_operator -> {"="; "*="; "/="; "+="; "-="; "<<="; ">>="; "&="; 
+                        "^="; "|="}.
+
+
+conditional_operator -> '?'.
+
+
+logical_operator -> {"||"; "&&"}.
+
+
+arithmetic_operator -> {"|"; "^"; "&"; "<<"; ">>"; "+"; "-"; 
+                        "*"; "/"; "%"}.
+
+
+relation_operator -> {"=="; "!="; "<"; ">"; ">="; "<="}.
+
+
+unary_operator -> {"&"; "*"; "+"; "-"; "~"; "!"; "++"; "--"}.
+
+
+struct_reference -> {"."; "->"}.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+is_operator(What) :-
+  (
+    What :== assignment_operator,
+    !
+  ;
+    What :== conditional_operator,
+    !
+  ;
+    What :== logical_operator,
+    !
+  ;
+    What :== arithmetic_operator,
+    !
+  ;
+    What :== relation_operator,
+    !
+  ;
+    What :== unary_operator,
+    !
+  ;
+    What :== struct_reference,
+    !
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+is_assignment_operator(What) :-
+  What :== assignment_operator,
+  !.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+is_assignment(What) :-
+  What :\>< string,
+  psi2str(What) :== assignment_operator,
+  !.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+features_list(What) ->
+  map(psi2str, features(What)).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+is_arithmetic_operator(What) :-
+  What :== arithmetic_operator,
+  !.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+is_relation_operator(What) :-
+  What :== relation_operator,
+  !.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+is_logical_operator(What) :-
+  What :== logical_operator,
+  !.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+is_conditional_operator(What) :-
+  What :== conditional_operator,
+  !.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+is_unary_operator(What) :-
+  What :== unary_operator,
+  !.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+is_struct_reference(What) :-
+  What :== struct_reference,
+  !.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+display_rules(Choice) :-
+  '*display_rules*' <<- Choice.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+basename(Name) -> string_of(base_name_of(str2list(Name))).
+
+
+base_name_of([]) -> [].
+
+base_name_of([47 | L]) -> BaseName  % 47 = asc("/")
+  | BaseNameList = zap2slash(L),
+    cond(BaseNameList :== [],
+      BaseName = L,
+      BaseName = base_name_of(BaseNameList)
+    ).
+
+base_name_of(L) -> BaseName
+  | BaseNameList = zap2slash(L),
+    cond(BaseNameList :== [],
+      BaseName = L,
+      BaseName = base_name_of(BaseNameList)
+    ).
+
+
+zap2slash([]) -> [].
+
+zap2slash(L:[47 | @]) -> L.
+
+zap2slash([@ | L]) -> zap2slash(L).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+file_extension(String) -> Extension
+  | BaseName = basename(String),
+    Pos = find_last_dot(str2list(BaseName), 0, 1),
+    cond(Pos :== 0,
+      Extension = "",
+      Extension = substr(BaseName, Pos + 1, strlen(BaseName) - Pos)
+    ).
+
+
+find_last_dot([], PreviousPos, CurrentPos) -> PreviousPos.
+
+find_last_dot([46 | L], PreviousPos, CurrentPos) -> %%% 46 = asc(".")
+  find_last_dot(L, CurrentPos, CurrentPos + 1).
+
+find_last_dot([@ | L], PreviousPos, CurrentPos) ->
+  find_last_dot(L, PreviousPos, CurrentPos + 1).
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+newlist(H, T) -> [H | T].
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+W : writeln :-
+  strip(W) & write,
+  nl.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+parse_the_tree(Operation, What) :-
+  (
+    parse_tree(Operation, What),
+    fail
+  ;
+    succeed
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+parse_tree(Operation, nothing) :- !.
+
+
+parse_tree(Operation, What) :-
+  What :== {toplevel; block_declarations},
+  !,
+  parse_mode <<- prefix,
+  Operation.1 <<- ref(What), Operation,
+  parse_the_tree(Operation, What.first_declaration),
+  parse_mode <<- postfix,
+  Operation.1 <<- ref(What), Operation.
+
+
+parse_tree(Operation, What) :-
+  What :== {external_declaration; local_declaration},
+  !,
+  the_current_declaration <<- ref(What),
+  parse_mode <<- prefix,
+  Operation.1 <<- ref(What), Operation,
+  parse_the_tree(Operation, What.type),
+  parse_the_tree(Operation, What.name),
+  parse_the_tree(Operation, What.initialization),
+  parse_the_tree(Operation, What.separator),
+  the_current_declaration <<- ref(nothing),
+  parse_mode <<- postfix,
+  Operation.1 <<- ref(What), Operation,
+  parse_the_tree(Operation, What.next).
+
+
+parse_tree(Operation, What) :-
+  What :== type_definition,
+  !,
+  parse_mode <<- prefix,
+  Operation.1 <<- ref(What), Operation,
+  parse_the_tree(Operation, What.keyword),
+  parse_the_tree(Operation, What.type),
+  parse_the_tree(Operation, What.name),
+  parse_the_tree(Operation, What.separator),
+  parse_mode <<- postfix,
+  Operation.1 <<- ref(What), Operation,
+  parse_the_tree(Operation, What.next).
+
+
+parse_tree(Operation, What) :-
+  What :== {struct_declaration; union_declaration;
+            enum_declaration},
+  !,
+  parse_mode <<- prefix,
+  Operation.1 <<- ref(What), Operation,
+  parse_the_tree(Operation, What.keyword),
+  parse_the_tree(Operation, What.name),
+  parse_the_tree(Operation, What.semi_colon),
+  parse_mode <<- postfix,
+  Operation.1 <<- ref(What), Operation,
+  parse_the_tree(Operation, What.next).
+
+
+parse_tree(Operation, What) :-
+  What :== {struct_definition; union_definition; enum_definition},
+  !,
+  parse_mode <<- prefix,
+  Operation.1 <<- ref(What), Operation,
+  parse_the_tree(Operation, What.keyword),
+  parse_the_tree(Operation, What.name),
+  parse_the_tree(Operation, What.body),
+  parse_mode <<- postfix,
+  Operation.1 <<- ref(What), Operation,
+  parse_the_tree(Operation, What.next).
+
+
+parse_tree(Operation, What) :-
+  What :== {struct; union; enum},
+  has_feature(keyword, What),
+  !,
+  parse_mode <<- prefix,
+  Operation.1 <<- ref(What), Operation,
+  (
+    is_token(What),
+    !,
+    succeed
+  ;    
+    parse_the_tree(Operation, What.keyword),
+    parse_the_tree(Operation, What.body),
+    parse_mode <<- postfix,
+    Operation.1 <<- ref(What), Operation
+  ).
+
+
+parse_tree(Operation, What) :-
+  What :== {struct_body; union_body},
+  !,
+  parse_mode <<- prefix,
+  Operation.1 <<- ref(What), Operation,
+  parse_the_tree(Operation, What.left_brace),
+  parse_the_tree(Operation, What.fields),
+  parse_the_tree(Operation, What.right_brace),
+  parse_mode <<- postfix,
+  Operation.1 <<- ref(What), Operation.
+
+
+parse_tree(Operation, What) :-
+  What :== enum_body,
+  !,
+  parse_mode <<- prefix,
+  Operation.1 <<- ref(What), Operation,
+  parse_the_tree(Operation, What.left_brace),
+  parse_the_tree(Operation, What.enumerators),
+  parse_the_tree(Operation, What.right_brace),
+  parse_mode <<- postfix,
+  Operation.1 <<- ref(What), Operation.
+
+
+parse_tree(Operation, What) :-
+  What :== {fields; enumerators},
+  !,
+  parse_mode <<- prefix,
+  Operation.1 <<- ref(What), Operation,
+  parse_the_tree(Operation, What.first_member),
+  parse_mode <<- postfix,
+  Operation.1 <<- ref(What), Operation.
+
+
+parse_tree(Operation, What) :-
+  What :== {field; enumerator},
+  !,
+  parse_mode <<- prefix,
+  Operation.1 <<- ref(What), Operation,
+  cond(What :== field,
+    parse_the_tree(Operation, What.type)
+  ),
+  parse_the_tree(Operation, What.name),
+  (
+    has_feature(initialization, What, Initialization),
+    !,
+    parse_the_tree(Operation, Initialization)
+  ;
+    succeed
+  ),
+  parse_the_tree(Operation, What.separator),
+  parse_mode <<- postfix,
+  Operation.1 <<- ref(What), Operation,
+  parse_the_tree(Operation, What.next).
+
+
+parse_tree(Operation, What) :-
+  What :== protected_type,
+  !,
+  parse_mode <<- prefix,
+  Operation.1 <<- ref(What), Operation,
+  parse_the_tree(Operation, What.left_parenthesis),
+  parse_the_tree(Operation, What.type),
+  parse_the_tree(Operation, What.right_parenthesis),
+  parse_mode <<- postfix,
+  Operation.1 <<- ref(What), Operation.
+
+
+parse_tree(Operation, What) :-
+  What :== pointer,
+  !,
+  parse_mode <<- prefix,
+  Operation.1 <<- ref(What), Operation,
+  parse_the_tree(Operation, What.to),
+  parse_the_tree(Operation, What.star),
+  parse_the_tree(Operation, What.qualification),
+  parse_mode <<- postfix,
+  Operation.1 <<- ref(What), Operation.
+ 
+
+parse_tree(Operation, What) :-
+  What :== array,
+  !,
+  parse_mode <<- prefix,
+  Operation.1 <<- ref(What), Operation,
+  parse_the_tree(Operation, What.of),
+  parse_dimensions(Operation, What.dimensions),
+  parse_mode <<- postfix,
+  Operation.1 <<- ref(What), Operation.
+
+
+parse_tree(Operation, What) :-
+  What :== tag,
+  !,
+  parse_mode <<- prefix,
+  Operation.1 <<- ref(What), Operation,
+  parse_tree(Operation, What.type),
+  parse_mode <<- postfix,
+  Operation.1 <<- ref(What), Operation.
+
+
+parse_tree(Operation, What) :-
+  What :== function,
+  !,
+  parse_mode <<- prefix,
+  Operation.1 <<- ref(What), Operation,
+  parse_the_tree(Operation, What.return_type),
+  parse_the_tree(Operation, What.left_parenthesis),
+  parse_the_tree(Operation, What.parameters),
+  (
+    What.parameters :\== nothing,
+    What.parameters.parameters_number >= 1,
+    !,
+    parse_the_tree(Operation, What.parameters.1),
+    cond(What.parameters.vararg :== true,
+      parse_the_tree(Operation, What.parameters.suspension_points)
+    )
+  ;
+    succeed
+  ),
+  parse_the_tree(Operation, What.right_parenthesis),
+  parse_mode <<- postfix,
+  Operation.1 <<- ref(What), Operation.
+
+
+parse_tree(Operation, What) :-
+  What :== parameter,
+  !,
+  parse_mode <<- prefix,
+  Operation.1 <<- ref(What), Operation,
+  parse_the_tree(Operation, What.type),
+  parse_the_tree(Operation, What.name),
+  parse_the_tree(Operation, What.separator),
+  parse_mode <<- postfix,
+  Operation.1 <<- ref(What), Operation.
+
+
+parse_tree(Operation, What) :-
+  What :== label_parameter,
+  !,
+  parse_mode <<- prefix,
+  Operation.1 <<- ref(What), Operation,
+  parse_the_tree(Operation, What.label),
+  parse_mode <<- postfix,
+  Operation.1 <<- ref(What), Operation,
+  parse_the_tree(Operation, What.next).
+
+
+parse_tree(Operation, What) :-
+  What :== function_definition,
+  !,
+  parse_mode <<- prefix,
+  Operation.1 <<- ref(What), Operation,
+  parse_the_tree(Operation, What.type),
+  parse_the_tree(Operation, What.name),
+  parse_the_tree(Operation, What.parameters_declarations),
+  parse_the_tree(Operation, What.body),
+  parse_mode <<- postfix,
+  Operation.1 <<- ref(What), Operation,
+  parse_the_tree(Operation, What.next).
+
+
+parse_tree(Operation, What) :-
+  What :== parameters_declarations,
+  !,
+  parse_mode <<- prefix,
+  Operation.1 <<- ref(What), Operation,
+  parse_the_tree(Operation, What.first_declaration),
+  parse_mode <<- postfix,
+  Operation.1 <<- ref(What), Operation.
+
+
+parse_tree(Operation, What) :-
+  What :== parameter_declaration,
+  !,
+  parse_mode <<- prefix,
+  Operation.1 <<- ref(What), Operation,
+  parse_the_tree(Operation, What.parameter),
+  parse_mode <<- postfix,
+  Operation.1 <<- ref(What), Operation,
+  parse_the_tree(Operation, What.next).
+
+
+parse_tree(Operation, What) :-
+  What :== {struct_name; union_name; enum_name},
+  !,
+  parse_mode <<- prefix,
+  Operation.1 <<- ref(What), Operation,
+  parse_the_tree(Operation, What.name),
+  parse_the_tree(Operation, What.keyword),
+  parse_mode <<- postfix,
+  Operation.1 <<- ref(What), Operation.
+
+
+parse_tree(Operation, What) :-
+  What :== block,
+  !,
+  the_current_instruction <<- ref(What),
+  the_current_block = ref(CurrentBlock),
+  parse_mode <<- prefix,
+  Operation.1 <<- ref(What), Operation,
+  parse_the_tree(Operation, What.left_brace),
+  the_current_block <<- ref(What),
+  parse_the_tree(Operation, What.block_declarations),
+  parse_instructions(Operation, What.instructions),
+  the_current_block <<- ref(CurrentBlock),
+  parse_the_tree(Operation, What.right_brace),
+  parse_mode <<- postfix,
+  the_current_instruction <<- ref(What),
+  Operation.1 <<- ref(What), Operation.
+
+
+parse_tree(Operation, What) :-
+  What :== expression_instruction,
+  !,
+  the_current_instruction <<- ref(What),
+  parse_mode <<- prefix,
+  Operation.1 <<- ref(What), Operation,
+  parse_the_tree(Operation, What.expression),
+  parse_the_tree(Operation, What.semi_colon),
+  parse_mode <<- postfix,
+  the_current_instruction <<- ref(What),
+  Operation.1 <<- ref(What), Operation.
+
+
+parse_tree(Operation, What) :-
+  What :== labeled_instruction,
+  !,
+  the_current_instruction <<- ref(What),
+  parse_mode <<- prefix,
+  Operation.1 <<- ref(What), Operation,
+  parse_the_tree(Operation, What.label),
+  parse_the_tree(Operation, What.colon),
+  parse_the_tree(Operation, What.body),
+  parse_mode <<- postfix,
+  the_current_instruction <<- ref(What),
+  Operation.1 <<- ref(What), Operation.
+
+
+parse_tree(Operation, What) :-
+  What :== case,
+  has_feature(keyword, What),
+  !,
+  the_current_instruction <<- ref(What),
+  parse_mode <<- prefix,
+  Operation.1 <<- ref(What), Operation,
+  parse_the_tree(Operation, What.keyword),
+  parse_the_tree(Operation, What.condition),
+  parse_the_tree(Operation, What.colon),
+  parse_the_tree(Operation, What.body),
+  parse_mode <<- postfix,
+  the_current_instruction <<- ref(What),
+  Operation.1 <<- ref(What), Operation.
+
+
+parse_tree(Operation, What) :-
+  What :== default,
+  has_feature(keyword, What),
+  !,
+  the_current_instruction <<- ref(What),
+  parse_mode <<- prefix,
+  Operation.1 <<- ref(What), Operation,
+  parse_the_tree(Operation, What.keyword),
+  parse_the_tree(Operation, What.colon),
+  parse_the_tree(Operation, What.body),
+  parse_mode <<- postfix,
+  the_current_instruction <<- ref(What),
+  Operation.1 <<- ref(What), Operation.
+
+
+parse_tree(Operation, What) :-
+  What :== if,
+  has_feature(keyword, What),
+  !,
+  the_current_instruction <<- ref(What),
+  parse_mode <<- prefix,
+  Operation.1 <<- ref(What), Operation,
+  parse_the_tree(Operation, What.keyword),
+  parse_the_tree(Operation, What.left_parenthesis),
+  parse_the_tree(Operation, What.condition),
+  parse_the_tree(Operation, What.right_parenthesis),
+  parse_the_tree(Operation, What.then_body),
+  the_current_instruction <<- ref(What),
+  parse_the_tree(Operation, What.else_keyword),
+  parse_the_tree(Operation, What.else_body),
+  parse_mode <<- postfix,
+  the_current_instruction <<- ref(What),
+  Operation.1 <<- ref(What), Operation.
+
+
+parse_tree(Operation, What) :-
+  What :== {switch; while},
+  has_feature(keyword, What),
+  !,
+  the_current_instruction <<- ref(What),
+  parse_mode <<- prefix,
+  Operation.1 <<- ref(What), Operation,
+  parse_the_tree(Operation, What.keyword),
+  parse_the_tree(Operation, What.left_parenthesis),
+  parse_the_tree(Operation, What.condition),
+  parse_the_tree(Operation, What.right_parenthesis),
+  parse_the_tree(Operation, What.body),
+  parse_mode <<- postfix,
+  the_current_instruction <<- ref(What),
+  Operation.1 <<- ref(What), Operation.
+
+
+parse_tree(Operation, What) :-
+  What :== do_while,
+  !,
+  the_current_instruction <<- ref(What),
+  parse_mode <<- prefix,
+  Operation.1 <<- ref(What), Operation,
+  parse_the_tree(Operation, What.do_keyword),
+  parse_the_tree(Operation, What.body),
+  parse_the_tree(Operation, What.while_keyword),
+  parse_the_tree(Operation, What.left_parenthesis),
+  parse_the_tree(Operation, What.condition),
+  parse_the_tree(Operation, What.right_parenthesis),
+  parse_the_tree(Operation, What.semi_colon),
+  parse_mode <<- postfix,
+  the_current_instruction <<- ref(What),
+  Operation.1 <<- ref(What), Operation.
+
+
+parse_tree(Operation, What) :-
+  What :== for,
+  has_feature(keyword, What),
+  !,
+  the_current_instruction <<- ref(What),
+  parse_mode <<- prefix,
+  Operation.1 <<- ref(What), Operation,
+  parse_the_tree(Operation, What.keyword),
+  parse_the_tree(Operation, What.left_parenthesis),
+  parse_the_tree(Operation, What.initialization),
+  parse_the_tree(Operation, What.first_semi_colon),
+  parse_the_tree(Operation, What.condition),
+  parse_the_tree(Operation, What.second_semi_colon),
+  parse_the_tree(Operation, What.step),
+  parse_the_tree(Operation, What.right_parenthesis),
+  parse_the_tree(Operation, What.body),
+  parse_mode <<- postfix,
+  the_current_instruction <<- ref(What),
+  Operation.1 <<- ref(What), Operation.
+
+
+parse_tree(Operation, What) :-
+  What :== {continue; break},
+  has_feature(keyword, What),
+  !,
+  the_current_instruction <<- ref(What),
+  parse_mode <<- prefix,
+  Operation.1 <<- ref(What), Operation,
+  parse_the_tree(Operation, What.keyword),
+  parse_the_tree(Operation, What.semi_colon),
+  parse_mode <<- postfix,
+  the_current_instruction <<- ref(What),
+  Operation.1 <<- ref(What), Operation.
+
+
+parse_tree(Operation, What) :-
+  What :== goto,
+  has_feature(keyword, What),
+  !,
+  the_current_instruction <<- ref(What),
+  parse_mode <<- prefix,
+  Operation.1 <<- ref(What), Operation,
+  parse_the_tree(Operation, What.keyword),
+  parse_the_tree(Operation, What.label),
+  parse_the_tree(Operation, What.semi_colon),
+  parse_mode <<- postfix,
+  the_current_instruction <<- ref(What),
+  Operation.1 <<- ref(What), Operation.
+
+
+parse_tree(Operation, What) :-
+  What :== return,
+  has_feature(keyword, What),
+  !,
+  the_current_instruction <<- ref(What),
+  Operation.1 <<- ref(What), Operation,
+  parse_the_tree(Operation, What.keyword),
+  parse_the_tree(Operation, What.value),
+  parse_the_tree(Operation, What.semi_colon),
+  parse_mode <<- postfix,
+  the_current_instruction <<- ref(What),
+  Operation.1 <<- ref(What), Operation.
+
+
+parse_tree(Operation, What) :-
+  What :== void_instruction,
+  !,
+  the_current_instruction <<- ref(What),
+  parse_mode <<- prefix,
+  Operation.1 <<- ref(What), Operation,
+  parse_the_tree(Operation, What.semi_colon),
+  parse_mode <<- postfix,
+  the_current_instruction <<- ref(What),
+  Operation.1 <<- ref(What), Operation.
+
+
+parse_tree(Operation, What) :-
+  What :== setting,
+  !,
+  parse_mode <<- prefix,
+  Operation.1 <<- ref(What), Operation,
+  parse_the_tree(Operation, What.keyword),
+  parse_the_tree(Operation, What.setting),
+  parse_mode <<- postfix,
+  Operation.1 <<- ref(What), Operation.
+
+
+parse_tree(Operation, What) :-
+  What :== complex_initialization,
+  !,
+  Operation.1 <<- ref(What), Operation,
+  parse_the_tree(Operation, What.left_brace),
+  parse_complex_initialization(Operation, What.body),
+  parse_the_tree(Operation, What.right_brace),
+  parse_mode <<- postfix,
+  Operation.1 <<- ref(What), Operation.
+
+
+parse_tree(Operation, What) :-
+  What :== conditional_operator,
+  !,
+  parse_mode <<- prefix,
+  Operation.1 <<- ref(What), Operation,
+  parse_the_tree(Operation, What.condition),
+  parse_the_tree(Operation, What.operator),
+  parse_the_tree(Operation, What.then),
+  parse_the_tree(Operation, What.colon),
+  parse_the_tree(Operation, What.else),
+  parse_mode <<- postfix,
+  Operation.1 <<- ref(What), Operation.
+
+
+parse_tree(Operation, What) :-
+  What :== protected_expression,
+  !,
+  parse_mode <<- prefix,
+  Operation.1 <<- ref(What), Operation,
+  parse_the_tree(Operation, What.left_parenthesis),
+  parse_the_tree(Operation, What.1),
+  parse_the_tree(Operation, What.right_parenthesis),
+  parse_mode <<- postfix,
+  Operation.1 <<- ref(What), Operation.
+
+
+parse_tree(Operation, What) :-
+  What :== cast,
+  !,
+  parse_mode <<- prefix,
+  Operation.1 <<- ref(What), Operation,
+  parse_the_tree(Operation, What.left_parenthesis),
+  parse_the_tree(Operation, What.type),
+  parse_the_tree(Operation, What.right_parenthesis),
+  parse_the_tree(Operation, What.expression),
+  parse_mode <<- postfix,
+  Operation.1 <<- ref(What), Operation.
+
+
+parse_tree(Operation, What) :-
+  What :== function_call,
+  !,
+  parse_mode <<- prefix,
+  Operation.1 <<- ref(What), Operation,
+  parse_the_tree(Operation, What.call),
+  parse_the_tree(Operation, What.left_parenthesis),
+  Arguments = What.arguments,
+  parse_the_tree(Operation, Arguments),
+  cond(Arguments.arguments_number > 0,
+    (
+      FirstArgument = Arguments.1,
+      parse_arguments(Operation, FirstArgument)
+    )
+  ),
+  parse_the_tree(Operation, What.right_parenthesis),
+  parse_mode <<- postfix,
+  Operation.1 <<- ref(What), Operation.
+
+
+parse_tree(Operation, What) :-
+  What :== array_reference,
+  !,
+  parse_mode <<- prefix,
+  Operation.1 <<- ref(What), Operation,
+  parse_the_tree(Operation, What.array),
+  parse_the_tree(Operation, What.left_bracket),
+  parse_the_tree(Operation, What.index),
+  parse_the_tree(Operation, What.right_bracket),
+  parse_mode <<- postfix,
+  Operation.1 <<- ref(What), Operation.
+
+
+parse_tree(Operation, What) :-
+  What :== sequence,
+  !,
+  parse_mode <<- prefix,
+  Operation.1 <<- ref(What), Operation,
+  parse_the_tree(Operation, What.1),
+  parse_the_tree(Operation, What.operator),
+  parse_the_tree(Operation, What.2),
+  parse_mode <<- postfix,
+  Operation.1 <<- ref(What), Operation.
+
+
+parse_tree(Operation, What) :-
+  What :\>< string,
+  is_operator(psi2str(What)),
+  !,
+  parse_mode <<- prefix,
+  Operation.1 <<- ref(What), Operation,
+  Mode = What.mode,
+  (
+    Mode :== prefix,
+    !,
+    parse_the_tree(Operation, What.operator),
+    parse_the_tree(Operation, What.1)
+  ;
+    Mode :== infix,
+    !,
+    parse_the_tree(Operation, What.1),
+    parse_the_tree(Operation, What.operator),
+    parse_the_tree(Operation, What.2)
+  ;
+    parse_the_tree(Operation, What.1),
+    parse_the_tree(Operation, What.operator)
+  ),
+  parse_mode <<- postfix,
+  Operation.1 <<- ref(What), Operation.
+
+
+parse_tree(Operation, What) :-
+  parse_mode <<- prefix,
+  Operation.1 <<- ref(What), Operation.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+parse_arguments(Operation, nothing) :- !.
+
+
+parse_arguments(Operation, Argument) :-
+  parse_mode <<- prefix,
+  Operation.1 <<- ref(Argument), Operation,
+  parse_the_tree(Operation, Argument.1),
+  parse_arguments(Operation, Argument.next).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+parse_dimensions(Operation, Dimensions : @(dimensions_number => N)) :-
+  parse_dimension(Operation, Dimensions, 1, N + 1).  
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+parse_dimension(Operation, Dimension, Total, Total) :-
+  !.
+
+
+parse_dimension(Operation, Dimensions, Number, Total) :-
+  Dimension = Dimensions.Number,
+  parse_mode <<- prefix,
+  Operation.1 <<- ref(Dimension), Operation,
+  parse_the_tree(Operation, Dimension.left_bracket),
+  parse_the_tree(Operation, Dimension.size),
+  parse_the_tree(Operation, Dimension.right_bracket),
+  parse_dimension(Operation, Dimensions, Number + 1, Total).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+parse_instructions(Operation, []) :- !.
+
+
+parse_instructions(Operation, [Instruction | Instructions]) :-
+  parse_the_tree(Operation, Instruction),
+  parse_instructions(Operation, Instructions).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+parse_complex_initialization(Operation, [Initializer | Initializers]) :-
+  !,
+  parse_the_tree(Operation, Initializer),
+  parse_complex_initialization(Operation, Initializers).
+
+
+parse_complex_initialization(Operation, []).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict(verify_rules) ?
+
+
+verify_rules(Node, ["main" | Rules], Domain) :-
+  !,
+  verify_rules(Node, Rules, Domain).
+
+
+verify_rules(Node, [Rule | Rules], Domain) :-
+  !,
+  (
+    TheNode = Node.1,
+    '*rule*'(Rule, TheNode, Domain),
+    !
+  ;
+    write_err(">>> superlint : verification of rule ", Rule,
+              " failed"),
+    nl_err,
+    fail
+  ),
+  verify_rules(Node, Rules, Domain).
+
+
+verify_rules(Node, []).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+max_string_length -> 20.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+error_msg(Message, Prompt) :-
+  cond('*display_rules*' :== yes,
+    write(":-< Rule ", '*rule_name*'.1," : ")
+  ), 
+  (
+    Prompt :== @,
+    !
+  ;
+    is_token(Prompt),
+    !,
+    Prompt = @(line => Line, file => File),
+    write(File, ", line ", Line),
+    write(" near '", display_token(Prompt), "'")
+  ;
+    write_err(">>> superlint : bad prompt in error_msg, ",
+              "in rule : ", Rule),
+    nl_err,
+    halt
+  ),
+  cond(Message :== @,
+    (
+    write_err(">>> superlint : no message in error_msg, ",
+              "in rule : ", Rule),
+    nl_err,
+    halt
+    ),
+    (
+      nl,
+      write("    ", Message),
+      nl
+    )
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+is_token(What) :-
+  has_feature(file, What).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+is_not_token(What) :-
+  (
+    has_feature(file, What),
+    !,
+    fail
+  ;
+    succeed
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+str2list(String) -> make_list_from_string(String, strlen(String)).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+make_list_from_string("", 0) -> [].
+
+
+make_list_from_string(String, Length) ->
+  [asc(substr(String, 1, 1)) | 
+   make_list_from_string(substr(String, 2, Length - 1), Length - 1)].
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+string_of([]) -> "".
+
+string_of([Char | LChars]) -> strcon(chr(Char), string_of(LChars)).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+
+
+
+
+
+
+
+
+

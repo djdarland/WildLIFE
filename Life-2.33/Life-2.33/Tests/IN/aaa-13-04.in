@@ -1,0 +1,3 @@
+f(A:int) -> write(A).
+f(23)?
+X,X=f(Y),Y=23?

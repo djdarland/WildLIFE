@@ -1,0 +1,14 @@
+%% fails to trace
+
+fact(0) -> 1.
+fact(N:int) -> N * fact(N-1).
+
+:: I:int | write(I," ").
+
+A = 5 * 7 ?
+
+B = fact(5)?
+
+
+
+

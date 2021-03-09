@@ -1,0 +1,3 @@
+% fails to trace
+:: C:cons | write(C.1), nl.
+A=[a,b,c,d]?

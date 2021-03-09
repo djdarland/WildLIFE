@@ -1,0 +1,4 @@
+page_width(60)?
+big(one(abc,X:def,fgh(a,b,c,d),ijk,lmn(e,f,g(h,i,j),
+h,i(12,23,34,45)),[a,b,c,d],[a,b](3=>10000),[X|X])).
+big(A),nl,write(A),nl,nl,pretty_write(A),fail?

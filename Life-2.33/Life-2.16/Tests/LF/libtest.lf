@@ -1,0 +1,67 @@
+import("expanders")?
+import("control")?
+import("files")?
+import("io")?
+import("lists")?
+import("sets")?
+import("structures")?
+import("terms")?
+import("times")?
+
+
+
+bidon :-
+	(	catch(Ball),
+		X={1;2;3;4;5;6},		
+		(	X:==4,		
+			throw(Ball)
+		;
+			writeln(X)
+		),
+		fail
+	;
+		writeln("ball caught")
+	).
+
+bidon?
+
+non_strict(test)?
+test(X) :- nl,nl,writeln("testing: ",X),writeln("	",evalin(X)),fail.
+
+test(set_extension("ms","dos"))?
+
+test(set_extension("wild.fun","life"))?
+
+test(remove_path("/a/b/c/d"))?
+
+test(remove_path("a"))?
+
+test(sort_remove_all(x,[a,b,c,x,d,e,x]))?
+
+test(ad_remove_all(X,[X:a,b,c,X,d,e,X]))?
+
+test(gen_quicksort(["abc","def","123","h","bruno","richard","peter"],
+		      order => `$>))?
+	
+test(gen_member(a,[b,c,d,e,a],test=> `:==))?
+
+test(gen_union([a,b,c],[d,e,f,b],test=> `:==)) ?
+
+test(gen_make_set([a,X:repeat,c,e,X,d,a,X,b,c],test=> `===))?
+
+test(gen_make_set([a,X:repeat,c,e,X,d,a,X,b,c],test=> `:==))?
+
+test(gen_intersect([a,b,c,d,3,4],[e,b,c,a,5,6,3],test => `:==))?
+
+test(gen_difference([a,b,c,d,e,f],[f,b,a],test=> `:==))?
+
+test(gen_difference([f,b,a],[a,b,c,d,e,f],test=> `:==))?
+
+test(term_size(p(a,b,c)))?
+
+test(term_size(X:[a,b,c|X]))?
+
+%%%start_timer(X,"oh dear, this may change"),
+%%%	print_timer(X),
+%%%	reset_timer(X),
+%%%	print_timer(X)?

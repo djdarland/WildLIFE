@@ -1,0 +1,22 @@
+makestr(-78)=J,
+makestr(-23.45e-21)=K,
+makestr(G)=L,
+makestr(big(tom(hair => knotted,
+        hands => clumsy,
+        brain => slow_witted,
+	favorite_exclamation => 'arghh!!',
+        friend => {john(face => spotty,
+                        teeth => yellow);
+                   jeremy(skin => black_and_blue,
+                          known_letters => [a,b,c,y,t,w,i,o],
+                          brain => hurts);
+                   martha(brain => plank(number => 2,
+                                         length => short),
+                          beauty => gorgon_like)},
+        nose => long(warts => red,
+                     spots => ugly),
+        mother => witch,
+        father => tax_collector)))=M,
+write(J),nl,nl,
+write(K),nl,nl,
+write(M),nl,nl ?

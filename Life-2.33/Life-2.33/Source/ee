@@ -1,0 +1,83 @@
+echo "-----------"
+echo "files wild life"
+echo "-----------"
+echo "1 ee1 - view any .h file (2.16) next to (below) 1.02 version"
+echo "1 ee1 - also edit (current) .h files"
+echo "2 ee2 - edit any .c file (current) next to (below) 1.02 version"
+echo "---------------------------------------------"
+echo "3 ee3 - diff any (2.16) .h file - with 1.02 version"
+echo "4 ee4 - diff any (current) .c file - with 1.02 version"
+echo "----------------------------------------------"
+echo "5 ee5 - edit any (current) .c file next to def_glob.h"
+echo "6 ee6 - edit any (current).c file next to def_proto.h"
+echo "7 ee7 - edit any (1.02).c file next to def_proto.h"
+echo "----------------------------------------------"
+echo "110 run splint and view"
+echo "111 make and view"
+echo "112 test ./wildlife on djd_pitch.lf"
+echo "113 djd_pitch OUTPUT"
+echo "114 gdb ./wildlife"
+echo "116 Run and View Test Suite"
+echo "117 Only View Test Suite"
+echo "118 Run and View One (current) Test"
+echo "119 Run wild_life interactively"
+
+
+echo "777 NOTES_DJD.txt"
+echo "999 quit"
+echo "select"
+read select
+while [ $select -ne 999 ]
+do 
+case $select in
+1) ./ee1 ;;
+2) ./ee2 ;;
+3) ./ee3 ;;
+4) ./ee4 ;;
+5) ./ee5 ;;
+6) ./ee6 ;;
+110) splint -warnposix -compdef -usedef -predboolint -boolops -realcompare -nullpass -predboolothers +boolint -shiftnegative -shiftimplementation -formatconst -mustfreeonly -unqualifiedtrans -mustfreefresh -globstate -type -branchstate -nullret -usereleased -nullderef -compmempass -nullstate -onlytrans -observertrans +relaxtypes -abstract -statictrans -fcnuse -redef -nullassign -compdestroy +charindex -kepttrans -immediatetrans -warnlintcomments +matchanyintegral -mayaliasunique -dependenttrans -ptrcompare -unsignedcompare  -exportlocal -paramuse *.c >djd1 2>djd2;
+$EDITOR djd1 djd2 ;;
+
+111) ./mk.sh;;
+112) ./pitch.sh;;
+113) $EDITOR pitch/pitch.out pitch/pitch.errout & ;;
+114) gdb ./wild_life;;
+116) ./ts.sh 1;;
+117) ./ts2.sh;;
+118) ./tsnow.sh;;
+119)  wild_life;;
+
+777) $EDITOR NOTES_DJD.txt & ;;
+
+esac
+
+echo "-----------"
+echo "files wild life"
+echo "-----------"
+echo "1 ee1 - view any .h file (2.16) next to (below) 1.02 version"
+echo "1 ee1 - also edit (current) .h files"
+echo "2 ee2 - edit any .c file (current) next to (below) 1.02 version"
+echo "---------------------------------------------"
+echo "3 ee3 - diff any (2.16) .h file - with 1.02 version"
+echo "4 ee4 - diff any (current) .c file - with 1.02 version"
+echo "----------------------------------------------"
+echo "5 ee5 - edit any (current) .c file next to def_glob.h"
+echo "6 ee6 - edit any (current).c file next to def_proto.h"
+echo "----------------------------------------------"
+echo "110 run splint and view"
+echo "111 make and view"
+echo "112 test ./wildlife on djd_pitch.lf"
+echo "113 djd_pitch OUTPUT"
+echo "114 gdb ./wildlife"
+echo "116 Run and View Test Suite"
+echo "117 Only View Test Suite"
+echo "118 Run and View One (current) Test"
+echo "119 Run wild_life interactively"
+
+echo "777 NOTES_DJD.txt"
+echo "999 quit"
+echo "select"
+read select
+
+done

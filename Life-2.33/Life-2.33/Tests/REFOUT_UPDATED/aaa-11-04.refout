@@ -1,0 +1,15 @@
+
+*** Yes
+> > 
+*** Yes
+> 
+*** Yes
+> 
+*** Yes
+A = p(1), B = succeed.
+--1> 
+*** Yes
+A = p(2), B = write(hello).
+--1> 
+*** No
+> 

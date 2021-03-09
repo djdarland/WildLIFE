@@ -1,0 +1,11 @@
+
+*** Yes
+> > function *(2 => 4) applied to argument 5 is 20
+function fact applied to argument 5 is 120
+function *(2 => 4) applied to argument 3 is 12
+function fact applied to argument 3 is 6
+function *(2 => 4) applied to argument 7 is 28
+function fact applied to argument 7 is 5040
+
+*** No
+> 

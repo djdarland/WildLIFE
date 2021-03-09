@@ -1,0 +1,9 @@
+%
+%		Wild_life testing
+%
+%		Overflow of memory
+%
+% this program calculates in a dumb way the sum of the N first integers
+%
+somme(0) -> 0.
+somme(N:int) -> N + somme(N-1).

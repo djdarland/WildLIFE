@@ -1,0 +1,4 @@
+A=3?
+B=5?
+end_of_file.
+write("Need a tank of gas!"),nl?

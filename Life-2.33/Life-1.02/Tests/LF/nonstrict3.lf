@@ -1,0 +1,4 @@
+non_strict(my_write1)?
+my_write1(X) :- write(X), nl.
+
+my_write2(X) :- write(X), nl.

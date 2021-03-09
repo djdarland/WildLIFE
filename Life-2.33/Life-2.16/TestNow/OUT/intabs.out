@@ -1,0 +1,48 @@
+
+*** Yes
+> > > 
+
+*** TESTING COMPABS ***
+*** Yes
+> > |    |    |    |    
+*** Yes
+A = @, L1 = @, L2 = @, X = @, Y = @, Z = @.
+--1> 
+*** No
+> > |    |    |    |    |    |    |    |    
+*** Yes
+X = @, Y = @.
+--1> 
+*** No
+> 
+*** Yes
+> > 
+dynamic(concat_proc)?
+concat_proc(actions => [disjunc([unif(@,[]),unif(@,@)],
+                                [unif(@,[@|@]),
+                                 unif(@,[@|@]),
+                                 abscall(concat,[@,@,@])],
+                                global_vars => [@,@,@])],
+            global_vars => [@,@,@]) :-
+        succeed.
+
+*** Yes
+> 
+dynamic(toto_proc)?
+toto_proc(actions => [disjunc([unif(@,a),abscall(tata,[@])],
+                              [disjunc([unif(@,b),abscall(tata,[@])],
+                                       [disjunc([abscall(tutu,[@,@]),
+                                                 abscall(!,[])],
+                                                [abscall(fail,[])],
+                                                global_vars => [@,@])],
+                                       global_vars => [@,@])],
+                              global_vars => [@,@])],
+          global_vars => [@,@]) :-
+        succeed.
+
+*** Yes
+> > > 
+
+*** TESTING NORMALIZATION ***
+*** Yes
+> > 

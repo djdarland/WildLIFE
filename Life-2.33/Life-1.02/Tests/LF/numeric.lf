@@ -1,0 +1,25 @@
+% FILE. . . . . /_/hassan/_/life/numeric
+% EDIT BY . . . Hassan Ait-Kaci
+% ON MACHINE. . Prl316
+% STARTED ON. . Sun Jun  9 16:27:24 1991
+
+% Last modified on Wed Feb 19 16:15:24 MET 1992 by mezhoud
+%      modified on Sun Jun 09 16:27:29 1991 by Hassan
+
+% remainder (or modulo) function:
+
+rem(N,P)-> N-P*floor(N/P).
+
+nat -> {0;1+nat}.
+
+aroot(X)-> cond(X<0,
+	       eval_pred(write('*** Negative argument in ''aroot''.')),
+	       cond(X=:=0,
+		    0,
+		    aroot_approx(X,1))).
+
+aroot_approx(X,R)-> cond(abs(Y*Y/X-1)<0.00000001,
+		         Y:((X-R*R)/2/R+R),
+			 aroot_approx(X,Y)).
+
+

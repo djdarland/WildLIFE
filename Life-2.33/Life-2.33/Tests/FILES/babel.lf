@@ -1,0 +1,2031 @@
+% PVR (17.9.92): Several spelling errors have been corrected.
+%                Alas, much of the hierarchy is inconsistent because
+%                the 'definition' fields clash!
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%                                            %
+	%        THE    LIBRARY    OF    BABEL       %
+	%                                            %
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% The Knowledge Base of BABEL
+
+%				[...]  solution to the ancient problem:
+%				The library is unlimited and cyclical.}
+%				If an eternal traveler were to cross it
+%				in   any  direction, after centuries he
+%				would  see that  the same volumes  were
+%				repeated in  the same  disorder (which,
+%				thus repeated,  would be an  order: the
+%				Order).
+%				
+%				                      Jorge Luis Borges
+%				                   The Library of Babel
+
+
+%				The  practical  upshot of all  this  is
+%				that if you stick a  Babel fish in your
+%				ear  you   can    instantly  understand
+%				everything said  to you  in any form of
+%				language.
+%				
+%				                          Douglas Adams
+%				  The Hitchhicker's Guide to the Galaxy
+
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   %                                                                  %
+   %   The class 'library_material' is a class of  all materials in   %
+   %   the library, and  hence can be defined as  the highest class   %
+   %   of the library class  hierarchy.  Each  library  item is  an   %
+   %   instance of  'library_material'.   Every library item shares   %
+   %   common  attributes.  Those common attributes can  be defined   %
+   %   at the highest class  of  the hierarchy, 'library_material'.   %
+   %   Among the  attributes of  each  object,  definition explains   %
+   %   what the object is, and attribute explains the attributes of   %
+   %   the  object if  the object  has  any  attributes other  than   %
+   %   definition.                                                    %
+   %                                                                  %
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+op(100,xfx,--)?
+
+library_material := 
+   @(title => string
+    ,l_responsibility => list_responsibility
+    ,s_responsibility => set_responsibility
+    ,language => languages
+    ,subject => subjects
+    ,publisher => publish
+    ,call_number => lc_number
+    ,date_of_pub => date
+    ,lend_info => lend_tab
+    ,recalled => record__key
+    ,recall_info => record__key
+    ,reserve_info => record__key
+    ,definition => "library_material spans all objects in the library"
+    ,attribute => "
+     'library_material' has following attributes:").
+%       title: the title of the item.
+%       l_responsibility and s_responsibility:
+%            the name of either authors, editors or associations which are
+%            responsible for the item. The difference between these two is
+%            the later keeps the names as a disjunctive classes, 
+%            while the former keeps those as a list of names.
+%       language: the language in which the item is described.
+%       publisher: the information about the publisher.
+%       call_number: the library of congress number.
+%       date_of_pub: the date of publish.
+%       lend_info: the information about lend status of the item.
+%       recalled:  a record__key which is the key of the record which 
+%           contains either 'yes' or 'no' to show whether the item is recalled.
+%       recall_info: a record__key which is the key of the record which contains
+%            the information table for the user who recalled the item.
+%       reserve_info: a record__key which is the key of the record which 
+%            contains the reserve information of the item.").
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%   if the value 'type' in 'lresponsibility' is 'author',                  %
+%    then 'list_responsibility'  has an attribute, 'author => name_list',  %
+%  if the value 'type' in 'lresponsibility' is 'editor',                   %
+%    then 'list_responsibility'  has an attribute, 'editor => name_list',  %
+%  if the value 'type' in 'lresponsibility' is 'association',              %
+%    then 'list_responsibility'  has an attribute,                         %
+%                                            'association => assoc_list'.  %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+list_responsibility :=
+   { author_list(type => author, author => name_list)
+   ; editor_list(type => editor, editor => name_list)
+   ; association_list(type => association, association => assoc_list)}.
+
+set_responsibility :=
+   { author_set(type => author, author => name_set)
+   ; editor_set(type => editor, editor => name_set)
+   ; association_set(type => association, association => assoc_set)}.
+
+name_set -> 
+    { full_name ; name_set }.
+
+assoc_set ->
+    { string ; assoc_set }.
+
+name_list := 
+   @(name => full_name
+    ,co_name => name_list
+    ,definition => "'name_list' is a list of names of people"
+    ,attribute => "
+     'name_list' has two attributes:
+       'name': A full name of a person.
+       'co_name': Either instantiated to a name_list or uninstantiated.
+                  If co_name is instantiated to a name_list, name_list 
+                  has a full_name of another people.").
+
+full_name := 
+   @(fname => string
+    ,mname => string
+    ,lname => string
+    ,definition => "'full_name' is a full name of a person"
+    ,attribute => "
+     'full_name' has three attributes. 'fname' for first name,
+     'mname' for middle name, 'lname' for last name").
+
+assoc_list := 
+   @(assoc_name => string
+    ,co_assoc => assoc_list
+    ,definition => "'assoc_name' is a list of the names of associations"
+    ,attribute => "
+     'assoc_list' has two attributes.
+        'assoc_name' is a name of an association,
+        'co_assoc' is either another 'assoc_list' or uninstantiated."). 
+
+
+languages := 
+    {english;french;german;japanese;chinese;korean;
+     spanish; portuguese;italian;latin;greek;hebrew}.
+
+publish := 
+   @(publisher_name => List1
+    ,address => place
+    ,definition => "'publish' has the information of publisher"
+    ,attribute => "'publish' has two attributes, publisher_name and address.").
+ 
+place  :=  
+   @(street => string
+    ,city   => string
+    ,state  => string
+    ,zip_code => string
+    ,nation => string
+    ,definition => "'place' is an address"
+    ,attribute => "
+     'place' has five attributes: 'street' which is a street address, 
+     'city', 'state', 'zip_code', and 'nation'").
+
+lc_number :=
+   @(c_letter => string
+    ,f_digit  => [1--9999]
+    ,s_digit  => [1--9999999]
+    ,cuttering => string
+    ,definition => "'lc_number' is a library congress number."
+    ,attribute => "
+     'lc_number' consists of four attributes:
+        'c_letter': a category letter which is one or two alphabet characters.
+        'f_digit':  the first four digits of lc_number.
+        's_digit':  the second 7 digits.
+        'cuttering':  a cutterring of the item" ).
+
+date  :=  
+   @(day => [1--31]
+    ,month => [1--12]
+    ,year => [0--3000]
+    ,definition => "It is a date"
+    ,attribute => "'date' has three attributes, day, month, and year").
+
+lend_tab := 
+   @(library_use_only  => record__key      % a key of a record of boolean
+    ,lend_period       => record__key      % a key of a record of period
+    ,checked_out       => record__key      % a key of a record of boolean
+    ,checking_time     => record__key      % a key of a record of time
+    ,ss_number         => record__key      % a key of a record of ss_num
+    ,return_time       => record__key      % a key of a record of time
+    ,definition => "
+     'lend_tab' contains informations about lend status of a material"
+    ,attribute => "
+     'lend_tab' has five attributes:
+       'library_use_only': boolean if a material can be checked out.
+       'lend_period'  :  allowed check out period of a material.
+       'checked_out'  :  a boolean if a material is currently checked out.
+       'checking_time':  the time a material is checked out.
+       'return_time'  :  the time a material is returned." ).
+
+boolean := {yes;no}.
+
+period := 
+   @(unit => time_unit
+    ,amount => integer
+    ,definition => "It is a period"
+    ,attribute => "
+     'period' has two attributes:
+       'unit': a unit of time.
+       'amount': the amount of time. 
+     For example, if 'unit' is 'weeks' and 'amount' is 5, 
+     then 'period' is 5 weeks.").
+
+time_unit := {hours; days; weeks; months; years}.
+
+time := 
+   @(minute => [0--59]
+    ,hour   => [0--23]
+    ,check_date => date
+    ,definition => "It is a time"
+    ,attribute => "
+     'time' has three attributes:
+       'minute', 'hour', and 'check_date' which is the date of the time").
+
+recall_tab := 
+   @(type => {recall; search}
+    ,ss_number => ss_num
+    ,more => record__key         % a key of a record of another recall_tab
+    ,definition => "
+     'recall_tab' is a table which contains the information for
+      all recall requests for the material."
+    ,attribute => "
+     'recall_tab' has five attributes:
+        'type': the type of recall, recall or search.
+        'ss_number': a social security number of the user.
+        'more': a record__key to 'recall_tab' for another user who 
+                recalled the same item.").
+
+ss_num := 
+   @(first => ['000'--'999']
+    ,middle => ['00'--'99']
+    ,last  => ['0000'--'9999']
+    ,definition => "'ss_num' is a social security number"
+    ,attribute => "
+     'ss_num' has three attributes:
+        'first': the first three digits of a social security number.
+        'middle': the two digits in the middle.
+        'last': is the last four digits.").
+
+reserve_tab := 
+   @(instructor => full_name
+    ,course_name => string
+    ,course_number => string
+    ,semester => semesters
+    ,year => [1900--2000]
+    ,definition => "
+     'reserve_tab' is a table which contains informations about course name,
+      instructor, and reserved period."
+    ,attribute => "
+     'reserve_tab' has six attributes:
+        'instructor': the name of the instructor reserved the item.
+        'course_name' and 'course_number' for which the item is reserved.
+        'lend_period': the lend period of the item.
+        'semester' and 'year': the semester during which the item is reserved.").
+
+semesters := {spring; summer; fall}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                  %
+%  Hierarchy of the class of library objects according to physical %
+%  description.                                                    %
+%                                                                  %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+printed_monograph := 
+  library_material
+    (pages => integer
+    ,definition => "
+     'printed_monograph' is a class of all printed material including books,
+      pamphlets, and printed sheets."
+    ,attribute => "
+     'printed_monograph' has attribute, 'pages', which is the number of pages
+      of the material. It has two subclasses, 'pamphlet' and 'monograph'." ).
+
+pamphlet := 
+  printed_monograph
+   (definition => "'pamphlet' is a class of all printed sheets and pamphlets.").
+
+monograph := 
+  printed_monograph
+    (isbn => string
+    ,definition => "'monograph' is a class of all kinds of books."
+    ,attribute => "
+     'monograph' has an attribute, 'isbn', which is an international standard 
+      book number of the item. It has three subclasses, 'thesis', 'textbook',
+      and 'books'.").
+
+thesis := 
+  monograph
+    (major => string
+    ,institute => string
+    ,degree => degree_list
+    ,award_date => date
+    ,definition => "'thesis' is a class of theses including technical report."
+    ,attribute => "
+     'thesis' has attributes, 'major', 'institute', 'degree', and 
+      'award_date'.  It has one subclass, technical_report.").
+
+technical_report := 
+    thesis
+    (report_number => string
+    ,definition => "
+     'technical_report' is a class of all technical reports."
+    ,attribute => "
+     'technical_report' has an attribute, 'number', which is a serial 
+      number of a technical report.").
+
+degree_list := {'Ph.D'; 'M.A.';'M.S.';'M.D.';'M.B.A.'}.
+
+textbook := 
+  monograph
+    (edition => integer
+    ,definition => "'textbook' is a class of all textbooks."
+    ,attribute => "
+     'textbook' has an attribute, edition, which is an edition number. 
+      It has two subclasses, 'elementary_textbook', and 'advanced_textbook'.").
+
+elementary_textbook := 
+  textbook
+    (definition => "
+     'elementary_textbook' is a class of all textbooks for elementary school.").
+
+advanced_textbook := 
+  textbook
+    (definition => "
+     'advanced_textbook' is a class of all textbooks for high school.").
+
+books := 
+  monograph
+    (edition => integer
+    ,definition => "'books' is a class of all books."
+    ,attribute => "
+     'books' has an attribute, edition, for the edition number of a book.
+      It has several subclasses.   Those are 'multi_volume_books', 
+      'single_volume_books', and 'series_books'.").
+
+multi_volume_books := 
+  books
+    (volume => integer
+    ,definition => "
+     'multi_volume_books' is a class of all books which consist of several 
+      volumes.    However it does not include 'series_books'."
+    ,attribute => "
+     'multi_volume_books' has an attribute, 'volume', which is the volume
+      number of the book.").
+single_volume_books := 
+  books
+    (definition => "
+     'single_volume_books' is a class of all single volume books.").
+
+cartographic_material := 
+  library_material
+   (definition => "
+      'cartographic_material' is a class of all geographical representations.
+       It has several subclasses include 'globes' and 'maps_atlas'.").
+
+globes := 
+  cartographic_material
+    (scale => integer
+    ,definition => "'globes' is a class of all 3-dimensional globes of earth."
+    ,attribute => "
+     'globes' has an attribute, scale, which is a reciprocal of scale, 
+      i.e., 50000 for  1 : 50000 scale globe.").
+
+maps_atlas := 
+  cartographic_material
+    (edition => integer
+    ,definition => "'maps_atlas' is a class of all kind of maps and atlas."
+    ,attribute => "
+     'maps_atlas' has an attribute, 'edition', which has edition number.
+      It has several subclasses including 'maps' and 'atlas'.").
+
+maps := 
+  maps_atlas
+    (scale => integer
+    ,definition => "'maps' is a class of all maps."
+    ,attribute => "
+     'maps' has an attribute, 'scale', which is a reciprocal of scale.").
+
+atlas := 
+  maps_atlas
+    (isbn => string
+    ,pages => integer
+    ,definition => "
+     'atlas' is a volume of maps with or without descriptive letterpress."
+    ,attribute => "
+     'atlas' has attributes, 'isbn and 'pages'. 
+        'isbn' is an international standard book number,
+        'pages' is the number of pages in an atlas.
+      It has several subclasses including 'world_atlas', 'national_atlas',
+      and 'thematic_atlas'.").
+
+world_atlas := 
+  atlas
+    (definition => "
+     'world_atlas' is a class of all atlas which contain mostly world maps.").
+
+national_atlas := 
+  atlas
+    (definition => "
+     'national_atlas' is a class of all atlas which contains national maps.").
+
+world_map := 
+  maps
+    (definition => "
+     'world_map' is a class of all maps which describe the world.").
+
+national_map := 
+  maps
+    (definition => "
+     'national_map' is a class of all maps which describe a nation").
+
+local_map := 
+  maps
+    (definition => "
+     'local_map' is a class of all maps which describe a part of a nation.").
+
+music_score := 
+  library_material
+    (edition => integer
+    ,op_number => integer
+    ,pages => integer
+    ,definition => "'music_score' is a class of all music score."
+    ,attribute => "
+     'music_score' has three attributes. 'edition' for edition number,
+     'op_number' for opus number, and 'pages' for the number of pages.").
+
+chorus_score := 
+  music_score
+    (definition => "
+     'chorus_score' is a class of all scores of vocal work showing only
+      the chorus part.").
+
+instrument_score :=
+  music_score
+    (definition => "
+     'instrument_score' is a class of all scores of a instrument part
+      of a music.").
+
+vocal_score := 
+  music_score
+    (definition => "
+     'vocal_score' is a class of all scores showing all vocal parts.").
+
+sound_recording :=
+  library_material
+    (playing_time => running_time
+    ,num_channel => channels
+    ,recording_type => rec_type
+    ,definition => "
+     'sound_recording' is a class of all recordings."
+    ,attribute => "
+     'sound_recording' has three attributes. 'playing_time' is total
+      playing time of a recording. 'num_channel' is the number of channel,
+      'recording_type' is the type of recording such as digital for digital
+      recording, and analog for analog recording.
+      It has sevral subclasses including 'disk', 'tape', and 'sound_film'.").
+
+running_time := 
+   @(sec => [0--59]
+    ,min => [0--59]
+    ,hour => [0--99]
+    ,definition => "'running_time' is the total playing time."
+    ,attribute => "'runing_time' has attributes, 'sec', 'min', and 'hour'.").
+
+channels := {mono; stereo; '4_track'; '8_track'}.
+rec_type := {analog; digital}.
+
+disc := 
+  sound_recording
+    (definition => "
+     'disc' is a class of all sound recordings which are recorded on disc.
+      It has several subclasses including 'compact_disc' and 'poly_disc'.") .
+
+compact_disc := 
+  disc
+    (definition => "'compact_disc' is a class of all compact discs.").
+
+poly_disc :=
+  disc
+    (playing_speed => disc_speed
+    ,definition => "'poly_disc' is a class of all conventional record discs."
+    ,attribute => "
+     'poly_disc' has an attribute, 'playing_speed', which is the speed of 
+      a turntable for the disc.").
+
+disc_speed := {lp; sp; lsp}.
+
+tape := 
+  sound_recording
+    (definition => "
+     'tape' is a class of all sound recording recorded in tape.
+      It has several subclasses including 'cassette', 'cartridge',
+      and 'reel_to_reel' according to extent of item.").
+
+cassette := 
+  tape
+    (definition => "'cassette' is a class of all cassette tape.").
+
+cartridge := 
+  tape
+    (definition => "'cartridge is a class of all cartridge tape.").
+
+reel_to_reel :=
+  tape
+    (definition => "
+     'reel_to_reel' is a class of all open reel tape.").
+
+motion_picture := 
+  library_material
+    (playing_time => running_time
+    ,color => boolean
+    ,sound => boolean
+    ,definition => "
+     'motion_picture' is a class of all films including cideo tapes and 
+      video discs."
+    ,attribute => "
+     'motion_picture' has three attributes. 
+       'playing_time' is the total length of playing time. 
+       'color' is a boolean showing whether the color of images is
+        natural color or black and white. 
+       'sound' is a boolean which shows whether it has sound.").
+
+motion_film :=
+  motion_picture
+    (definition => "
+     'motion_film' is a class of allN motion_picture in length of film.").
+
+video_tape := 
+  motion_picture
+    (definition => "'video_tape' is a class of all video cassette tapes.").
+
+video_disc := 
+  motion_picture
+    (definition => "'video_disc' is a class of all video disc.").
+
+sound_film := 
+  sound_recording
+    (definition => "'sound_film' is a class of all film with sound track.").
+
+sound_film <| motion_film.
+
+sound_vtape := 
+  sound_recording
+    (definition => "
+     'sound_vtape' is a class of all video tape with sound track.").
+
+sound_vtape <| video_tape.
+
+sound_vdisc := 
+  sound_recording
+    (definition => "
+     'sound_vdisc' is a class of all video disc with sound track.").
+
+sound_vdisc <| video_disc.
+
+microforms := 
+  library_material
+    (definition => "
+     'microforms' is a class of all library material in any medium 
+      transparent or opaque, bearing micro images.").
+
+microfilm := 
+  microforms
+    (definition => "'microfilm' is a class of all microfilms.").
+
+microfiche := 
+  microforms
+    (num_frame => integer
+    ,definition => "
+     'microfiche' is a class of all microforms in a sheet of
+      film bearing a number of microimages in a two dimensional array."
+    ,attribute => "
+     'microfiche' has an attribute, 'num_frame', which is the number of 
+      microimages in each sheet.").
+
+books_in_microforms := 
+  microforms
+    (definition => "
+     'books_in_microforms' is a class of all microforms whose content 
+      is the copy of a book.").
+
+books_in_microforms <| books.
+
+multi_volume_books_in_microforms := 
+  multi_volume_books
+    (definition => "
+     'multi_volume_books_in_microforms' is a class of all microforms of 
+      which content is the copy of a multi_volume book.").
+
+multi_volume_books_in_microforms <| books_in_microforms.
+
+single_volume_books_in_microforms := 
+  single_volume_books
+    (definition => "
+     'single_volume_books_in_microforms' is a class of all microforms of 
+      which content is the copy of a single_volume book.").
+
+single_volume_books_in_microforms <| books_in_microforms.
+
+books_in_microfilm := 
+  microfilm
+    (definition => "
+     'books_in_microfilm' is a class of all microfilms whose content 
+      is the copy of a book.").
+
+books_in_microfilm <| books.
+
+multi_volume_books_in_microfilm := 
+  multi_volume_books_in_microforms
+    (definition => "
+     'multi_volume_books_in_microfilm' is a class of all  microfilms
+      whose content is the copy of a multi_volume book.").
+
+multi_volume_books_in_microfilm <| books_in_microfilm.
+
+single_volume_books_in_microfilm := 
+  single_volume_books_in_microforms
+    (definition => "
+     'single_volume_books_in_microfilm' is a class of all microfilms
+      whose content is the copy of a single_volume book.").
+
+single_volume_books_in_microfilm <| books_in_microfilm.
+
+serials := 
+  library_material
+    (volume => integer
+    ,number => integer
+    ,issn => string
+    ,definition => "
+     'serials' is a class of all publications in any medium issued in 
+      successive parts bearing numerical or chronological designations 
+      and intended to be continued indefinitely."
+    ,attribute => "
+     'serials' has three attributes, 'volume' for a volume number of a 
+      material, 'number' for a number within a volume, 
+      and 'issn' for international standard serial number.").
+
+series := 
+  serials
+    (definition => "
+     'series' is a group of seperate items related one another by the 
+      fact that each item bears.").
+
+series_books := 
+  books
+    (definition => "'series_books' is a class of all books in series").
+
+series_books <| series.
+
+series_books_in_microforms := 
+  series_books
+    (definition => "
+     'series_books_in_microforms' is a class of all microforms whose
+      content is a copy of a series books.").
+
+series_books_in_microforms <| books_in_microforms.
+
+series_books_in_microfilm := 
+  series_books_in_microforms
+    (definition => "
+     'series_books_in_microfilm' is a class of all microfilms whose 
+      content is a copy of a series book.").
+
+series_books_in_microfilm <| books_in_microfilm.
+
+periodical := 
+  serials
+    (definition := "
+     'periodical' is a class of all serials which is regulary issued.").
+
+academic_journal := 
+  serials
+    (definition => "
+     'academic_journal' is a class of all journals whose content is 
+      a news of academic society and research papers.").
+
+journalism_serial := 
+  serials
+    (definition => "
+     'journalism_serial' is a class of all serials of news media, including
+      newspaper, weekly news magazine.").
+
+magazines := 
+  serials
+    (definition => "
+     'magazines' is a class of all magazines which are not academic journals
+      nor news magazines. It includes magazine for hobbiest and consumer
+      reports.").
+
+transactions := 
+  serials
+    (definition => "
+     'transactions' is a class of all transactions of societies").
+
+proceedings :=
+  serials
+    (definition => "
+     'proceedings' is a class of all proceedings of conferences of societies.").
+
+daily_periodical := 
+  periodical
+    (frequency => 'daily'
+    ,definition => "
+     'daily_periodical' is a class of all periodicals issued daily."
+    ,attribute => "
+     'daily_periodical' has one attribute, 'frequency', whose value is
+      a string, 'daily'.").
+
+weekly_periodical := 
+  periodical
+    (frequency => 'weekly'
+    ,definition => "
+     'weekly_periodical' is a class of all periodicals issued weekly."
+    ,attribute => "
+     'weekly_periodical' has an attribute, 'frequency', whose value is
+      a string, 'weekly'.").
+
+monthly_periodical := 
+  periodical
+    (frequency => 'monthly'
+    ,definition => "
+     'monthly_periodical' is a class of all periodicals issued monthly."
+    ,attribute => "
+     'monthly_periodical' has an attribute, 'frequency', whose value is
+      a string, 'monthly'.").
+
+quarterly_periodical := 
+  periodical
+    (frequency => 'quarterly'
+    ,definition => "
+     'quarterly_periodical' is a class of all periodicals issued quarterly."
+    ,attribute => "
+     'quarterly_periodical' has one attribute, 'frequency', whose value is
+      a string, 'quarterly'.").
+
+yearly_periodical := 
+  periodical
+    (frequency => 'yearly'
+    ,definition => "
+     'yearly_periodical' is a class of all periodicals issued yearly."
+    ,attribute => "
+     'yearly_periodical' has one attribute, 'frequency', whose value is
+      a string, 'yearly'.").
+
+weekly_academic_journal := 
+  weekly_periodical
+    (definition => "
+     'weekly_academic_journal' is a class of all academic journals
+     issued every week.").
+
+weekly_academic_journal <| academic_journal.
+
+monthly_academic_journal := 
+  monthly_periodical
+    (definition => "
+     'monthly_academic_journal' is a class of all academic journals
+      issued every month.").
+
+monthly_academic_journal <| academic_journal.
+
+quarterly_academic_journal := 
+  quarterly_periodical
+    (definition => "
+     'quarterly_academic_journal' is a class of all academic journals
+      issued every three months.").
+
+quarterly_academic_journal <| academic_journal.
+
+yearly_academic_journal := 
+  yearly_periodical
+    (definition => "
+     'yearly_academic_journal' is a class of all academic journals
+      issued every year.").
+
+yearly_academic_journal <| academic_journal.
+
+daily_newspaper := 
+  daily_periodical
+    (definition => "
+     'daily_newspaper' is a class of all newspapers which are
+      issued on every day.").
+
+daily_newspaper <| journalism_serial.
+
+weekly_news_magazine := 
+  weekly_periodical
+    (definition => "
+     'weekly_news_magazine' is a class of all news magazines
+      issued every week.").
+
+weekly_news_magazine <| journalism_serial.
+
+monthly_news_magazine := 
+  monthly_periodical
+    (definition => "
+     'monthly_news_magazine' is a class of all news magazines which are
+      issued every month.").
+
+monthly_news_magazine <| journalism_serial.
+
+weekly_magazine := 
+  magazine
+    (definition => "
+     'weekly_magazine' is a class of all magazines which is issued
+      every week.").
+
+weekly_magazine <| weekly_periodical.
+
+monthly_magazine <| monthly_periodical.
+
+monthly_magazine := 
+  magazine
+    (definition => "
+     'monthly_magazine' is a class of all  magazines which are issued
+      every month.").
+
+quarterly_magazine := 
+  magazine
+    (definition => "
+     'quarterly_magazine' is a class of all magazines which are issued
+      every three months.").
+
+quarterly_magazine <| quarterly_periodical.
+
+monthly_transactions := 
+  transactions
+    (definition => "
+     'monthly_transactions' is a class of all transactions of  
+      societies issued every month.").
+monthly_transactions <| monthly_periodical.
+
+quarterly_transactions := 
+  transactions
+    (definition => "
+     'quarterly_transactions' is a class of all transactions of societies
+      issued every three months.").
+
+quarterly_transactions <| qurterly_periodical.
+
+yearly_transactions := 
+  transactions
+    (definition => "
+     'yearly_transactions' is a class of all transactions of a 
+      society  issued every year.").
+yearly_transactions <| yearly_periodical.
+
+monthly_proceedings := 
+  proceedings
+    (definition => "
+     'monthly_proceedingss' is a class of all proceedings of  
+      conference of societies issued every month.").
+
+monthly_proceedings <| monthly_periodical.
+
+quarterly_proceedings := 
+  proceedings
+    (definition => "
+     'quarterly_proceedingss' is a class of all proceedings of 
+      conference of societies issued every three months.").
+
+quarterly_proceedings <| qurterly_periodical.
+
+yearly_proceedings := 
+  proceedings
+    (definition => "
+     'yearly_proceedingss' is a class of all proceedings of a
+      conference of societies which is issued every year.").
+
+yearly_proceedings <| yearly_periodical.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                 %
+%                  Hierarchy according to subject.                %
+%                                                                 %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+general_reference :=
+  library_material
+    (definition => "
+     'general_reference' is a class of all materials which are 
+      used as references.").
+
+encyclopedia :=
+  general_reference
+    (definition => "
+     'encyclopedia' is a class of all encyclopedia. It has 
+      two subclasses, 'general_encyclopedia' and 'subject_encyclopedia'").
+
+dictionary  :=
+  general_reference
+    (definition => "
+     'dictionary' is a class of all dictionary. It has several subclasses
+      including 'unabridged_dictionary', 'desk_dictionary',
+      and special_dictionary.").
+
+geographic_reference :=
+  general_reference
+    (definition => "
+     'geographic_reference' is a class of references for all kinds of
+      geographic matter. It has several subclasses like 'maps_atlas', 
+      'gazeteer', and 'guidebook'.").
+
+gazeteer :=
+  geographic_reference
+    (definition => "
+     'gazeteer' is a class of all geographical dictionary.").
+
+maps_atlas <| geographical_reference.
+
+general_encyclopedia :=
+  encyclopedia
+    (definition => "
+     'general_encyclopedia' is a class of all encyclopedia that 
+      contain information on all branches of knowledge.").
+
+subject_encyclopedia :=
+  encyclopedia
+    (definition => "
+     'subject_encyclopedia' is a class of all encyclopedia that 
+      treats comprehensively a particular branch of knowledge.").
+
+unabridged_dictionary :=
+  dictionary
+    (definition => "
+     'unabridged_dictionary' is a class of all unabridged dictionary").
+
+desk_dictionary :=
+  dictionary
+    (definition => "
+     'desk_dictionary' is a class of all  dictionary which is abridged, 
+      and contains college level words.").
+
+special_dictionary :=
+  dictionary
+    (definition => "
+     'special_dictionary' is a class of all dictionary which has special
+     purpose like slang, 'synonym_antonym', or 'foreign_language' dictionary").
+
+slang_dictionary :=
+  special_dictionary
+    (definition => "
+     'slang_dictionary' is a class of all slang dictionaries.").
+
+synonym_antonym_dictionary :=
+  special_dictionary
+    (definition => "
+     'synonym_antonym_dictionary' is a class of all  dictionarie which
+      explains synonym and/or antonym of words.").
+
+foreign_language_dictionary :=
+  special_dictionary
+    (source_language => languages
+    ,destination_language => languages
+    ,definition => " 
+     'foreign_language_dictionary' is a class of all  dictionaries for
+      foreign languages."
+    ,attribute => "
+     'foreign_language_dictionary' has two attributes, 'source_language'
+      and 'destination_language'.").
+
+philosophy_material :=
+  library_material
+    (subject => philosophy
+    ,definition => "
+     'philosophy_material' is a class of all library materials whose 
+      subject is philosophy.").
+
+religion_material :=
+  library_material
+    (subject => religion
+    ,definition => "
+     'religion_material' is a class of all library materials whose subject 
+      is religion.").
+
+social_science_material :=
+  library_material
+    (subject => social_science
+    ,definition => "
+     'social_science_material' is a class of all library materials whose 
+      subject is social science.").
+
+language_material :=
+  library_material
+    (subject => language
+    ,definition => "
+     'language_material' is a class of all library materials whose subject 
+      is language.").
+
+pure_science_material :=
+  library_material
+    (subject => pure_science
+    ,definition => "
+     'pure_science_material' is a class of all library materials whose 
+      subject is pure science.").
+
+applied_science_material :=
+  library_material
+    (subject => applied_science
+    ,definition => "
+     'applied_science_material' is a class of all library materials whose 
+      subject is applied science.").
+
+art_material :=
+  library_material
+    (subject => art
+    ,definition => "
+     'art_material' is a class of all library materials whose subject 
+      is art.").
+
+literature_material :=
+  library_material
+    (subject => literature
+    ,definition => "
+     'literature_material' is a class of all library materials whose 
+      subject is literature.").
+
+history_material :=
+  library_material
+    (subject => history
+    ,definition => "
+     'history_material' is a class of all library materials whose subject 
+      is history.").
+
+metaphysics_material :=
+  philosophy_material
+    (subject => metaphysics
+    ,definition => "
+     'metaphysics_material' is a class of all philosophy materials whose 
+      subject is metaphysics.").
+
+psychology_material :=
+  philosophy_material
+    (subject => psychology
+    ,definition => "
+     'psychology_material' is a class of all philosophy materials whose 
+      subject is psychology.").
+
+logic_material :=
+  philosophy_material
+    (subject => logic
+    ,definition => "
+     'logic_material' is a class of all philosophy materials whose 
+      subject is logic.").
+
+ethics_material :=
+  philosophy_material
+    (subject => ethics
+    ,definition => "
+     'ethics_material' is a class of all philosophy materials whose 
+      subject is ethics.").
+
+physiological_psychology_material :=
+  psychology_material
+    (subject => physiological_psychology
+    ,definition => "
+     'physiological_psychology_material' is a class of all psychology 
+      materials whose subject is physiological psychology").
+
+intelligent_intellect_material :=
+  psychology_material
+    (subject => intelligent_intellect
+    ,definition => "
+     'intelligent_intellect_material' is a class of all psychology materials 
+      whose subject is intelligent intellect").
+
+induction_material :=
+  logic_material
+    (subject => induction
+    ,definition => "
+     'induction_material' is a class of all logic materials whose
+      subject is induction").
+
+deduction_material := 
+  logic_material
+    (subject => deduction
+    ,definition => "
+     'deduction_material' is a class of all logic materials whose subject
+      is deduction").
+
+analogy_material :=
+  logic_material
+    (subject => analogy
+    ,definition => "
+     'analogy_material' is a class of all logic materials whose 
+      subject is analogy").
+
+natural_religion_material :=
+  religion_material
+    (subject => natural_religion
+    ,definition => "
+     'natural_religion_material' is a class of all religion materials whose 
+      subject is natural religion").
+
+christian_theology_material :=
+  religion_material
+    (subject => christian_theology
+    ,definition => "
+     'christian_theology_material' is a class of all religion materials of 
+      which subject is christian theology").
+
+other_religion_material :=
+  religion_material
+    (subject => other_religion
+    ,definition => "
+     'other_religion_material' is a class of all religion materials whose 
+      subject deals with non-christian religions.").
+
+statistics_material :=
+  social_science_material
+    (subject => the_statistics
+    ,definition => "
+     'statistics_material' is a class of all social science materials whose 
+      subject is statistics.").
+
+political_science_material :=
+  social_science_material
+    (subject => political_science
+    ,definition => "
+     'political_science_material' is a class of all social science materials 
+      whose subject is political science").
+
+economics_material :=
+  social_science_material
+    (subject => economics
+    ,definition => "
+     'economics_material' is a class of all social science materials whose 
+      subject is economics").
+
+law_material :=
+  social_science_material
+    (subject => law
+    ,definition => "
+     'law_material' is a class of all social science materials whose 
+      subject is law").
+
+linguistics_material :=
+  language_material
+    (subject => linguistics
+    ,definition => "
+     'linguistics_material' is a class of all language materials whose 
+      subject is linguistics").
+
+english_material :=
+  language_material
+    (subject => english
+    ,definition => "
+     'english_material' is a class of all language materials whose 
+      subject is english").
+
+german_material :=
+  language_material
+    (subject => german
+    ,definition => "
+     'german_material' is a class of all language materials whose 
+      subject is german").
+
+french_material :=
+  language_material
+    (subject => french
+    ,definition => "
+     'french_material' is a class of all language materials whose 
+      subject is french").
+
+computational_liguistics_material :=
+  linguistics_material
+    (subject => computational_linguistics
+    ,definition => "
+     'computational_linguistics_material' is a class of all linguistics 
+      materials whose subject is computational linguistics.").
+
+etymology_material :=
+  linguistics_material
+    (subject => etymology
+    ,definition => "
+     'etymology_material' is a class of all linguistics materials whose 
+      subject is etymology.").
+
+phonology_material :=
+  linguistics_material
+    (subject => phonology
+    ,definition => "
+     'phonology_material' is a class of all linguistics materials whose 
+      subject is phonology.").
+
+structural_system_material :=
+  linguistics_material
+    (subject => structural_system
+    ,definition => "
+     'structural_system_material' is a class of all linguistics materials 
+      whose subject is structural system.").
+
+mathematics_material :=
+  pure_science_material
+    (subject => mathematics
+    ,definition => "
+     'mathematics_material' is a class of all pure science materials whose 
+      subject is mathematics.").
+
+computer_science_material :=
+  pure_science_material
+    (subject => computer_science
+    ,definition => "
+     'computer_science_material' is a class of all pure science materials 
+      whose subject is computer science.").
+
+physics_material :=
+  pure_science_material
+    (subject => physics
+    ,definition => "
+     'physics_material' is a class of all pure science materials whose 
+      subject is physics.").
+
+chemistry_material :=
+  pure_science_material
+    (subject => chemistry
+    ,definition => "
+     'chemistry_material' is a class of all pure science materials whose 
+      subject is chemistry.").
+
+biology_material :=
+  pure_science_material
+    (subject => biology
+    ,definition => "
+     'biology_material' is a class of all pure science materials whose 
+      subject is biology.").
+
+algebra_material :=
+  mathematics_material
+    (subject => algebra
+    ,definition => "
+     'algebra_material' is a class of all mathematics materials whose 
+      subject is algebra.").
+
+analysis_material :=
+  mathematics_material
+    (subject => analysis
+    ,definition => "
+     'analysis_material' is a class of all mathematics materials whose 
+      subject is analysis.").
+
+topology_material :=
+  mathematics_material
+    (subject => topology
+    ,definition => "
+     'topology_material' is a class of all mathematics materials, whose 
+      subject is topology.").
+
+theory_of_computation_material :=
+  computer_science_material
+    (subject => theory_of_computation
+    ,definition => "
+     'theory_of_computation_material' is a subclass of computer science and 
+      mathematics  materials. The area of theory of computer science 
+      includes mathematical theory of computer sciences, automata theory, 
+      and mathematical logic.  Subject is theory of computation.").
+
+theory_of_computation_material := 
+  mathematics_material
+    (subject => theory_of_computation).
+
+artificial_intelligence_material := 
+  computer_science_material
+    (subject => artificial_intelligence
+    ,definition => "
+     'artificial_intelligence_material' is a class of all A.I. materials. 
+       The area of artificial intelligence includes the areas of knowledge 
+       representation, search heuristics, natural language processing, machine
+       learning, expert system, automatic theorem proving, robotics, computer 
+       vision, AI machine, parallel processing for AI, and AI programming 
+       language.  Subject is artificial intelligence.").
+
+distributed_system_material :=
+  computer_science_material
+    (subject => distributed_system
+    ,definition => "
+     'distributed_system_material is a subclass of  computer science 
+      materials.  Subject is distributed system.").
+
+computer_architecture_material :=
+  computer_science_material
+    (subject => computer_architecture
+    ,definition => "
+     'computer_architecture_material' is a subclass of  both computer science 
+      and computer engineering materials. Subject is computer architecture.").
+
+software_engineering_material :=
+  computer_science_material
+    (subject => software_engineering
+    ,definition => "
+     'software_engineering_material' is a subclass of computer science 
+      materials.  Subject is software engineering").
+
+parallel_processing_material :=
+  computer_science_material
+    (subject => parallel_processing
+    ,definition => "
+     'parallel_processing_material' is a subclass of computer science 
+      materials.   Subject is parallel processing").
+
+programming_language_material :=
+  computer_science_material
+    (subject => programming_languages
+    ,definition => "
+     'programming_language_material' is a subclass of computer science
+      materials.  Subject is programming languages").
+
+vlsi_material :=
+  computer_science_material
+    (subject => vlsi
+    ,definition => "
+     'vlsi_material' is a subclass of all both computer science and computer 
+      engineering  materials.   Subject is VLSI.").
+
+database_material :=
+  computer_science_material
+    (subject => database
+    ,definition => "
+     'database_material' is a subclass of computer science materials. 
+      Subject is database").
+
+computer_network_material :=
+  computer_science_material
+    (subject => computer_network
+    ,definition => "
+     'computer_network_material' is a subclass of both computer science and 
+      computer engineering materials.   Subject is computer network").
+
+modeling_analysis_material :=
+  computer_science_material
+    (subject => modeling_analysis
+    ,definition => "
+     'modeling_analysis_material' is a subclass of computer science 
+      materials.  Subject is modeling analysis").
+
+medical_material :=
+  applied_science_material
+    (subject => medicine
+    ,definition => "
+     'medical_material' is a subclass of applied science materials. 
+      Subject is medicine.").
+
+engineering_material :=
+  applied_science_material
+    (subject => engineering
+    ,definition => "
+     'engineering_material' is a subclass of applied science materials. 
+      Subject is  engineering").
+
+building_material :=
+  applied_science_material
+    (subject => building
+    ,definition => "
+     'building_material' is a subclass of applied science materials. 
+      Subject is building.").
+
+medical_engineering_material :=
+  medical_material
+    (subject => medical_engineering
+    ,definition => "
+     'medical_engineering_material' is a subclass of both medicine and 
+      engineering materials.   Subject is medical engineering.").
+
+medical_engineering_material := 
+  engineering_material
+    (subject => medical_engineering).
+
+electrical_engineering_material :=
+  engineering_material
+    (subject => electrical_engineering
+    ,definition => "
+     'electrical_engineering_material' is an engineering material. 
+      Subject is electrical engineering.").
+
+civil_engineering_material :=
+  engineering_material
+    (subject => civil_engineering
+    ,definition => "
+     'civil_engineering_material' is an engineering material. 
+      Subject is civil engineering.").
+
+petroleum_engineering_material :=
+  engineering_material
+    (subject => petroleum_engineering
+    ,definition => "
+     'petroleum_engineering_material' is an engineering material. 
+      Subject is petroleum engineering.").
+
+computer_engineering_material :=
+  electrical_engineering_material
+    (subject => computer_engineering
+    ,definition => "
+     'computer_engineering_material' is an electrical engineering material.
+      Subject is computer engineering").
+
+computer_architecture_material := 
+  computer_engineering_material
+    (subject => computer_architecture).
+
+vlsi_material := 
+  computer_engineering_material
+    (subject => vlsi).
+
+computer_network_material :=
+  computer_engineering_material
+    (subject => computer_network).
+
+music_material :=
+  art_material
+    (subject => music
+    ,definition => "
+     'music_material' is an art material which is related to music.
+      The area of music includes music score, sound recording...
+      Subject is music.").
+
+painting_material :=
+  art_material
+    (subject => painting
+    ,definition => "
+     'painting_material' is an art material which is related to painting
+      Subject is painting.").
+
+sculpture_material :=
+  art_material
+    (subject => sculpture
+    ,definition => "
+     'sculpture_material' is an art material which is related to sculpture.
+      Subject is sculpture.").
+
+architecture_material :=
+  art_material
+    (subject => architecture
+    ,definition => "
+     'architecture_material' is an art material which is related to 
+      architecture.  Subject is architecture").
+
+american_literature_material :=
+  literature_material
+    (subject => american_literature
+    ,definition => "
+     'american_literature_material' is a literature material which is 
+      related to american literature.  Subject is american literature.").
+
+german_literature_material :=
+  literature_material
+    (subject => german_literature
+    ,definition => "
+     'german_literature_material' is a literature material which is related to
+      german literature.  Subject is german literature.").
+
+italian_literature_material :=
+  literature_material
+    (subject => italian_literature
+    ,definition => "
+     'italian_literature_material' is a literature material which is related to
+      italian literature.  Subject is italian literature.").
+
+ancient_history_material :=
+  history_material
+    (subject => ancient_history
+    ,definition => "
+     'ancient_history_material' is a history material which is related to
+      ancient history.  Subject is ancient history").
+
+europe_history_material :=
+  history_material
+    (subject => europe_history
+    ,definition => "
+     'europe_history_material' is a history material which is related to
+      europe history.  Subject is europe history").
+
+asia_history_material :=
+  history_material
+    (subject => asia_history
+    ,definition => "
+     'asia_history_material' is a history material which is related to
+      asia history.  Subject is asia history").
+
+america_history_material :=
+  history_material
+    (subject => america_history
+    ,definition => "
+     'america_history_material' is a history material which is related to
+      america history.  Subject is america history").
+
+mathematical_logic_material :=
+  theory_of_computation_material
+    (subject => mathematical_logic
+    ,definition => "
+     'mathematical_logic_material' is a both theory of computation and logic 
+      material which is related to mathematical logic.  
+      Subject is mathematical logic").
+
+mathematical_logic_material := 
+  logic_material
+    (subject => mathematical_logic).
+
+automata_material := theory_of_computation_material
+    (subject => automata
+    ,definition => "
+     'automata_material' is a both theory of computation and structural system
+      material which is related to automata.  
+      Subject is automata").
+
+automata_material := 
+  structural_system_material
+    (subject => automata).
+
+knowledge_representation_material :=
+  artificial_intelligence_material
+    (subject => knowledge_representation
+    ,definition => "
+     'knowledge_representation_material' is an artificial intelligence material
+      which is related to knowledge representation.  
+      Subject is knowledge representation").
+
+search_heuristics_material :=
+  artificial_intelligence_material
+    (subject => search_heuristics
+    ,definition => "
+     'search_heuristics_material' is an artificial intelligence material 
+      which is related to search heuristics.  
+      Subject is search heuristics").
+
+natural_language_processing_material :=
+  computational_linguistics_material 
+    (subject => natural_language_processing
+    ,definition => "
+     'natural_language_processing_material' is a both computational linguistics
+      and artificial intelligence material which is related to natural language
+      processing.  Subject is natural language processing").
+
+natural_language_processing_material := 
+  artificial_intelligence_material
+    (subject => natural_language_processing).
+
+machine_learning_material := 
+       artificial_intelligence_material
+    (subject => machine_learning
+    ,definition => "
+     'machine_learning_material' is an artificial intelligence material 
+      which is related to machine learning.  
+      Subject is machine learning").
+
+expert_system_material :=
+  artificial_intelligence_material
+    (subject => expert_system
+    ,definition => "
+     'expert_system_material' is an artificial intelligence material 
+      which is related to expert system.
+      Subject is expert system.").
+
+automatic_theorem_proving_material :=
+  artificial_intelligence_material
+    (subject => automatic_theorem_proving
+    ,definition => "
+     'automatic_theorem_proving_material' is an artificial intelligence 
+      material  which is related to automatic theorem proving.  
+      Subject is automatic theorem proving").
+
+robotics_material :=
+  artificial_intelligence_material
+    (subject => robotics
+    ,definition => "
+     'robotics_material' is an artificial intelligence material which is 
+      related to robotics.  Subject is robotics").
+
+computer_vision_material :=
+  artificial_intelligence_material
+    (subject => computer_vision
+    ,definition => "
+     'computer_vision_material' is an artificial intelligence material 
+      which is related to computer vision. Subject is computer vision").
+
+ai_machine_material :=
+  artificial_intelligence_material
+    (subject => ai_machine
+    ,definition => "
+     'ai_machine_material' is a both computer architecture and artificial 
+      intelligence material which is related to AI machine. 
+      Subject is AI machine").
+
+ai_machine_material := 
+  computer_architecture_material
+    (subject => ai_machine).
+
+parallel_processing_for_ai_material := 
+     artificial_intelligence_material
+    (subject => parallel_processing_for_ai
+    ,definition => "
+     'parallel_processing_for_ai_material' is a both parallel processing and
+      artificial intelligence material which is related to parallel processing
+      for AI.   Subject is parallel processing for AI").
+
+parallel_processing_for_ai_material := 
+  parallel_processing_material
+    (subject => parallel_processing_for_ai).
+
+ai_programming_language_material := 
+      artificial_intelligence_material
+    (subject => ai_programming_language
+    ,definition => "
+     'ai_programming_language_material' is a both programming language and 
+      artificial intelligence material which is related to AI programming 
+      language.   Subject is AI programming language").
+
+ai_programming_language_material :=
+  programming_language_material
+    (subject => ai_programming_language).
+
+medical_expert_system_material := 
+      expert_system_material
+    (subject => medical_expert_system
+    ,definition => "
+     'medical_expert_material' is a both expert system and medical engineering
+      material which is related to medical expert system.
+      Subject is medical expert system.").
+
+medical_expert_system_material := 
+  medical_engineering_material(subject => medical_expert_system).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                 %
+%  Of course, there might be lots of subjects which  are  not     %
+%  listed above.  We can generate a new  class by combining any   %
+%  of  the  class listed  above  with  any class  in   physical   %
+%  description hierarchy.    For example,   we can define  new    %
+%  classes as in the next section.                                %
+%                                                                 %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                 %
+%   New classes generated  by combining the classes in subject    %
+%   hierarchy and the classes from  the  hierarchy by  physical   %
+%   description.                                                  %
+%                                                                 %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+pure_science_periodical :=
+  periodical
+    (definition => "
+     'pure_science_periodical' is a periodical whose subject is pure science").
+
+pure_science_periodical <| pure_science_material.
+
+computer_science_periodical :=
+  pure_science_periodical
+    (definition => "
+     'computer_science_periodical' is a pure science periodical whose subject
+      is computer science").
+
+computer_science_periodical <| computer_science_material.
+
+artificial_intelligence_periodical :=
+  artficial_intelligence_material
+    (definition => "
+     'artificial_intelligence_periodical' is a computer science periodical
+      whose subject is artificial intelligence.").
+artificial_intelligence_periodical <| computer_science_periodical.
+
+monthly_computer_science_journal :=
+  computer_science_periodical
+    (definition => "
+     'monthly_computer_science_journal' is a computer science journal which is
+      issued every month.").
+
+monthly_computer_science_journal <| monthly_academic_journal.
+
+monthly_artificial_intelligence_journal :=
+  monthly_computer_science_journal
+    (definition => "
+     'monthly_artificial_intelligence_journal' is an artificial intelligence 
+      journal which is issued every month.").
+
+monthly_artificial_intelligence_journal <| artificial_intelligence_periodical.
+
+computer_science_transactions :=
+  computer_science_periodical
+    (definition => "
+     'computer_science_transactions' is a computer science periodical which
+      is a transaction of a computer science society.").
+computer_science_transactions <| transactions.
+
+artificial_intelligence_transactions :=
+  artificial_intelligence_periodical
+    (definition => "
+     'artificial_intelligence_transactions' is an artificial intelligence 
+     periodical which is a transaction of artificial intelligence societies.").
+artificial_intelligence_transactions <| computer_science_transactions.
+
+monthly_computer_science_transactions :=
+  monthly_transactions
+    (definition => "
+     'monthly_computer_science_transactions' is a computer science transactions
+      which is issued every month.").
+
+monthly_computer_science_transactions <| computer_science_transactions.
+
+monthly_artificial_intelligence_transactions :=
+  monthly_computer_science_transactions
+    (definition => "
+     'monthly_artificial_intelligence_transactions' is an artificial 
+      intelligence transactions which is issued every month.").
+
+monthly_artificial_intelligence_transactions <| 
+                                         artificial_intelligence_transactions.
+
+quarterly_computer_science_transactions :=
+  quarterly_transactions
+    (definition => "
+     'quarterly_computer_science_transactions' is a computer science 
+      transactions  which is issued every three months.").
+
+quarterly_computer_science_transactions <| computer_science_transactions.
+
+quarterly_artificial_intelligence_transactions :=
+  quarterly_computer_science_transactions
+    (definition => "
+     'quarterly_artificial_intelligence_transactions' is an artificial 
+      intelligence transactions which is issued every three month.").
+
+quarterly_artificial_intelligence_transactions <| 
+                                         artificial_intelligence_transactions.
+
+computer_science_proceedings :=
+  computer_science_periodical
+    (definition => "
+     'computer_science_proceedings' is a computer science periodical which is
+      issued as a computer science conference proceedings.").
+
+computer_science_proceedings <| proceedings.
+
+yearly_computer_science_proceedings :=
+  computer_science_proceedings
+    (definition => "
+     'yearly_computer_science_proceedings' is a computer science proceedings
+      which is issued every year.").
+
+yearly_computer_science_proceedings <| yearly_proceedings.
+
+artificial_intelligence_proceedings :=
+  artificial_intelligence_periodical
+    (definition => "
+     'artificial_intelligence_proceedings' is an artificial intelligence 
+      periodical which is issued as a AI conference proceedings.").
+
+artificial_intelligence_proceedings <| computer_science_proceedings.
+
+yearly_artificial_intelligence_proceedings :=
+  yearly_computer_science_proceedings
+    (definition => "
+     'yearly_artificial_intelligence_proceedings' is an artificial
+      intelligence proceedings which is issued every year.").
+
+yearly_artificial_intelligence_proceedings <| 
+                             artificial_intelligence_proceedings.
+
+computer_science_encyclopedia :=
+  computer_science_material
+    (definition => "
+     'computer_science_encyclopedia' is a subject encyclopedia whose subject
+      is computer science.").
+
+computer_science_encyclopedia <| subject_encyclopedia.
+
+multi_volume_encyclopedia :=
+  encyclopedia
+    (definition => "
+     'multi_volume_encyclopedia' is an encyclopedia which consists of several
+      volumes.").
+
+multi_volume_encyclopedia <| multi_volume_books.
+
+multi_volume_subject_encyclopedia :=
+  multi_volume_encyclopedia
+    (definition => "
+     'multi_volume_subject_encyclopedia' is a subject encyclopedia which 
+      consists of several volumes.").
+
+multi_volume_subject_encyclopedia <| subject_encyclopedia.
+
+multi_volume_general_encyclopedia :=
+  multi_volume_encyclopedia
+    (definition => "
+     'multi_volume_general_encyclopedia' is a general encyclopedia which 
+      consists of several volumes.").
+
+multi_volume_general_encyclopedia <| general_encyclopedia.
+
+multi_volume_computer_science_encyclopedia :=
+  computer_science_encyclopedia
+    (definition => "
+     'multi_volume_computer_science_encyclopedia' is a computer science 
+      encyclopedia which consists of several volumes.").
+
+multi_volume_computer_science_encyclopedia <| multi_volume_subject_encyclopedia.
+
+single_volume_encyclopedia :=
+  encyclopedia
+    (definition => "
+     'single_volume_encyclopedia' is an encyclopedia which consists of single
+      volume.").
+
+single_volume_encyclopedia <| single_volume_books.
+
+single_volume_pure_science_books :=
+  single_volume_books
+    (definition => "
+     'single_volume_pure_science_books' is a single volume books whose 
+      subject is pure science.").
+
+single_volume_pure_science_books <| pure_science_material.
+
+single_volume_computer_science_books :=
+  computer_science_material
+    (definition => "
+     'single_volume_computer_science_books' is a  computer science material
+      written in single volume books.").
+
+single_volume_computer_science_books <| single_volume_pure_science_books.
+
+single_volume_artificial_intelligence_books :=
+  single_volume_computer_science_books
+    (definition => "
+     'single_volume_artificial_intelligence_books' is an artificial 
+      intelligence material written in single volume books.").
+single_volume_artificial_intelligence_books <| artificial_intelligence_material.
+
+single_volume_expert_system_books :=
+  single_volume_artificial_intelligence_books
+    (definition => "
+     'single_volume_expert_system_books' is an expert system
+      material written in single volume books.").
+
+single_volume_expert_system_books <| expert_system_material.
+
+single_volume_medical_expert_system_books :=
+  medical_expert_system_material
+    (definition => "
+     'single_volume_medical_expert_system_books' is a medical expert system
+      material written in single volume books.").
+
+single_volume_medical_expert_system_books <| single_volume_expert_system_books.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                 %
+%     Each class in this hierarchy is not a class  of  library    %
+%   items.   Each class represents a  conceptual term  which  is  %
+%   used as  a value  of the attribute, 'subject', of  the class  %
+%   'libarary_material'.   This hierarchy  make  it possible  to  %
+%   succeed  when we  try  to unify  two  terms  which have some  %
+%   relationships using   generalized  unification algorithm  in  %
+%   LOGIN.                                                        %
+%                                                                 %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+philosophy <| subjects.
+religion <| subjects.
+social_science <| subjects.
+language <| subjects.
+pure_science <| subjects.
+applied_science <| subjects.
+art <| subjects.
+literature <| subjects.
+history <| subjects.
+
+metaphysics <| philosophy.
+psychology <| philosophy.
+logic <| philosophy.
+ethics <| philosophy.
+
+physiological_psychology <| psychology.
+intelligent_intellect <| psychology.
+
+induction <| logic.
+deduction <| logic.
+analogy <| logic.
+
+natural_religion <| religion.
+christian_theology <| religion.
+other_religion <| religion.
+
+the_statistics <| social_science.
+political_science <| social_science.
+economics <| social_science.
+law <| social_science.
+
+linguistics <| language.
+english <| language.
+german <| language.
+french <| language.
+
+computational_linguistics <| linguistics.
+etymology <| linguistics.
+phonology <| linguistics.
+structural_system <| linguistics.
+
+mathematics <| pure_science.
+computer_science <| pure_science.
+physics <| pure_science.
+chemistry <| pure_science.
+biology <| pure_science.
+
+algebra <| mathematics.
+analysis <| mathematics.
+topology <| mathematics.
+
+theory_of_computation <| computer_science.
+theory_of_computation <| mathematics.
+artificial_intelligence <| computer_science.
+distributed_system <| computer_science.
+computer_architecture <| computer_science.
+software_engineering <| computer_science.
+parallel_processing <| computer_science.
+programming_language <| computer_science.
+vlsi <| computer_science.
+database <| computer_science.
+computer_network <| computer_science.
+modeling_analysis <| computer_science.
+
+medicine <| applied_science.
+engineering <| applied_science.
+building <| applied_science.
+
+medical_engineering <| medicine.
+medical_engineering <| engineering.
+electrical_engineering <| engineering.
+civil_engineering <| engineering.
+petroleum_engineering <| engineering.
+
+computer_engineering <| electrical_engineering.
+computer_architecture <| computer_engineering.
+vlsi <| computer_engineering.
+computer_network <| computer_egineering.
+
+music <| art.
+painting <| art.
+sculpture <| art.
+architecture <| art.
+
+american_literature <| literature.
+german_literature <| literature.
+italian_literature <| literature.
+
+ancient_history <| history.
+europe_history <| history.
+asia_history <| history.
+america_history <| history.
+
+mathematical_logic <| theory_of_computation.
+mathematical_logic <| logic.
+automata <| theory_of_computation.
+automata <| structural_system.
+
+knowledge_representation <| artificial_intelligence.
+search_heuristics <| artificial_intelligence.
+natural_language_processing <| computational_linguistics.
+natural_language_processing <| artificial_intelligence.
+machine_learning <| artificial_intelligence.
+expert_system <| artificial_intelligence.
+automatic_theorem_proving <| artificial_intelligence.
+robotics <| artificial_intelligence.
+
+computer_vision <| artificial_intelligence.
+ai_machine <| artificial_intelligence.
+ai_machine <| computer_architecture.
+parallel_processing_for_ai <| artificial_intelligence.
+parallel_processing_for_ai <| parallel_processing.
+ai_programming_language <| artificial_intelligence.
+ai_programming_language <| programming_language.
+
+medical_expert_system <| expert_system.
+medical_expert_system <| medical_engineering.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                 %
+%                 Hierarchy  of  Library  Users                   %
+%                                                                 %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+library_user := 
+   @(ss_number => ss_num
+    ,name      => full_name 
+    ,address   => place
+    ,fine      => object_state_key     % a key value to the record of fine 
+    ,definition => "
+     'library_user' is an authorized person to use a library"
+    ,attribute => "
+     'library_user' has three attributes, 'ss_number', 'name', and
+      'address'. "). 
+
+professor_user :=
+  library_user
+    (status => professor).
+
+staff_user := 
+  library_user
+    (status => staff).
+
+student_user :=
+  library_user
+    (status => student).
+
+graduate_student_user := 
+  student
+    (status => graduate_student).
+
+undergraduate_student_user := student(status => undergraduate_student).
+
+graduate_student <| student.
+
+undergraduate_student <| student.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                 %
+%                     END OF BABEL CLASSES                        %
+%                                                                 %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

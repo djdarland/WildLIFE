@@ -1,0 +1,100 @@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% As a (useful) programming exercise, it is interesting to write in LIFE a
+% function that takes an arbitrary psi-term and returns a distinct clone
+% copy of it. The only real complication comes from the necessity to
+% respect faithfully all coreferences, including cycles.  The point, of
+% course, is to do it as `cleanly' as possible; i.e., without `assert' nor
+% `retract' and neither in-place assignment.
+
+% This solution -- one of many, I am sure -- is purely functional.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% The main function is called `copy'. It uses an auxiliary function
+% `memo_copy' that does the actual copying with the necessary book
+% keeping to enforce coreferences. It takes a pair of psi-term and a
+% list of pairs of psi-terms (a table of correspondence between nodes
+% that have been already copied and their actual copies), and returns a
+% similar object. So, copy just projects out the correspondence table
+% and keeps the first component of the pair (the fully copied x).
+
+copy(X) -> memo_copy(X,[]).1.
+
+% Another way of extracting a component of a structure is by unification
+% using the `where' function trick [defined as where -> @.] and define
+% `copy' as follows: 
+
+% copy(X) -> C&where((C , _)&memo_copy(X,[])).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% The function `memo_copy' takes a psi-term and a table of the copies that
+% have already been made and returns a pair of the copy and updated table. 
+
+memo_copy(X,Table:list) ->
+	cond( deja_vu(X,Table)&bool(Copy)
+	    , (Copy , Table)
+	    , (Copy&root_sort(X)&bodify_list(B) , New_Table)
+              &where((B , New_Table)
+                     &copy_body(listify_body(X),[(X , Copy)|Table]))
+            ).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% The function `deja_vu' checks whether its first argument has already being
+% recorded as the left component of a pair in its second argument (a table in
+% the form of a list of pairs). It returns `false' if it is nout found, and
+% otherwise returns `true' augmented with feature 1 set to its corresponding
+% copy. 
+
+deja_vu(@,[])        -> false.
+deja_vu(X,[(Y , V)|T]) -> cond( X===Y
+			    , true(V)
+			    , deja_vu(X,T)
+			    ).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% The function `copy_body' takes a list of pairs of the form
+% (attribute,psi-term) and a table and returns a pair made up
+% of a similar list and a new table.
+
+copy_body([],Table:list)        -> ([] , Table).
+copy_body([(A , X)|T],Table:list) -> ([(A , CX)|CT] , New_Table)
+				   &where( (CX , NT)&memo_copy(X,Table)
+				         , (CT , New_Table)&copy_body(T,NT)
+					 ).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% The function `bodify_list' rebuilds a psi-term body from a list of pairs of
+% the form (attr,subterm). 
+
+bodify_list([]) -> @.
+bodify_list([(A , X)|T]) -> Y & bodify_list(T)
+  		        | X = Y.A.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% The function `listify_body' does the opposite -- i.e., it returns the body
+% of a psi-term in the form of a list of pairs (attr,subterm).
+
+listify_body(X) -> map(feature_value(2=>X),features(X)).
+
+feature_value(A,X) -> (A , X.A).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%% STRUCTURELLE EQUALITY
+
+str_eq0(X,Y)-> 	cond(	copy(X)=copy(Y),
+			true,
+			false
+		     ).
+str_eq1(X,Y) -> A=(copy(X)&copy(Y)).
+str_eq2(X,Y) -> copy(X)&copy(Y).
+
+where->@.

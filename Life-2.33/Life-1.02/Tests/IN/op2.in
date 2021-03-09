@@ -1,0 +1,15 @@
+op(500,xfy,"aaa")?
+op(500,xfy,123)?
+op(500,xfy,123.3)?
+op(500,xfy,A)?
+;
+op(500,xff,asd)?
+op(5000,xfy,asd)?
+op(0,xfy,asd)?
+op(-234,xfy,asd)?
+op(abc,xfy,asd)?
+op(500,xfy,asd)?
+A= quick asd fox?
+B=root_sort(A)?
+.
+

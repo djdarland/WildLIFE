@@ -1,0 +1,6 @@
+retract(p(X)),gc,retract(p(Y))?
+;
+;
+;
+;
+

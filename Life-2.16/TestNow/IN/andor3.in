@@ -1,0 +1,33 @@
+true=A and B?
+.
+false=A and B?
+.
+true=A and false?
+.
+true=false and A?
+.
+true=A:bool and B:bool?
+.
+A:bool=B:bool and false?
+.
+A:bool=false and B:bool?
+.
+A = B and B?
+.
+
+true=A or B?
+.
+false=A or B?
+.
+true=A or false?
+.
+true=false or A?
+.
+true=A:bool or B:bool?
+.
+A:bool=B:bool or false?
+.
+A:bool=false or B:bool?
+.
+A = B or B?
+.

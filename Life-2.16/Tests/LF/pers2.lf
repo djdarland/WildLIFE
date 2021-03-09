@@ -1,0 +1,28 @@
+p(a).
+p(1234).
+p(int).
+p("a little rope").
+p(string).
+p(3.141592654).
+p(real).
+p([a,b,c,d]).
+p(list).
+p(cons).
+p(nil).
+p(@).
+p(@(hello=>world)).
+small <| big.
+sad <| funny.
+dead_mouse <| small.
+dead_mouse <| sad.
+cheshire_cat <| big.
+cheshire_cat <| funny.
+p(small).
+p(big).
+p(sad).
+p(funny).
+p(dead_mouse).
+p(cheshire_cat).
+
+p(A),X<<-A,nl,nl,
+p(Y),X=copy_term(Y),write(X," <| ",Y,"."),nl,fail?

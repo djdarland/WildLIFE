@@ -1,0 +1,557 @@
+							      >	  printf("GET REAL VALUE 0000001 t = %lx v = %lx n = %lx\n",t
+							      >	    printf("GET REAL VALUE 0000002 type = %d success = %ld sm
+							      >	    
+  							      |	  printf("C READ 0000001\n");
+							      >	  printf("C READ 0000002\n");
+							      >	  printf("C READ 0000003\n");
+							      >	  printf("C READ 0000004\n");
+							      >	  printf("C READ 0000005\n");
+							      >	  printf("C READ 0000006\n");
+							      >	  printf("C READ 0000007\n");
+							      >	  printf("C READ 0000008\n");
+							      >	  printf("C READ 000009 \n");
+							      >	  printf("C READ 0000010\n");
+							      >	  printf("C READ 0000011\n");
+							      >	  printf("C READ 0000012\n");
+							      >	  printf("C READ 0000013 n");
+							      >	  printf("C READ 0000014\n");
+							      >	  printf("C READ 0000015\n");
+							      >	  printf("C READ 0000016\n");
+							      >	  printf("C READ 0000017\n");
+							      >	  printf("C READ 0000018\n");
+							      >	  printf("C READ 0000019\n");
+							      >	  printf("C READ 0000020\n");
+							      >	  printf("C READ 0000021 n");
+							      >	  printf("C READ 0000022\n");
+							      >	  printf("C READ 0000023\n");
+							      >	  printf("C READ 0000024\n");
+							      >	  printf("C READ 0000025\n");
+							      >	  printf("C READ 0000026\n");
+							      >	  printf("C READ 0000027\n");
+							      >	  printf("C READ 0000028\n");
+							      >	  printf("C READ 0000029\n");
+							      >	    printf("C ASSERT FIRST 0000001\n");
+							      >	    printf("C ASSERT FIRST 0000002\n");
+							      >	    printf("C ASSERT LAST 0000001\n");
+							      >
+							      >	    printf("C ASSERT LAST 0000002\n");
+							      >
+  np1=(char *)find(INTEGERCMP,three,funct->attr_list); /*  RM |	  n=find(FEATURECMP,three,funct->attr_list);
+  if(np1) {						      |	  if (n) {
+    n = (ptr_node)atol(np1);				      |	    //ptr_psi_term varflag;
+							      >	    //    varflag=stack_psi_term(4);
+							      >	    //varflag->type=var_occurred?true:false;
+							      >	    //push_goal(unify,varflag,arg3,NULL);
+							      >	extern long debug_flag;
+							      >	    printf("FEATURE INSERT SYNTAX ERROR 0000001\n");
+							      >
+							      >		    printf("PARSE LIST SYNTAX ERROR 0000001\n");
+							      >		    printf("PARSE LIST SYNTAX ERROR 0000002\n");
+							      >			printf("READ PSI TERM SYNTAX ERROR 0000001\n"
+							      >
+							      >		  printf("MAKE LIFE FORM SYNTAX ERROR 0000001\n");
+							      >
+							      >	/******** READ_LIFE_FORM(str1,str2)
+							      >	  This reads in one life-form from the input stream which fin
+							      >	  the psi_term whose name is STR1 or STR2, typically if we're
+							      >	  [A,4*5,b-4!] then STR1="," and STR2="|" . It would be incor
+							      >	  taken as an operator.
+							      >
+							      >	  This routine implements the two state expression parser as 
+							      >	  implementation guide. It deals with all the various types o
+							      >	  precedence is dealt with by the CRUNCH function. Each time 
+							      >	  parenthesis is encountered a new expression is started.
+							      >	*/
+							      >
+							      >	psi_term read_life_form_bad(ch1,ch2)
+							      >	char ch1,ch2;
+							      >	{
+							      >	  psi_term t,t2;
+							      >	  long limit,pr_op,pr_1,pr_2,start=0;
+							      >	  long fin=FALSE;
+							      >	  long state=0;
+							      >	  long prec=0;
+							      >	  
+							      >	  operator op;
+							      >	  if (debug_flag) { printf("READ LIFE FORM 000001\n"); }
+							      >	  
+							      >	  limit=parser_stack_index+1;
+							      >	  if (debug_flag) { printf("READ LIFE FORM 000002\n"); }
+							      >	  
+							      >	  if(parse_ok)
+							      >	    do {
+							      >	      if (debug_flag) { printf("READ LIFE FORM 000003\n"); }
+							      >	      if(state) {
+							      >		if (debug_flag) { printf("READ LIFE FORM 000004\n"); 
+							      >		read_token(&t);
+							      >		if (debug_flag) { printf("READ LIFE FORM 000005\n"); 
+							      >	      }
+							      >	      else
+							      >		{
+							      >		  if (debug_flag) { printf("READ LIFE FORM 000006\n")
+							      >		  
+							      >		  t=read_psi_term();
+							      >		  if (debug_flag) { printf("READ LIFE FORM 000007\n")
+							      >		} 
+							      >	      if(!start)
+							      >		{
+							      >		  if (debug_flag) { printf("READ LIFE FORM 000008\n")
+							      >		  
+							      >		  start=line_count;
+							      >		  if (debug_flag) { printf("READ LIFE FORM 000009\n")
+							      >		}
+							      >	      if(!fin)
+							      >		{
+							      >		  if(state) {
+							      >		    if (debug_flag) { printf("READ LIFE FORM 000010n"
+							      >		    if(equ_tokc(t,ch1) || equ_tokc(t,ch2)) {
+							      >		      if (debug_flag) { printf("READ LIFE FORM 000011
+							      >		      fin=TRUE;
+							      >		      if (debug_flag) { printf("READ LIFE FORM 000012
+							      >		      put_back_token(t);
+							      >		      if (debug_flag) { printf("READ LIFE FORM 000013
+							      >		    }
+							      >		    else {
+							      >		      if (debug_flag) { printf("READ LIFE FORM 000014
+							      >		      
+							      >		      pr_op=precedence(t,xf);
+							      >		      if (debug_flag) { printf("READ LIFE FORM 000015
+							      >		      pr_1=pr_op-1;
+							      >		      if (debug_flag) { printf("READ LIFE FORM 000016
+							      >		      
+							      >		      if(pr_op==NOP) {
+							      >			if (debug_flag) { printf("READ LIFE FORM 0000
+							      >			pr_op=precedence(t,yf);
+							      >			if (debug_flag) { printf("READ LIFE FORM 0000
+							      >			pr_1=pr_op;
+							      >			if (debug_flag) { printf("READ LIFE FORM 0000
+							      >		      }
+							      >		      
+							      >		      if (debug_flag) { printf("READ LIFE FORM 000020
+							      >		      if(pr_op==NOP) {
+							      >			if (debug_flag) { printf("READ LIFE FORM 0000
+							      >			
+							      >			pr_op=precedence(t,xfx);
+							      >			if (debug_flag) { printf("READ LIFE FORM 0000
+							      >			pr_1=pr_op-1;
+							      >			pr_2=pr_op-1;
+							      >			
+							      >			if(pr_op==NOP) {
+							      >			  if (debug_flag) { printf("READ LIFE FORM 00
+							      >			  pr_op=precedence(t,xfy);
+							      >			  pr_1=pr_op-1;
+							      >			  pr_2=pr_op;
+							      >			}
+							      >			
+							      >			if(pr_op==NOP) {
+							      >			  if (debug_flag) { printf("READ LIFE FORM 00
+							      >			  pr_op=precedence(t,yfx);
+							      >			  pr_1=pr_op;
+							      >			  pr_2=pr_op-1;
+							      >			}
+							      >			
+							      >			/* if(pr_op==NOP) {
+							      >			   pr_op=precedence(t,yfy);
+							      >			   pr_1=pr_op;
+							      >			   pr_2=pr_op-1;
+							      >			   }
+							      >			*/
+							      >			
+							      >			if(pr_op==NOP) {
+							      >			  if (debug_flag) { printf("READ LIFE FORM 00
+							      >			  fin=TRUE;
+							      >			  put_back_token(t);
+							      >			}
+							      >			else
+							      >			  {
+							      >			    if (debug_flag) { printf("READ LIFE FORM 
+							      >			    crunch(pr_1,limit);
+							      >			    if (debug_flag) { printf("READ LIFE FORM 
+							      >			    push(t,pr_2,xfx);
+							      >			    prec=pr_2;
+							      >			    state=0;
+							      >			  }
+							      >		      }
+							      >		      else {
+							      >			if (debug_flag) { printf("READ LIFE FORM 0000
+							      >			crunch(pr_1,limit);
+							      >			if (debug_flag) { printf("READ LIFE FORM 0000
+							      >			push(t,pr_1,xf);
+							      >			prec=pr_1;
+							      >		      }
+							      >		    }
+							      >		  }
+							      >		}
+							      >	      else {
+							      >		if (debug_flag) { printf("READ LIFE FORM 000030\n"); 
+							      >		
+							      >		if(t.attr_list)
+							      >		  pr_op=NOP;
+							      >		else {
+							      >		  pr_op=precedence(t,fx);
+							      >		  pr_2=pr_op-1;
+							      >		  
+							      >		  if(pr_op==NOP) {
+							      >		    pr_op=precedence(t,fy);
+							      >		    pr_2=pr_op;
+							      >		  }
+							      >		}
+							      >		
+							      >		if(pr_op==NOP) {
+							      >		  if (debug_flag) { printf("READ LIFE FORM 000031\n")
+							      >		  if(equ_tokch(t,'(')) {
+							      >		    if (debug_flag) { printf("READ LIFE FORM 000032\n
+							      >		    t2=read_life_form(')',0);
+							      >		    if(parse_ok) {
+							      >		      if (debug_flag) { printf("READ LIFE FORM 000033
+							      >		      push(t2,prec,nop);
+							      >		      if (debug_flag) { printf("READ LIFE FORM 000034
+							      >		      read_token(&t2);
+							      >		      if (debug_flag) { printf("READ LIFE FORM 000035
+							      >		      if(!equ_tokch(t2,')')) {
+							      >			if (debug_flag) { printf("READ LIFE FORM 0000
+							      >			if (stringparse) parse_ok=FALSE;
+							      >			else {
+							      >			  if (debug_flag) { printf("READ LIFE FORM 00
+							      >			  /*
+							      >			    perr("*** Syntax error ");psi_term_error(
+							      >			    perr(": ')' missing.\n");
+							      >			  */
+							      >			  
+							      >			  /*  RM: Feb  1 1993  */
+							      >			  if (debug_flag) { printf("READ LIFE FORM SY
+							      >			  
+							      >			  Syntaxerrorline("')' missing (%E)\n");
+							      >			  if (debug_flag) { printf("READ LIFE FORM 00
+							      >			  
+							      >			  put_back_token(t2);
+							      >			  if (debug_flag) { printf("READ LIFE FORM 00
+							      >			}
+							      >			if (debug_flag) { printf("READ LIFE FORM 0000
+							      >		      }
+							      >		      state=1;
+							      >		      if (debug_flag) { printf("READ LIFE FORM 000042
+							      >		    }
+							      >		    if (debug_flag) { printf("READ LIFE FORM 000043\n
+							      >		  }
+							      >		  else 
+							      >		    if(bad_psi_term(&t)) {
+							      >		      if (debug_flag) { printf("READ LIFE FORM 000044
+							      >		      put_back_token(t);
+							      >		      if (debug_flag) { printf("READ LIFE FORM 000045
+							      >		      /* psi_term_error(); */
+							      >		      fin=TRUE;
+							      >		    }
+							      >		    else {
+							      >		      if (debug_flag) { printf("READ LIFE FORM 000046
+							      >		      push(t,prec,nop);
+							      >		      if (debug_flag) { printf("READ LIFE FORM 000047
+							      >		      state=1;
+							      >		    }
+							      >		  if (debug_flag) { printf("READ LIFE FORM 000048\n")
+							      >		}
+							      >		else {
+							      >		  if (debug_flag) { printf("READ LIFE FORM 000049\n")
+							      >		  push(t,pr_2,fx);
+							      >		  if (debug_flag) { printf("READ LIFE FORM 000050\n")
+							      >		  prec=pr_2;
+							      >		}
+							      >		if (debug_flag) { printf("READ LIFE FORM 000051\n"); 
+							      >		
+							      >	      }
+							      >	      if (debug_flag) { printf("READ LIFE FORM 000052\n"); }
+							      >	      
+							      >	    } while (!fin && parse_ok);
+							      >	  
+							      >	  if (state)
+							      >	    {
+							      >	      if (debug_flag) { printf("READ LIFE FORM 000053\n"); }
+							      >	      crunch(MAX_PRECEDENCE,limit);
+							      >	      if (debug_flag) { printf("READ LIFE FORM 000054\n"); }
+							      >	    }
+							      >	  if (parse_ok && parser_stack_index!=limit) {
+							      >	    if (debug_flag) { printf("READ LIFE FORM 000055\n"); }
+							      >	    if (stringparse) parse_ok=FALSE;
+							      >	    else {
+							      >	      if (debug_flag) { printf("READ LIFE FORM 000056\n"); }
+							      >	      /*
+							      >		perr("*** Syntax error ");psi_term_error();
+							      >		perr(": bad expression.\n"); 
+							      >	      */
+							      >	      
+							      >	      /*  RM: Feb  1 1993  */
+							      >	      if (debug_flag) { printf("READ LIFE FORM SYNTAX ERROR 0
+							      >	      
+							      >	      Syntaxerrorline("bad expression (%E)\n"); 
+							      >	    }
+							      >	    if (debug_flag) { printf("READ LIFE FORM 000057\n"); }
+							      >	  }
+							      >	  else
+							      >	    {
+							      >	      if (debug_flag) { printf("READ LIFE FORM 000058\n"); }
+							      >	      pop(&t,&op);
+							      >	      if (debug_flag) { printf("READ LIFE FORM 000059\n"); }
+							      >	    }
+							      >	  if (!parse_ok)
+							      >	    {
+							      >	      if (debug_flag) { printf("READ LIFE FORM 000060\n"); }
+							      >	      
+							      >	      t= *error_psi_term;
+							      >	      if (debug_flag) { printf("READ LIFE FORM 000061\n"); }
+							      >	    }
+							      >	  parser_stack_index=limit-1;
+							      >	  if (debug_flag) { printf("READ LIFE FORM 000062\n"); }
+							      >	  
+							      >	  return t;
+							      >	}
+							      >
+							      >
+							      >
+  /*s=read_life_form('.','?');*/			      |	  printf("PARSE  0000001\n");
+							      >	  // s=read_life_form('.','?');
+							      >	  printf("PARSE  0000002\n");
+							      >	      printf("PARSE  0000003\n");
+							      >	      printf("PARSE  0000004\n");
+							      >	      printf("PARSE t.type = %ld  0000004BBB\n",t.type);
+							      >	      printf("PARSE t.finq = %ld  0000004CCC\n",final_questio
+							      >	      printf("PARSE t.find = %ld  0000004DDD\n",final_dot);
+							      >	      printf("PARSE t.strp = %ld  0000004DDD\n",stringparse);
+							      >		{
+							      >		  printf("PARSE  0000005\n");
+							      >		}
+							      >		{
+							      >		  printf("PARSE  0000006\n");
+							      >		}
+        if (stringparse) parse_ok=FALSE;		      |	        if (stringparse) {
+							      >		  printf("PARSE  0000007\n");
+							      >		  parse_ok=FALSE;
+							      >		}
+							      >		
+							      >		  printf("PARSE SYNTAX ERROR 0000008\n");
+							      >		  
+      /* d->always_check=TRUE; */			      |	      // djd uncommented next 5
+      /* d->protected=TRUE; */				      |	      d->always_check=TRUE;
+      /* d->children=NULL; */				      |	      d->protected=TRUE;
+      /* d->parents=NULL; */				      |	      d->children=NULL;
+      /* d->code=NOT_CODED; */				      |	      d->parents=NULL;
+							      >	      d->code=NOT_CODED;
+							      |	  printf("ASSERT LESS 0000001 t1 %lx t2 %lx\n",t1,t2);
+							      >	  printf("ASSERT LESS 0000002\n");
+							      >	  printf("ASSERT LESS 0000003\n");
+							      >	  printf("ASSERT LESS 0000004\n");
+							      >	  printf("ASSERT LESS 0000005\n");
+							      >	  printf("ASSERT LESS 0000006\n");
+							      >	  printf("ASSERT LESS 0000007\n");
+							      >	  printf("ASSERT LESS 0000008 d1 %lx d2 %lx\n",d1,d2);
+							      >	  printf("ASSERT LESS 0000009\n");
+							      >	  printf("ASSERT LESS 0000010\n");
+							      >	  printf("ASSERT LESS 0000011\n");
+							      >	  printf("ASSERT LESS 0000012\n");
+    /* d1->parents=cons(d2,d1->parents); */		      |	    printf("ASSERT LESS 0000013 d1->type %lx d2->type %lx\n",
+    /* d2->children=cons(d1,d2->children); */		      |	    //next 2 lines de commented djd then recommented
+							      >	    //d1->parents=cons(d2,d1->parents); 
+							      >	    //d2->children=cons(d1,d2->children);
+							      >	  printf("ASSERT LESS 0000014\n");
+							      >	  printf("ASSERT LESS 0000015 ok = %lx\n",ok);
+							      >	    {
+							      >	      printf("ASSERT TYPE 0000001\n");
+							      >	}
+  long eqflag = equ_tok((*t),":=");			      |	  long eqflag;
+							      >	  eqflag = equ_tok((*t),":=");
+							      >	  printf("ASSERT COMPLICATED TYPE 0000001AAA t=%lx eqflag = %
+							      >		      printf("ASSERT COMPLICATED TYPE 0000001\n");
+							      >
+							      >		      printf("ASSERT COMPLICATED TYPE 0000002\n");
+							      >
+							      >		      printf("ASSERT COMPLICATED TYPE 0000003\n");
+							      >		      printf("ASSERT COMPLICATED TYPE 0000004\n");
+							      >
+							      >		  {
+							      >		      printf("ASSERT COMPLICATED TYPE 0000005\n");
+							      >		      printf("ASSERT COMPLICATED TYPE 0000006\n");
+							      >		  }
+							      >	  printf("ASSERT COMPLICATED TYPE 0000007 assert_ok = %lx 000
+							      >	  printf("PROPIGATE DEFINITIONS 0000001\n");
+							      >	  printf("PROPIGATE DEFINITIONS adults = %lx 0000002\n",adult
+							      >	    printf("PROPIGATE DEFINITIONS adults = %lx 0000003\n",adu
+							      >	    printf("PROPIGATE DEFINITIONS adults = %lx 0000004\n",adu
+							      >	      printf("PROPIGATE DEFINITIONS adults = %lx  0000005\n",
+      							      |	      if (d) {
+							      >		printf("PROPIGATE DEFINITIONS adults = %lx d = %ld  0
+							      >		printf("PROPIGATE DEFINITIONS 0000006\n");
+							      >		printf("PROPIGATE DEFINITIONS 0000007\n");
+							      >		printf("PROPIGATE DEFINITIONS children = %lx 0000008\
+							      >		printf("PROPIGATE DEFINITIONS kids = %lx 0000009\n",k
+							      >		  printf("PROPIGATE DEFINITIONS 0000010\n");
+							      >		  if (kids->value && d->properties)
+							      >		    {
+							      >		      printf("PROPIGATE DEFINITIONS 0000011\n");
+							      >		      printf("PROPIGATE DEFINITIONS kids = %lx 000001
+							      >		    }
+							      >		  else
+							      >		    kids = NULL;
+							      >		}
+							      >	      printf("PROPIGATE DEFINITIONS adults = %lx 0000012\n",a
+							      >	    printf("PROPIGATE DEFINITIONS adults = %lx 0000013\n",adu
+							      >	  printf("PROPIGATE DEFINITIONS 0000014\n");
+							      |	  if (p > 0){
+  code=HEAP_ALLOC(int_list);				      |	  printf("TWO TO THE P 0000001 p=%ld\n",p);
+							      >	  code=HEAP_ALLOC(struct wl_int_list);
+							      >	  printf("TWO TO THE P 0000002 \n");
+							      >	  printf("TWO TO THE P 0000003 \n");
+							      >	  printf("TWO TO THE P 0000004 \n");
+							      >	  printf("TWO TO THE P 0000005 \n");
+    code->next=HEAP_ALLOC(int_list);			      |	  printf("TWO TO THE P 0000006 \n");
+							      >	    code->next=HEAP_ALLOC(struct wl_int_list);
+							      >	  printf("TWO TO THE P 0000007 \n");
+							      >	  printf("TWO TO THE P 0000008 \n");
+							      >	  printf("TWO TO THE P 0000009 \n");
+							      >	  printf("TWO TO THE P 0000010 \n");
+							      >	    printf("TWO TO THE P 0000011 p=%ld\n",p);
+							      >	  printf("TWO TO THE P 0000012 \n");
+							      >	  printf("TWO TO THE P 0000013 \n");
+							      |	  printf("TWO TO THE P 0000014 \n");
+							      >	  }
+							      >	  else result = NULL;
+  							      |	  static maxdads = 0;
+							      >	  static maxkids = 0;
+							      >	  printf("ENCODE TYPES 0000001\n");
+							      >	  gamma_table=(ptr_definition *) heap_alloc(type_count*sizeof
+							      >	    printf("ENCODE TYPES 0000002\n");
+							      >	    printf("ENCODE TYPES 0000003\n");
+							      >	    printf("ENCODE TYPES 0000004\n");
+							      >	    printf("ENCODE TYPES 0000005\n");
+							      >	    printf("ENCODE TYPES 0000006\n");
+							      >	    printf("ENCODE TYPES 0000007\n");
+							      >	    printf("ENCODE TYPES 0000008\n");
+							      >	    printf("ENCODE TYPES 0000009\n");
+							      >	    printf("ENCODE TYPES 0000010\n");
+							      >	    printf("ENCODE TYPES 0000011\n");
+							      >	    printf("ENCODE TYPES 0000012\n");
+							      >	    printf("ENCODE TYPES 0000013\n");
+							      >	    printf("ENCODE TYPES 0000014\n");
+							      >	    printf("ENCODE TYPES 0000015\n");
+							      >	    printf("ENCODE TYPES 0000016n");
+							      >	    printf("ENCODE TYPES 0000017\n");
+							      >	      printf("ENCODE TYPES 0000018\n");
+							      >	      printf("ENCODE TYPES 0000019\n");
+							      >	    printf("ENCODE TYPES 0000020\n");
+							      >	    printf("ENCODE TYPES 0000021\n");
+							      >	    printf("ENCODE TYPES 0000022\n");
+							      >	    printf("ENCODE TYPES 0000023\n");
+							      >	    printf("ENCODE TYPES 0000024\n");
+    gamma_table=(ptr_definition *) heap_alloc(type_count*size |	    printf("ENCODE TYPES 0000025\n");
+							      >	    printf("ENCODE TYPES 0000026\n");
+							      >	    printf("ENCODE TYPES 0000027\n");
+							      >	      printf("ENCODE TYPES 0000028 layer = %lx\n",layer);
+      do {						      |	      printf("ENCODE TYPES 0000029\n");
+							      >	      while (l) {
+							      >		printf("ENCODE TYPES 0000030 l = %lx\n",l);
+							      >		printf("ENCODE TYPES 0000031\n");
+							      >		if (xdef) {
+							      >		    printf("ENCODE TYPES 0000032\n");
+          code=two_to_the(p);				      |		    printf("ENCODE TYPES 0000033\n");
+          						      |		    //	      code=two_to_the(p);
+          while (kids) {				      |		    printf("ENCODE TYPES 0000034\n");
+							      >		    
+							      >		    while (kids && maxkids < 1000) {
+							      >		      maxkids ++;
+							      >		      printf("ENCODE TYPES 0000035\n");
+							      >		      printf("ENCODE TYPES 0000036\n");
+							      >		      printf("ENCODE TYPES 0000037\n");
+							      >		      printf("ENCODE TYPES 0000038\n");
+							      >		    printf("ENCODE TYPES kids = %lx 0000039\n",kids);
+							      >		    printf("ENCODE TYPES 0000040\n");
+							      >		    printf("ENCODE TYPES 0000041\n");
+							      >		    printf("ENCODE TYPES 0000042\n");
+							      >		    printf("ENCODE TYPES 0000043\n");
+							      >		}
+							      >		printf("ENCODE TYPES 0000044\n");
+        						      |		printf("ENCODE TYPES 0000045 l = %lx\n",l);
+      } while (l);					      |	      }
+							      >	      printf("ENCODE TYPES 0000046\n");
+							      >	      //      layer=nothing->parents;
+							      >	      printf("ENCODE TYPES layer = %lx 0000047\n",layer);
+							      >	      printf("ENCODE TYPES 0000048\n");
+      do {						      |	      while (l) {
+							      >		printf("ENCODE TYPES 0000049 l = %lx\n",l);
+							      >		printf("ENCODE TYPES 0000050\n");
+							      >		printf("ENCODE TYPES 0000051\n");
+        while (dads) {					      |	        while (dads && maxdads < 1000) {
+							      >		  maxdads ++;
+							      >		  printf("ENCODE TYPES 0000052 maxdads %d\n",maxdads)
+							      >		  
+							      >		  printf("ENCODE TYPES 0000053 ddef %lx\n",ddef);
+							      >		  if (ddef > 1000) {
+							      >		    printf("ENCODE TYPES 0000053BBBB ddef->code %lx\n
+							      >		      printf("ENCODE TYPES 0000054\n");
+							      >		      printf("ENCODE TYPES 0000055\n");
+							      >		      printf("ENCODE TYPES 0000056\n");
+							      >			printf("ENCODE TYPES 0000057\n");
+							      >			printf("ENCODE TYPES 0000058\n");
+							      >			
+							      >			printf("ENCODE TYPES kids = %lx 0000058\n",ki
+							      >		      printf("ENCODE TYPES 0000059\n");
+							      >			{
+							      >		        printf("ENCODE TYPES layer = %lx 000060AAAA\n
+							      >			}
+							      >		      printf("ENCODE TYPES 0000060\n");
+							      >		    }
+							      >		    else
+							      >		      {
+							      >			printf("ENCODE TYPES 0000060BBBB\n");
+							      >			break;
+							      >			
+							      >		      }
+							      >		  printf("ENCODE TYPES dads = %lx 0000061\n",dads);
+							      >		printf("ENCODE TYPES 0000062\n");
+      } while(l);					      |		printf("ENCODE TYPES l = %lx 0000063\n",l);
+							      >	      }
+							      >	      printf("ENCODE TYPES 0000064\n");
+							      >	  printf("ENCODE TYPES 0000065\n");
+							      >	  printf("ENCODE TYPES 0000066\n");
+							      >	      {
+							      >		printf("ENCODE TYPES 0000067\n");
+							      |	      }
+							      >	    printf("ENCODE TYPES 0000068\n");
+							      >	    printf("ENCODE TYPES 0000069\n");
+      gamma_table[i]=NULL;				      |	      {
+							      >		printf("ENCODE TYPES 0000070\n");
+							      >		gamma_table[i]=NULL;
+							      >	      }
+							      >	    printf("ENCODE TYPES 0000071\n");
+							      >	    printf("ENCODE TYPES 0000072\n");
+							      >	    printf("ENCODE TYPES 0000073\n");
+							      >	    printf("ENCODE TYPES 0000074\n");
+							      >	    printf("ENCODE TYPES 0000075\n");
+							      >	      printf("ENCODE TYPES 0000076\n");
+							      >	      printf("ENCODE TYPES 0000077\n");
+							      >	      printf("ENCODE TYPES 0000078\n");
+							      >	    printf("ENCODE TYPES 0000079\n");
+							      >	    printf("ENCODE TYPES 0000080\n");
+							      >	    printf("ENCODE TYPES 0000081\n");
+  							      |	  printf ("MATCHES 0000001 t1 %lx t2 %lx\n",t1,t2);
+							      >	    {
+							      >	  printf ("MATCHES 0000002 top %lx \n",top);
+							      >		{
+							      >		    {
+							      >		      printf ("MATCHES 0000003\n");
+							      >		    }
+							      >		    printf ("MATCHES 0000004 c1 %lx c2 %lx\n",c1,c2);
+            if ((unsigned long)c1->value &  (unsigned long)c2 |			printf ("MATCHES 0000005 c1 %lx c2 %lx\n",c1,
+            if ((unsigned long)c1->value & ~(unsigned long)c2 |			if ((unsigned long)c1->value &  (unsigned lon
+							      >			  {
+							      >			    result=TRUE;
+							      >			    
+							      >			  }
+							      >			if ((unsigned long)c1->value & ~(unsigned lon
+							      >			  {
+							      >			    *smaller=FALSE;
+							      >			  }
+							      >		      {
+							      >			printf ("MATCHES 0000006 c1 %lx c2 %lx\n",c1,
+							      >		    
+							      >		  }
+							      >		}
+							      >	    }
+							      >	  printf ("MATCHES 0000007 *smaller %lx result %lx\n",*smalle

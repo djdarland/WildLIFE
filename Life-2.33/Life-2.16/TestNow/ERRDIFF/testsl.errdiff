@@ -1,0 +1,9 @@
+7,8c7,11
+< *** Syntax error: ',' expected in argument list (near line 724 in file "/home/dennis/local/lib/life/Examples/SuperLint/c_tokenizer.lf")
+< *** Syntax error near line 724 in file "/home/dennis/local/lib/life/Examples/SuperLint/c_tokenizer.lf": bad symbol in list 'of'.
+---
+> *** Warning: benign module name clash: c_public_terms#step and built_ins#step
+> done
+> *** Warning: benign module name clash: c_parser#error and built_ins#error
+> *** Warning: local definition of '.' overrides 'syntax#.'
+> ..................

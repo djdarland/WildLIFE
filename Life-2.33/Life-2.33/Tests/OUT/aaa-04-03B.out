@@ -1,0 +1,40 @@
+
+*** Yes
+> > 
+*** Yes
+> 
+*** Yes
+> 
+*** Yes
+> 
+*** Yes
+> 
+*** Yes
+> 
+*** Yes
+> bike
+*** Yes
+A = bike.
+--1> 
+*** No
+> > > truck
+*** Yes
+B = truck.
+--1> car
+*** Yes
+B = car.
+--1> 
+*** No
+> > 
+*** No
+> > > > bike
+*** Yes
+D = bike.
+--1> 
+*** No
+> > > bike
+*** Yes
+E = bike.
+--1> 
+*** No
+> > > > 

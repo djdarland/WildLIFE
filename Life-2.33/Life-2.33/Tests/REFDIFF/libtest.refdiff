@@ -1,0 +1,149 @@
+281,332c281,287
+<  No manual entry for bitvector
+<  No manual entry for regexp
+<  No manual entry for stream
+<  No manual entry for file_stream
+<  No manual entry for socket_stream
+<  No manual entry for process_no_children
+<  No manual entry for process_exited
+<  No manual entry for process_signaled
+<  No manual entry for process_stopped
+<  No manual entry for process_continued
+<  No manual entry for make_bitvector
+<  No manual entry for bitvector_and
+<  No manual entry for bitvector_or
+<  No manual entry for bitvector_xor
+<  No manual entry for bitvector_not
+<  No manual entry for bitvector_count
+<  No manual entry for bitvector_get
+<  No manual entry for bitvector_set
+<  No manual entry for bitvector_clear
+<  No manual entry for regexp_compile
+<  No manual entry for regexp_execute
+<  No manual entry for int2stream
+<  No manual entry for fopen
+<  No manual entry for fclose
+<  No manual entry for get_buffer
+<  No manual entry for get_record
+<  No manual entry for get_code
+<  No manual entry for ftell
+<  No manual entry for fseek
+<  No manual entry for socket
+<  No manual entry for bind
+<  No manual entry for connect
+<  No manual entry for fwrite
+<  No manual entry for fflush
+<  No manual entry for listen
+<  No manual entry for accept
+<  No manual entry for errno
+<  No manual entry for errmsg
+<  No manual entry for import_symbol
+<  No manual entry for fork
+<  No manual entry for wait
+<  No manual entry for waitpid
+<  No manual entry for kill
+<  No manual entry for cuserid
+<  No manual entry for gethostname
+<  No manual entry for lazy_project
+<  No manual entry for wait_on_feature
+<  No manual entry for my_wait_on_feature
+<  No manual entry for apply1
+<  No manual entry for getpid
+<  No manual entry for stream2sys_stream
+<  No manual entry for sys_stream2stream
+---
+>  No manual entry for begin_raw
+>  No manual entry for get_raw
+>  No manual entry for put_raw
+>  No manual entry for end_raw
+>  No manual entry for in_raw
+>  No manual entry for window_flag
+>  No manual entry for reset_window_flag
+350d304
+<  No manual entry for begin_raw
+354d307
+<  No manual entry for end_raw
+356,357d308
+<  No manual entry for get_raw
+<  No manual entry for in_raw
+380d330
+<  No manual entry for put_raw
+382d331
+<  No manual entry for reset_window_flag
+386d334
+<  No manual entry for window_flag
+389,393d336
+<  No manual entry for stdin
+<  No manual entry for stdout
+<  No manual entry for stderr
+<  No manual entry for ftruncate
+<  No manual entry for psi2string
+460,461d402
+<  No manual entry for x_loaded
+<  No manual entry for load_x
+796,797c737,738
+<           Rest1 is Set1  Inter.
+<           Rest2 is Set2  Inter.
+---
+>           Rest1 is Set1 \ Inter.
+>           Rest2 is Set2 \ Inter.
+930,931c871,872
+<           Rest1 is Set1  Inter.
+<           Rest2 is Set2  Inter.
+---
+>           Rest1 is Set1 \ Inter.
+>           Rest2 is Set2 \ Inter.
+1065,1066c1006,1007
+<           Rest1 is Set1  Inter.
+<           Rest2 is Set2  Inter.
+---
+>           Rest1 is Set1 \ Inter.
+>           Rest2 is Set2 \ Inter.
+1117c1058
+<   +>=,+=<,+>,+<,+><,==,+>=,+=<,+>,+<,+><,==
+---
+>   +>=,+=<,+>,+<,+><,==,+\>=,+\=<,+\>,+\<,+\><,\==
+1139c1080
+<   +>=,+=<,+>,+<,+><,==,+>=,+=<,+>,+<,+><,==
+---
+>   +>=,+=<,+>,+<,+><,==,+\>=,+\=<,+\>,+\<,+\><,\==
+1161c1102
+<   +>=,+=<,+>,+<,+><,==,+>=,+=<,+>,+<,+><,==
+---
+>   +>=,+=<,+>,+<,+><,==,+\>=,+\=<,+\>,+\<,+\><,\==
+1183c1124
+<   +>=,+=<,+>,+<,+><,==,+>=,+=<,+>,+<,+><,==
+---
+>   +>=,+=<,+>,+<,+><,==,+\>=,+\=<,+\>,+\<,+\><,\==
+1205c1146
+<   +>=,+=<,+>,+<,+><,==,+>=,+=<,+>,+<,+><,==
+---
+>   +>=,+=<,+>,+<,+><,==,+\>=,+\=<,+\>,+\<,+\><,\==
+1227c1168
+<   +>=,+=<,+>,+<,+><,==,+>=,+=<,+>,+<,+><,==
+---
+>   +>=,+=<,+>,+<,+><,==,+\>=,+\=<,+\>,+\<,+\><,\==
+1249c1190
+<   +>=,+=<,+>,+<,+><,==,+>=,+=<,+>,+<,+><,==
+---
+>   +>=,+=<,+>,+<,+><,==,+\>=,+\=<,+\>,+\<,+\><,\==
+1271c1212
+<   +>=,+=<,+>,+<,+><,==,+>=,+=<,+>,+<,+><,==
+---
+>   +>=,+=<,+>,+<,+><,==,+\>=,+\=<,+\>,+\<,+\><,\==
+1293c1234
+<   +>=,+=<,+>,+<,+><,==,+>=,+=<,+>,+<,+><,==
+---
+>   +>=,+=<,+>,+<,+><,==,+\>=,+\=<,+\>,+\<,+\><,\==
+1315c1256
+<   +>=,+=<,+>,+<,+><,==,+>=,+=<,+>,+<,+><,==
+---
+>   +>=,+=<,+>,+<,+><,==,+\>=,+\=<,+\>,+\<,+\><,\==
+1337c1278
+<   +>=,+=<,+>,+<,+><,==,+>=,+=<,+>,+<,+><,==
+---
+>   +>=,+=<,+>,+<,+><,==,+\>=,+\=<,+\>,+\<,+\><,\==
+1359c1300
+<   +>=,+=<,+>,+<,+><,==,+>=,+=<,+>,+<,+><,==
+---
+>   +>=,+=<,+>,+<,+><,==,+\>=,+\=<,+\>,+\<,+\><,\==

@@ -1,0 +1,87 @@
+
+*** Yes
+> > 
+*** Yes
+> > 
+*** Yes
+> > 
+*** Yes
+> > 
+*** Yes
+> > 
+non_strict(pair)?
+pair(_A: pair(_B: pair(_C: pair(_D: pair(_E: pair(_F: pair(_G: pair(_H: pair(_I: pair(_J: bot,
+                                                                                      _J),
+                                                                             _I),
+                                                                    _H),
+                                                           _G),
+                                                  _F),
+                                         _E),
+                                _D),
+                       _C),
+              _B),
+     _A) :-
+        succeed.
+
+spair(_A: spair(_B: spair(_C: spair(_D: spair(_E: spair(_F: spair(_G: spair(_H: spair(_I: spair(_J: bot,
+                                                                                                _J),
+                                                                                      _I),
+                                                                            _H),
+                                                                  _G),
+                                                        _F),
+                                              _E),
+                                    _D),
+                          _C),
+                _B),
+      _A) :-
+        succeed.
+
+non_strict(triple)?
+triple(_A: triple(_B: triple(_C: triple(_D: triple(_E: triple(_F: triple(_G: triple(_H: triple(_I: triple(_J: bot,
+                                                                                                          _J,
+                                                                                                          _J),
+                                                                                               _I,
+                                                                                               _I),
+                                                                                    _H,
+                                                                                    _H),
+                                                                         _G,
+                                                                         _G),
+                                                              _F,
+                                                              _F),
+                                                   _E,
+                                                   _E),
+                                        _D,
+                                        _D),
+                             _C,
+                             _C),
+                  _B,
+                  _B),
+       _A,
+       _A) :-
+        succeed.
+
+striple(_A: striple(_B: striple(_C: striple(_D: striple(_E: striple(_F: striple(_G: striple(_H: striple(_I: striple(_J: bot,
+                                                                                                                    _J,
+                                                                                                                    _J),
+                                                                                                        _I,
+                                                                                                        _I),
+                                                                                            _H,
+                                                                                            _H),
+                                                                                _G,
+                                                                                _G),
+                                                                    _F,
+                                                                    _F),
+                                                        _E,
+                                                        _E),
+                                            _D,
+                                            _D),
+                                _C,
+                                _C),
+                    _B,
+                    _B),
+        _A,
+        _A) :-
+        succeed.
+
+*** Yes
+> 

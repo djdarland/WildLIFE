@@ -1,0 +1,6 @@
+:: P:married_person(spouse=>person(spouse=>P)).
+married_person <| person.
+delay_check(person)?
+
+db([J:person(spouse=>M),M:person(spouse=>J)]).
+db2([_A:married_person(spouse => _B:married_person(spouse => _A)),_B]).

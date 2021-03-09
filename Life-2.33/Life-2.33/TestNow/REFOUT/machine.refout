@@ -1,0 +1,119 @@
+Distributeur de Snacks et Boissons de DEC PRL.
+
+La machine contient:
+
+       cake(prix => 3,quantite => 3)
+       lion(prix => 3,quantite => 7)
+       bounty(prix => 3.5,quantite => 2)
+       raider(prix => 3.5,quantite => 3)
+       yes(prix => 4,quantite => 7)
+       gini(prix => 5,quantite => 2)
+       perrier(prix => 5,quantite => 9)
+       oasis(prix => 5,quantite => 2)
+       coca(prix => 5,quantite => 1)
+       coca_light(prix => 5,quantite => 1)
+       piece(prix => 0.5,quantite => 1)
+       piece(prix => 1,quantite => 3)
+       piece(prix => 2,quantite => 2)
+       piece(prix => 5,quantite => 2)
+       piece(prix => 10,quantite => 1)
+
+Que voulez vous acheter ? 
+Vous avez commande un cake
+
+Vous devez payer 3F.
+
+Donnez une piece de F ? Donnez une piece de F ? La machine rend: 1F
+
+Prenez votre cake dans le distributeur SVP.
+
+
+-----------------------------------------------------
+Distributeur de Snacks et Boissons de DEC PRL.
+
+La machine contient:
+
+       cake(prix => 3,quantite => 2)
+       lion(prix => 3,quantite => 7)
+       bounty(prix => 3.5,quantite => 2)
+       raider(prix => 3.5,quantite => 3)
+       yes(prix => 4,quantite => 7)
+       gini(prix => 5,quantite => 2)
+       perrier(prix => 5,quantite => 9)
+       oasis(prix => 5,quantite => 2)
+       coca(prix => 5,quantite => 1)
+       coca_light(prix => 5,quantite => 1)
+       piece(prix => 0.5,quantite => 1)
+       piece(prix => 1,quantite => 2)
+       piece(prix => 2,quantite => 4)
+       piece(prix => 5,quantite => 2)
+       piece(prix => 10,quantite => 1)
+
+Que voulez vous acheter ? 
+Vous avez commande un perrier
+
+Vous devez payer 5F.
+
+Donnez une piece de F ? La machine rend: 1F 2F 2F
+
+Prenez votre perrier dans le distributeur SVP.
+
+
+-----------------------------------------------------
+Distributeur de Snacks et Boissons de DEC PRL.
+
+La machine contient:
+
+       cake(prix => 3,quantite => 2)
+       lion(prix => 3,quantite => 7)
+       bounty(prix => 3.5,quantite => 2)
+       raider(prix => 3.5,quantite => 3)
+       yes(prix => 4,quantite => 7)
+       gini(prix => 5,quantite => 2)
+       perrier(prix => 5,quantite => 8)
+       oasis(prix => 5,quantite => 2)
+       coca(prix => 5,quantite => 1)
+       coca_light(prix => 5,quantite => 1)
+       piece(prix => 0.5,quantite => 1)
+       piece(prix => 1,quantite => 1)
+       piece(prix => 2,quantite => 2)
+       piece(prix => 5,quantite => 2)
+       piece(prix => 10,quantite => 2)
+
+Que voulez vous acheter ? Il n'y en a pas a vendre...
+Recommencez...
+Que voulez vous acheter ? 
+Vous avez commande un lion
+
+Vous devez payer 3F.
+
+Donnez une piece de F ? Donnez une piece de F ? Donnez une piece de F ? Le compte est bon.
+Veuillez prendre votre lion dans le distributeur...
+
+
+-----------------------------------------------------
+Distributeur de Snacks et Boissons de DEC PRL.
+
+La machine contient:
+
+       cake(prix => 3,quantite => 2)
+       lion(prix => 3,quantite => 6)
+       bounty(prix => 3.5,quantite => 2)
+       raider(prix => 3.5,quantite => 3)
+       yes(prix => 4,quantite => 7)
+       gini(prix => 5,quantite => 2)
+       perrier(prix => 5,quantite => 8)
+       oasis(prix => 5,quantite => 2)
+       coca(prix => 5,quantite => 1)
+       coca_light(prix => 5,quantite => 1)
+       piece(prix => 0.5,quantite => 1)
+       piece(prix => 1,quantite => 4)
+       piece(prix => 2,quantite => 2)
+       piece(prix => 5,quantite => 2)
+       piece(prix => 10,quantite => 2)
+
+Que voulez vous acheter ? Il n'y en a pas a vendre...
+Recommencez...
+Que voulez vous acheter ? Il n'y en a pas a vendre...
+Recommencez...
+Que voulez vous acheter ? 

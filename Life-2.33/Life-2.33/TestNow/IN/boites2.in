@@ -1,0 +1,3 @@
+try :- nl,nl,write("====} premiere methode"),main1,fail.
+try :- nl,nl,write("====} deuxieme methode"),main2,fail.
+try?

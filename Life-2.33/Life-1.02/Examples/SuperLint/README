@@ -1,0 +1,48 @@
+
+
+                                  SUPERLINT 0.3
+                                  =============
+
+
+AUTHOR : Arnaud Venet                                    DATE : Feb 11 1994
+========                                                 ======
+
+
+USE NOTE :
+==========
+
+The user interface of SuperLint is based on two shell scripts:
+sl and slc.  Upon installing Wild_LIFE 1.0, edit these scripts
+to contain the correct pathnames for the wild_life executable.
+
+To compile rules type the Unix shell command:
+
+    % slc rules_file
+or 
+    % slc -o my_analyzer rules_file
+
+In the first case the analyzer will be put in a file called
+superlint.lf in the current directory.  An example rules
+file, rules.lf, is included, as well as an example analyzer
+created by slc, superlint.lf.
+
+To achieve verifications on C files, you have to type :
+
+    % sl file1.c file2.c ...
+or
+    % sl -f my_analyzer file1.c file2.c ...
+
+If the -f option is not given, there must be a file superlint.lf
+in the current directory.
+
+You can type :
+
+    % sl -h
+or
+    % slc -h
+
+to remember the syntax of these commands.
+
+
+
+

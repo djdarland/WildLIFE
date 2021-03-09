@@ -1,0 +1,85 @@
+echo "WildLife Edit Utility"
+echo "Edit any .c file NEXT to def_glob.h?"
+echo "enter 0 to proceed 999 to quit"
+read select
+while [ $select -ne 999 ]
+do 
+echo "-----------"
+echo ".c files for wild life NEXT to def_glob.h"
+echo "-----------"
+echo "1 arity.c"
+echo "2 bi_math.c"
+echo "3 bi_sys.c"
+echo "4 bi_type.c"
+echo "5 built_ins.c"
+echo "6 copy.c"
+echo "7 error.c"
+echo "8 hash_table.c"
+echo "9 info.c"
+echo "10 interrupt.c"
+echo "11 lefun.c"
+echo "12 lib.c"
+echo "13 life.c"
+echo "14 list.c"
+echo "15 login.c"
+echo "16 lub.c"
+echo "17 memory.c"
+echo "18 modules.c"
+echo "19 parser.c"
+echo "20 print.c"
+echo "21 raw.c"
+echo "22 sys.c"
+echo "23 sys_dbm.c"
+echo "24 templates.c"
+echo "25 token.c"
+echo "26 trees.c"
+echo "27 types.c"
+echo "28 xdisplaylist.c"
+echo "29 xpred.c"
+
+
+
+
+
+
+echo "777 NOTES_DJD.txt"
+
+echo "999 quit"
+echo "select"
+read select
+case $select in
+1) $EDITOR def_glob.h  arity.c   ;;
+2) $EDITOR def_glob.h bi_math.c   ;;
+3) $EDITOR def_glob.h bi_sys.c   ;;
+4) $EDITOR def_glob.h bi_type.c   ;;
+5) $EDITOR def_glob.h built_ins.c   ;;
+6) $EDITOR def_glob.h copy.c   ;;
+7) $EDITOR def_glob.h error.c   ;;
+8) $EDITOR def_glob.h hash_table.c   ;;
+9) $EDITOR def_glob.h info.c   ;;
+10) $EDITOR def_glob.h interrupt.c   ;;
+11) $EDITOR def_glob.h lefun.c   ;;
+12) $EDITOR def_glob.h lib.c   ;;
+13) $EDITOR def_glob.h life.c   ;;
+14) $EDITOR def_glob.h list.c   ;;
+15) $EDITOR def_glob.h login.c   ;;
+16) $EDITOR def_glob.h lub.c   ;;
+17) $EDITOR def_glob.h  memory.c   ;;
+18) $EDITOR def_glob.h  modules.c   ;;
+19) $EDITOR def_glob.h parser.c   ;;
+20) $EDITOR def_glob.h print.c   ;;
+21) $EDITOR def_glob.h raw.c   ;;
+22) $EDITOR def_glob.h sys.c   ;;
+23) $EDITOR def_glob.h sys_dbm.c   ;;
+24) $EDITOR def_glob.h templates.c   ;;
+25) $EDITOR def_glob.h token.c   ;;
+26) $EDITOR def_glob.h trees.c   ;;
+27) $EDITOR def_glob.h types.c   ;;
+28) $EDITOR def_glob.h xdisplaylist.c   ;;
+29) $EDITOR def_glob.h xpred.c   ;;
+
+777) $EDITOR NOTES_DJD.txt ;;
+
+esac
+done
+

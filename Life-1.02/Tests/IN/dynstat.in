@@ -1,0 +1,14 @@
+p(a).
+p(b).
+static(p)?
+p(c).
+p(d).
+retract(p(a))?
+listing(p)?
+dynamic(p)?
+retract(p(a))?
+.
+p(e).
+static(p)?
+p(f).
+listing(p)?

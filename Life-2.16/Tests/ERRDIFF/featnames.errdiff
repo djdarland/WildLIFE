@@ -1,0 +1,4 @@
+1c1
+< *** Warning: non-numeric argument(s) in ''-34' + '-34''.
+---
+> *** Warning: non-numeric argument(s) in '_A: '-34' + _A'.

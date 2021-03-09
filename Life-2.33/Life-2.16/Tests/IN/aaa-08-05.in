@@ -1,0 +1,3 @@
+p(a).
+p(b).
+A=bagof(s(X),p(X))?

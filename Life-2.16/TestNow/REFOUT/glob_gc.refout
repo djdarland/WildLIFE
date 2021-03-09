@@ -1,0 +1,169 @@
+
+*** Yes
+> > 50->1276
+100->5051
+150->11326
+200->20101
+250->31376
+300->45151
+350->61426
+400->80201
+450->101476
+500->125251
+550->151526
+600->180301
+650->211576
+700->245351
+750->281626
+800->320401
+850->361676
+900->405451
+950->451726
+1000->500501
+done
+
+*** Yes
+> > > 50->1276
+100->5051
+150->11326
+200->20101
+250->31376
+300->45151
+350->61426
+400->80201
+450->101476
+500->125251
+550->151526
+600->180301
+650->211576
+700->245351
+750->281626
+800->320401
+850->361676
+900->405451
+950->451726
+1000->500501
+1050->551776
+1100->605551
+1150->661826
+1200->720601
+1250->781876
+1300->845651
+1350->911926
+1400->980701
+1450->1051976
+1500->1125751
+1550->1202026
+1600->1280801
+1650->1362076
+1700->1445851
+1750->1532126
+1800->1620901
+1850->1712176
+1900->1805951
+1950->1902226
+2000->2001001
+done
+
+*** Yes
+> > > 
+*** Yes
+A = (c_equal(n,
+             init_value), c_equal(sum,
+                                  1), for(c_equal(i,0),
+                                          less_than(i,n),
+                                          c_equal(i,i + 1),
+                                          (c_equal(sum,
+                                                   sum + i), if(i mod 50 = 0,
+                                                                (print(i,
+                                                                       "->",
+                                                                       sum), nl)))), print("done"), nl).
+
+--1> @@@
+*** Yes
+A = (c_equal(n,
+             init_value), c_equal(sum,
+                                  1), for(c_equal(i,0),
+                                          less_than(i,n),
+                                          c_equal(i,i + 1),
+                                          (c_equal(sum,
+                                                   sum + i), if(i mod 50 = 0,
+                                                                (print(i,
+                                                                       "->",
+                                                                       sum), nl)))), print("done"), nl).
+
+----2> 
+*** Yes
+A = (c_equal(n,
+             init_value), c_equal(sum,
+                                  1), for(c_equal(i,0),
+                                          less_than(i,n),
+                                          c_equal(i,i + 1),
+                                          (c_equal(sum,
+                                                   sum + i), if(i mod 50 = 0,
+                                                                (print(i,
+                                                                       "->",
+                                                                       sum), nl)))), print("done"), nl).
+
+------3> 50->1276
+100->5051
+150->11326
+200->20101
+250->31376
+300->45151
+350->61426
+400->80201
+done
+
+*** Yes
+A = (c_equal(n,
+             init_value), c_equal(sum,
+                                  1), for(c_equal(i,0),
+                                          less_than(i,n),
+                                          c_equal(i,i + 1),
+                                          (c_equal(sum,
+                                                   sum + i), if(i mod 50 = 0,
+                                                                (print(i,
+                                                                       "->",
+                                                                       sum), nl)))), print("done"), nl).
+
+--------4> 
+*** No
+A = (c_equal(n,
+             init_value), c_equal(sum,
+                                  1), for(c_equal(i,0),
+                                          less_than(i,n),
+                                          c_equal(i,i + 1),
+                                          (c_equal(sum,
+                                                   sum + i), if(i mod 50 = 0,
+                                                                (print(i,
+                                                                       "->",
+                                                                       sum), nl)))), print("done"), nl).
+
+------3> 
+*** No
+A = (c_equal(n,
+             init_value), c_equal(sum,
+                                  1), for(c_equal(i,0),
+                                          less_than(i,n),
+                                          c_equal(i,i + 1),
+                                          (c_equal(sum,
+                                                   sum + i), if(i mod 50 = 0,
+                                                                (print(i,
+                                                                       "->",
+                                                                       sum), nl)))), print("done"), nl).
+
+----2> 
+*** No
+A = (c_equal(n,
+             init_value), c_equal(sum,
+                                  1), for(c_equal(i,0),
+                                          less_than(i,n),
+                                          c_equal(i,i + 1),
+                                          (c_equal(sum,
+                                                   sum + i), if(i mod 50 = 0,
+                                                                (print(i,
+                                                                       "->",
+                                                                       sum), nl)))), print("done"), nl).
+
+--1> 

@@ -1,0 +1,31 @@
+p(1) 	:- write('Rule one: ').
+p(2) 	:- write('Rule two: ').
+p(3) 	:- write('Rule three: ').
+
+test_p 	:- p(A),
+	write(A),
+	nl,
+	listing(p),
+	nl,
+	retract(p(2) :- B),
+	assert((p(4) 	:- 	write('RULE TWO:: '))).
+
+f(1)	-> 'First result---'.
+f(2) 	-> 'Second result--'.
+f(3) 	-> 'Third result---'.
+
+gc?
+
+test_f 	:- 	A=f(B),
+		B={1;2;3;4},
+		write(A),
+		write(B),nl,
+		listing(f),nl,
+		retract((f(2) ->C)),
+		assert((f(4) -> 'Forth result---')).
+
+
+
+dynamic(p)?
+dynamic(f)?
+

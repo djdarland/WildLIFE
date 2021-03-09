@@ -1,0 +1,14 @@
+import("profiler")?
+solution(S)?
+
+profile(go,merge,level=>goal)?
+profile(move,level=>goal)?
+solution(S)?
+.
+write_stats?
+profile(move,level=>clause)?
+solution(S)?
+write_stats?
+unprofile(move,go)?
+.
+listing(move,go)?

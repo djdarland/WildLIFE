@@ -1,0 +1,46 @@
+
+*** Yes
+> > 
+*** Yes
+S = [c,d,b,a,a,a,b,a,b,b,a].
+--1> 
+*** Yes
+S = [a,b,b,a,a,c,d,a,b,b,a].
+--1> 
+*** Yes
+S = [a,b,b,a,a,a,b,c,d,b,a].
+--1> 
+*** No
+> 
+*** Yes
+X = [], Y = [d,e,a,b,c].
+--1> 
+*** Yes
+X = [a], Y = [d,e,b,c].
+--1> 
+*** Yes
+X = [a,b], Y = [d,e,c].
+--1> 
+*** Yes
+X = [a,b,c], Y = [d,e].
+--1> 
+*** Yes
+X = [], Y = [a,d,e,b,c].
+--1> 
+*** Yes
+X = [b], Y = [a,d,e,c].
+--1> 
+*** Yes
+X = [b,c], Y = [a,d,e].
+--1> 
+*** Yes
+X = [], Y = [a,b,d,e,c].
+--1> 
+*** Yes
+X = [c], Y = [a,b,d,e].
+--1> 
+*** Yes
+X = [], Y = [a,b,c,d,e].
+--1> 
+*** No
+> > 

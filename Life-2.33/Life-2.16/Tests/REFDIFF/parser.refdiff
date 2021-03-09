@@ -1,0 +1,43 @@
+7a8,49
+> *** File 'FILES/parser.1' parsed
+> 
+> *** Yes
+> --1> 
+> *** File 'FILES/parser.2' parsed
+> 
+> *** Yes
+> --1> 
+> *** Yes
+> --1> 
+> *** Yes
+> --1> 
+> *** Yes
+> X1 = foo(a,b,4 => c,bar => d), 
+> X2 = @(X2), 
+> X3 = f(_A: g(X3),X3,_A), 
+> X4 = '23 34  e2 f 3rf3cf3 3 3f', 
+> X5 = "23  23r 32f f ef3 f43 f34 f", 
+> X6 = 2.345e+46, 
+> X7 = end_of_file.
+> 
+> ----2> 
+> *** Yes
+> S = input_file(current_module => "user",
+>                eof_flag => true,
+>                input_file_name => "FILES/parser.3",
+>                line_count => 12,
+>                old_saved_char => 0,
+>                old_saved_psi_term => '<NULL PSI TERM>',
+>                saved_char => -1,
+>                saved_psi_term => end_of_file,
+>                start_of_line => false,
+>                stream => stream), 
+> X1 = foo(a,b,4 => c,bar => d), 
+> X2 = @(X2), 
+> X3 = f(_A: g(X3),X3,_A), 
+> X4 = '23 34  e2 f 3rf3cf3 3 3f', 
+> X5 = "23  23r 32f f ef3 f43 f34 f", 
+> X6 = 2.345e+46, 
+> X7 = end_of_file.
+> 
+> ------3> > 

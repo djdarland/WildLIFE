@@ -1,0 +1,11 @@
+*** Error: division by zero in 0 // 0.
+*** Error: division by zero in real // 0.
+*** Error: division by zero in 2 // 0.
+*** Warning: argument '2.4' of integer division is not an integer.
+*** Warning: argument '2.4' of integer division is not an integer.
+*** Error: division by zero in 0 // 0.
+*** Warning: argument '56.6' of integer division is not an integer.
+*** Warning: argument '-45.5' of integer division is not an integer.
+*** Warning: argument '6.7' of integer division is not an integer.
+*** Warning: argument '34.4' of integer division is not an integer.
+*** Warning: argument '34.4' of integer division is not an integer.

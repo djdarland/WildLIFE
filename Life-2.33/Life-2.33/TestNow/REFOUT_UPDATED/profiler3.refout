@@ -1,0 +1,209 @@
+
+*** Yes
+
+Type 'profile_help ?' to get some help about the profiler
+
+
+*** Yes
+> 
+*** Yes
+S = [['Start       ',x,x,x,' ',o,o,o],
+     ['o move left ',x,x,x,o,' ',o,o],
+     ['x jump right',x,x,' ',o,x,o,o],
+     ['x move right',x,' ',x,o,x,o,o],
+     ['o jump left ',x,o,x,' ',x,o,o],
+     ['o jump left ',x,o,x,o,x,' ',o],
+     ['o move left ',x,o,x,o,x,o,' '],
+     ['x jump right',x,o,x,o,' ',o,x],
+     ['x jump right',x,o,' ',o,x,o,x],
+     ['x jump right',' ',o,x,o,x,o,x],
+     ['o move left ',o,' ',x,o,x,o,x],
+     ['o jump left ',o,o,x,' ',x,o,x],
+     ['o jump left ',o,o,x,o,x,' ',x],
+     ['x move right',o,o,x,o,' ',x,x],
+     ['x jump right',o,o,' ',o,x,x,x],
+     ['o move left ',o,o,o,' ',x,x,x]].
+
+--1> 
+*** No
+> Profile : Added profiling code to predicate 'go' at goal level
+
+*** Yes
+--1> Profile : Added profiling code to predicate 'move' at goal level
+
+*** Yes
+--1> 
+*** Yes
+S = [['Start       ',x,x,x,' ',o,o,o],
+     ['o move left ',x,x,x,o,' ',o,o],
+     ['x jump right',x,x,' ',o,x,o,o],
+     ['x move right',x,' ',x,o,x,o,o],
+     ['o jump left ',x,o,x,' ',x,o,o],
+     ['o jump left ',x,o,x,o,x,' ',o],
+     ['o move left ',x,o,x,o,x,o,' '],
+     ['x jump right',x,o,x,o,' ',o,x],
+     ['x jump right',x,o,' ',o,x,o,x],
+     ['x jump right',' ',o,x,o,x,o,x],
+     ['o move left ',o,' ',x,o,x,o,x],
+     ['o jump left ',o,o,x,' ',x,o,x],
+     ['o jump left ',o,o,x,o,x,' ',x],
+     ['x move right',o,o,x,o,' ',x,x],
+     ['x jump right',o,o,' ',o,x,x,x],
+     ['o move left ',o,o,o,' ',x,x,x]].
+
+--1> > 
+Profiling statistics for predicates :
+-----------------------------------
+
+  *Tries*    Entries    Success   %Tot.fail %Expl.fail   predicates
+   288         ---       125        83.33      62.50     move
+    37         ---        16        56.75      56.75     go
+
+  *Tries*    Entries    Success   %Tot.fail %Expl.fail   predicates
+    37          1          1          0          0       go#1
+    36         36         15        58.33      58.33     go#2
+   288        252         89        86.90      68.65     move#1
+   255          7          7        71.42        0       move#2
+   253         13         13        69.23        0       move#3
+   249          8          8        37.50        0       move#4
+   244          8          8         50          0       move#5
+
+   Tries    *Entries*   Success   %Tot.fail %Expl.fail   predicates
+    36         36         15        58.33      58.33     go#2
+    37          1          1          0          0       go#1
+   288        252         89        86.90      68.65     move#1
+   253         13         13        69.23        0       move#3
+   249          8          8        37.50        0       move#4
+   244          8          8         50          0       move#5
+   255          7          7        71.42        0       move#2
+
+   Tries     Entries   *Success*  %Tot.fail %Expl.fail   predicates
+    36         36         15        58.33      58.33     go#2
+    37          1          1          0          0       go#1
+   288        252         89        86.90      68.65     move#1
+   253         13         13        69.23        0       move#3
+   249          8          8        37.50        0       move#4
+   244          8          8         50          0       move#5
+   255          7          7        71.42        0       move#2
+
+
+*** Yes
+> Profile : Added profiling code to predicate 'move' at clause level
+
+*** Yes
+--1> 
+*** Yes
+S = [['Start       ',x,x,x,' ',o,o,o],
+     ['o move left ',x,x,x,o,' ',o,o],
+     ['x jump right',x,x,' ',o,x,o,o],
+     ['x move right',x,' ',x,o,x,o,o],
+     ['o jump left ',x,o,x,' ',x,o,o],
+     ['o jump left ',x,o,x,o,x,' ',o],
+     ['o move left ',x,o,x,o,x,o,' '],
+     ['x jump right',x,o,x,o,' ',o,x],
+     ['x jump right',x,o,' ',o,x,o,x],
+     ['x jump right',' ',o,x,o,x,o,x],
+     ['o move left ',o,' ',x,o,x,o,x],
+     ['o jump left ',o,o,x,' ',x,o,x],
+     ['o jump left ',o,o,x,o,x,' ',x],
+     ['x move right',o,o,x,o,' ',x,x],
+     ['x jump right',o,o,' ',o,x,x,x],
+     ['o move left ',o,o,o,' ',x,x,x]].
+
+--1> 
+Profiling statistics for predicates :
+-----------------------------------
+
+  *Tries*    Entries    Success   %Tot.fail %Expl.fail   predicates
+   288         ---       125        83.33      62.50     move
+    74         ---        32        56.75      56.75     go
+
+  *Tries*    Entries    Success   %Tot.fail %Expl.fail   predicates
+    74          2          2          0          0       go#1
+    72         72         30        58.33      58.33     go#2
+   288        252         89        86.90      68.65     move#1
+   255          7          7        71.42        0       move#2
+   253         13         13        69.23        0       move#3
+   249          8          8        37.50        0       move#4
+   244          8          8         50          0       move#5
+
+   Tries    *Entries*   Success   %Tot.fail %Expl.fail   predicates
+    72         72         30        58.33      58.33     go#2
+    74          2          2          0          0       go#1
+   288        252         89        86.90      68.65     move#1
+   253         13         13        69.23        0       move#3
+   249          8          8        37.50        0       move#4
+   244          8          8         50          0       move#5
+   255          7          7        71.42        0       move#2
+
+   Tries     Entries   *Success*  %Tot.fail %Expl.fail   predicates
+    72         72         30        58.33      58.33     go#2
+    74          2          2          0          0       go#1
+   288        252         89        86.90      68.65     move#1
+   253         13         13        69.23        0       move#3
+   249          8          8        37.50        0       move#4
+   244          8          8         50          0       move#5
+   255          7          7        71.42        0       move#2
+
+
+*** Yes
+S = [['Start       ',x,x,x,' ',o,o,o],
+     ['o move left ',x,x,x,o,' ',o,o],
+     ['x jump right',x,x,' ',o,x,o,o],
+     ['x move right',x,' ',x,o,x,o,o],
+     ['o jump left ',x,o,x,' ',x,o,o],
+     ['o jump left ',x,o,x,o,x,' ',o],
+     ['o move left ',x,o,x,o,x,o,' '],
+     ['x jump right',x,o,x,o,' ',o,x],
+     ['x jump right',x,o,' ',o,x,o,x],
+     ['x jump right',' ',o,x,o,x,o,x],
+     ['o move left ',o,' ',x,o,x,o,x],
+     ['o jump left ',o,o,x,' ',x,o,x],
+     ['o jump left ',o,o,x,o,x,' ',x],
+     ['x move right',o,o,x,o,' ',x,x],
+     ['x jump right',o,o,' ',o,x,x,x],
+     ['o move left ',o,o,o,' ',x,x,x]].
+
+> Profile : restored original clauses for predicate 'move'
+Profile : restored original clauses for predicate 'go'
+
+*** Yes
+S = [['Start       ',x,x,x,' ',o,o,o],
+     ['o move left ',x,x,x,o,' ',o,o],
+     ['x jump right',x,x,' ',o,x,o,o],
+     ['x move right',x,' ',x,o,x,o,o],
+     ['o jump left ',x,o,x,' ',x,o,o],
+     ['o jump left ',x,o,x,o,x,' ',o],
+     ['o move left ',x,o,x,o,x,o,' '],
+     ['x jump right',x,o,x,o,' ',o,x],
+     ['x jump right',x,o,' ',o,x,o,x],
+     ['x jump right',' ',o,x,o,x,o,x],
+     ['o move left ',o,' ',x,o,x,o,x],
+     ['o jump left ',o,o,x,' ',x,o,x],
+     ['o jump left ',o,o,x,o,x,' ',x],
+     ['x move right',o,o,x,o,' ',x,x],
+     ['x jump right',o,o,' ',o,x,x,x],
+     ['o move left ',o,o,o,' ',x,x,x]].
+
+--1> > 
+dynamic(move)?
+move([@|@],[@|@],@) :-
+        move(@,@,@).
+move([x,' '|@],[' ',x|@],'x move right') :-
+        succeed.
+move([' ',o|@],[o,' '|@],'o move left ') :-
+        succeed.
+move([x,o,' '|@],[' ',o,x|@],'x jump right') :-
+        succeed.
+move([' ',x,o|@],[o,x,' '|@],'o jump left ') :-
+        succeed.
+
+dynamic(go)?
+go(@,@,[]) :-
+        succeed.
+go(@,@,[[@|@]|@]) :-
+        move(@,@,@),
+        go(@,@,@).
+
+*** Yes
+> 

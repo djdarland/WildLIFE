@@ -1,0 +1,177 @@
+%	$Id: parser.exp,v 1.2 1994/12/08 23:51:41 duchier Exp $	
+module("parser")?
+
+load_exp("tokenizer")?
+
+open("accumulators")?
+
+open("tokenizer")?
+
+public(syntax,prefix,infix,postfix,prefix_table,post_infix_table)?
+
+persistent(prefix_table,post_infix_table)?
+
+set_C(parser_C)?
+
+->(parser_C([],true,_A,_B),|(succeed,=(_A,_B))).
+
+->(parser_C([],false,_A,_B),=(_A,_B)).
+
+->(parser_C([_A],true,_B,_C),|(=(`(evalin(_D)),_C),=(_B,[_A|_D]))).
+
+->(parser_C([_A],false,_B,_C),,(=(_B,[_A|_D]),=(`(evalin(_D)),_C))).
+
+op(1000,xfy,virgule)?
+
+dynamic(term)?
+
+:-(term(0 => [construct(_A)|_B],_C,cons => _D,rest => _E,vars => _F),,(=(evalin(_B),_G),,(!,,(;(,(attributes(0 => _G,_A,_H,_I,rest => _E,vars => _F),,(;(,(:==(_H,succeed),,(!,=(_C,_A))),=(_C,`(|(_A,,(_H,=(_I,_A)))))),=(_D,false))),,(=(_G,_E),,(=(_C,_A),=(_D,true)))),,(!,succeed))))).
+
+:-(term(0 => [variable(_A)|_B],_C,cons => false,rest => _D,vars => _E),,(=(evalin(_B),_F),,(!,,(get_variable(_A,_G,_E),;(,(attributes(0 => _F,_H,_I,_J,rest => _D,vars => _E),,(!,;(,(:==(_I,succeed),,(!,=(_C,`(meta_apply(_G,_H))))),=(_C,`(|(_K,,(_I,,(=(_H,_J),=(_K,meta_apply(_G,_H)))))))))),,(=(_F,_D),=(_C,_G))))))).
+
+:-(term(0 => _A,_B,cons => false,rest => _C,vars => _D),,(liste(0 => _A,_E,rest => _F,vars => _D),,(!,,(;(,(attributes(0 => _F,_E,_G,_E,rest => _C,vars => _D),;(,(:==(_G,succeed),,(!,=(_B,_E))),=(_B,`(|(_E,_G))))),,(=(_F,_C),=(_B,_E))),,(!,succeed))))).
+
+:-(term(0 => _A,_B,cons => false,rest => _C,vars => _D),,(disjunction(0 => _A,_E,rest => _F,vars => _D),,(;(,(attributes(0 => _F,_E,_G,_E,rest => _C,vars => _D),;(,(:==(_G,succeed),,(!,=(_B,_E))),=(_B,`(|(_E,_G))))),,(=(_F,_C),=(_B,_E))),,(!,succeed)))).
+
+syntact_object(lambda)?
+
+:-(term(0 => ["lambda"|_A],_B,cons => false,rest => _C,vars => _D),,(=(evalin(_A),_E),,(!,,(attributes(0 => _E,_F,@,@,rest => _G,vars => _H),,(expr(0 => _G,_I,mask => 0,max => 0,rest => _C,vars => &(_H,@(_J))),,(=(_K,features(_F,"parser")),,(=(_L,feats(_J)),,(=(_B,&(lambda_exp(args => _K,env => _L,expr => _I),_F)),,(=(@,false),put_in_context(_J,_D)))))))))).
+
+syntact_object(let)?
+
+syntact_object(in)?
+
+:-(term(0 => ["let"|_A],_B,cons => false,rest => _C,vars => _D),,(=(evalin(_A),_E),,(!,,(,(=(_E,[variable(_F)|_G]),=(evalin(_G),_H)),,(get_variable(_F,_I,_J),,(,(=(_H,[atom(=)|_K]),=(evalin(_K),_L)),,(expr(0 => _L,_M,mask => 0,max => 1200,rest => ["in"|_N],vars => _D),,(=(evalin(_N),_O),,(expr(0 => _O,_P,mask => 0,max => 0,rest => _C,vars => &(_J,@(_Q))),,(=(_R,feats(_Q)),,(=(_S,lambda_exp(_I,args => [1],env => _R,expr => _P)),,(=(_B,`(meta_apply(_S,@(_M)))),,(=(@,false),put_in_context(_Q,_D)))))))))))))).
+
+syntact_object(if)?
+
+syntact_object(then)?
+
+syntact_object(else)?
+
+:-(term(0 => ["if"|_A],_B,cons => false,rest => _C,vars => _D),,(=(evalin(_A),_E),,(!,,(expr(0 => _E,_F,mask => 0,max => 999,rest => _G,vars => _D),,(;(,(,(=(_G,["then"|_H]),=(evalin(_H),_I)),,(!,,(expr(0 => _I,_J,mask => 0,max => 999,rest => _K,vars => _D),=(_L,`(|(true,_J)))))),,(=(_G,_K),=(_L,true))),,(;(,(,(=(_K,["else"|_M]),=(evalin(_M),_N)),,(!,,(expr(0 => _N,_O,mask => 0,max => 999,rest => _C,vars => _D),=(_P,`(|(true,_O)))))),,(=(_K,_C),=(_P,true))),=(_B,`(cond(_F,_L,_P))))))))).
+
+:-(attributes(0 => ["("|_A],_B,_C,_D,rest => _E,vars => _F),,(=(evalin(_A),_G),list_attributes(0 => _G,_B,_D,succeed,_C,oldnb => 1,rest => _E,vars => _F))).
+
+:-(list_attributes(0 => _A,_B,_C,_D,_E,newnb => _F,oldnb => _G,rest => _H,vars => _I),,(attribute(0 => _A,_B,_C,_D,_J,newnb => _K,oldnb => _G,rest => _L,vars => _I),;(,(,(=(_L,[")"|_M]),=(evalin(_M),_H)),,(!,=(_E,_J))),,(,(=(_L,[atom(,)|_N]),=(evalin(_N),_O)),list_attributes(0 => _O,_B,_C,_J,_E,newnb => _F,oldnb => _K,rest => _H,vars => _I))))).
+
+:-(attribute(0 => _A,_B,_C,_D,_E,newnb => _F,oldnb => _G,rest => _H,vars => _I),,(expr(0 => _A,_J,cons => _K,mask => 9,rest => _L,vars => _I),;(,(,(=(_L,[atom(=>)|_M]),=(evalin(_M),_N)),,(!,,(expr(0 => _N,_O,mask => 1,rest => _H,vars => _I),,(;(,(_K,,(!,,(=(project(_J,_B),_O),=(_D,_E)))),=(_E,virgule(=(project(_J,_C),_O),_D))),=(_F,_G))))),,(=(_L,_H),,(=(project(_G,_B),_J),,(=(_F,+(_G,1)),=(_D,_E))))))).
+
+:-(liste(0 => ["["|_A],_B,rest => _C,vars => _D),,(=(evalin(_A),_E),,(!,;(,(,(=(_E,["]"|_F]),=(evalin(_F),_C)),,(!,=(_B,[]))),end_list(0 => _E,_B,rest => _C,vars => _D))))).
+
+:-(liste(0 => ["[|"|_A],_B,rest => _C,vars => _D),,(=(evalin(_A),_E),,(!,,(expr(0 => _E,_F,mask => 0,rest => ["]"|_G],vars => _D),,(=(evalin(_G),_C),=(_B,cons(2 => _F))))))).
+
+:-(liste(0 => ["[|]"|_A],cons,rest => _B,vars => @),=(evalin(_A),_B)).
+
+:-(end_list(0 => _A,_B,rest => _C,vars => _D),,(expr(0 => _A,_E,mask => 5,rest => _F,vars => _D),;(,(,(=(_F,["]"|_G]),=(evalin(_G),_C)),,(!,=(_B,[_E]))),;(,(,(=(_F,[atom(,)|_H]),=(evalin(_H),_I)),,(!,,(end_list(0 => _I,_J,rest => _C,vars => _D),=(_B,[_E|_J])))),;(,(,(=(_F,[atom(|)|_K]),=(evalin(_K),_L)),,(!,,(expr(0 => _L,_J,mask => 0,rest => ["]"|_M],vars => _D),,(=(evalin(_M),_C),=(_B,[_E|_J]))))),,(,(=(_F,["|]"|_N]),=(evalin(_N),_C)),=(_B,cons(_E)))))))).
+
+:-(disjunction(0 => ["{"|_A],_B,rest => _C,vars => _D),,(=(evalin(_A),_E),;(,(,(=(_E,["}"|_F]),=(evalin(_F),_C)),,(!,=(_B,`({})))),end_disjunction(0 => _E,_B,rest => _C,vars => _D)))).
+
+:-(end_disjunction(0 => _A,_B,rest => _C,vars => _D),,(expr(0 => _A,_E,mask => 2,rest => _F,vars => _D),;(,(,(=(_F,["}"|_G]),=(evalin(_G),_C)),,(!,=(_B,`({_E})))),;(,(,(=(_F,[atom(;)|_H]),=(evalin(_H),_I)),,(!,,(end_disjunction(0 => _I,_J,rest => _C,vars => _D),=(_B,`({_E|_J}))))),,(,(=(_F,[atom(|)|_K]),=(evalin(_K),_L)),,(expr(0 => _L,_J,mask => 0,rest => ["}"|_M],vars => _D),,(=(evalin(_M),_C),=(_B,`({_E|_J}))))))))).
+
+:-(expr(0 => _A,_B,cons => _C,mask => _D,max => _E,rest => _F,vars => _G),,(start_expr(0 => _A,_H,cons => _I,mask => _D,max => _E,rest => _J,vars => _G),,(end_expr(0 => _J,_B,cons => _K,left_expr => _H,mask => _D,max => _E,rest => _F,vars => _G),=(_C,and(_I,_K))))).
+
+:-(start_expr(0 => _A,_B,cons => _C,mask => _D,rest => _E,vars => _F),,(prefix_op(0 => _A,_G,_H,max => 1200,rest => _I,right_strict => _J),,(=(_B,_H),;(,(=(["("|@],_I),,(=(_I,_K),,(!,,(attributes(0 => _K,_B,rest => _E,vars => _F),=(_C,false))))),;(,(expr(0 => _I,_L,mask => _D,max => preced(_J,_G),rest => _E,vars => _F),,(!,,(=(project(1,_B),_L),=(_C,false)))),,(=(_I,_E),=(cons,true))))))).
+
+:-(start_expr(0 => ["("|_A],_B,cons => false,rest => _C,vars => _D),,(=(evalin(_A),_E),,(!,,(expr(0 => _E,_F,max => 1200,rest => [")"|_G],vars => _D),,(=(evalin(_G),_H),;(,(attributes(0 => _H,_I,_J,_K,rest => _C,vars => _D),,(!,;(,(:==(_J,succeed),,(!,=(_B,`(meta_apply(_F,_I))))),=(_B,`(|(_L,,(_J,,(=(_I,_K),=(_L,meta_apply(_F,_I)))))))))),,(=(_H,_C),=(_B,_F)))))))).
+
+:-(start_expr(0 => _A,_B,cons => _C,rest => _D,vars => _E),term(0 => _A,_B,cons => _C,rest => _D,vars => _E)).
+
+:-(end_expr(0 => _A,_B,cons => false,left_expr => _C,left_prec => _D,mask => _E,max => _F,rest => _G,vars => _H),,(sub_expr(0 => _A,_I,left_expr => _C,left_prec => _D,mask => _E,max => _F,prec => _J,rest => _K,vars => _H),,(!,end_expr(0 => _K,_B,left_expr => _I,mask => _E,max => _F,prec => _J,rest => _G,vars => _H)))).
+
+:-(end_expr(0 => _A,_B,cons => true,left_expr => _B,rest => _A),succeed).
+
+:-(sub_expr(0 => _A,_B,left_expr => _C,left_prec => _D,mask => _E,max => _F,prec => _G,rest => _H,vars => _I),,(=<(_D,preced(_J,_K)),,(post_or_infix_op(0 => _A,_L,_K,_M,left_strict => _J,mask => _E,max => _F,rest => _N,right_strict => _O),;(,(=(_N,_H),,(:==(_L,postfix),,(!,,(=(_B,&(_M,@(_C))),=(_G,0))))),,(=(_N,_P),,(:==(_L,infix),,(expr(0 => _P,_Q,mask => _E,max => preced(_O,_K),rest => _H,vars => _I),,(;(,(:==(_M,`(:)),,(!,;(,(or(var(_C),var(_Q)),,(=(_B,&(_C,_Q)),!)),=(_B,`(&(_C,_Q)))))),=(_B,&(_M,@(_C,_Q)))),=(_G,_K))))))))).
+
+:-(prefix_op(0 => _A: [atom(_B)|@],_C,_B,max => _D,rest => _E,right_strict => _F),,(,(has_feature(combined_name(_B),prefix_table,@(precedence => _C,right_strict => _F)),>=(_D,_C)),,(=(_A,[@|_G]),=(evalin(_G),_E)))).
+
+:-(post_or_infix_op(0 => _A: [atom(_B)|@],_C,_D,_B,left_strict => _E,mask => _F,max => _G,rest => _H,right_strict => _I),,(,(cond(or(or(or(and(=:=(/\(_F,1),1),:==(_B,,)),and(=:=(/\(_F,2),2),:==(_B,;))),and(=:=(/\(_F,4),4),:==(_B,`(|)))),and(=:=(/\(_F,8),8),:==(_B,`(=>)))),fail),,(has_feature(combined_name(_B),post_infix_table,@(left_strict => _E,precedence => _D,right_strict => _I,type => _C)),>=(_G,_D))),,(=(_A,[@|_J]),=(evalin(_J),_H)))).
+
+->(preced(true,_A),-(_A,1)).
+
+->(preced(false,_A),_A).
+
+:-(get_variable(_A,_B,_C),cond(has_feature(_A,_C),=(project(_A,_C),_B),cond(has_feature(1,_C),get_variable(_A,_B,project(1,_C)),=(project(_A,_C),_B)))).
+
+:-(put_in_context(_A,_B),place_variables(features(_A,"parser"),_A,_B)).
+
+:-(place_variables([],@,@),!).
+
+:-(place_variables([_A|_B],_C,_D),,(get_variable(_A,project(_A,_C),_D),place_variables(_B,_C,_D))).
+
+non_strict(virgule)?
+
+->(virgule(_A,succeed),_A).
+
+->(virgule(_A,_B),,(_A,_B)).
+
+module("built_ins")?
+
+dynamic(op)?
+
+asserta(:-(op(_A,_B,_C,functor => _C,kind => _B,precedence => _A),,(!,,(trace(_D,_E),;(,(op_parse(_A,_B,_C),,(!,trace(_D,_E))),,(trace(_D,_E),fail))))))?
+
+static(op)?
+
+:-(op_parse(_A,_B,_C),,(nonvar(_A),,(nonvar(_B),,(nonvar(_C),,(=(_C,list),,(!,op_3(_C,_A,_B))))))).
+
+:-(op_parse(@,@,_A),,(nonvar(_A),,(=(_A,list),,(!,,(write_err("*** Error: invalid operator declaration."),nl_err))))).
+
+:-(op_parse(_A,_B,_C),,(nonvar(_A),,(nonvar(_B),,(nonvar(_C),,(!,hash_op(_A,_B,_C)))))).
+
+:-(op_parse(_A,_B,_C),member(op(_A,_B,_C),ops)).
+
+:-(hash_op(_A,_B,_C),,(=(_D,&(project(_B,@(fx => @(right_strict => true,type => prefix),fy => @(right_strict => false,type => prefix),xf => @(left_strict => true,right_strict => @,type => postfix),xfx => @(left_strict => true,right_strict => true,type => infix),xfy => @(left_strict => true,right_strict => false,type => infix),yf => @(left_strict => false,right_strict => @,type => postfix),yfx => @(left_strict => false,right_strict => true,type => infix))),@(precedence => _A,type => _E))),,(=(_F,combined_name(_C)),cond(or(has_feature(_F,prefix_table,_G),has_feature(_F,post_infix_table,_H)),cond(or(equ_op(_D,_G),equ_op(_D,_H)),succeed,,(c_op(_A,_B,_C),,(cond(:==(_E,prefix),<<-(.(prefix_table,_F),_D),<<-(.(post_infix_table,_F),_D)),,(write_err("*** Warning: overloading definition"," of operator ",_C," ***"),nl_err)))),,(c_op(_A,_B,_C),cond(:==(_E,prefix),<<-(.(prefix_table,_F),_D),<<-(.(post_infix_table,_F),_D))))))).
+
+->(equ_op(@(left_strict => _A,precedence => _B,right_strict => _C,type => _D),_E),|(_F,,(=(_E,@(left_strict => _G,precedence => _H,right_strict => _I,type => _J)),=(_F,and(and(and(=:=(_B,_H),:==(_D,_J)),:==(_A,_G)),:==(_C,_I)))))).
+
+module("parser")?
+
+:-(init_hash_op(op(_A,_B,_C)),,(=(_D,&(project(_B,@(fx => @(right_strict => true,type => prefix),fy => @(right_strict => false,type => prefix),xf => @(left_strict => true,type => postfix),xfx => @(left_strict => true,right_strict => true,type => infix),xfy => @(left_strict => true,right_strict => false,type => infix),yf => @(left_strict => false,type => postfix),yfx => @(left_strict => false,right_strict => true,type => infix))),@(precedence => _A,type => _E))),cond(:==(_E,prefix),<<-(.(prefix_table,combined_name(_C)),_D),<<-(.(post_infix_table,combined_name(_C)),_D)))).
+
+maprel(init_hash_op,ops)?
+
+:-(open_close_op(_A,_B,_C),,(syntact_object(_A),,(syntact_object(_B),,(=(_D,psi2str(_A)),,(=(_E,psi2str(_B)),-->(term(_F,cons => false,vars => _G),,([_D],,(!,,(expr(_H,mask => 0,max => 1200,vars => _G),,([_E],{=(_F,&(_C,@(_H)))})))))))))).
+
+non_strict(meta_apply)?
+
+non_strict(lambda_exp)?
+
+->(meta_apply(_A: lambda_exp,_B),|(_C,,(=(_D,copy_lambda(_A)),,(diff_list(features(_B,"parser"),.(_D,args),_E),,(=(evalin(_B),_D),;(,(:==(_E,[]),,(!,,(=(_F,.(_D,expr)),=(_C,evalin(_F))))),,(<-(.(_B,args),_E),=(_C,_B)))))))).
+
+->(meta_apply(_A: meta_apply,_B),|(_C,,(=(_D,evalin(_A)),=(_C,meta_apply(_D,_B))))).
+
+->(meta_apply(_A,_B),|(_C,,(=(_C,&(apply(functor => _A),_B)),=(_C,evalin(_C))))).
+
+->(copy_lambda(_A: lambda_exp),|(_B,,(=(_B,copy_pointer(copy_term(_A))),restore_global(.(_B,env),.(_A,env))))).
+
+:-(restore_global([],[]),!).
+
+:-(restore_global([_A|_B],[_C|_D]),,(<-(_A,_C),restore_global(_B,_D))).
+
+:-(syntax(_A,_B),,(open_in(_A,_C),,(open_out(cond(:<(_B,string),_B,strcon(_A,"_expr")),_D),,(first_statement(_C),,(close(_C),close(_D)))))).
+
+:-(first_statement(_A),,(=(_B,first_token),;(,(=(_B,[]),,(!,,(open_out("stdout",@),,(nl,,(nl,,(write("Empty File"),nl)))))),;(,(read_new_expr(_B,_C,_D,_E,_F),,(cond(_C,cond(:==(_E,assertion),,(nl,,(writeq(_D),write("."))),,(nl,,(writeq(_D),write("?")))),,(close(_A),,(nl_err,,(write_err("Syntax error near line ",.(_A,line_count)," in file '",.(_A,input_file_name),"'"),,(nl_err,,(!,fail)))))),;(,(=(_F,[]),,(!,,(open_out("stdout",@),,(nl,,(write("*** File '",.(_A,input_file_name),"'  parsed"),nl))))),fail))),next_statement(_A))))).
+
+:-(next_statement(_A),;(,(read_new_expr([copy_term(rest_token)|`(next_token)],_B,_C,_D,_E),,(cond(_B,cond(:==(_D,assertion),,(nl,,(nl,,(writeq(_C),write(".")))),,(nl,,(nl,,(writeq(_C),write(" ?"))))),,(close(_A),,(nl_err,,(write_err("*** Syntax error near line ",.(_A,line_count)," in file '",.(_A,input_file_name),"'"),,(nl_err,,(!,fail)))))),;(,(=(_E,[]),,(!,,(open_out("stdout",@),,(nl,,(write("*** File '",.(_A,input_file_name),"' parsed"),nl))))),fail))),next_statement(_A))).
+
+:-(read_new_expr(_A,_B,_C,_D,_E),;(,(expr(0 => _A,_C,mask => 0,max => 1200,rest => _F,vars => @),,(;(,(=(_F,["."|_G]),,(=(_E,evalin(_G)),=(_D,assertion))),,(=(_F,["?"|_G]),,(=(_E,evalin(_G)),=(_D,query)))),,(=(_B,true),!))),=(_B,false))).
+
+reset_C?
+
+public(feats)?
+
+->(feats(_A),map(project(2 => _A),features(_A,"parser"))).
+
+public(diff_list)?
+
+:-(diff_list([],_A,_A),!).
+
+:-(diff_list([_A|_B],_C,_D),cond(memberAndRest(_A,_C,_E),diff_list(_B,_E,_D),diff_list(_B,_C,_D))).
+
+public(memberAndRest)?
+
+->(memberAndRest(@,[],@),false).
+
+->(memberAndRest(_A,[_B|_C],_D),cond(=(_A,_B),|(true,=(_D,_C)),|(memberAndRest(_A,_C,_E),=(_D,[_B|_E])))).
+

@@ -1,0 +1,39 @@
+
+% typetest
+
+a <| b.
+b <| c.
+
+:: a | write(aa).
+:: b | write(bb).
+:: c | write(cc).
+
+x <| y.
+y <| z.
+
+:: x(Q) | write(xx),write(Q).
+:: y(Q) | write(yy),write(Q).
+:: z(Q) | write(zz),write(Q).
+
+k <| m.
+k <| n.
+
+:: k | write(kk).
+:: m | write(mm).
+:: n | write(nn).
+
+k1 <| m1.
+k1 <| n1.
+
+:: k1(Q) | write(kk),write(Q).
+:: m1(Q) | write(mm),write(Q).
+:: n1(Q) | write(nn),write(Q).
+
+a1 <| b1.
+a1 <| b2.
+a2 <| b1.
+a2 <| b2.
+:: a1 | write('A1').
+:: b1 | write('B1').
+:: a2 | write('A2').
+:: b2 | write('B2').

@@ -1,0 +1,31 @@
+
+*** Yes
+> > 
+*** Yes
+Joe = person(age => 50,today => 1992,yob => 1942).
+--1> 
+*** No
+> 
+*** Yes
+Joe = person(age => int~,today => real~,yob => int~), X = int~.
+--1> 
+*** Yes
+Joe = person(age => int~~,today => 1992,yob => int~~), X = int~~.
+--1> 
+*** Yes
+Joe = person(age => 30,today => 1992,yob => 1962), X = 30.
+--1> > 
+*** Yes
+Joe = human(age => 50,today => 1992,yob => 1942).
+--1> 
+*** No
+> 
+*** Yes
+Joe = human(age => int~,today => int~,yob => int~), X = int~.
+--1> 
+*** Yes
+Joe = human(age => int~~,today => 1992,yob => int~~), X = int~~.
+--1> 
+*** Yes
+Joe = human(age => 30,today => 1992,yob => 1962), X = 30.
+--1> > 

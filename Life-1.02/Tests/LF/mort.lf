@@ -1,0 +1,9 @@
+mort(P,Time,I,MP,B)
+	:- 0 < Time, Time =< 1,
+	   Int = Time*(P*I/1200),
+	   B = P+Int-(Time*MP).
+
+mort(P,Time,I,MP,B)
+	:- Time > 1,
+	   Int = P*I/1200,
+	   mort(P+Int-MP,Time-1,I,MP,B).

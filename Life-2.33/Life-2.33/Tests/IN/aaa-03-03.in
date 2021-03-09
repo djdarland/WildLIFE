@@ -1,0 +1,20 @@
+%% in example 6.6 I was getting extra outout after *** No
+%% commented out || level > 0 in line 2015 login.c
+%% stopped that problem - but changed this example which then differed
+%% It does no make sense to me for vales to be printed after *** No
+%% So I am sticking with change & appoving these cases.
+
+father(john,harry).
+father(john,charles).
+father(harry,michael).
+grandfather(X,Y) :- father(X,Z), father(Z,Y).
+grandfather(A,B)?
+father(A,C)?
+;
+;
+father(C,B)?
+father(A,C)?
+
+.
+
+

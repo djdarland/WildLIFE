@@ -1,0 +1,20 @@
+a = true and A?
+write(1),nl?
+string = false or B?
+write(2),nl?
+a = b and c?
+write(3),nl?
+A = b and c?
+write(4),nl?
+A = B and c?
+write(5),nl?
+A = b and C?
+write(6),nl?
+A = true and c?
+write(7),nl?
+A = b and true?
+write(8),nl?
+A = false and c?
+write(9),nl?
+A = b and false?
+write(a),nl?

@@ -1,0 +1,4 @@
+1c1
+< sh: core: command not found
+---
+> sh: 1: core: not found

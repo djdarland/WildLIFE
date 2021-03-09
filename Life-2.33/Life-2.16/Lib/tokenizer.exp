@@ -1,0 +1,187 @@
+%	$Id: tokenizer.exp,v 1.2 1994/12/09 00:26:23 duchier Exp $	
+module("tokenizer")?
+
+public(atom,construct,numb,chaine,syntact_object,variable,tokenize,first_token,rest_token,next_token,rest_chars)?
+
+import_exp("accumulators")?
+
+set_C(token_C)?
+
+acc_info(dcg,_A,_B,_C,acc_pred => 'C'(_A,false,_B,_C),in_name => 0,out_name => rest)?
+
+->(token_C([],true,_A,_B),|(succeed,=(_A,_B))).
+
+->(token_C([],false,_A,_B),=(_A,_B)).
+
+->(token_C([_A],true,_B,_C),|(=(`(evalin(_D)),_C),=(_B,[_A|_D]))).
+
+->(token_C([_A],false,_B,_C),,(=(_B,[_A|_D]),=(`(evalin(_D)),_C))).
+
+non_strict(atom)?
+
+<|(atom,construct).
+
+<|(numb,construct).
+
+<|(chaine,construct).
+
+:-(token(0 => []),,(!,fail)).
+
+:-(token(0 => _A: [_B|@],_C,rest => _D),;(,(and(>=(_B,97),=<(_B,122)),,(!,,(non_quoted_atom(0 => _A,_E,rest => _D),cond(is_syntactic(_E),=(_C,_E),,(=(_F,str2psi(_E,current_module)),=(_C,atom(_F))))))),;(,(and(>=(_B,65),=<(_B,90)),,(!,,(variable(0 => _A,_G,rest => _D),=(_C,variable(str2psi(_G,"tokenizer")))))),cond(and(>=(_B,48),=<(_B,57)),,(number(0 => _A,_H,rest => _D),=(_C,numb(_H))),&(str2psi(strcon("tk",int2str(_B)),"tokenizer"),@(0 => _A,_C,rest => _D)))))).
+
+:-(tk95(0 => [@|_A],_B,rest => _C),,(=(evalin(_A),_D),,(var_chars(0 => _D,_E,rest => _C),;(,($==(_E,""),,(!,=(_B,atom(@)))),=(_B,variable(str2psi(strcon("_",_E),"tokenizer"))))))).
+
+:-(variable(0 => [_A|_B],_C,rest => _D),,(=(evalin(_B),_E),,(var_chars(0 => _E,_F,rest => _D),=(_C,strcon(chr(_A),_F))))).
+
+:-(var_chars(0 => _A,_B,rest => _C),,(simple_atom_chars(0 => _A,_D,rest => _E),;(,(primes(0 => _E,_F,rest => _C),,(!,=(_B,strcon(_D,_F)))),,(=(_E,_C),=(_B,_D))))).
+
+:-(tk40(0 => [@|_A],"(",rest => _B),=(evalin(_A),_B)).
+
+:-(tk41(0 => [@|_A],")",rest => _B),=(evalin(_A),_B)).
+
+:-(tk63(0 => [@|_A],"?",rest => _B),=(evalin(_A),_B)).
+
+:-(tk123(0 => [@|_A],"{",rest => _B),=(evalin(_A),_B)).
+
+:-(tk125(0 => [@|_A],"}",rest => _B),=(evalin(_A),_B)).
+
+:-(tk46(0 => [46|_A: []],".",rest => _B),,(=(evalin(_A),_B),,(!,succeed))).
+
+:-(tk46(0 => _A: [46,_B|@],_C,rest => _D),;(,(has_feature(0 => _A,_B,void_table,rest => _E),,(!,,(=(_C,"."),,(=(_E,[@|_F]),=(evalin(_F),_D))))),tk46bis(0 => _A,_C,rest => _D))).
+
+:-(tk46bis(0 => [@|_A],_B,rest => _C),,(=(evalin(_A),_D),,(op_atom_chars(0 => _D,_E,rest => _C),,(=(_F,strcon(".",_E)),;(,(is_syntactic(_F),,(!,=(_B,_F))),,(=(_G,str2psi(_F,current_module)),=(_B,atom(_G)))))))).
+
+:-(tk91(0 => [@|_A],_B,rest => _C),,(=(evalin(_A),_D),;(,(,(=(_D,[124|_E]),=(evalin(_E),_F)),,(!,;(,(,(=(_F,[93|_G]),=(evalin(_G),_C)),,(!,=(_B,"[|]"))),,(=(_F,_C),=(_B,"[|"))))),,(=(_D,_C),=(_B,"["))))).
+
+:-(tk93(0 => [@|_A],"]",rest => _B),=(evalin(_A),_B)).
+
+:-(tk124(0 => [@|_A],_B,rest => _C),,(=(evalin(_A),_D),;(,(,(=(_D,[93|_E]),=(evalin(_E),_C)),,(!,=(_B,"|]"))),,(op_atom_chars(0 => _D,_F,rest => _C),,(=(_G,strcon("|",_F)),cond(is_syntactic(_G),=(_B,_G),,(=(_H,str2psi(_G,current_module)),=(_B,atom(_H))))))))).
+
+:-(non_quoted_atom(0 => [_A|_B],_C,rest => _D),,(=(evalin(_B),_E),,(simple_atom_chars(0 => _E,_F,rest => _D),=(_C,strcon(chr(_A),_F))))).
+
+:-(tk39(0 => [@|_A],_B,rest => _C),,(=(evalin(_A),_D),,(quoted_atom_end(0 => _D,_E,rest => _C),cond(is_syntactic(_E),=(_B,_E),,(=(_F,str2psi(_E,current_module)),=(_B,atom(_F))))))).
+
+:-(number(0 => _A,_B,rest => _C),,(digits(0 => _A,_D,rest => _E),,(;(,(=(_E,[46,_F|_G]),,(digits(0 => [_F|_G],_H,length => _I,rest => _J),,(=(_K,evalin(_J)),,(=(_L,+(_D,*(_H,^(10,-(_I))))),!)))),,(=(_L,_D),=(_K,_E))),;(,(=(_K,[{101;69}|_M]),,(!,,(exponent(0 => evalin(_M),_N,rest => _C),=(_B,*(_L,^(10,_N)))))),,(=(_B,_L),=(_K,_C)))))).
+
+:-(tk34(0 => [@|_A],chaine(_B),rest => _C),,(=(evalin(_A),_D),char_chaine_end(0 => _D,_B,rest => _C))).
+
+:-(gen_op_char_ass_pred_def(_A),,(=(_B,chr(_A)),,(=(str2psi(strcon("tk",int2str(_A)),"tokenizer"),_C),,(=(_D,&(_C,@(_E))),-->(_D,,([@],,(op_atom_chars(_F),{,(=(_G,strcon(_B,_F)),cond(is_syntactic(_G),=(_E,_G),,(=(_H,str2psi(_G,current_module)),=(_E,atom(_H)))))}))))))).
+
+maprel(gen_op_char_ass_pred_def,[33,35,36,37,38,42,43,45,47,58,60,61,62,92,94,126])?
+
+:-(tk64(0 => [@|_A],atom(@),rest => _B),=(evalin(_A),_B)).
+
+:-(tk96(0 => [@|_A],atom(`),rest => _B),=(evalin(_A),_B)).
+
+:-(tk44(0 => [@|_A],atom(,),rest => _B),=(evalin(_A),_B)).
+
+:-(tk59(0 => [@|_A],atom(;),rest => _B),=(evalin(_A),_B)).
+
+:-(void_chars(0 => [{9;10;32}|_A],rest => _B),,(=(evalin(_A),_C),,(!,void_chars(0 => _C,rest => _B)))).
+
+:-(void_chars(0 => [37|_A],rest => _B),,(=(evalin(_A),_C),,(!,,(comment_chars(0 => _C,rest => _D),void_chars(0 => _D,rest => _B))))).
+
+:-(void_chars(0 => _A,rest => _B),,(nested_comments(0 => _A,rest => _C),void_chars(0 => _C,rest => _B))).
+
+:-(void_chars(0 => _A,rest => _A),succeed).
+
+:-(comment_chars(0 => [10|_A],rest => _B),,(=(evalin(_A),_B),,(!,succeed))).
+
+:-(comment_chars(0 => [@|_A],rest => _B),,(=(evalin(_A),_C),,(!,comment_chars(0 => _C,rest => _B)))).
+
+:-(comment_chars(0 => _A,rest => _A),succeed).
+
+:-(nested_comments(0 => [47|_A: [42|@]],rest => _B),,(=(evalin(_A),[@|_C]),,(=(evalin(_C),_D),end_nested_comments(0 => _D,rest => _B)))).
+
+:-(end_nested_comments(0 => [42|_A: [47|@]],rest => _B),,(=(evalin(_A),[@|_C]),,(=(evalin(_C),_B),,(!,succeed)))).
+
+:-(end_nested_comments(0 => _A,rest => _B),,(;(nested_comments(0 => _A,rest => _C),,(=(_A,[@|_D]),=(evalin(_D),_C))),end_nested_comments(0 => _C,rest => _B))).
+
+:-(simple_atom_chars(0 => _A,_B,rest => _C),,(simple_atom_char(0 => _A,_D,rest => _E),,(!,,(simple_atom_chars(0 => _E,_F,rest => _C),=(_B,strcon(_D,_F)))))).
+
+:-(simple_atom_chars(0 => _A,"",rest => _A),succeed).
+
+:-(simple_atom_char(0 => [_A|_B],_C,rest => _D),,(has_feature(_A,simple_atom_table,_C),=(_D,evalin(_B)))).
+
+:-(at_least_1_simple_atom_char(0 => _A,_B,rest => _C),,(simple_atom_char(0 => _A,_D,rest => _E),,(!,,(simple_atom_chars(0 => _E,_F,rest => _C),=(_B,strcon(_D,_F)))))).
+
+:-(primes(0 => [39|_A],_B,rest => _C),,(=(evalin(_A),_D),;(,(primes(0 => _D,_E,rest => _C),,(=(_B,strcon("'",_E)),!)),,(=(_D,_C),=(_B,"'"))))).
+
+:-(quoted_atom_end(0 => [39|_A],_B,rest => _C),,(=(evalin(_A),_D),,(!,;(,(,(=(_D,[39|_E]),=(evalin(_E),_F)),,(!,,(quoted_atom_end(0 => _F,_G,rest => _H),=(0 => _H,_B,strcon("'",_G),rest => _C)))),,(=(_D,_C),=(_B,"")))))).
+
+:-(quoted_atom_end(0 => _A,_B,rest => _C),,(any_char(0 => _A,_D,rest => _E),,(quoted_atom_end(0 => _E,_F,rest => _C),=(_B,strcon(_D,_F))))).
+
+:-(digits(0 => _A,_B,length => _C,rest => _D),,(digit(0 => _A,_E,rest => _F),;(,(digits(0 => _F,_G,length => _H,rest => _D),,(!,,(=(_C,+(_H,1)),=(_B,+(*(_E,^(10,_H)),_G))))),,(=(_F,_D),,(=(_B,_E),=(_C,1)))))).
+
+:-(digit(0 => [+(48,_A)|_B],_A,rest => _C),,(and(=<(_A,9),>=(_A,0)),=(_C,evalin(_B)))).
+
+:-(exponent(0 => _A,_B,rest => _C),,(sign(0 => _A,_D,rest => _E),,(digits(0 => _E,_F,rest => _C),,(!,=(_B,*(_D,_F)))))).
+
+:-(sign(0 => _A,1,rest => _A),succeed).
+
+:-(sign(0 => [45|_A],-1,rest => _B),,(=(evalin(_A),_B),,(!,succeed))).
+
+:-(sign(0 => [43|_A],1,rest => _B),=(evalin(_A),_B)).
+
+:-(char_chaine_end(0 => [34|_A],_B,rest => _C),,(=(evalin(_A),_D),,(!,;(,(,(=(_D,[34|_E]),=(evalin(_E),_F)),,(!,,(char_chaine_end(0 => _F,_G,rest => _C),=(_B,strcon("""",_G))))),,(=(_D,_C),=(_B,"")))))).
+
+:-(char_chaine_end(0 => _A,_B,rest => _C),,(any_char(0 => _A,_D,rest => _E),,(char_chaine_end(0 => _E,_F,rest => _C),=(_B,strcon(_D,_F))))).
+
+:-(op_atom_char(0 => [_A|_B],_C,rest => _D),,(has_feature(_A,op_chars_table,_C),=(_D,evalin(_B)))).
+
+:-(op_atom_chars(0 => _A,_B,rest => _C),,(op_atom_char(0 => _A,_D,rest => _E),,(!,,(op_atom_chars(0 => _E,_F,rest => _C),=(_B,strcon(_D,_F)))))).
+
+:-(op_atom_chars(0 => _A,"",rest => _A),succeed).
+
+:-(any_char(0 => [_A|_B],_C,rest => _D),,(=(evalin(_B),_D),=(_C,chr(_A)))).
+
+reset_C?
+
+:-(gen_char_table(_A,[_B|_C]),,(!,,(<<-(.(_A,_B),chr(_B)),gen_char_table(_A,_C)))).
+
+gen_char_table.
+
+persistent(void_table)?
+
+gen_char_table(void_table,[9,10,32,37])?
+
+persistent(simple_atom_table)?
+
+gen_char_table(simple_atom_table,[48,49,50,51,52,53,54,55,56,57,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,95,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122])?
+
+persistent(op_chars_table)?
+
+gen_char_table(op_chars_table,[33,35,36,37,38,42,43,45,46,47,58,60,61,62,92,94,124,126])?
+
+->(is_syntactic(_A),has_feature(_A,syntact_objects_table)).
+
+persistent(syntact_objects_table)?
+
+:-(syntact_object(_A),;(,(is_value(_A),,(!,,(nl_err,,(write_err("*** Error: numbers or strings cannot be syntactic objects."),nl_err)))),=(.(syntact_objects_table,_A),true))).
+
+persistent(read_tok)?
+
+<<-(read_tok,false)?
+
+persistent(rest_chars)?
+
+<<-(rest_chars,[])?
+
+persistent(rest_token)?
+
+<<-(rest_token,none)?
+
+->(next_char,|(_A,,(get(_B),,(cond(:=<(_B,end_of_file),=(_A,[]),=(_A,[_B|_C])),=(_C,`(next_char)))))).
+
+->(next_token,|(_A,;(,(cond(=(_B: copy_term(rest_chars),[_C,_D]),=(_E,[_C,_D|`(next_char)]),=(_E,_B)),,(=(call_once(read_new_token(_F,_E)),_G),;(,(:==(_G,false),,(!,fail)),;(,(:==(_F,none),,(!,=(_A,[]))),,(<<-(rest_token,`(_F)),fail))))),=(_A,[copy_term(rest_token)|`(next_token)])))).
+
+->(first_token,|(_A,,(=(_B,next_char),,(=(_C,evalin(_B)),,(read_new_token(_D,_C),,(cond(:==(_D,none),=(_A,[]),=(_A,[_D|_E])),=(_E,`(next_token)))))))).
+
+:-(read_new_token(_A,_B),,(void_chars(0 => _B,rest => _C),,(!,;(,(=(_C,[]),,(!,=(_A,none))),,(token(0 => _C,_A,rest => _D),;(,(=(_D,[_E,_F|@]),,(!,<<-(rest_chars,[_E,_F]))),<<-(rest_chars,_D))))))).
+
+:-(tokens(true,_A,_B),,(<<-(read_tok,false),,(void_chars(0 => _A,rest => _C),,(!,;(,(=(_C,[]),,(!,,(open_out("stdout",@),,(nl,,(nl,,(write("*** File '",.(_B,input_file_name),"' tokenized"),nl)))))),;(,(token(0 => _C,_D,rest => _E),,(nl,,(writeq(_D),,(<<-(read_tok,true),,(cond(=(_E,[_F,_G|@]),<<-(rest_chars,[_F,_G]),<<-(rest_chars,_E)),fail))))),,(cond(=(_H: copy_term(rest_chars),[_F,_G]),=(_I,[_F,_G|`(next_char)]),=(_I,_H)),tokens(read_tok,_I,_B)))))))).
+
+:-(tokens(false,@,_A),,(open_out("stdout",@),,(nl_err,,(nl_err,,(write_err("*** Token error near line ",.(_A,line_count)," in file '",.(_A,input_file_name),"'"),nl_err))))).
+
+:-(tokenize(_A: string),,(open_in(_A,_B),,(open_out(strcon(_A,"_toks"),_C),,(=(_D,next_char),,(=(_E,evalin(_D)),,(tokens(true,_E,_B),,(close(_B),close(_C)))))))).
+

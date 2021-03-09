@@ -1,0 +1,15 @@
+fact(0) -> 1.
+fact(N) -> N * fact(N - 1).
+times_four(N) -> 4 * N.
+% had to change pick_func
+write("Had to change pick_func.")?
+pick_arg({5 ; 3 ; 7}).
+pick_func({ times_four ; fact}).
+test :-
+    R=F(A),
+    pick_arg(A),
+    pick_func(F),
+    write("Function ", F, " applied to argument ", A, " is ", R),
+    nl,
+    fail.
+test?

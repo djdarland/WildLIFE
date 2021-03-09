@@ -1,0 +1,496 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%                   TERM EXPANSION
+%
+% Author: Bruno Dumant
+%
+% Copyright 1993-1994 Digital Equipment Corporation
+% All rights reserved 
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%	$Id: term_expansion.lf,v 1.2 1994/12/08 23:34:30 duchier Exp $	
+
+public(associate_expanders,quiet_associate_expanders,
+       add_expanders_a,add_expanders_z,remove_expanders,
+       term_expansion,term_xpand,
+       expand_load,
+       load_exp,import_exp,
+       new_suffix)?
+
+persistent(consulted)?
+persistent(expansion_methods_table) ?
+global(loading_file,line) ?
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% associating expanders with symbols
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% Association
+
+associate_expanders(Sort,Expanders,Type) :-
+	cond( has_feature(combined_name(Sort),expansion_methods_table),
+	      warn("redefining expansion methods for: ",Sort,".")
+	    ),
+	quiet_associate_expanders(Sort,Expanders,Type).
+
+quiet_associate_expanders(Sort,Expanders,Type) :-
+	cond( Expanders :< list,
+	      expansion_methods_table.combined_name(Sort)
+	      <<- (Expanders,Type),
+	      expansion_methods_table.combined_name(Sort)
+	      <<- ([Expanders],Type)
+	    ).
+
+%%%associate_expander(associate_expander,make_association) ?
+%%%make_association(associate_expander(Sort,Expander,Type),
+%%%		 in_clauses => In,
+%%%		 out_clauses => In) :-
+%%%	associate_expander(Sort,Expander,Type).
+
+
+add_expanders_a(Sort,Expanders,Type) :-
+	( has_feature(combined_name(Sort),expansion_methods_table,E),!,
+	  ( Expanders :< list,!,
+	    E.1 <<- append(Expanders,E.1)
+	  ;
+	    E.1 <<- [Expanders|copy_pointer(E.1)]
+	  ),
+	  cond( Type :\== @,
+		cond( Type :\== E.2,
+		      ( warn("Changing the type of the expansion ",
+				"method for ",
+				Sort,"."),
+			E.2 <<- Type
+		      )
+		    )
+	      )
+	;
+	  quiet_associate_expanders(Sort,Expanders,Type)
+	).
+	    
+%%%associate_expander(add_expander_a,assoc_a) ?
+%%%assoc_a(add_expander_a(Sort,Expander,Type),
+%%%	in_clauses => In,
+%%%	out_clauses => In) :-
+%%%	add_expander_a(Sort,Expander,Type).
+
+
+add_expanders_z(Sort,Expanders,Type) :-
+	( has_feature(combined_name(Sort),expansion_methods_table,E),!,
+	  ( Expanders :< list,!,
+	    E.1 <<- append(E.1,Expanders) 
+	  ;
+	    E.1 <<- append(E.1,[Expanders])
+	  ),
+	  cond( Type :\== @,
+		cond( Type :\== E.2,
+		      ( warn("Changing the type of the expansion ",
+				"method for ",
+				Sort,"."),
+			E.2 <<- Type
+		      )
+		    )
+	      )
+	;
+	  quiet_associate_expanders(Sort,Expanders,Type)
+	).
+
+%%%associate_expander(add_expander_z,assoc_z) ?
+%%%assoc_z(add_expander_z(Sort,Expander,Type),
+%%%	in_clauses => In,
+%%%	out_clauses => In) :-
+%%%	add_expander_z(Sort,Expander,Type).
+
+
+remove_expanders(Sort,Expanders) :-
+	( has_feature(combined_name(Sort),expansion_methods_table,E),!,
+	  E.1 <<- rm_exp(Expanders,E.1)
+	;
+	  succeed
+	).
+
+rm_exp([A|B],L) -> rm_exp(B,rm_exp1(L,A)).
+rm_exp([],L) -> L.
+rm_exp(A,L) -> rm_exp1(L,A).
+
+rm_exp1([A|B],Exp) -> cond( Exp :== A,
+			    rm_exp1(B,Exp),
+			    [A|rm_exp1(B,Exp)]
+			  ).
+rm_exp1([],Exp) -> [].
+	
+%%% expanding
+
+composed_expansion(A,B,(Exp,Type),file => File,line => Line) :-
+	( Exp :== [],!,
+	  B = [A]
+	;
+	  cond( Type :== @,
+		Clauses = [A],
+		Clauses = [root_sort(Type) & strip(A)]
+	      ),
+	  apply_expanders(Exp,Clauses,B,
+			  file => File, line => Line)
+	).
+
+apply_expanders([Exp|Exps],In,Out,
+		file => File, line => Line) :-
+	!,
+	apply_expander(In,Exp,
+		       in_clauses => Inter,out_clauses => [],
+		       file => File, line => Line),
+	apply_expanders(Exps,Inter,Out,
+			file => File, line => Line).
+apply_expanders([],Clauses,Clauses).
+
+
+apply_expander([Cl1|Cls],Expander,
+	       in_clauses => In,out_clauses => Out,
+	       file => File, line => Line) :-
+	!,
+	copy_term(Expander) & @(Cl1,
+				in_clauses => In,
+				out_clauses => Inter,
+				file => File, line => Line),
+	apply_expander(Cls,Expander,
+		       in_clauses => Inter,
+		       out_clauses => Out,
+		       symbol => Symbol,file => File, line => Line).
+apply_expander([],in_clauses => In,out_clauses => In).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% term_expansion
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+dynamic(term_expansion) ?
+assert(term_expansion),retract(term_expansion) ?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% simple_exp_load
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% simple_exp_load
+%%% a 'simple_load' predicate using read, expanding facts when necessary,
+%%% and writing the expanded version if asked.
+
+simple_exp_load(File) :-
+	OldFile <- root_sort(loading_file),
+	OldLine <- root_sort(line),
+	line <- @,
+	cond( OldFile :== @, OldFile = "?"),
+	loading_file <- File,
+	CM = current_module,
+	open_in(File,StreamIn),
+	cond( expand2file,
+	      open_out(new_suffix(File,".exp"),StreamOut)
+	    ),
+	consulted.File <<- true,
+	load_expanded(StreamIn,StreamOut),
+	set_module(CM),
+	file <- OldFile,
+	line <- OldLine.
+
+load_expanded(StreamIn,StreamOut) :-
+	(
+	    next_rule(Expr,Type,End,line),
+	    ( End,!,
+	      close(StreamIn),
+	      cond( expand2file,
+		    close(StreamOut)
+		  )
+	    ;
+	      cond( Type :== declaration,
+		    process_declaration(Expr,StreamOut),
+		    cond( Type :== query,
+			  process_query(Expr,StreamIn,StreamOut),
+			  (
+			      set_choice(top_load),
+			      write_syntax_error(StreamIn,StreamOut)
+			  )
+			)
+		  ),
+	      fail
+	    )
+	;
+	    load_expanded(StreamIn,StreamOut)
+	).
+
+next_rule(X,Type,Bool,Line) :-
+	read(X,Type,Line),
+	Bool = ( X :=< end_of_file).
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% processing queries
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% proving queries of a file
+
+non_strict(process_query) ?
+process_query(Query,StreamIn,StreamOut) :-
+	(
+%%%	    has_feature(combined_name(Query),expansion_methods_table,M),
+%%%	    M :\== [],!,
+%%%	    process_declaration(Query,StreamOut)
+%%%	;
+	    
+	    retract(( load_query :- @ )),
+	    assert(( load_query :- Query )),
+	    open_in("stdin",_),
+	    
+	    @ = call_once(load_query),
+	    
+	    set_input(StreamIn),
+	    cond( expand2file,
+	        output_query(Query,StreamOut)
+	    ),
+	    fail
+	;
+	    succeed
+	).
+
+dynamic(load_query) ?
+load_query.
+
+
+output_query(Query,StreamOut) :-
+	set_output(StreamOut),
+	cond( Query :== load,
+	      write_canonical(modify_load(Query)),
+	      cond( Query :== import,
+		    write_canonical(modify_import(Query)),
+		    write_canonical(Query)
+		  )
+	    ),
+	write("?"),nl,nl,
+	open_out("stdout",_).
+
+modify_load(X) ->
+	load_exp & strip(X).
+modify_import(X) ->
+	import_exp&strip(X).
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Processing declarations
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%% asserting declarations of a file
+
+process_declaration(Declaration,StreamOut) :-
+	(
+	    term_xpand(Declaration,NewDefs),!,
+	    process_defs(NewDefs,StreamOut)
+	;
+	    nl_err,
+	    write_err("*** Error: "),nl_err,write_err("    "),
+	    writeq_err(Declaration),write_err("."),nl_err,
+	    write_err("    could not be expanded in file """,
+	                   loading_file,""""," near line ",line,"."),
+	    nl_err
+	).
+
+
+term_xpand(A,B) :-
+	(
+	    has_feature(combined_name(A),expansion_methods_table,M),!,
+	    composed_expansion(A,B,M,file => loading_file,line => line),! 
+	;
+	    (
+		clause(( term_expansion(A) :- @ ))
+	    ;
+	        clause(( term_expansion(A) ))
+	    ),!,
+	    term_expansion(A,B,
+			   file => loading_file,
+			   line => line),!
+	;
+	    A = B
+	).
+
+
+process_defs(NewDefs,StreamOut) :-
+	(
+	    expand2file,
+	    set_output(StreamOut),
+	    cond( NewDefs :=< list,
+		  maprel(write_def, NewDefs),
+		  write_def(NewDefs)
+		),
+	    open_out("stdout",_),
+	    fail
+	;
+	    assert_rules,
+	    cond( NewDefs :=< list,
+		  maprel(assert_def, NewDefs),
+		  assert_def(NewDefs)
+		),
+	    fail
+	;
+	    succeed
+	).
+
+assert_def(X) :-
+	cond( Bool:(consulted.loading_file),
+	      cond( X :== (->),
+		    Bool.current_module.functions.(X.1) <<- true,
+		    cond( X :== (:-),
+			  Bool.current_module.preds.(X.1) <<- true,
+			  cond( X :== (<|) or X :== (::) or X :== (:=),
+				succeed,
+				Bool.current_module.preds.X <<- true 
+			      )
+			)
+		  )
+	    ),
+	assert(X).
+
+write_def(X) :-
+	write_canonical(X),
+	write("."),
+	nl,nl.
+
+
+
+%%% writing syntax errors
+
+write_syntax_error(StreamIn,StreamOut) :-
+	close(StreamIn),
+	cond( expand2file,
+	    close(StreamOut)
+	),
+	fail.	
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% load options
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% setting options
+
+persistent(assert_rules)?   %% will expanded rules be asserted ?
+assert_rules <<- false ?    
+
+persistent(expand2file) ?   %% will expanded rules be written in a file ?
+expand2file <<- false ?
+
+
+%%% load_option is defined in built_ins.lf. It is used to decide whether term
+%%% expansion is used or not.
+
+expand_load(Assert,Expand2File) :-
+	cond( var(Assert),
+	      Assert = copy_term(assert_rules),
+	      (
+		  Assert :< bool,
+		  assert_rules <<- Assert
+	      )
+	    ),
+	cond( var(Expand2File),
+	      Expand2File = copy_term(expand2file),
+	      (
+		  Expand2File :< bool,
+		  expand2file <<- Expand2File
+	      )
+	    ),
+	load_option <<- assert_rules or expand2file. 
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Loading expanded files
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+non_strict(load_exp)?
+X:load_exp :-
+	CM = current_module,
+	F = features(X),
+	(
+	    loading,!,
+	    load_exp_2(F,X)
+	;
+	    loading <<- true,
+	    top_load <<- get_choice,
+	    load_exp_2(F,X),!,loading <<- false
+	;
+	    open_out("stdout",_),
+	    open_in("stdin",_),
+	    set_module(CM),
+	    loading <<- false,
+	    fail
+	).
+
+load_exp_2([F|L],X) :-
+	(
+	    find_file(new_suffix(X.F,".exp"),CF),!,
+	    (
+		has_feature(CF,consulted,Bool),!,
+		quiet_write_err("*** File """,CF,""" is already loaded.")
+	    ;
+		consulted.CF <<- false,
+		quiet_write_err("*** Loading File """,CF,""""),
+		simple_load(CF)
+	    ),
+	    load_exp_2(L,X)
+	;
+	    set_choice(top_load),fail
+	).
+load_exp_2([]).
+
+X:import_exp :-
+	load_exp&strip(X),
+	open&strip(X).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% utilities
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+new_suffix(F,S) -> strcon(prefix(F),S).
+
+prefix(F) -> prefix2(F,1,strlen(F)).
+ 
+
+prefix2(F,N,Length) ->
+	cond(asc(substr(F,N,1)) =:= asc("."),
+	     substr(F,1,N-1),
+	     cond( N =:= Length,
+	         F,
+		 prefix2(F,N+1,Length)
+	     )
+	 ).
+
+warn :- quiet,!.
+X:warn :-
+	write_err("*** Warning: "),
+	write_err&strip(X),
+	nl_err.
+
+quiet_write_err :- quiet,!.
+C:quiet_write_err :-
+	write_err&strip(C),
+	nl_err.

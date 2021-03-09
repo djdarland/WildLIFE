@@ -1,0 +1,13 @@
+a(X), assert(b->X)?
+
+X=1+2, assert(c->X)?
+
+A=X:(1+2), assert(d->X)?
+
+listing(a,b,c,d)?
+sc(X,Y) :- assert(X->Y).
+sc(str2psi(strcon("a","1")),t(X:(1024*1024)*X,Y*Y:(256*256)))?
+.
+listing(sc,a1)?
+write(X:a1.1/X.2)?
+.

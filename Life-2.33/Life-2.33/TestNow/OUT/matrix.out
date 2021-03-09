@@ -1,0 +1,15 @@
+
+*** Yes
+> > edge(column => 0,row => 0)
+3
+
+*** Yes
+> edge(column => 1,row => 0)
+3
+
+*** Yes
+> edge(column => 0,row => 1)
+3
+
+*** Yes
+> 

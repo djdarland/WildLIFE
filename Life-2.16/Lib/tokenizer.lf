@@ -1,0 +1,649 @@
+%	$Id: tokenizer.lf,v 1.2 1994/12/09 00:26:37 duchier Exp $	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%                          TOKENIZER FOR LIFE
+%                             (in wild_life)
+%
+% This file contains a complete tokenizer for Life programs. The obtained
+% tokens are used as inputs by the life parser in life (see parser.lf)
+%
+% Tokens are of the following types:
+%    - variable(X) where X is the name of the variable; 
+%    - construct(X) represents a constructor X. 
+%      The type of a constructor is a subsort of construct: numb, chaine, or
+%      atom. X is the "value" of the atom (string, number, or unevaluated atom)
+%    - any syntactic object like "[" or "?", or defined by syntact_object(X)
+% 
+% The dot may be tokenized in three different ways, depending on the context in
+% which it appears:
+%   - It is not returned as a token if it occurs inside a floating point
+%     number;
+%   - It is returned as a syntactic object "." if it is followed by a void
+%     character (tab, nl, space, or end_of_file)
+%   - it is returned as atom(".") otherwise.
+%
+% The tokenizer is written as an attribute grammar, using the grammar
+% translator. It reads two characters in advance.
+%
+% Use of this file:
+%      tokenize(Filename) ? 
+% reads in  the file Filename and writes the obtained tokens in the file
+% Filename_toks. 
+%    
+% All the necessary files are automatically loaded if they are in the same
+% directory.  
+%
+%
+% Author: Bruno Dumant
+%
+% Copyright 1992 Digital Equipment Corporation
+% All Rights Reserved
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+module("tokenizer") ?
+
+public( atom,construct,numb,chaine,syntact_object,variable,
+	tokenize,first_token,rest_token,next_token,
+	rest_chars) ?
+
+
+%%% load utilities
+
+import("accumulators") ?
+
+%%% set the right function for handling terminals in the grammar.
+
+set_C( token_C) ?
+
+
+%%% changed for efficiency
+
+acc_info(dcg,Term, Xs, Ys, acc_pred => 'C'(Term,false,Xs,Ys),
+	 in_name => 0, out_name => rest)?
+
+
+token_C([],true,Xs,Ys) -> succeed | Xs = Ys.
+token_C([],false,Xs,Ys) -> Xs = Ys.
+
+token_C([A],true,Xs,Ys) ->  (`evalin(D) = Ys) | Xs = [A|D].
+token_C([A],false,Xs,Ys) -> (  Xs = [A|D], `evalin(D) = Ys ).
+
+%%% Types.
+
+non_strict(atom) ?
+atom <| construct.
+numb <| construct.
+chaine <| construct.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Grammar of the tokenizer.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Main Predicates
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+token(0 => []) :- !, fail.
+token(0 => W:[A|B], T, rest => R) :-
+	(
+	    A >= 97 and A =< 122,!,
+	    non_quoted_atom(SA,0 => W,rest => R),
+	    cond(  
+	            is_syntactic(SA),
+		    T = SA,
+		    ( U = str2psi(SA,current_module), T = atom(U))
+		)
+	;
+	    A >= 65 and A=< 90,!,
+	    variable(V, 0 => W,rest => R),
+	    T = variable(str2psi(V))
+	;
+	    cond(   A >= 48 and A =< 57,
+	            ( 
+			number(N,0 => W,rest => R),
+			T = numb(N)
+		    ),
+		    str2psi(strcon("tk",int2str(A)))
+		           & @(T,0 => W,rest  => R)
+		)
+	).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% First Character
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% variables
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+tk95(T) -->                                      % variables starting with _
+	[_],
+	var_chars(Y), 
+	{   
+            (
+		Y $== "",!,
+		T = atom(@)                     % _ is @
+	    )                     
+	;
+	    T = variable(str2psi(strcon("_",Y)))
+	} .                  
+
+variable(X) -->                                  % variables starting with
+	[Y],                                     % a capital letter
+	var_chars(Z), 
+	{ X = strcon(chr(Y),Z) } .
+
+var_chars(Z) -->
+	simple_atom_chars(Y),
+	(
+	    primes(P),!,                         % variables may end with '
+	    { Z = strcon(Y,P) }
+	;
+	    { Z = Y }
+	).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% syntactic objects
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+tk40( "(") --> [_] .
+tk41( ")") --> [_] .
+tk63( "?") --> [_] .
+tk123( "{") --> [_] .
+tk125( "}") --> [_] .
+
+
+%%% "." is a syntactic dot, or the special operator ".": the distinction is
+%%% done thanks to the following character.
+
+tk46( ".",0 => [46])     -->                             %%% end of file
+	[_] , ! .
+%%%tk46( T,0 => [46,K|L]) -->                  % . is followed by space, tab,
+%%%					       % percent or newline.
+%%%	{ cond(   has_feature(K,void_table),
+%%%                  T = ".",
+%%%		  T = atom(".")
+%%%	      )
+%%%	},
+%%%	[_] .
+
+tk46( T,0 => [46,K|L]) -->
+	(   has_feature(K,void_table),!,
+	    { T = "." },
+	    [_]
+	;
+	    tk46bis(T)
+	).
+
+tk46bis(T) -->
+	[_],
+	op_atom_chars(Z),
+	{  
+            X = strcon(".",Z),
+	    ( is_syntactic(X),!,
+	      T = X
+	    ;
+	      U = str2psi(X,current_module),
+	      T = atom(U)
+	    )
+	} .
+
+tk91(T) --> 
+	[_],
+	( 
+	    [124],!,
+	    (
+		[93],!, { T = "[|]"}
+	    ;
+	        {T = "[|"}
+	    )
+	;
+	    {T = "["}
+	) .
+    
+tk93( "]") --> [_] .
+
+%% special case: "|]"
+
+tk124(T) -->
+	[_],
+	(
+	    [93],!, { T = "|]"}
+	;
+	    op_atom_chars(Z),
+	    {  
+	        X = strcon("|",Z),
+		cond(   is_syntactic(X),
+		        T = X,
+			( U = str2psi(X,current_module), T = atom(U))
+		    )
+	    } 
+	) . 
+	    
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% constructors
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%% simple atoms
+       
+non_quoted_atom(X) --> 
+	[Y], 
+	simple_atom_chars(Z), 
+	{ X = strcon(chr(Y),Z) } .
+
+%%% quoted atoms
+
+tk39(T) --> 
+	[_],
+        quoted_atom_end(X),
+	{  cond(   is_syntactic(X),
+	           T = X,
+		   ( U = str2psi(X,current_module), T = atom(U) )
+	       )
+	} .
+
+
+%%% Numbers: it is necessary to read two characters in advance.
+
+number(X, 0 => W, rest => R) :-
+	digits( V1, 0 => W, rest => R1),
+	(
+	    R1 = [46,D|R2], 
+	    digits(0 => [D|R2],V2,length => L2,rest => R3), 
+	    R4 = evalin(R3),
+	    Vint = V1 + V2 * 10^(-L2),
+	    !
+	;
+	    Vint = V1,
+	    R4 = R1
+
+	),
+	(
+	    R4 = [{101;69}|R5],!,    %% e or E
+	    exponent(E,0 => evalin(R5),rest=> R),
+	    X = Vint * 10^(E)
+	;
+	    X = Vint, R4 = R
+	).
+
+
+%%% Strings
+
+tk34(chaine(X)) --> 
+	[_],
+        char_chaine_end(X) .
+
+%%% op_atoms
+
+gen_op_char_ass_pred_def(Char) :-
+	S = chr(Char),
+	str2psi(strcon("tk",int2str(Char))) = PredName,
+	Head = PredName & @(T),
+	(
+	    Head --> 
+	         [_],
+		 op_atom_chars(Z),
+		 {  
+		     X = strcon(S,Z),
+		     cond(   is_syntactic(X),
+		             T = X,
+			     ( U = str2psi(X,current_module), T = atom(U))
+			 )
+		 } 
+	).
+	
+maprel(gen_op_char_ass_pred_def,
+       [33,35,36,37,38,42,43,45,47,58,60,61,62,92,94,126]) ?
+
+
+%%% special cases: @ , ; `
+
+tk64( atom(@)) --> [_] .
+tk96( atom(`)) --> [_] .
+tk44( atom(,)) --> [_] .    
+tk59( atom(;)) --> [_] .
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Other Characters
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%% void chars
+
+void_chars -->                                  % space, tab, new line
+	[{9;10;32}],!,
+	void_chars .   
+void_chars -->                                  % comments
+	[37],!, 
+	comment_chars, 
+	void_chars .
+void_chars -->                                  % nested comments
+	nested_comments,
+	void_chars .
+void_chars --> [] .
+
+comment_chars --> [10], ! .                     % a comment ends with a nl.
+comment_chars --> [X],!, comment_chars .
+comment_chars --> [] .                          % nothing left to read
+
+
+%%% nested_comments
+
+nested_comments( 0 => [47,42|_]) -->
+	[_],[_],
+	end_nested_comments .
+
+end_nested_comments( 0 => [42,47|_]) -->
+	    [_],[_],! .
+
+end_nested_comments -->
+	(
+	    nested_comments
+	;
+	    [_]
+	),
+	end_nested_comments .
+
+%%% simple atom characters
+
+simple_atom_chars(Z) --> 
+	simple_atom_char(X), !,
+	simple_atom_chars(Y), 
+	{ Z = strcon(X,Y)} .
+simple_atom_chars("") --> [] .
+
+
+simple_atom_char(X, 0 => [Y|R1], rest => R2) :- 
+%%	Y >= 48 and Y =< 57        % chiffre
+%%     or Y >= 65 and Y =< 90        % majuscule
+%%     or Y =:= 95                   % underscore
+%%     or Y >= 97 and Y =< 122,      % minuscule 
+%% 	R2 = evalin(R1),
+%% 	X = chr(Y).
+        has_feature(Y,simple_atom_table,X),
+	R2 = evalin(R1).
+
+at_least_1_simple_atom_char(Z) -->
+	simple_atom_char(X), !,
+	simple_atom_chars(Y), 
+	{ Z = strcon(X,Y) } .
+
+%%% primes
+
+primes(P) -->
+	[39],
+	(
+	    primes(Q), {P = strcon("'",Q), !}
+	;
+	    {P = "'"}
+	). 
+
+%%% quoted atoms
+
+quoted_atom_end(X) --> 
+	[39], !,
+	( 
+	    [39], !,quoted_atom_end(Y), X = strcon("'",Y) 
+	; 
+	    { X = "" }
+	) .
+
+quoted_atom_end(X) --> 
+	any_char(Y),
+	quoted_atom_end(Z),
+	{  X = strcon(Y,Z)} .
+
+
+%%% numbers
+
+digits(V, length=>L) --> 
+	digit( V1), 
+	( digits(V2,length => L2),!,
+	  { L = L2+1, V = V1*10^L2 + V2} ;
+          { V = V1, L = 1}) .
+
+digit(0 => [48+N|R], N, rest => Rest)  :-
+	N =< 9 and N >= 0,
+	Rest = evalin(R).
+
+exponent(V) --> sign(S), digits(V1), {!, V = S*V1} .
+
+sign(1) --> [] .
+sign(-1) --> [45], ! .
+sign(1) --> [43] .
+
+
+%%% strings 
+
+char_chaine_end(X) --> 
+	[34], !,
+	( [34], !,char_chaine_end(Y), {X = strcon("""",Y)} ; 
+          { X = "" }) .
+char_chaine_end(X) --> 
+	any_char(Y),
+	char_chaine_end(Z),
+	{ X = strcon(Y,Z)} .
+
+
+%%% characters for "operators"
+
+op_atom_char(X, 0=> [Y|R1], rest => R2) :- 
+	has_feature(Y,op_chars_table,X),
+	R2 = evalin(R1).
+
+op_atom_chars(X) --> 
+	op_atom_char(Y),!, 
+	op_atom_chars(Z),
+	{ X = strcon(Y,Z)} .
+op_atom_chars("") -->
+	[] .
+
+
+%%% any character
+
+any_char(Y) -->
+	[X], { Y = chr(X) } .
+
+%
+% reset C function
+%
+
+reset_C ?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% characters tables
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+gen_char_table(Table,[A|B]) :-
+	!,
+	Table.A <<- chr(A),
+	gen_char_table(Table,B).
+gen_char_table.
+
+persistent(void_table) ?
+gen_char_table(void_table,[9,10,32,37]) ?
+
+persistent(simple_atom_table) ?
+gen_char_table(simple_atom_table,
+          [48,49,50,51,52,53,54,55,56,57,65,66,67,68,69,70,
+	   71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,
+	   89,90,95,97,98,99,100,101,102,103,104,105,106,107,
+	   108,109,110,111,112,113,114,115,116,117,118,119,120,121,122]) ?
+
+persistent(op_chars_table) ?
+gen_char_table(op_chars_table,[33,35,36,37,38,42,43,45,46,47,
+	                       58,60,61,62,92,94,124,126]) ?
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  definition of new syntactic objects
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+is_syntactic(X) -> has_feature(X,syntact_objects_table).
+
+persistent(syntact_objects_table) ?
+
+syntact_object(X) :-
+	is_value(X),!,
+	nl_err,
+	write_err(
+	    "*** Error: numbers or strings cannot be syntactic objects."),
+	nl_err
+    ;
+	syntact_objects_table.X = true.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% char handler
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+persistent(read_tok) ?
+read_tok <<- false ?
+persistent(rest_chars) ?
+rest_chars <<- [] ?
+persistent(rest_token) ?
+rest_token <<- none ?
+
+next_char -> 
+	L 
+    |   
+        get(X),
+	cond( X :=< end_of_file , 
+	      L=[] ,
+              L = [X|T] ),
+        T = `next_char.
+
+next_token -> L |
+         (
+ 	     cond( R:copy_term(rest_chars) = [A,B],
+ 		   Chars = [A,B|`next_char],
+		   Chars = R ),
+             call_once(read_new_token(Tok, Chars)) = TT,
+	     (
+		 TT :== false, !, fail 
+	     ; 
+		 Tok :== none, !,
+		 L = []
+	     ;
+	         rest_token <<- `Tok,
+		 fail 
+	     )
+	 ;
+	     L = [copy_term(rest_token)|`next_token]
+	 ).
+
+
+
+first_token ->
+	L
+    |   
+        FC = next_char,
+        NC = evalin(FC),                   %% 2 characters must be read
+        read_new_token(Tok,NC),
+	cond( Tok :== none,
+	      L = [],
+	      L = [Tok|T]),
+	T = `next_token.
+
+
+read_new_token( Tok, X) :- 
+	void_chars(0 => X, rest => R1),!,
+	(
+	    R1 = [], !, Tok = none
+	;
+	    token( 0 => R1, Tok, rest => R2),
+	    ( 
+		R2 = [A,B|R],!,
+		rest_chars <<- [A,B]
+	    ;
+		rest_chars <<- R2
+	    )
+	).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Interface Predicates
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+tokens(true,X,S1) :-
+	read_tok <<- false,
+	void_chars(0 => X, rest => R1),!,
+	(
+	    R1 = [], !,
+	    open_out("stdout",S),
+	    nl,nl,
+	    write("*** File '",S1.input_file_name,"' tokenized"),
+	    nl
+	;
+	    (  
+		token( 0 => R1, T, rest => R2),
+		nl,writeq(T),
+		read_tok <<- true,
+		cond( R2 = [A,B|_],
+		      rest_chars <<- [A,B],
+		      rest_chars <<- R2),
+		fail
+	    ;
+	        cond( R:copy_term(rest_chars) = [A,B],
+ 		      Chars = [A,B|`next_char],
+		      Chars = R ),
+		tokens(read_tok,Chars,S1)
+	    )
+	).
+tokens(false,_,S1) :- 
+	open_out("stdout",S),
+	nl_err,nl_err,
+	write_err("*** Token error near line ",S1.line_count,
+              " in file '",S1.input_file_name,"'"),
+	nl_err.
+
+tokenize(File:string) :- 
+	open_in(File,S1),
+	open_out(strcon(File,"_toks"),S2),
+	FC = next_char,
+	NC = evalin(FC),
+	tokens(true,NC,S1),
+	close(S1),
+	close(S2).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,5 @@
+global(warfare)?
+warfare=34?
+write(warfare)?
+.
+write(warfare)?

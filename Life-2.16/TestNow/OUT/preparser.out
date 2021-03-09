@@ -1,0 +1,37 @@
+> > > 
+
+*** TESTING THE TOKENIZER ***
+*** Yes
+> > 
+true
+*** Yes
+V = 342.89.
+--1> 
+*** No
+> |    |    |    
+false
+*** Yes
+V = @.
+--1> 
+*** No
+> |    |    |    |    |    
+false
+*** Yes
+V = @.
+--1> 
+*** No
+> 
+false
+@
+*** Yes
+L = @.
+--1> 
+*** No
+> 
+
+*** TESTING THE EXPRESSIONS  ***
+*** Yes
+> > |    |    
+
+*** No
+> 

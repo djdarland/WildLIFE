@@ -1,0 +1,43 @@
+module("phew")?
+private_feature(view)?
+public(p)?
+public(q)?
+
+p(X) :- X.view=you_cant_see_me.
+
+q(X) :- write("right to the horizon here: "),nl,
+	write("	",features(X)),nl,
+	write("	",feature_values(X)),nl,
+	(write("	",X.view),nl,fail;succeed).
+
+
+
+module("you")?
+open("phew")?
+public(r)?
+r(X) :- X.view=look_at_the_C, X.joke=this_isn_t_funny.
+
+
+
+module("me")?
+open("phew")?
+open("you")?
+public(go)?
+
+
+s(X) :- write("limited outlook here: "),nl,
+	write("	",features(X)),nl,
+	write("	",feature_values(X)),nl,
+	write("	",X.view),nl.
+
+
+show(X) :- nl,nl,write("term: ",X),nl,s(X),q(X).
+
+
+go :-
+	X=this(view=>@(it_s_blue),charley=>brown,one,two,three),
+	show(X),
+	r(X),
+	show(X),
+	p(X),
+	show(X).

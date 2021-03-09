@@ -1,0 +1,5 @@
+
+listloop([]) :- ! .
+listloop([A|L]) :- listing(A), listloop(L).
+
+listall :- listloop(children(@)).

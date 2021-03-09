@@ -1,0 +1,386 @@
+
+Type 'profile_help ?' to get some help about the profiler
+
+
+*** Yes
+> > > > > > > > > Profile : Added profiling code to predicate 'verif' at goal level
+Profile : Added profiling code to predicate 'app' at goal level
+Profile : Added profiling code to predicate 'testapp' at goal level
+Profile : Added profiling code to function 'f' at goal level
+Profile : Added profiling code to function 'g' at goal level
+Profile : Added profiling code to function 'h' at goal level
+
+*** Yes
+--1> 
+*** No
+> > > > > testapp
+[]
+[1,2,3]
+[1]
+[2,3]
+[1,2]
+[3]
+[1,2,3]
+[]
+failure !
+
+*** No
+> > 
+Profiling statistics for predicates :
+-----------------------------------
+
+  *Tries*    Entries    Success   %Tot.fail %Expl.fail   predicates
+     4         ---        10        100          0       app
+     1         ---         0        100        100       testapp
+
+  *Tries*    Entries    Success   %Tot.fail %Expl.fail   predicates
+     4          4          4        100          0       app#1
+     4          3          6        100          0       app#2
+     1          1          0        100        100       testapp#1
+     1          1          0        100        100       testapp#2
+     0          0          0         ---        ---      testapp#3
+
+   Tries    *Entries*   Success   %Tot.fail %Expl.fail   predicates
+     4          4          4        100          0       app#1
+     4          3          6        100          0       app#2
+     1          1          0        100        100       testapp#1
+     1          1          0        100        100       testapp#2
+     0          0          0         ---        ---      testapp#3
+
+   Tries     Entries   *Success*  %Tot.fail %Expl.fail   predicates
+     4          3          6        100          0       app#2
+     4          4          4        100          0       app#1
+     1          1          0        100        100       testapp#1
+     1          1          0        100        100       testapp#2
+     0          0          0         ---        ---      testapp#3
+
+
+*** Yes
+> > 
+*** Yes
+A = [], B = [1,2,3].
+--1> 
+*** Yes
+A = [1], B = [2,3].
+--1> 
+*** Yes
+A = [1,2], B = [3].
+--1> 
+*** Yes
+A = [1,2,3], B = [].
+--1> 
+*** No
+> > 
+*** No
+> > 
+Profiling statistics for predicates :
+-----------------------------------
+
+  *Tries*    Entries    Success   %Tot.fail %Expl.fail   predicates
+     9         ---        20        100        11.11     app
+
+  *Tries*    Entries    Success   %Tot.fail %Expl.fail   predicates
+     9          8          8        100          0       app#1
+     9          6         12        100          0       app#2
+
+   Tries    *Entries*   Success   %Tot.fail %Expl.fail   predicates
+     9          8          8        100          0       app#1
+     9          6         12        100          0       app#2
+
+   Tries     Entries   *Success*  %Tot.fail %Expl.fail   predicates
+     9          6         12        100          0       app#2
+     9          8          8        100          0       app#1
+
+
+*** Yes
+> > 
+*** Yes
+> > that's true
+
+*** Yes
+--1> 
+*** No
+> 
+*** Yes
+--1> 
+*** No
+> 
+Profiling statistics for predicates :
+-----------------------------------
+
+Profile statistics for predicate 'verif' :
+----------------------------------------
++ Number of tries : 2
++ Number of explicit failures : 0
++ Total number of failures : 0
++ Number of successes : 2
++ Success rate : 100 %
+
+CLAUSE #1 :
+----------------------------------------
++ Number of tries : 2
++ Number of explicit failures : 0
++ Total number of failures : 0
++ Number of head unifications : 2
++ Number of successes : 2
++ Success rate : 100 %
+
+Statistics for the goals :
+----------------------------------------
+| G#1 <CONDITION> Tries: 2, Successes: 2
+| <CONDITION SATISFIED> Tries: 1, Successes: 1
+| | G#1 <CALL> Tries: 1, Successes: 1
+| | G#2 <CALL> Tries: 1, Successes: 1
+| <CONDITION NOT SATISFIED> Tries: 0, Successes: 0
+| | G#1 <CALL> Tries: 0, Successes: 0
+| | G#2 <CALL> Tries: 0, Successes: 0
+
+
+
+**************************************************
+
+
+
+
+*** Yes
+> > > > > > 
+*** No
+> > 
+*** Yes
+X = "+rien+".
+--1> 
+*** No
+> 
+*** No
+> > 
+*** No
+> > 
+*** Yes
+X = "zero".
+--1> 
+*** No
+> 
+*** Yes
+X = "<> 0".
+--1> 
+*** No
+> 
+*** No
+> > 
+Profiling statistics for functions :
+----------------------------------
+
+  *Tries*     Match      %Eval    Successes  %Tot.fail   functions
+     4         ---        ---         2         50       g
+     3         ---        ---         1        66.66     f
+
+   Tries     *Match*     %Eval    Successes  %Tot.fail   functions
+    ---         1        100          1          0       f#1
+    ---         1        100          0        100       f#2
+    ---         2        100          2          0       g#2
+    ---         1          0          0        100       g#1
+
+
+*** Yes
+> > 
+*** Yes
+X = 4.
+--1> 
+*** No
+> 
+*** Yes
+X = "rien+++".
+--1> 
+*** No
+> 
+*** No
+> > 
+Profiling statistics for functions :
+----------------------------------
+
+  *Tries*     Match      %Eval    Successes  %Tot.fail   functions
+     4         ---        ---         2         50       g
+     3         ---        ---         1        66.66     f
+     3         ---        ---         2        33.33     h
+
+   Tries     *Match*     %Eval    Successes  %Tot.fail   functions
+    ---         1        100          1          0       f#1
+    ---         1        100          0        100       f#2
+    ---         2        100          2          0       g#2
+    ---         1          0          0        100       g#1
+    ---         1        100          1          0       h#1
+    ---         1        100          1          0       h#2
+
+
+*** Yes
+> > > > > > Profile : Added profiling code to predicate 'app' at clause level
+
+*** Yes
+--1> 
+*** No
+> 
+*** No
+> > 
+*** Yes
+A = [1,2,3].
+--1> 
+*** No
+> 
+Profiling statistics for predicates :
+-----------------------------------
+
+  *Tries*    Entries    Success   %Tot.fail %Expl.fail   predicates
+     4         ---         3         25         25       app
+
+  *Tries*    Entries    Success   %Tot.fail %Expl.fail   predicates
+     4          1          1          0          0       app#1
+     3          2          2          0          0       app#2
+
+   Tries    *Entries*   Success   %Tot.fail %Expl.fail   predicates
+     3          2          2          0          0       app#2
+     4          1          1          0          0       app#1
+
+   Tries     Entries   *Success*  %Tot.fail %Expl.fail   predicates
+     3          2          2          0          0       app#2
+     4          1          1          0          0       app#1
+
+
+*** Yes
+> > > > > > Profile : Added profiling code to predicate 'q' at clause level
+
+*** Yes
+--1> 
+*** No
+> q : first try
+q : second try
+
+*** Yes
+--1> q : that's all
+
+*** No
+> > > 
+Profiling statistics for predicates :
+-----------------------------------
+
+  *Tries*    Entries    Success   %Tot.fail %Expl.fail   predicates
+     1         ---         1        100        100       q
+
+  *Tries*    Entries    Success   %Tot.fail %Expl.fail   predicates
+     1          1          1        100          0       q#1
+     1          1          0        100        100       q#2
+     0          0          0         ---        ---      q#3
+
+   Tries    *Entries*   Success   %Tot.fail %Expl.fail   predicates
+     1          1          1        100          0       q#1
+     1          1          0        100        100       q#2
+     0          0          0         ---        ---      q#3
+
+   Tries     Entries   *Success*  %Tot.fail %Expl.fail   predicates
+     1          1          1        100          0       q#1
+     1          1          0        100        100       q#2
+     0          0          0         ---        ---      q#3
+
+
+*** Yes
+> > 
+*** Yes
+> > 
+Profiling statistics for predicates :
+-----------------------------------
+
+Profile statistics for predicate 'q' :
+----------------------------------------
++ Number of tries : 0
++ Number of explicit failures : 0
++ Total number of failures : 0
++ Number of successes : 0
++ Success rate : --- %
+
+CLAUSE #1 :
+----------------------------------------
++ Number of tries : 0
++ Number of explicit failures : 0
++ Total number of failures : 0
++ Number of head unifications : 0
++ Number of successes : 0
++ Success rate : --- %
+
+CLAUSE #2 :
+----------------------------------------
++ Number of tries : 0
++ Number of explicit failures : 0
++ Total number of failures : 0
++ Number of head unifications : 0
++ Number of successes : 0
++ Success rate : --- %
+
+CLAUSE #3 :
+----------------------------------------
++ Number of tries : 0
++ Number of explicit failures : 0
++ Total number of failures : 0
++ Number of head unifications : 0
++ Number of successes : 0
++ Success rate : --- %
+
+
+**************************************************
+
+
+
+
+*** Yes
+> > q : first try
+q : second try
+
+*** Yes
+--1> q : that's all
+
+*** No
+> > > 
+Profiling statistics for predicates :
+-----------------------------------
+
+Profile statistics for predicate 'q' :
+----------------------------------------
++ Number of tries : 1
++ Number of explicit failures : 1
++ Total number of failures : 1
++ Number of successes : 1
++ Success rate : 100 %
+
+CLAUSE #1 :
+----------------------------------------
++ Number of tries : 1
++ Number of explicit failures : 0
++ Total number of failures : 1
++ Number of head unifications : 1
++ Number of successes : 1
++ Success rate : 100 %
+
+CLAUSE #2 :
+----------------------------------------
++ Number of tries : 1
++ Number of explicit failures : 1
++ Total number of failures : 1
++ Number of head unifications : 1
++ Number of successes : 0
++ Success rate : 0 %
+
+CLAUSE #3 :
+----------------------------------------
++ Number of tries : 0
++ Number of explicit failures : 0
++ Total number of failures : 0
++ Number of head unifications : 0
++ Number of successes : 0
++ Success rate : --- %
+
+
+**************************************************
+
+
+
+
+*** Yes
+> > > > > > > > > > > > > 

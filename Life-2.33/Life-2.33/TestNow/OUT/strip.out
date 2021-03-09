@@ -1,0 +1,75 @@
+
+*** Yes
+> > 
+*** Yes
+A = s(q,w,e).
+--1> 
+*** Yes
+A = s(q,w,e), B = @(q,w,e).
+--1> 
+*** Yes
+A = s(q,w,e,qq), B = @(q,w,e).
+--1> 
+*** No
+A = s(q,w,e), B = @(q,w,e).
+--1> 
+*** Yes
+A = s(q,w,e), B = @(q,w,e,qq).
+--1> 
+*** No
+A = s(q,w,e), B = @(q,w,e).
+--1> > 
+*** Yes
+A = s.
+--1> 
+*** Yes
+A = s, B = @.
+--1> 
+*** Yes
+A = s(qq), B = @.
+--1> 
+*** No
+A = s, B = @.
+--1> 
+*** Yes
+A = s, B = @(qq).
+--1> 
+*** No
+A = s, B = @.
+--1> > 
+*** Yes
+A = s(q,w,e).
+--1> 
+*** Yes
+A = s(q,w,e), B = s(q,w,e).
+--1> 
+*** Yes
+A = s(q,w,e,qq), B = s(q,w,e).
+--1> 
+*** No
+A = s(q,w,e), B = s(q,w,e).
+--1> 
+*** Yes
+A = s(q,w,e), B = s(q,w,e,qq).
+--1> 
+*** No
+A = s(q,w,e), B = s(q,w,e).
+--1> > 
+*** Yes
+A = s.
+--1> 
+*** Yes
+A = s, B = s.
+--1> 
+*** Yes
+A = s(qq), B = s.
+--1> 
+*** No
+A = s, B = s.
+--1> 
+*** Yes
+A = s, B = s(qq).
+--1> 
+*** No
+A = s, B = s.
+--1> > 

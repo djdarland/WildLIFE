@@ -1,0 +1,45 @@
+
+*** Yes
+> > 
+*** Yes
+> > 
+*** Yes
+X = (p :- retbool, inc, assert(X), fail).
+--1> 
+*** No
+> 
+_A: p :-
+        _B: (retbool,
+        inc,
+        assert((_A :-
+        _B)),
+        fail).
+
+*** Yes
+> 
+*** Yes
+> 
+*** Yes
+> 
+_A: p :-
+        _B: (retbool,
+        inc,
+        assert((_A :-
+        _B)),
+        fail).
+p :-
+        fail.
+
+*** Yes
+> 
+*** Yes
+> 
+*** No
+> 
+% 'p' is a user-defined predicate with an empty definition.
+
+dynamic(count)?
+count -> 999.
+
+*** Yes
+> 

@@ -1,0 +1,843 @@
+
+%
+% This operator is syntactic sugar for project
+%
+
+% Needed in map, used later on:
+my_project(A,B) -> B.A.
+
+
+%
+% setq for predicates
+%
+setPred(A,B) :-
+        C = eval(B),
+        retract(A),
+        !,
+        U=root_sort(A),
+        U=@(C),
+        assert(U).
+setPred(A,B) :-
+        dynamic(A),
+        C = eval(B),
+        U=A,
+        U=@(C),
+        assert(U).
+
+non_strict(setPred)?
+
+%
+% set new fact
+%
+
+non_strict(set_new_fact) ?
+set_new_fact(F) :-
+	G = root_sort(F),
+	dynamic(G),
+	assert(F).
+
+non_strict(set_fact) ?
+set_fact(F) :-
+	G = root_sort(F),
+	retract((G :- succeed)),
+	assert(F).
+
+%
+%  make a new root from an old one and a suffix
+%
+suffixRoot(P,S:string) -> str2psi(strcon(psi2str(P),S)).
+
+%
+%
+%
+
+map_pred([],P) :- !.
+map_pred([A|B],P) :-
+	fake_copy(P) & @(A),
+	map_pred(B,P).
+%
+%
+%
+
+fake_copy(T) -> root_sort(T)&strip(T).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% List manipulation
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+merge_ad([],L) -> L.
+merge_ad([A|B],C) -> 
+	cond( member_ad(C,A),
+	      merge_ad(B,C),
+	      [A|merge_ad(B,C)]).
+
+no_redundant_ad([]) -> [].
+no_redundant_ad([A|B]) -> 
+	cond( member_ad(B,A),
+	      no_redundant_ad(B),
+	      [A|no_redundant_ad(B)]).
+
+member_ad([],A) -> false.
+member_ad([B|C],A) ->
+	cond( A === B,
+	      true,
+	      member_ad(C,A)).
+
+inter_ad([],L) -> [].
+inter_ad([A|B],C) ->
+	cond( member_ad(C,A),
+	      [A| inter_ad(B,C)],
+	      inter_ad(B,C)).
+
+%
+% diff_list(L1,L2,L3): L3 is L2 \ (L1 inter L2)
+%
+
+diff_list_ad([],L2,L2) :- !.
+diff_list_ad(L1:[A|NewL1],L2,RestL2) :-
+	cond( memberAndRest_ad(A,L2,InterRestL2),
+	      diff_list_ad(NewL1,InterRestL2,RestL2),
+	      diff_list_ad(NewL1,L2,RestL2)).
+
+%
+% memberAndRest(A,List,Rest) returns true if A is a member of List, with Rest
+% containing the other members of List. 
+%
+
+memberAndRest_ad(A,[],Rest) -> false.
+memberAndRest_ad(A,[B|C],Rest) ->
+	cond( A === B,
+	      ( true | Rest = C),
+	      memberAndRest_ad(A,C,OtherRest) | Rest = [B|OtherRest] ).
+
+%
+% suppress_ad(List,Ad) returns a new list with no member at adress Ad
+%
+
+supress_ad([],Ad) -> [].
+suppress_ad([A|B],Ad) ->
+	cond( A === Ad,
+	      suppress_ad(B,Ad),
+	      [A|suppress_ad(B,Ad)]).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% compiler for abstract analyser
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+op(1200,xfy,::--) ?
+non_strict(::--) ?
+op(1200,xf,'..') ?
+non_strict('..') ?
+
+(Lhs '..') :-
+	PName = suffixRoot(Lhs,"_proc"),
+	setPred(PName,proced(global_vars => [],
+	                     actions => [])).
+(Lhs ::-- Rhs) :-
+	abst_head(Lhs,GlobalVars),
+	abst_body(Rhs,GlobalVars,Vars,Actions),
+	PName = suffixRoot(Lhs,"_proc"),
+	PName = @(global_vars => GlobalVars,
+	          actions => Actions),
+	set_new_fact(PName).
+
+
+
+abst_head(Lhs,GlobalVars) :-
+	GlobalVars = map(my_project(2=>Lhs),features(Lhs)).
+
+
+
+non_strict(abst_body) ?
+
+abst_body((A,B),GVars,NGVars,Actions) :-
+	!,
+	abst_body(B,GVars,NGVarsB,ActionsB),
+	abst_body(A,NGVarsB,NGVars,[ActionA]),
+	Actions = [ActionA|ActionsB].
+
+abst_body(A,GVars,NGVars,Actions) :-
+	abst_action(A,GVars,NGVars,ActionA),
+	Actions = [ActionA].
+
+
+non_strict(abst_action) ?
+
+abst_action(A:(X=Y),GVars,NGVars,Action) :-
+	!,
+	Action = unif(X,Y),
+	NGVars = merge_ad( vars_in_term(A),GVars).
+
+abst_action(D:(A;B),GVars,NGVars,ActionD) :-
+	!,
+	abst_body(A,GVars,NGVarsA,ActionsA),
+	abst_body(B,GVars,NGVarsB,ActionsB),
+	NGVars = merge_vars(NGVarsA,NGVarsB),
+	ActionD = disjunc( ActionsA,
+                        ActionsB,
+			global_vars  => inter_ad(vars_in_term(D),GVars)).
+
+abst_action(A,GVars,NGVars,Action) :- 
+	Action = abscall(root_sort(A),map(my_project(2=>A),features(A))),
+	NGVars = merge_ad(vars_in_term(A),GVars).
+
+
+non_strict(vars_in_term) ?
+vars_in_term(X) ->
+	cond( F:features(X) :== [],
+	      cond( root_sort(X) :== @,
+	            [X],
+		    []),
+	      ( vars_in_features(G,X) | G = F)).
+
+non_strict(vars_in_features) ?
+vars_in_features([],X) -> [].
+vars_in_features([F1|Fs],X) -> 
+	Vars
+    |   T = X.F1,
+	Vars = merge_vars(vars_in_term(T), vars_in_features(Fs,X)).
+
+merge_vars(L1,L2) -> merge_ad(L1,no_redundant_ad(L2)).
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%   GENERIC ABSTRACT INTERPRETATION ALGORITHM
+%
+%   main source: 
+%       Experimental Evaluation of a Generic Abstract Interpretation
+%                       algorithm for Prolog
+%       B. Le Charlier and Pascal Van Hentenryck
+%       Tech. Report No CS-91.55  Brown University, DCS
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% LOCAL PREDICATES:
+%
+% solve, solve_call, solve_procedure, solve_goal, solve_goals, solve_alter,
+%        init_solve 
+% extend, extend_node, compare_nodes, adjust, adjust_node, adjust_fathers,
+%         find_node 
+% suspend, un_suspend, not_suspended
+% ext_dp, add_dp, remove_dp, dp_member, not_dp_member
+% set_sat, lub_out
+%
+
+% EXTERNAL PREDICATES (defined w.r.t. an abstract domain and a data structure)
+%
+% 'U', more_gen_than, equ, less_general_than
+% ai_unif
+% extc, restrc, extg, restrg
+%
+op(450,xfy,'U') ?
+op(670,xfy,more_general_than)?
+op(670,xfy,equ)?
+op(670,xfy,less_general_than)?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% GENERIC ABSTRACT INTERPRETATION 
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+solve( BetaIn, PName) :-
+	init_solve(SAT),
+	solve_call( BetaIn, PName, SAT, AT).
+
+
+solve_call( BetaIn, PName, SAT, AbsTuple) :-
+	extend(BetaIn, PName, SAT) = @(SAT,AbsTuple,New),
+	(
+	    not_suspended( AbsTuple) and not_dp_member( AbsTuple),
+	    !,
+	    set_sat(SAT),
+	    repeat,
+	    (
+		ext_dp(AbsTuple2:find_node(BetaIn,PName,SAT2:sat)),
+		suspend(AbsTuple2),
+		solve_procedure( AbsTuple2, SAT2, PName, BetaOut),
+		@(SAT2,Modified,AbsTuple3) = 
+	                 adjust(BetaIn,PName,BetaOut,SAT2),
+		remove_dp(Modified,SAT2),
+		set_sat(SAT2)
+	    ),
+	    dp_member(AbsTuple3),
+	    !,
+	    AbsTuple <- AbsTuple3,
+	    SAT <- SAT2,
+	    un_suspend(AbsTuple);
+	    succeed
+	).
+
+solve_procedure( AbsTuple:node(BetaIn), SAT, PName, BetaOut) :-
+	Proc:proc(PName),
+	BetaExt = extc(Proc,BetaIn),
+	nl,nl,write("enter solve_procedure ",PName," with ",BetaIn),
+	solve_goals( Proc.actions, BetaExt,SAT,PName,BetaIn,NewBetaExt),
+	BetaOut = restrc(Proc,NewBetaExt),
+	nl,nl,write("exit solve_procedure ",PName," with ",BetaOut).
+
+solve_goals([],BetaExt,_,_,_,BetaExt) :- !.
+solve_goals([G1|Gs],BetaExt,SAT,PName,BetaIn,NewBetaExt) :-
+	BetaAux = restrg(G1,BetaExt),
+	solve_goal(G1,BetaAux,SAT,PName,BetaIn,BetaInt),
+	BetaExtInt = extg(G1,BetaExt,BetaInt),
+	solve_goals(Gs,BetaExtInt,SAT,PName,BetaIn,NewBetaExt).
+
+solve_goal(unif(A,B),Beta1,SAT,PName,BetaIn,Beta2) :-
+	!, ai_unif(A,B,Beta1,Beta2).
+
+solve_goal(G:abscall(QName),Beta1,SAT,PName,BetaIn,Beta2) :-
+	!,
+	nl,nl,write("enter solve_call ",QName," with ",Beta1),
+	solve_call( Beta1, QName, SAT, AbsTuple),
+	Beta2 = AbsTuple.2,
+	nl,nl,write("exit solve_call ",QName," with ",Beta2),
+	cond( dp_member(AbsTuple),
+	      add_dp(BetaIn,PName,AbsTuple,SAT)).
+	
+	
+solve_goal(G:disjunc(Alt1,Alt2,global_vars => V),Beta1,SAT,PName,BetaIn,Beta2) :-
+	solve_alter(copy_term(alt(Alt1,global_vars => V)),
+	            Beta1,SAT,PName,BetaIn,Beta3),
+	solve_alter(copy_term(alt(Alt2,global_vars => V)),
+	            Beta1,SAT,PName,BetaIn,Beta4),
+	nl,nl, write("  first  alternative:",Beta3),
+	nl,nl, write("  second alternative:",Beta4),
+	Beta2 = Beta3 'U' Beta4,
+	nl,nl, write("  union             :",Beta2).
+	
+solve_alter(alt([]),Beta1,SAT,PName,BetaIn,bot) :- !.
+solve_alter(Alt:alt(Actions),Beta1,SAT,PName,BetaIn,Beta2) :-
+	nl,nl,write("enter solve_alter with ",Beta1),
+	BetaExt = extc(Alt,Beta1),
+	solve_goals(Actions,BetaExt,SAT,PName,BetaIn,NewBetaExt),
+	Beta2 = restrc(Alt,NewBetaExt),
+	nl,nl,write("exit solve_alter with ",Beta2).
+	
+	
+	
+	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% OPERATIONS ON SATs
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+init_solve(SAT:hasse) :- 
+	setq(sat,SAT).                  % the first argument of state is a
+					% hasse diagram whose features have the
+					% names of the predicates encountered
+					% so far.
+
+%
+% EXTEND
+%
+
+extend( Beta, PName, SAT) ->
+	@(SAT,NewNode,New)
+    |   cond( Top:(SAT.PName) :== @,
+	      (
+		  Top = [AT:node(Beta,bot,
+			         depend_on_me => [],
+				 fathers => [],
+				 sons => [],
+				 stable => false,
+				 suspended => false)],
+		  NewNode = AT,
+		  New = true
+	      ),
+	      extend_top(Top, Beta, NewNode, New)),
+	!.
+
+extend_top( Top, Beta, NewNode, New) :- 
+        compare_nodes( Top, Beta, ENode,[],[],[],
+	               GTNodes,LTNodes,NCNodes),
+	(
+	    ENode :== @,
+	    !,
+	    ( 
+		GTNodes :\== [],
+		!,
+		map_pred( GTNodes, extend_node( 2=>Beta,3=>NewNode,4=>New))
+	    ;
+		(
+		    Top <- [NewNode|NCNodes],
+		    NewNode = node(Beta,lub_out(LTNodes),
+		                   depend_on_me => [],
+		                   fathers => [],
+				   sons => LTNodes,
+				   stable => false,
+				   suspended => false),
+		    New = true,
+		    map_pred(LTNodes,update_ex_top_sons(2=>NewNode))
+		)
+	    )
+	;
+	    (
+		NewNode = ENode,
+		New = false
+	    )
+	).
+
+extend_node(Node, Beta, NewNode, New) :- 
+        compare_nodes( NS:(Node.sons), Beta, ENode,[],[],[],
+	               GTNodes,LTNodes,NCNodes),
+	(
+	    ENode :== @,
+	    !,
+	    ( 
+		GTNodes :\== [],
+		!,
+		map_pred( GTNodes, extend_node( 2=>Beta,3=>NewNode,4=>New))
+	    ;
+		(
+		    NS <- [NewNode|NCNodes],
+		    NewNode = node(Beta,OldOut:{bot;@},
+		                   depend_on_me => [],
+		                   fathers => OldFathers:{[];@},
+				   sons => OldSons:{[];@},
+				   stable => false,
+				   suspended => false),
+		    !,
+		    New = true,
+		    OldSons <- append(OldSons,LTNodes),
+		    OldFathers <- [Node|fake_copy(OldFathers)],
+		    OldOut <- OldOut 'U' lub_out(LTNodes),
+		    map_pred(LTNodes,update_fathers(2=>NewNode,3=>Node))
+		)
+	    )
+	;
+	    (
+		NewNode = ENode,
+		New = false
+	    )
+	).
+
+update_fathers(Node,NewFatherNode,OldFatherNode) :-
+	NF:Node.Fathers <- [NewFatherNode|suppress_ad(NF,OldFatherNode)].
+update_ex_top_sons(Node,FatherNode) :-
+	Node.fathers <- [FatherNode].
+
+% 
+% ADJUST
+%
+
+adjust(BetaIn,PName,BetaOut,SAT) ->
+	@(SAT,Modified,AT)
+    |   adjust_node( AT:find_node(BetaIn,PName,SAT),BetaOut,[],Modified).
+
+
+adjust_node( Node:node(2=>BetaOut), NewBetaOut,L1,L2) :-
+	cond( NewBetaOut more_general_than BetaOut,
+	      ( 
+		  BetaOut <- NewBetaOut,
+		  adjust_fathers(Node.fathers, NewBetaOut,[Node|L1],L2)
+	      ),
+	      L1 = L2 ).
+
+adjust_fathers([],_,L,L) :- !.
+adjust_fathers([P1:node(2=>BetaOut)|Ps],NewBetaOut,L1,L3) :- 
+	adjust_node(P1,BetaOut 'U' NewBetaOut,L1,L2),
+	adjust_fathers(Ps,NewBetaOut,L2,L3).
+
+
+compare_nodes([],_,_,GT,LT,NC,GT,LT,NC) :- !.
+compare_nodes( [N1:node(BetaIn1)|Ns],Beta,E,GT1,LT1,NC1,GT3,LT3,NC3) :-
+	cond( Beta equ BetaIn1,
+	      E = N1,
+	      (
+		  cond( BetaIn1 more_general_than Beta,
+		        (
+			    GT2 = [N1|GT1],
+			    LT2 = LT1,
+			    NC2 = NC1
+			),
+			cond( BetaIn1 less_general_than Beta,
+			      (
+				  GT2 = GT1,
+				  LT2 = [N1|LT1],
+				  NC2 = NC1
+			      ),
+			      (
+				  GT2 = GT1,
+				  LT2 = LT1,
+				  NC2 = [N1|NC1]
+			      ))),
+                  compare_nodes(Ns,Beta,E,GT2,LT2,NC2,GT3,LT3,NC3)
+	      )).
+
+%
+% FIND_NODE
+%
+
+find_node( Beta, PName, SAT) -> find_node_in_list(SAT.PName, Beta).
+
+find_node_in_list([], Beta) -> false.
+find_node_in_list([N1:node(BetaIn1)|Ns],Beta) ->
+	Node
+    |   cond( Beta equ BetaIn1,
+	      Node = N1,
+	      cond( BetaIn1 more_general_than Beta,
+	            Node = find_node_in_list(N1.sons,Beta),
+		    Node = find_node_in_list(Ns,Beta))).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% OPERATIONS ON DEPENDENCIES
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+ext_dp(AbsTuple) :-
+	AbsTuple.stable <- true.
+
+add_dp(BetaIn,PName,AbsTuple,SAT) :-
+	AbsTuple2 = find_node( BetaIn, PName, SAT),
+	ATD:(AbsTuple.depend_on_me) <- [AbsTuple2|fake_copy(ATD)],
+	AbsTuple2.stable <- true.
+
+remove_dp([],SAT) :- !.
+remove_dp([AT1|ATs],SAT) :-
+	map_pred(DP:(AT1.depend_on_me),stabilize),
+	DP <- [],
+	remove_dp(ATs,SAT).
+	
+
+dp_member(node(stable => S)) -> S.
+not_dp_member(node(stable => S)) -> not(S).
+
+stabilize(node(stable => S)) :- S <- false.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% OPERATIONS ON SUSPENDED TUPLES
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+suspend(AbsTuple) :- AbsTuple.suspended <- true.
+un_suspend(AbsTuple) :- AbsTuple.suspended <- false.
+not_suspended(node(suspended => B)) -> not(B).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% MISC
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%
+% LEAST UPPER BOUND OF A LIST OF ELEMENTS
+%
+
+lub_out ([]) -> bot.
+lub_out([node(2 => Beta)|Nodes]) -> lub_out(Nodes) 'U' Beta.
+
+%
+% set_state
+%
+
+set_sat(SAT) :- 
+	retract((sat -> @)),
+	asserta(( sat -> SAT)).
+
+
+%
+% proc
+%
+
+proc(X) -> str2psi(strcon(psi2str(X),"_proc")).
+
+
+any <| free.
+any <| non_var.
+non_var <| ground.
+
+bot -> @.
+
+
+A more_general_than B -> A :< B.
+A less_general_than B -> A :> B.
+A equ B -> A :== B.
+
+% A 'U' B -> root_sort(A)&root_sort(B).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%   SIMPLE DOMAIN FOR THE GENERIC ABSTRACT INTERPRETATION ALGORITHM
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% LATTICE 
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%                    any                    
+%             free        non-var
+%                               ground            
+%                   bottom
+%
+
+any <| free.
+any <| non_var.
+non_var <| ground.
+
+bot -> @.
+
+%
+% OPERATIONS ON THE LATTICE
+%
+
+op( 670 ,xfy, less_general_or_equ ) ?
+op( 670, xfy, more_general_or_equ ) ?
+op( 670, xfy, more_general_list_than ) ?
+op( 670, xfy, less_general_list_than ) ?
+op( 670, xfy, equ_list ) ?
+op( 450, xfy, 'Ulist') ?
+
+X more_general_than Y ->
+	cond( Y :== @,
+	      true,
+	      X more_general_list_than Y ).
+
+
+X less_general_than Y ->
+	cond( Y :== @,
+	      false,
+	      X less_general_list_than Y ).
+
+X equ Y ->
+	cond( Y :== @,
+	      X :== @,
+	      X equ_list Y ).
+
+
+
+
+
+[A|B] more_general_list_than [C|D] ->
+	cond( A :< C,
+	      B more_general_or_equ D,
+	      cond( A :== C,
+	            B more_general_list_than D,
+		    false )).
+
+[] more_general_list_than [] -> false.
+
+
+[A|B] more_general_or_equ [C|D] ->
+	cond( A :=< C,
+	      B more_general_or_equ D,
+	      false ).
+
+[] more_general_or_equ [] -> true.
+
+[A|B] less_general_list_than [C|D] ->
+	cond( A :> C,
+	      B less_general_or_equ D,
+	      cond( A :== C,
+	            B less_general_list_than D,
+		    false )).
+
+
+[] less_general_list_than [] -> false.
+
+[A|B] less_general_or_equ [C|D] ->
+	cond( A :>= C,
+	      B less_general_or_equ D,
+	      false ).
+
+[] less_general_or_equ [] -> true.
+
+[A|B] equ_list [C|D] ->
+	cond( A :== C,
+	      B equ_list D,
+	      false ).
+
+[] equ_list [] -> true.
+	      
+X 'U' Y ->
+	cond( X :== @ or Y :== @,
+	      copy_term(X&Y),
+	      X 'Ulist' Y).
+[] 'Ulist' [] -> [].
+[A|B] 'Ulist' [C|D] -> [root_sort(A)&root_sort(C)| B 'U' D].
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% UNIFICATION
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% hierarchy used for unification
+% 
+
+ground2 <| non_var_false.
+non_var_false <| non_var_true.
+non_var_false <| any2.
+non_var_true <| free2.
+any2 <| free2.
+
+bottom2 <| ground2.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% CORRESPONDENCES BETWEEN THE TWO LATTICES
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+var2pat(@(type=>T)) ->
+	TT
+    |   cond( T :< free2,
+	      cond( T :== any2,
+	            TT = any,
+	            cond( T:< non_var_false,
+			  cond( T:< ground2,
+			        TT = @,
+				TT = ground),
+			  TT = non_var)),
+	      TT = free).
+
+
+pat2var(T) ->
+	@(type=>TT) 
+    |   cond( T:== @,
+	      TT = bottom2,
+	      cond( T :== free,
+                    TT = free2,
+		    cond( T:< ground,
+	                  cond( T:< non_var,
+		                TT = any2,
+				TT = non_var_false ),
+			  TT = ground2))).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  normalisation des variables... avec des coreferences, cela devient
+%  problematique (calcul de point fixe). Pour le moment la normalisation est
+%  correcte mais pas optimale.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% Une bonne normalisation consisterait a ajouter a chaque element un attribut
+% 1 (en decalant les autres arguments) qui represente le type de l'objet. Ce
+% serait fait dans une premiere phase de reecriture du programme.
+
+normalize(X:@(type=>T),parents => P:{[];@}) :-
+	!,
+	cond( T :== bottom2,
+	      bottomize(P),
+	cond( F:features(X)=[type],
+              cond( root_sort(X) :< @,
+	            T = ground2,
+	            T = free2),
+	      (
+		  T = non_var_true,
+		  norm_features(F,T,[X|P],T1),
+		  T = T1
+	      ))).
+
+norm_features([],_,_,ground2) :- !.
+norm_features([type|Feats],T,Parents,T1) :- 
+	!, norm_features(Feats,T,Parents,T1).
+norm_features([Feat|Feats],T,Parents:[X|P],T1) :- 
+	cond( member_ad(Parents,Y:(X.Feat)),              % occur-check
+	      (
+		  norm_features(Feats,T,Parents,T3),
+		  T1 = up_feature(Y.type,T3)
+	      ),
+	      ( 
+		  norm_feature(Y,T,T2,Parents),
+		  norm_features(Feats,T,Parents,T3),
+		  T1 = up_feature(T2,T3)
+	      )).
+
+norm_feature(X:@(type=>T2),T,T2,Parents) :-      % propagation descendante 
+	cond( T :== non_var_false,
+	      T2 =  any2,
+	      cond( T :== any2,
+	            ( T = non_var_false, T2 = any2 ),
+		    cond( T :== ground2,
+		          T2 = ground2))),
+	normalize(X,parents=>Parents).
+
+up_feature(X:ground2,Y:ground2) -> root_sort(X)&root_sort(Y).
+
+bottomize([]) :- !.
+bottomize([A|B]) :-
+	A.type <- bottom2,
+	bottomize(B).
+
+
+
+normalize_list([]) -> [].
+normalize_list([A|B]) ->
+	[A|normalize_list(B)]
+    |   normalize(A).
+	
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% DEFINITION OF THE PREDICATES NEEDED BY THE GENERIC ANALYSER
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% ai_unif
+%
+ 
+
+ai_unif(A,B,_,_) :-
+	normalize(A&B).
+
+%
+% extc, restrc
+%
+	
+
+extc(Proc,BetaIn) ->
+	BetaIn
+    |   Proc.global_vars = map(pat2var,BetaIn).
+
+restrc(Proc,_) -> 
+	map(var2pat,normalize_list(Proc.global_vars)).
+
+%
+% restrg
+%
+
+restrg(abscall(PName,Vars),_) ->
+	map(var2pat,Vars).
+restrg(disjunc(global_vars => Vars),_) -> 
+	map(var2pat,Vars).
+restrg(unif,_) -> @.
+
+extg(abscall(PName,Vars),_,BetaInt) ->
+	cond( BetaInt :< list,
+              (
+		  BetaInt | Vars = map(pat2var, BetaInt)
+	      ),
+	      (
+		  BetaInt | bottomize(Vars)
+	      )).
+
+
+extg(disjunc(global_vars => Vars),_,BetaInt) ->
+	BetaInt
+    |   Vars = map(pat2var, BetaInt).
+
+extg(unif,_,_) -> @.

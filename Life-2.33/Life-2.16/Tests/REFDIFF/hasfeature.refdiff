@@ -1,0 +1,16 @@
+21a22
+> A = s(q,w,e,f => r).
+26a28
+> A = s(q,w,e,f => r).
+28a31
+> A = s(q,w,e,f => r).
+36a40
+> A = s(q,w,e,f => r), X = '2'.
+38a43
+> A = s(q,w,e,f => r).
+43a49
+> A = s(q,w,e,f => r), X = '4'.
+51a58
+> A = s(q,w,e,f => r).
+53a61
+> A = s(q,w,e,f => r).

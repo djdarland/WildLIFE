@@ -1,0 +1,71 @@
+
+*** Yes
+> > > 1 :=< 1 = true
+1 :=< 1.0 = true
+1 :=< 1.1 = false
+1 :=< int = true
+1 :=< real = true
+1 :=< @ = true
+1.0 :=< 1 = true
+1.0 :=< 1.0 = true
+1.0 :=< 1.1 = false
+1.0 :=< int = true
+1.0 :=< real = true
+1.0 :=< @ = true
+1.1 :=< 1 = false
+1.1 :=< 1.0 = false
+1.1 :=< 1.1 = true
+1.1 :=< int = false
+1.1 :=< real = true
+1.1 :=< @ = true
+int :=< 1 = false
+int :=< 1.0 = false
+int :=< 1.1 = false
+int :=< int = true
+int :=< real = true
+int :=< @ = true
+real :=< 1 = false
+real :=< 1.0 = false
+real :=< 1.1 = false
+real :=< int = false
+real :=< real = true
+real :=< @ = true
+@ :=< 1 = false
+@ :=< 1.0 = false
+@ :=< 1.1 = false
+@ :=< int = false
+@ :=< real = false
+@ :=< @ = true
+"a" :=< "a" = true
+"a" :=< "b" = false
+"a" :=< string = true
+"a" :=< @ = true
+"b" :=< "a" = false
+string :=< "a" = false
+string :=< "b" = false
+string :=< string = true
+string :=< @ = true
+@ :=< "a" = false
+@ :=< "b" = false
+@ :=< string = false
+@ :=< @ = true
+[] :=< [] = true
+[] :=< [1] = false
+[] :=< list = true
+[] :=< @ = true
+[1] :=< [] = false
+[1] :=< [1] = true
+[1] :=< [2] = true
+[1] :=< list = true
+[1] :=< @ = true
+list :=< [] = false
+list :=< [1] = false
+list :=< list = true
+list :=< @ = true
+@ :=< [] = false
+@ :=< [1] = false
+@ :=< list = false
+@ :=< @ = true
+
+*** Yes
+> 

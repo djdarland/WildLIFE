@@ -1,0 +1,6 @@
+*** Error: module "superlint" not found
+*** Error: 'main("FILES/testsl.c")' is not a predicate or a function.
+
+*** Abort
+
+*** END Abort

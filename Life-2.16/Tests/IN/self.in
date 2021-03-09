@@ -1,0 +1,11 @@
+'=X,writeq(X),write(X)?'=X,writeq(X),write(X)?
+.
+"=X,writeq(X),write(X)?"=X,writeq(X),write(X)?
+.
+X: (writeq(X), write("?"))?
+.
+X:write(X)?
+.
+X: (write(X), put(63))?
+.
+self?

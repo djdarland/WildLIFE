@@ -1,0 +1,2528 @@
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%
+%                            TREE CONSTRUCTORS
+%                            -----------------
+%
+%  
+%
+%
+%  AUTHOR : Arnaud Venet                     CREATION : August 9th 1993
+%  ------                                    --------
+%
+%
+%                             ---------------                        
+%
+%                    
+%                   Last modification : March 3rd 1994 
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%
+%  (C) Digital Equipment Corporation 1993 - 1994
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+
+
+
+load("expand_type") ?
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+persistent(the_current_declarations) ?
+
+
+persistent(top_declarations) ?
+
+
+persistent(the_current_declaration) ?
+
+
+persistent(the_previous_declaration) ?
+
+
+persistent(the_current_instruction) ?
+
+
+persistent(the_previous_instruction) ?
+
+
+persistent(the_instruction_scope) ?
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+current_declaration -> the_current_declaration.1.
+
+
+previous_declaration -> the_previous_declaration.1.
+
+
+current_declarations -> the_current_declarations.1.
+
+
+previous_instruction -> the_previous_instruction.1.
+
+
+current_instruction -> the_current_instruction.1.
+
+
+instruction_scope -> the_instruction_scope.1.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+local_error(Message, Cause : @(line => Line, file => File), Warning) :-
+  cond(the_error_mode :== talkie,
+    (
+      nl_err,
+      cond(Warning :== @,
+        Prompt = "error",
+        Prompt = "warning"
+      ),
+      write_err(">>> ", Prompt, " : ", File, ", line ", Line, " "),
+      cond(Cause :\== anonymous, 
+        write_err("near '", display_token(Cause), "' ")
+      ),
+      write_err("-- "),
+      cond(Message :\== @,
+        write_err(Message)
+      )
+    )
+  ),
+  cond(Warning :== @,
+    parse_error <<- true
+  ),
+  error_number <<- error_number + 1,
+  Error = the_error_log.error_number,
+  Error.type <<- error,
+  Error.message <<- Message,
+  Error.cause <<- Cause.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+persistent(operations_table) ?
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+put_operation(Operation, Precedence) -> @
+  | operations_table.Operation <<- Precedence.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+set_precedence(Operations, Precedence) :-
+  (
+    @ = map(put_operation(2 => Precedence), Operations),
+    fail
+  ;
+    succeed
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+init_operations :-
+  set_precedence(assignment, 1),
+  set_precedence(logical_or, 2),
+  set_precedence(logical_and, 3),
+  set_precedence(inclusive_or, 4),
+  set_precedence(exclusive_or, 5),
+  set_precedence(c_and, 6),
+  set_precedence(equality, 7),
+  set_precedence(relation, 8),
+  set_precedence(shift, 9),
+  set_precedence(addition, 10),
+  set_precedence(multiplication, 11).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+clear_tree :-
+  init_operations,
+  string_storage <<- @,
+  top_declarations <<- toplevel,
+  top_declarations.files <<- files,
+  top_declarations.parent_declarations <<- nothing,
+  top_declarations.type_definitions <<- type_definitions,
+  top_declarations.struct_definitions <<- struct_definitions,
+  top_declarations.union_definitions <<- union_definitions,
+  top_declarations.enum_definitions <<- enum_definitions,
+  top_declarations.struct_declarations <<- struct_declarations,
+  top_declarations.union_declarations <<- union_declarations,
+  top_declarations.enum_declarations <<- enum_declarations,
+  top_declarations.external_declarations <<- external_declarations,
+  top_declarations.function_definitions <<- function_definitions,
+  the_previous_declaration <<- ref(nothing),
+  the_previous_instruction <<- ref(nothing),
+  the_current_declarations <<- ref(top_declarations).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+chain_declarations :-
+  current_declaration.previous <<- previous_declaration,
+  cond(previous_declaration :\== nothing,
+    previous_declaration.next <<- current_declaration
+  ),
+  the_previous_declaration <<- ref(current_declaration).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+end_declarations_chain :-
+  current_declaration.next <<- nothing.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+set_current_instruction(Instruction) :-
+  the_current_instruction <<- ref(Instruction).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+chain_instructions(Instruction, NewInstruction) :-
+  current_instruction.previous <<- previous_instruction,
+  cond(previous_instruction :\== nothing,
+    previous_instruction.next <<- current_instruction
+  ),
+  the_previous_instruction <<- ref(current_instruction),
+  NewInstruction = current_instruction.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+end_instructions_chain :-
+  current_instruction.next <<- nothing.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+isolate_instruction(Instruction) :-
+  Instruction.next <<- nothing,
+  Instruction.previous <<- nothing.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+set_local_declarations(LocalDeclarations) :-
+  the_current_declarations = ref(ParentDeclarations),
+  LocalDeclarations <<- block_declarations,
+  LocalDeclarations.parent_declarations <<- ParentDeclarations,
+  the_current_declarations <<- ref(LocalDeclarations).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+set_function_local_declarations :-
+  the_current_declarations <<- ref(parameters_declarations).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+restore_function_local_declarations :-
+  the_current_declarations <<- ref(top_declarations).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+init_complex_declaration(LocalDeclarations) :-
+  LocalDeclarations.local_declarations <<- local_declarations,
+  LocalDeclarations.type_definitions <<- type_definitions,
+  LocalDeclarations.struct_definitions <<- struct_definitions,
+  LocalDeclarations.enum_definitions <<- enum_definitions,
+  LocalDeclarations.union_definitions <<- union_definitions,
+  LocalDeclarations.struct_declarations <<- struct_declarations,
+  LocalDeclarations.enum_declarations <<- enum_declarations,
+  LocalDeclarations.union_declarations <<- union_declarations.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+restore_declarations_from(LocalDeclarations) :-
+  the_current_declarations <<- ref(LocalDeclarations.parent_declarations).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+set_previous_declaration(PreviousDeclaration) :-
+  PreviousDeclaration <<- previous_declaration,
+  the_previous_declaration <<- ref(nothing).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+restore_previous_declaration_from(PreviousDeclaration) :-
+  the_previous_declaration <<- ref(PreviousDeclaration).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+set_previous_instruction(PreviousInstruction) :-
+  the_previous_instruction = ref(PreviousInstruction),
+  the_previous_instruction <<- ref(nothing).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+restore_previous_instruction_from(PreviousInstruction) :-
+  the_previous_instruction <<- ref(PreviousInstruction).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+set_instruction_scope(Scope) :-
+  the_instruction_scope <<- ref(Scope).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+set_previous_instruction_scope(TheBlock) :-
+  TheBlock <<- instruction_scope.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+restore_instruction_scope_from(TheBlock) :-
+  the_instruction_scope <<- ref(TheBlock).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+set_scope_for_instruction(Instruction) :-
+  Instruction.scope <<- instruction_scope.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+is_type_name(Identifier) :-
+  type_occurence(Identifier, current_declarations).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+type_occurence(Name, Declarations, EquivalentType) :-
+  (
+    search_enumerator(Name, Declarations),
+    !,
+    fail
+  ;
+    has_feature(local_declarations, Declarations, LocalDeclarations),
+    has_feature(Name.1, LocalDeclarations),
+    !,
+    fail
+  ;
+    has_feature(type_definitions, Declarations, TypeDefinitions),
+    has_feature(Name.1, TypeDefinitions, EquivalentType),
+    !
+  ;
+    Declarations :== parameters_declarations,
+    !,
+    type_occurence(Name, top_declarations, EquivalentType)
+  ;
+    ParentDeclarations : (Declarations.parent_declarations) :\== nothing,
+    type_occurence(Name, ParentDeclarations, EquivalentType)
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+search_enumerator(Name, Declarations) :-
+  has_feature(enum_definitions, Declarations),
+  F = features(Declarations.enum_definitions, current_module),
+  search_enumerators(Name, F, Declarations.enum_definitions).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+search_enumerators(Name, [Enum | Enums], Enumerations) :-
+  (
+    has_feature(Name.1, Enumerations.Enum.body),
+    !
+  ;
+    search_enumerators(Name, Enums, Enumerations)
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+struct_occurence(Name, Declarations, EquivalentType) :-
+  (
+    has_feature(struct_definitions, Declarations, Structures),
+    has_feature(Name.1, Structures, EquivalentType),
+    !
+  ;
+    Declarations :== parameters_declarations,
+    !,
+    struct_occurence(Name, top_declarations, EquivalentType)
+  ;
+    ParentDeclarations : (Declarations.parent_declarations) :\== nothing,
+    !,
+    struct_occurence(Name, ParentDeclarations, EquivalentType)
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+union_occurence(Name, Declarations, EquivalentType) :-
+  (
+    has_feature(union_definitions, Declarations, Unions),
+    has_feature(Name.1, Unions, EquivalentType),
+    !
+  ;
+    Declarations :== parameters_declarations,
+    !,
+    union_occurence(Name, top_declarations, EquivalentType)
+  ;
+    ParentDeclarations : (Declarations.parent_declarations) :\== nothing,
+    !,
+    union_occurence(Name, ParentDeclarations, EquivalentType)
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+enum_occurence(Name, Declarations, EquivalentType) :-
+  (
+    has_feature(enum_definitions, Declarations, Enumerations),
+    has_feature(Name.1, Enumerations, EquivalentType),
+    !
+  ;
+    Declarations :== parameters_declarations,
+    !,
+    enum_occurence(Name, top_declarations, EquivalentType)
+  ;
+    ParentDeclarations : (Declarations.parent_declarations) :\== nothing,
+    !,
+    enum_occurence(Name, ParentDeclarations, EquivalentType)
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+build_anonymous -> anonymous(line => current_token.line,
+                             file => current_token.file,
+                             white_spaces => store([])).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+persistent(tag_number) ?
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict(is_a_function_definition) ?
+
+
+is_a_function_definition([Declaration : @(type => Type, 
+                                          name => TokenName)], 
+                          Name, Style) :-
+  (
+    has_feature(separator, Declaration),
+    !,
+    fail
+  ;
+    RootType = root_type(Type),
+    TokenName = identifier(Name),
+    Parameters = RootType.parameters,
+    (
+      Parameters :== nothing,
+      !,
+      Style = old
+    ;
+      Parameters.1 :== label_parameter,
+      !,
+      Style = old
+    ;
+      Style = modern
+    )
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+root_type(protected_type(InnerType)) -> root_type(InnerType).
+
+
+root_type(Type) -> Type.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict(build_type) ?
+
+
+build_type(DeclarationSpecifiers, Qualification, StoreClass) -> Type
+  | collect_the_type(DeclarationSpecifiers, RoughType, Signed, Long),
+    Type.specifiers = DeclarationSpecifiers,
+    cond(StoreClass :== @,
+      Type.store_class = nothing,
+      Type.store_class = root_sort(StoreClass)
+    ),
+    cond(Qualification :== @,
+      Type.qualification = nothing,
+      Type.qualification = root_sort(Qualification)
+    ),
+    cond(RoughType :== @,
+      cond(Signed :\== @,
+        RoughType = int,
+        cond(Long :\== @,
+          RoughType = int,
+          (
+            DeclarationSpecifiers = [FirstSpecifier | @],
+            local_error("Bad type", FirstSpecifier)
+          )
+        )
+      )
+    ),
+    (
+      RoughType :== {int; double},
+      !,
+      (
+        Long :\== @,
+        !,
+        cond(Long :== true,
+          Size = "long_",
+          cond(RoughType :== int,
+            Size = "short_",
+            (
+              Size = "",
+              DeclarationSpecifiers = [FirstSpecifier | @],
+              local_error("Bad type", FirstSpecifier)
+            )
+          )
+        ),
+        Type = str2psi(strcon(Size, psi2str(RoughType)))
+      ;
+        Type = RoughType
+      )
+    ;
+      Type = RoughType,
+      cond(Long :\== @,
+        (
+          DeclarationSpecifiers = [FirstSpecifier | @],
+          local_error("Bad type", FirstSpecifier)
+        )
+      )
+    ),
+    (
+      Type :== {int; short_int; long_int; float; double; long_double},
+      !,
+      cond(Signed :== @,
+        Type.signed = true, 
+        Type.signed = Signed
+      )
+    ;
+      Type :== char,
+      !,
+      cond(Signed :== @,
+        Type.signed = false,
+        Type.signed = Signed
+      )
+    ;
+      cond(Signed :\== @,
+        (
+          DeclarationSpecifiers = [FirstSpecifier | @],
+          local_error("Bad type", FirstSpecifier)
+        )
+      )
+    ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict(collect_the_type) ?
+
+
+collect_the_type([Int : int | LSpecifiers], Type, Signed, Long) :-
+  !,
+  Type = int,
+  (
+    has_feature(inserted, Int),
+    !,
+    Type.inserted = true
+  ;
+    succeed
+  ),
+  collect_the_type(LSpecifiers, Type, Signed, Long).
+
+
+collect_the_type([SingleType | LSpecifiers], Type, Signed, Long) :-
+  SingleType :== {void; char; float; double},
+  !,
+  Type = root_sort(SingleType),
+  collect_the_type(LSpecifiers, Type, Signed, Long).
+
+
+collect_the_type([Size | LSpecifiers], Type, Signed, Long) :-
+  Size :== {short; long},
+  !,
+  cond(Size :== long,
+    IsLong = true,
+    IsLong = false
+  ),
+  (
+    Long :== @,
+    !,
+    Long = IsLong 
+  ;
+    local_error("Bad size", Size)
+  ),
+  collect_the_type(LSpecifiers, Type, Signed, Long).
+
+
+collect_the_type([Sign | LSpecifiers], Type, Signed, Long) :-
+  Sign :== {signed; unsigned},
+  !,
+  cond(Sign :== signed,
+    IsSigned = true,
+    IsSigned = false
+  ),
+  (
+    Signed :== @,
+    !,
+    Signed = IsSigned 
+  ;
+    local_error("Bad sign", Sign)
+  ),
+  collect_the_type(LSpecifiers, Type, Signed, Long).
+
+
+collect_the_type([ComplexType | LSpecifiers], Type, Signed, Long) :-
+  !,
+  Type = ComplexType,
+  collect_the_type(LSpecifiers, Type, Signed, Long).
+
+
+collect_the_type([]).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict (add_separator) ?
+
+
+add_separator(Separator, What) :-
+  What.separator <<- Separator.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+add_semi_colon(SemiColon, What) :-
+  What.semi_colon <<- SemiColon.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+complete_definition([S : struct_name(Name)], Qualification, StoreClass,
+                     SemiColon, Scope) :-
+  !,
+  check_are_empty(Qualification, StoreClass),
+  add_struct_declaration(S, SemiColon, Scope).
+
+
+complete_definition([U : union_name(Name)], Qualification, StoreClass,
+                     SemiColon, Scope) :-
+  !,
+  check_are_empty(Qualification, StoreClass),
+  add_union_declaration(U, SemiColon, Scope).
+
+
+complete_definition([E : enum_name(Name)], Qualification, StoreClass,
+                     SemiColon, Scope) :-
+  !,
+  (
+    enum_occurence(Name, current_declarations),
+    !,
+    check_are_empty(Qualification, StoreClass),
+    add_enum_declaration(E, SemiColon, Scope)
+  ;
+    local_error("Cannot define incomplete enum definitions", Name)
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+check_are_empty(Qualification, StoreClass) :-
+  cond(Qualification :\== @,
+    local_error("Useless qualifier", Qualification, warning)
+  ),
+  cond(StoreClass :\== @,
+    local_error("Useless specifier", StoreClass, warning)
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+default_type -> int(inserted => true).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+scan_specifiers([T : typedef(Keyword, Declarators) | RoughSpecifiers],
+                [typedef | Specifiers], Qualification, StoreClass, Where) :-
+  !,
+  (
+    Where :== {toplevel; block},
+    !,
+    build_type_definition(Keyword, Declarators)
+  ;
+    local_error("Cannot make typedef", Keyword)
+  ),
+  scan_specifiers(RoughSpecifiers, Specifiers, Qualification, StoreClass, Where).
+
+
+scan_specifiers([S : struct(Body, name => Name, keyword => Keyword) 
+                 | RoughSpecifiers],
+                Specifiers, Qualification, StoreClass, Where) :-
+  !,
+  (
+    Where :== {toplevel; block; typedef; struct; union},
+    !,
+    cond(Name :== anonymous,  
+      Specifiers = [struct(Body, keyword => Keyword) | LSpecifiers],
+      (
+        add_struct_definition(Keyword, Name, Body),
+        Specifiers = [build_struct_name(Keyword, Name) | LSpecifiers]
+      )
+    ),
+    scan_specifiers(RoughSpecifiers, LSpecifiers, Qualification, StoreClass, Where)
+  ;
+    local_error("Cannot define structure", Keyword),
+    scan_specifiers(RoughSpecifiers, Specifiers, Qualification, StoreClass, Where)
+  ).
+
+
+scan_specifiers([S : union(Body, name => Name, keyword => Keyword) 
+                 | RoughSpecifiers],
+                Specifiers, Qualification, StoreClass, Where) :-
+  !,
+  (
+    Where :== {toplevel; block; typedef; struct; union},
+    !,
+    cond(Name :== anonymous,  
+      Specifiers = [union(Body, keyword => Keyword) | LSpecifiers],
+      (
+        add_union_definition(Keyword, Name, Body),
+        Specifiers = [build_union_name(Keyword, Name) | LSpecifiers]
+      )
+    ),
+    scan_specifiers(RoughSpecifiers, LSpecifiers, Qualification, StoreClass, Where)
+  ;
+    local_error("Cannot define union", Keyword),
+    scan_specifiers(RoughSpecifiers, Specifiers, Qualification, StoreClass, Where)
+  ).
+
+
+scan_specifiers([S : enum(Body, name => Name, keyword => Keyword) 
+                 | RoughSpecifiers],
+                Specifiers, Qualification, StoreClass, Where) :-
+  !,
+  (
+    Where :== {toplevel; block; typedef; struct; union},
+    !,
+    cond(Name :== anonymous,  
+      Specifiers = [enum(Body, keyword => Keyword) | LSpecifiers],
+      (
+        add_enum_definition(Keyword, Name, Body),
+        Specifiers = [build_enum_name(Keyword, Name) | LSpecifiers]
+      )
+    ),
+    scan_specifiers(RoughSpecifiers, LSpecifiers, Qualification, StoreClass, Where)
+  ;
+    local_error("Cannot define enumeration", Keyword),
+    scan_specifiers(RoughSpecifiers, Specifiers, Qualification, StoreClass, Where)
+  ).
+
+
+scan_specifiers([S : store_class_specifier | RoughSpecifiers], Specifiers,
+                 Qualification, StoreClass, Where) :-
+  !,
+  (
+    Where :== typedef,
+    !,
+    local_error("Useless specifier in typedef", S, warning)
+  ;
+    cond(StoreClass :== @,
+      StoreClass = S,
+      cond(StoreClass :== S,
+        local_error("Duplicate specifier", S, warning),
+        local_error("Bad specifier", S)
+      )
+    )
+  ),
+  scan_specifiers(RoughSpecifiers, Specifiers, Qualification, 
+                  StoreClass, Where).
+
+
+scan_specifiers([Q : type_qualifier | RoughSpecifiers], Specifiers,
+                Qualification, StoreClass, Where) :-
+  !,
+  (
+    Where :== typedef,
+    !,
+    local_error("Useless qualifier in typedef", Q, warning)
+  ;
+    cond(Qualification :== @,
+      Qualification = Q,
+      cond(Qualifier :== Q,
+        local_error("Duplicate qualifier", Q, warning),
+        local_error("Bad qualifier", Q)
+      )
+    )
+  ),
+  scan_specifiers(RoughSpecifiers, Specifiers, Qualification, 
+                  StoreClass, Where).
+
+
+scan_specifiers([Specifier | RoughSpecifiers], [Specifier | Specifiers],
+                Qualification, StoreClass, Where) :-
+  !,
+  scan_specifiers(RoughSpecifiers, Specifiers, Qualification, 
+                  StoreClass, Where).
+
+
+scan_specifiers([], []).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict(build_type_name) ?
+
+
+build_type_name(Identifier) ->
+  type_alias(Identifier).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict(build_typedef) ?
+
+
+build_typedef(Keyword, Declarators) -> typedef(Keyword, Declarators).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict (build_type_definition) ?
+
+
+build_type_definition(Typedef, 
+                      [D : @(name => Name : anonymous) | TypeDeclarators]) :-
+  !,
+  local_error("Bad type definition", Name),
+  fail.
+
+
+build_type_definition(Typedef, 
+                      [Def : @(name => Identifier : identifier(Name), 
+                               type => Type)
+                       | TypeDeclarators]) :-
+  !,
+  TypeDefinition = current_declarations.type_definitions.Name,
+  (
+    TypeDefinition :== @,
+    !,
+    TypeDefinition <<- type_definition,
+    TypeDefinition.type <<- Type,
+    TypeDefinition.name <<- Identifier,
+    TypeDefinition.keyword <<- Typedef,
+    (
+      has_feature(initialization, Def),
+      !,
+      local_error("No initialization in typedef", Identifier)
+    ;
+      succeed
+    ),
+    (
+      TypeDeclarators :== [],
+      !,
+      (
+        has_feature(separator, Def, Separator),
+        Separator :== ';',
+        !
+      ;
+        recover_token(Separator, ';')
+      ),
+      TypeDefinition.separator <<- Separator
+    ;
+      TypeDefinition.separator <<- Def.separator
+    ),
+    the_current_declaration <<- ref(TypeDefinition),
+    chain_declarations
+  ;
+    local_error(strcon("Duplicate definition of ", Name),
+                Identifier, warning)
+  ),
+  build_type_definition(Typedef, TypeDeclarators).
+
+
+build_type_definition(Typedef, []).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+single_sort(external_declarations) -> external_declaration.
+
+
+single_sort(local_declarations) -> local_declaration.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict (build_declaration) ?
+
+
+build_declaration([@(name => Name : anonymous) | Declarators], Where,
+                  NodeName) :-
+  !,
+  local_error("Bad Declaration", Name),
+  fail.
+
+
+build_declaration([Declarator : @(name => Identifier : identifier(Name), 
+                                  type => Type) 
+                   | Declarators], Where, NodeName) :-
+  !,
+  Declaration = current_declarations.NodeName.Name,
+  (
+    Declaration :== @,
+    !,
+    Declaration <<- single_sort(NodeName),
+    Declaration.type <<- Type,
+    Declaration.name <<- Identifier,
+    Declaration.scope <<- Where,
+    (
+      Declarators :== [],
+      !,
+      (
+        has_feature(separator, Declarator, Separator),
+        Separator :== ';',
+        !
+      ;
+        recover_token(Separator, ';')
+      ),
+      Declaration.separator <<- Separator
+    ;
+      Declaration.separator <<- Declarator.separator
+    ),
+    (
+      has_feature(initialization, Declarator, Initialization),
+      !,
+      Declaration.initialization <<- Initialization
+    ;
+      Declaration.initialization <<- nothing
+    ),
+    the_current_declaration <<- ref(Declaration),
+    chain_declarations,
+    (
+      not_a_function(Name),
+      !
+    ;
+      local_error(strcon("Redeclaration of function ", Name),
+                  Identifier)
+    ),
+    (
+      not_an_enumerator(Name),
+      !
+    ;
+      local_error(strcon("Conflict with enumerator ", Name),
+                  Identifier)
+    )
+  ;
+    local_error(strcon("Duplicate declaration of ", Name),
+                Identifier, warning)
+  ),
+  build_declaration(Declarators, Where, NodeName).
+
+
+build_declaration([]).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+check_struct_and_union_declarations :-
+  S = features(current_declarations.struct_declarations, current_module),
+  check_struct_declarations(S),
+  U = features(current_declarations.union_declarations, current_module),
+  check_union_declarations(S).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+check_struct_declarations([Name | LNames]) :-
+  !,
+  (
+    struct_occurence(current_declarations.struct_declarations.Name.name,
+                     current_declarations),
+    !
+  ;
+    local_error(strcon("Undefined structure ", psi2str(Name)))
+  ),
+  check_struct_declarations(LNames).
+
+
+check_struct_declarations([]).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+check_union_declarations([Name | LNames]) :-
+  !,
+  (
+    union_occurence(current_declarations.union_declarations.Name.name,
+                    current_declarations),
+    !
+  ;
+    local_error(strcon("Undefined union ", psi2str(Name)))
+  ),
+  check_struct_declarations(LNames).
+
+
+check_union_declarations([]).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+
+non_strict (build_local_declarations) ?
+
+
+build_local_declarations([@(name => Name : anonymous) | Declarators],
+                         Where) :-
+  !,
+  local_error("Bad Declaration", Name),
+  fail.
+
+
+build_local_declarations([@(name => Identifier : identifier(Name),
+                            type => Type,
+                            separator => Separator) 
+                        | Declarators], Where) :-
+  !,
+  Declaration = current_declarations.Name, 
+  (
+    Declaration :== @,
+    !,
+    Declaration <<- parameter_declaration,
+    Declaration.1 <<- parameter,
+    Declaration.1.name <<- Identifier,
+    Declaration.1.type <<- Type,
+    Declaration.1.separator <<- Separator,
+    Declaration.scope <<- Where,
+    the_current_declaration <<- ref(Declaration),
+    chain_declarations
+  ;
+    local_error(strcon("Duplicate declaration of ", Name),
+                Identifier, warning)
+  ),
+  build_local_declarations(Declarators, Where).
+
+
+build_local_declarations([]).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+check_coherence(FunctionName, 
+                [@(type => function(parameters => Parameters))]) :-
+  Number = Parameters.parameters_number,
+  TheNumber = Number + 1,
+  cond(Number :\== 0,
+    check_labels(FunctionName, Parameters, 1, TheNumber)
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict(check_labels) ?
+
+
+check_labels(FunctionName, Parameters, Number, Number) :- !.
+
+
+check_labels(FunctionName, Parameters, Number, Total) :-
+  Parameters.Number = label_parameter(label => Token : @(Name)),
+  (
+    has_feature(Name, current_declarations),
+    !
+  ;
+    add_default_declaration(FunctionName, Token),
+    local_error("Parameter undefined", Token, warning)
+  ),
+  NewNumber = Number + 1,
+  check_labels(FunctionName, Parameters, NewNumber, Total).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+add_default_declaration(FunctionName, TokenName : @(Name)) :-
+  Declaration = current_declarations.Name,
+  Declaration <<- parameter_declaration,
+  Declaration.1 <<- parameter,
+  Declaration.1.name <<- TokenName,
+  DefaultType = default_type,
+  Declaration.1.type <<- build_type([DefaultType], @, @),
+  Declaration.1.separator <<- nothing,
+  Declaration.scope <<- function_head(FunctionName),
+  the_current_declaration <<- ref(Declaration),
+  chain_declarations.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict (build_function) ?
+
+
+build_function(style => Style, FunctionDeclarator, LocalDeclarations,
+               FunctionBody) :-
+  !,
+  FunctionDeclarator = [@(name => TokenName : identifier(Name), type => Type)],
+  FunctionDef = top_declarations.function_definitions.Name,
+  (
+    FunctionDef :== @,
+    !,
+    FunctionDef <<- function_definition,
+    FunctionDef.name <<- TokenName,
+    FunctionDef.style <<- Style,
+    FunctionDef.body <<- FunctionBody,
+    FunctionDef.type <<- Type,
+    FunctionDef.parameters_declarations <<- LocalDeclarations,
+    FunctionDef.body.scope <<- function_body(Name),
+    the_current_declaration <<- ref(FunctionDef),
+    chain_declarations,
+    (
+      not_an_enumerator(Name),
+      !
+    ;
+      local_error(strcon("Conflict with enumerator ", Name),
+                  TokenName)
+    )
+  ;
+    local_error(strcon("Duplicate definition of function ", Name),
+                TokenName, warning)
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict(build_modern_local_declarations) ?
+
+
+build_modern_local_declarations([FunctionDeclarator], Where) :-
+  Parameters = (root_type(FunctionDeclarator.type)).parameters,
+  ParametersNumber = Parameters.parameters_number,
+  (
+    ParametersNumber :== 1,
+    expand_type(Parameters.1.type) :== void,
+    Parameters.1.name :== anonymous,
+    !
+  ;
+    set_previous_declaration(PreviousDeclaration),
+    build_declarations_from_parameters(Parameters, 1, ParametersNumber, Where),
+    restore_previous_declaration_from(PreviousDeclaration)
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict(build_declarations_from_parameters) ?
+
+
+build_declarations_from_parameters(Parameters, CurrentParameterNumber, 
+                                   ParametersNumber, Where) :-
+  CurrentParameterNumber :== ParametersNumber + 1,
+  !,
+  end_declarations_chain.
+
+
+build_declarations_from_parameters(Parameters, CurrentNumber, 
+                                   ParametersNumber, Where) :-
+  Parameters.CurrentNumber = Parameter & @(name => TokenName),
+  (
+    TokenName :== anonymous,
+    !,
+    local_error("Bad parameter", TokenName)
+  ; 
+    TokenName = identifier(Name),
+    Declaration = current_declarations.Name,
+    (
+      Declaration :== @,
+      !,
+      Declaration <<- parameter_declaration(Parameter),
+      Declaration.scope <<- Where,
+      the_current_declaration <<- ref(Declaration),
+      chain_declarations
+    ;
+      local_error(strcon("Duplicate parameter declaration", Name),
+                  TokenName, warning)
+    )
+  ),
+  NewCurrentNumber = CurrentNumber + 1,
+  build_declarations_from_parameters(Parameters, NewCurrentNumber, 
+                                     ParametersNumber, Where).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict (build_pointer) ?
+
+
+build_pointer(BaseType, Qualifiers, Star) ->
+  Pointer : pointer(to => BaseType, star => Star)
+  | Pointer.qualification = build_qualifiers(Qualifiers).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+build_array(BaseType, Array) ->
+  array(dimensions => Array, of => BaseType).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict (build_qualifiers) ?
+
+
+build_qualifiers([]) -> nothing.
+
+build_qualifiers([Const : const]) -> const(qualification => Const).
+
+build_qualifiers([Volatile : volatile]) -> volatile(qualification => Volatile).
+
+build_qualifiers([Qualifier | @]) -> nothing
+  | local_error("Bad qualifier", Qualifier).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict (build_struct_name) ?
+
+
+
+build_struct_name(Struct : struct, Name) ->
+  struct_name(Name, keyword => Struct).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict (build_union_name) ?
+
+
+build_union_name(Union : union, Name) ->
+  union_name(Name, keyword => Union).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict (build_enum_name) ?
+
+
+build_enum_name(Enum, Name) ->
+  enum_name(Name, keyword => Enum).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict(add_struct_definition) ?
+
+
+add_struct_definition(Keyword : struct, TokenName, Body) :-
+  Name = TokenName.1,
+  StructDef = current_declarations.struct_definitions.Name,
+  (
+    StructDef :== @,
+    !,
+    StructDef <<- struct_definition,
+    StructDef.name <<- TokenName,
+    StructDef.keyword <<- Keyword,
+    StructDef.body <<- Body,
+    the_current_declaration <<- ref(StructDef),
+    chain_declarations
+  ;
+    local_error(strcon("Duplicate declaration of ", Name), 
+                TokenName, warning)
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict(add_union_definition) ?
+
+
+add_union_definition(Keyword : union, TokenName, Body) :-
+  Name = TokenName.1,
+  UnionDef = current_declarations.union_definitions.Name,
+  (
+    UnionDef :== @,
+    !,
+    UnionDef <<- union_definition,
+    UnionDef.name <<- TokenName,
+    UnionDef.keyword <<- Keyword,
+    UnionDef.body <<- Body,
+    the_current_declaration <<- ref(UnionDef),
+    chain_declarations
+  ;
+    local_error(strcon("Duplicate declaration of ", Name), 
+                TokenName, warning)
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict(add_enum_definition) ?
+
+
+add_enum_definition(Keyword, TokenName, Body) :-
+  Name = TokenName.1,
+  EnumDef = current_declarations.enum_definitions.(TokenName.1),
+  (
+    EnumDef :== @,
+    !,
+    EnumDef <<- enum_definition,
+    EnumDef.name <<- TokenName,
+    EnumDef.keyword <<- Keyword,
+    EnumDef.body <<- Body,
+    the_current_declaration <<- ref(EnumDef),
+    chain_declarations
+  ;
+    local_error(strcon("Duplicate declaration of ", Name), 
+                TokenName, warning)
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict (build_struct_definition) ?
+
+
+build_struct_definition(Specifier, Name, Body) ->
+  root_sort(Specifier) & @(Body, name => Name, keyword => Specifier).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict (build_enum_definition) ?
+
+
+build_enum_definition(Specifier, Name, Body) ->
+  root_sort(Specifier) & @(Body, name => Name, keyword => Specifier).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict(add_struct_declaration) ?
+
+
+add_struct_declaration(struct_name(Name, keyword => Keyword), SemiColon,
+                       Scope) :-
+  StructDeclaration <<- struct_declaration,
+  StructDeclaration.name <<- Name, 
+  StructDeclaration.keyword <<- Keyword, 
+  StructDeclaration.semi_colon <<- SemiColon,
+  StructDeclaration.scope <<- Scope,
+  the_current_declaration <<- ref(StructDeclaration),
+  chain_declarations,
+  (
+    has_feature(Name.1, current_declarations.struct_declarations),
+    !,
+    local_error("Redundant struct declaration", Name, warning)
+  ;
+    succeed
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict(add_union_declaration) ?
+
+
+add_union_declaration(union_name(Name, keyword => Keyword), SemiColon,
+                      Scope) :-
+  UnionDeclaration <<- union_declaration,
+  UnionDeclaration.name <<- Name, 
+  UnionDeclaration.keyword <<- Keyword, 
+  UnionDeclaration.semi_colon <<- SemiColon,
+  UnionDeclaration.scope <<- Scope,
+  the_current_declaration <<- ref(UnionDeclaration),
+  chain_declarations,
+  (
+    has_feature(Name.1, current_declarations.union_declarations),
+    !,
+    local_error("Redundant union declaration", Name, warning)
+  ;
+    succeed
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict(add_enum_declaration) ?
+
+
+add_enum_declaration(enum_name(Name, keyword => Keyword), SemiColon,
+                     Scope) :-
+  EnumDeclaration <<- enum_declaration,
+  EnumDeclaration.name <<- Name, 
+  EnumDeclaration.keyword <<- Keyword, 
+  EnumDeclaration.semi_colon <<- SemiColon,
+  EnumDeclaration.scope <<- Scope,
+  the_current_declaration <<- ref(StructDeclaration),
+  chain_declarations,
+  (
+    has_feature(Name.1, current_declarations.enum_declarations),
+    !,
+    local_error("Redundant enum declaration", Name, warning)
+  ;
+    succeed
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict (build_struct_or_union_body) ?
+
+
+build_struct_or_union_body(struct, LeftBrace, StructDeclarations, RightBrace) ->
+  struct_body(left_brace => LeftBrace,
+              fields =>  StructDeclarations & fields,
+              right_brace => RightBrace).
+
+
+build_struct_or_union_body(union, LeftBrace, StructDeclarations, RightBrace) ->
+  union_body(left_brace => LeftBrace,
+             fields =>  StructDeclarations & fields,
+             right_brace => RightBrace).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict (build_enum_body) ?
+
+
+build_enum_body(LeftBrace, Enumeration, RightBrace) ->
+  enum_body(left_brace => LeftBrace,
+            enumerators => Enumeration & enumerators,
+            right_brace => RightBrace).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict (build_struct_declaration) ?
+
+
+build_struct_declaration([@(name => Name : anonymous) | Declarators],
+                         Declarations) :-
+  !,
+  local_error("Bad declaration", Name),
+  fail.
+
+
+build_struct_declaration([Declarator : @(name => Identifier, % : identifier(Name), 
+                                         type => Type,
+                                         separator => Separator) 
+                          | Declarators], Declarations) :-
+  Identifier = {identifier(Name); anonymous_tag(id => Name)},
+  !,
+  Declaration = Declarations.Name,
+  (
+    Declaration :== @,
+    !,
+    Declaration <<- field,
+    Declaration.type <<- Type, 
+    Declaration.name <<- Identifier,
+    Declaration.separator <<- Separator,
+    (
+      has_feature(initialization, Declarator, Initialization),
+      !,
+      Declaration.initialization <<- Initialization
+    ;
+      Declaration.initialization <<- nothing
+    ),
+    the_current_declaration <<- ref(Declaration),
+    chain_declarations
+  ;
+    local_error(strcon("Duplicate definition of ", Name), 
+                Identifier, warning)
+  ),    
+  build_struct_declaration(Declarators, Declarations).
+
+
+build_struct_declaration([], Declarations).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict (build_enum_declaration) ?
+
+
+build_enum_declaration([Declarator : @(name => Identifier : identifier(Name),
+                                       separator => Separator) 
+                         | Declarators], Declarations) :-
+  Declaration = Declarations.Name, 
+  (
+    Declaration :== @,
+    no_conflict_for_enumerator(Name),
+    !,
+    Declaration <<- enumerator,
+    Declaration.name <<- Identifier,
+    Declaration.separator <<- Separator,
+    (
+      has_feature(initialization, Declarator, Initialization),
+      !,
+      Declaration.initialization <<- Initialization
+    ;
+      Declaration.initialization <<- nothing
+    ),
+    the_current_declaration <<- ref(Declaration),
+    chain_declarations
+  ;
+    local_error(strcon("Duplicate definition of ", Name), 
+                Identifier, warning)
+  ),
+  (
+    Declarators :== [],
+    !,
+    (
+      Separator :== ',',
+      !,
+      local_error("Unexpected comma", Separator)
+    ;
+      succeed
+    )
+  ;
+    build_enum_declaration(Declarators, Declarations)
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+build_tag_name -> anonymous_tag(id => strcon("tag*", int2str(tag_number)))
+  | tag_number <<- tag_number + 1.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict(build_function_declaration) ?
+
+
+build_function_declaration(BaseType, LeftParenthesis, Parameters,
+                           RightParenthesis) ->
+  F : function(return_type => BaseType,
+               left_parenthesis => LeftParenthesis,
+               right_parenthesis => RightParenthesis)
+  | set_previous_declaration(PreviousDeclaration),
+    cond(Parameters :== nothing,
+      TheParameters <<- nothing,
+      (
+        TheParameters <<- parameters,
+        build_parameters(Parameters, TheParameters, 1)
+      )
+    ),
+    F.parameters <<- TheParameters,
+    restore_previous_declaration_from(PreviousDeclaration).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict(build_parameters) ?
+
+
+build_parameters([Parameter | Parameters], Where, Number) :-
+  !,
+  (
+    Parameter :== '...',
+    !,
+    Where.vararg <<- true,
+    end_declarations_chain,
+    Where.parameters_number <<- Number - 1,
+    Where.suspension_points <<- Parameter,
+    cond(Parameters :\== [],
+      local_error("Garbage parameters after '...'", Parameter)
+    )
+  ;
+    the_current_declaration <<- ref(Parameter),
+    chain_declarations,
+    Where.Number <<- current_declaration,
+    NewNumber = Number + 1,
+    build_parameters(Parameters, Where, NewNumber)
+  ).
+
+
+build_parameters([], Where, Number) :-
+  !,
+  cond(Where.vararg :== @,
+    Where.vararg <<- false
+  ),
+  Where.parameters_number <<- Number - 1.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict (build_tag) ?
+
+
+build_tag(type => BaseType) ->
+  tag(type => BaseType).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+build_tag_value(Initialization, Colon) ->
+  setting(keyword => Colon, setting => Initialization).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict (build_protected_type) ?
+
+
+build_protected_type(InnerType, LeftParenthesis, RightParenthesis) ->
+  protected_type(InnerType, 
+                 left_parenthesis => LeftParenthesis, 
+                 right_parenthesis => RightParenthesis).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+build_vararg(SuspensionPoints) -> SuspensionPoints.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict (build_parameter) ?
+
+
+build_parameter(Type, Name, Comma) ->
+  Parameter : parameter(type => Type, name => Name) 
+   |  cond(Comma :\== @,
+        add_separator(Comma, Parameter),
+        add_separator(nothing, Parameter)
+      ).   
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict(build_identifier_parameter) ?
+
+
+build_identifier_parameter(Identifier) -> Parameter
+  | the_current_declaration <<- ref(label_parameter(label => Identifier)),
+    chain_declarations,
+    Parameter = current_declaration.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict(build_function_call) ?
+
+
+build_function_call(LeftExpression, LeftParenthesis, Arguments, 
+                    RightParenthesis) ->
+  function_call(call => LeftExpression,
+                mode => special,
+                operator => nothing,
+                left_parenthesis => LeftParenthesis, 
+                arguments => TheArguments,
+                right_parenthesis => RightParenthesis)
+  | set_previous_declaration(PreviousDeclaration),
+    TheArguments <<- arguments,
+    collect_expressions_arguments(Arguments, TheArguments, 0),
+    end_declarations_chain,
+    restore_previous_declaration_from(PreviousDeclaration).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict(collect_expressions_arguments) ?
+
+
+collect_expressions_arguments([], Arguments, Number) :-
+  !,
+  Arguments.arguments_number <<- Number.
+
+
+collect_expressions_arguments([Expression | Expressions], Arguments, N) :-
+  NN = N + 1,
+  the_current_declaration <<- ref(Expression),
+  chain_declarations,
+  Arguments.NN <<- current_declaration,
+  collect_expressions_arguments(Expressions, Arguments, NN).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+build_argument(Expression) -> argument(Expression).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict(build_protected_expression) ?
+
+
+build_protected_expression(Expression, LeftParenthesis, RightParenthesis) ->
+  protected_expression(Expression,
+                       operator => nothing,
+                       left_parenthesis => LeftParenthesis, 
+                       right_parenthesis => RightParenthesis,
+                       mode => special).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict(build_sequence_expression) ?
+
+
+build_sequence_expression(LeftExpression, AssignmentExpression, Comma) ->
+  sequence(LeftExpression, AssignmentExpression,
+           mode => infix, operator => Comma).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict(build_binary_expression) ?
+
+
+build_binary_expression(Operator, LeftExpression, RightExpression) ->
+  root_sort(Operator) & @(LeftExpression, RightExpression, 
+                         operator => Operator, mode => infix).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict(build_prefix_expression) ?
+
+
+build_prefix_expression(Operator, InnerExpression) ->
+  root_sort(Operator) & @(operator => Operator, InnerExpression, mode => prefix).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict(build_postfix_expression) ?
+
+
+build_postfix_expression(InnerExpression, Operator) ->
+  root_sort(Operator) & @(operator => Operator, InnerExpression, mode => postfix).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict (build_conditional_expression) ?
+
+
+build_conditional_expression(Condition, QuestionMark, Then, Colon, Else) ->
+  '?'(condition => Condition, then => Then, else => Else,
+      operator => QuestionMark, colon => Colon, mode => special).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict (build_cast) ?
+
+
+build_cast(LeftParenthesis, TypeName, CastExpression,
+           RightParenthesis) ->
+  cast(left_parenthesis => LeftParenthesis, 
+       type => TypeName,
+       operator => nothing,
+       mode => special,
+       expression => CastExpression,
+       right_parenthesis => RightParenthesis).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict (build_array_reference) ?
+
+
+build_array_reference(LeftExpression, LeftBracket, Index, RightBracket) ->
+  array_reference(array => LeftExpression,
+                  mode => special,
+                  operator => nothing,
+                  left_bracket => LeftBracket, 
+                  index => Index, 
+                  right_bracket => RightBracket).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict (build_struct_reference) ?
+
+
+build_struct_reference(LeftExpression, Operator, Field) ->
+  root_sort(Operator) & @(LeftExpression, operator => Operator, 
+                          Field, mode => infix).
+  
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict (build_initializer) ?
+
+
+build_initializer(Operator, InitializerBody) ->
+  setting(keyword => Operator, setting => InitializerBody).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict (build_dimension) ?
+
+
+build_dimension(Dimension, LeftBracket, RightBracket) ->
+  dimension(size => Dimension, left_bracket => LeftBracket, 
+            right_bracket => RightBracket).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+check_for_type_name(anonymous) :- !.
+
+
+check_for_type_name(DeclaratorName) :-
+  local_error(strcon(strcon("Bad declarator '", 
+                     psi2str(display_token(DeclaratorName))),
+                     "' in cast expression"), DeclaratorName).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+validate_identifier(Identifier : identifier) :-
+  !,
+  (
+    search_declaration_of(Identifier.1, current_declarations),
+    !
+  ;
+    local_error("Unknown identifier", Identifier)
+  ).
+
+
+validate_identifier.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+search_declaration_of(Name, nothing) :-
+  !,
+  fail.
+
+
+search_declaration_of(Name, Declarations : toplevel) :-
+  has_feature(Name, Declarations.external_declarations),
+  !.
+
+
+search_declaration_of(Name, Declarations : block_declarations) :-
+  has_feature(Name, Declarations.local_declarations),
+  !.
+
+
+search_declaration_of(Name, Declarations : parameters_declarations) :-
+  has_feature(Name, Declarations),
+  !.
+
+
+search_declaration_of(Name, Declarations) :-
+  has_feature(enum_definitions, Declarations),
+  Enumerations = features(E : (Declarations.enum_definitions)),
+  search_enumerator(Name, Enumerations, E),
+  !.
+
+
+search_declaration_of(Name, Declarations) :-
+  (
+    Declarations :== parameters_declarations,
+    !,
+    search_declaration_of(Name, top_declarations)
+  ;
+    search_declaration_of(Name, Declarations.parent_declarations)
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+search_enumerator(What, [Enumeration | Enumerations], EnumDefinitions) :-
+  !,
+  (
+    has_feature(What, EnumDefinitions.Enumeration.body.enumerators),
+    !
+  ;
+    search_enumerator(What, Enumerations, EnumDefinitions)
+  ).
+
+
+search_enumerator(What, []) :-
+  fail.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+no_conflict_for_enumerator(What) :-
+  not_an_enumerator(What),
+  not_a_variable(What).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+not_an_enumerator(What) :-
+  Enumerations = features(E : (current_declarations.enum_definitions)),
+  (
+    search_enumerator(What, Enumerations, E),
+    !,
+    fail
+  ;
+    succeed
+  )
+.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+not_a_variable(What) :-
+  cond(current_declarations :== toplevel,
+    Declarations = external_declarations,
+    Declarations = local_declarations
+  ),
+  (
+    has_feature(What, current_declarations.Declarations),
+    !,
+    fail
+  ;
+    succeed
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+not_a_function(What) :-
+  (
+    current_declarations :== toplevel,
+    !,
+    (
+      has_feature(What, current_declarations.function_definitions),
+      !,
+      fail
+    ;
+      succeed
+    )
+  ;
+    succeed
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+%  Modified : 2 15 1994
+%
+% ------------------------------------------------------------------------------
+%
+
+non_strict (build_labeled_instruction) ?
+
+
+build_labeled_instruction(Label, Colon, Body) ->
+  labeled_instruction(body => Body, label => Label, colon => Colon)
+  | Body.previous <<- N:nothing,
+    Body.next <<- N.
+
+
+build_case(Case, Expression, Colon, Body) ->
+  case(body => Body, condition => Expression, keyword => Case, colon => Colon)
+  | Body.previous <<- N:nothing,
+    Body.next <<- N.
+
+
+build_default(Default, Colon, Body) ->
+  default(body => Body, keyword => Default, colon => Colon)
+  | Body.previous <<- N:nothing,
+    Body.next <<- N.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict (build_expression_instruction) ?
+
+
+build_expression_instruction(Expression, SemiColon) ->
+  expression_instruction(Expression, semi_colon => SemiColon).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict (build_compound_instruction) ?
+
+
+build_compound_instruction(LeftBrace, Body, RightBrace) ->
+  I : block(left_brace => LeftBrace, 
+            block_declarations => current_declarations, 
+            instructions => Body,
+            right_brace => RightBrace)
+  | check_struct_and_union_declarations.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+build_scope(Where) :-
+  build_scope_for(current_declarations.type_definitions, Where),
+  build_scope_for(current_declarations.struct_definitions, Where),
+  build_scope_for(current_declarations.union_definitions, Where),
+  build_scope_for(current_declarations.enum_definitions, Where),
+  build_scope_for(current_declarations.struct_declarations, Where),
+  build_scope_for(current_declarations.union_declarations, Where),
+  build_scope_for(current_declarations.enum_declarations, Where).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+build_scope_for(What, Where) :-
+  F = features(What, current_module),
+  F = [First | @],
+  !,
+  iter_build_scope_for(What.First, Where).
+
+
+build_scope_for.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+iter_build_scope_for(What, Where) :-
+  What :\== nothing,
+  !,
+  What.scope <<- Where,
+  iter_build_scope_for(What.next, Where).
+
+
+iter_build_scope_for.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+chain_body([Instruction | Instructions], Block) :-
+  !,
+  Instruction.scope <<- Block,
+  chain_body(Instructions, Block).
+
+
+chain_body([], Block).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict (build_if) ?
+
+
+build_if(If, LeftParenthesis, Condition, RightParenthesis, ThenBody, 
+         Else, ElseBody) ->
+  Instruction : if(keyword => If, 
+                   left_parenthesis => LeftParenthesis,
+                   condition => Condition,
+                   right_parenthesis => RightParenthesis,
+                   then_body => ThenBody)
+  | cond(Else :\== @,
+      true | (
+        Instruction = @(else_body => ElseBody, else_keyword => Else),
+        ElseBody.previous <<- N:nothing,
+        ElseBody.next <<- N
+      ),
+      Instruction = @(else_body => N, else_keyword => N)
+    ),
+    ThenBody.previous <<- N,
+    ThenBody.next <<- N.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict (build_switch) ?
+
+
+build_switch(Switch, LeftParenthesis, Condition, RightParenthesis, Body) ->
+  switch(keyword => Switch,
+         left_parenthesis => LeftParenthesis,
+         condition => Condition,
+         right_parenthesis => RightParenthesis,
+         body => Body)
+  | Body.previous <<- N:nothing,
+    Body.next <<- N.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict (build_while) ?
+
+
+build_while(While, LeftParenthesis, Condition, RightParenthesis, Body) ->
+  while(keyword => While,
+        left_parenthesis => LeftParenthesis,
+        condition => Condition,
+        right_parenthesis => RightParenthesis,
+        body => Body)
+  | Body.previous <<- N:nothing,
+    Body.next <<- N.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict (build_do_while) ?
+
+
+build_do_while(Do, Body, While, LeftParenthesis, Condition, 
+               RightParenthesis, SemiCOlon) ->
+  do_while(do_keyword => Do,
+           while_keyword => While,
+           left_parenthesis => LeftParenthesis,
+           condition => Condition,
+           right_parenthesis => RightParenthesis,
+           body => Body,
+           semi_colon => SemiColon)
+  | Body.previous <<- N:nothing,
+    Body.next <<- N.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+non_strict (build_for) ?
+
+
+build_for(For, LeftParenthesis, Initialization, SemiColon1,
+          Condition, SemiColon2, Step, RightParenthesis, Body) ->
+  for(keyword => For,
+      left_parenthesis => LeftParenthesis,
+      initialization => Initialization,
+      first_semi_colon => SemiColon1,
+      condition => Condition,
+      second_semi_colon => SemiColon2,
+      step => Step,
+      right_parenthesis => RightParenthesis,
+      body => Body)
+  | Body.previous <<- N:nothing,
+    Body.next <<- N.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+build_jump(Jump) -> root_sort(Jump) & @(keyword => Jump).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+build_goto(Goto, Label) -> goto(label => Label, keyword => Goto).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+build_return(Return, Value) -> return(value => Value, keyword => Return).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+build_complex_initialization(LeftBrace, Initializers, RightBrace) ->
+  complex_initialization(left_brace => LeftBrace, 
+                         body => Initializers, 
+                         right_brace => RightBrace).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+build_void_instruction(SemiColon) ->
+  void_instruction(semi_colon => SemiColon).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+
+
+
+
+
+
+
+

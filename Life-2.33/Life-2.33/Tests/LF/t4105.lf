@@ -1,0 +1,1 @@
+divides(M,N) -> cond((N/M) =:= floor(N/M), true, false).

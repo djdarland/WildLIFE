@@ -1,0 +1,7 @@
+*** Error: attempt to unify with curried function *(23)
+*** Error: attempt to unify with curried function +(2 => 23)
+*** Error: attempt to unify with curried function -(2 => 34)
+*** Error: attempt to unify with curried function /(100)
+*** Error: attempt to unify with curried function /(2 => 100)
+*** Error: attempt to unify with curried function *(10)
+*** Error: attempt to unify with curried function /(10)

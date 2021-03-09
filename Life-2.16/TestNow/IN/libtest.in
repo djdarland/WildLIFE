@@ -1,0 +1,2 @@
+map_man(X) :-& man(X)?
+map_man(public_symbols)?

@@ -1,0 +1,15 @@
+% m_list <| list.
+% m_cons <| cons.
+% m_nil  <| nil.
+
+m_cons <| m_list.
+m_nil  <| m_list.
+
+delay_check(m_cons)?
+:: m_cons(N,m_list(N-1)).
+
+:: m_nil(0).
+
+% Predicate using m_list:
+sel(0,m_nil).
+sel(I,m_cons(N,T)) :- sel(I-1,T).

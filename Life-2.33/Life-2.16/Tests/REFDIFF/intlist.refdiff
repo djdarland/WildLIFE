@@ -1,0 +1,15 @@
+8c8
+< X = int_cons(1,[2,3]).
+---
+> X = int_cons(1,int_cons(2,int_cons(3,int_nil))).
+11c11
+< X = int_cons(1,[2,3]), Y = 3.
+---
+> X = int_cons(1,int_cons(2,int_cons(3,int_nil))), Y = 3.
+14c14,17
+< X = int_cons(1,[2,3]), Y = 3, Z = [1,2,3|int_cons(1,[2,3])].
+---
+> X = int_cons(_A: 1,int_cons(_B: 2,int_cons(_C: 3,int_nil))), 
+> Y = 3, 
+> Z = [_A,_B,_C|X].
+> 

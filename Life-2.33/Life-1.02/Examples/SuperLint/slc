@@ -1,0 +1,15 @@
+#!/bin/csh
+
+set DIR = `pwd`
+
+setenv SLDIR /udir/venet/LIFE/SUPERLINT/PACKAGE
+
+chdir $SLDIR
+
+./wild_life -q $DIR slc.lf $* <<EOF
+
+[@, "-q", Directory, Binary | Args] = argv,
+  load(Binary),
+    wl_main(Directory, Args),
+      halt ?
+EOF

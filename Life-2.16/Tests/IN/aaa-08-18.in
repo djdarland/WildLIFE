@@ -1,0 +1,4 @@
+read_token(S)?
+foo
+read_token(T)?
+S

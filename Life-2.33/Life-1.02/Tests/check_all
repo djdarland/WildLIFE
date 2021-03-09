@@ -1,0 +1,8 @@
+#!/bin/csh -f
+# Test program for Wild-LIFE
+# Runs the entire test-suite and generates a log file
+
+set umask=666
+
+rm -f check.log
+./check `ls LF` | tee check.log

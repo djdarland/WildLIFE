@@ -1,0 +1,14 @@
+display_modules(true), A = hello?
+module("secret")?
+V = current_module?
+public("prison")?
+private_feature(entrance)?
+prison(entrance => tunnel).
+P:prison(door => guarded)?
+F=features(P)?
+module("user")?
+open("secret")?
+display_modules(true)?
+
+
+

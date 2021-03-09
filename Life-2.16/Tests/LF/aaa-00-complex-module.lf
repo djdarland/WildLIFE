@@ -1,0 +1,6 @@
+module("complex")?
+public(number)?
+module("user")?
+open("complex")?
+X:number(re=>0, im=> 1).
+display_modules(true)?

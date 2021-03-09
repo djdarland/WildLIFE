@@ -1,0 +1,15 @@
+nl_parse([pascal,compiles],S)?
+;
+
+nl_parse([john,eats,lunch],S)?
+;
+
+% ? nl_parse([john,catches,the,flu],S)?
+% Answer is no for this one: (!?)
+nl_parse([spot,caught,a,frisbee],S)?
+
+nl_parse([spot,runs],S)?
+
+% Answer is no for this one:
+nl_parse([spot,catches],S)?
+

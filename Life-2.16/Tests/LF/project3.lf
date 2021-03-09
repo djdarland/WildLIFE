@@ -1,0 +1,10 @@
+% Bug noticed by Arnaud:
+% Project released resids on _result_.
+% It should release resids on its _first argument_.
+
+set_daemon_on(X:@(set => true)) -> true | write(X).
+
+f(X:int) -> write(aha).
+
+p(@(@,@,@)) -> 3.
+

@@ -1,0 +1,126 @@
+8,10c8
+< > T0001 C00    PVR: entering check_out with status 4 and term p(@)
+< T0002 C00   prove p(@)
+< T0002 C00    PVR: entering check_out with status 0 and term {1;2;3;4}
+---
+> > T0002 C00   prove p(@)
+14d11
+< T0004 C01     PVR: entering check_out with status 4 and term 1
+17,20d13
+< T0007 C01    PVR: entering check_out with status 0 and term write(A: 1 + 1 = A + 2)
+< T0007 C01    PVR: entering check_out with status 0 and term A: 1 + 1 = A + 2
+< T0007 C01    PVR: entering check_out with status 0 and term 1 + 2
+< T0007 C01    PVR: entering check_out with status 0 and term 1 + 1
+23,24d15
+< T0008 C01     PVR: entering check_out with status 4 and term 2
+< T0008 C01     PVR: entering check_out with status 4 and term 1
+26,27d16
+< T0008 C01      PVR: entering check_out with status 4 and term 1
+< T0008 C01      PVR: entering check_out with status 4 and term 1
+29,30d17
+< T0009 C01     PVR: entering check_out with status 0 and term real
+< T0009 C01     PVR: entering check_out with status 0 and term 2
+32,35d18
+< T0010 C01    PVR: entering check_out with status 0 and term real
+< T0010 C01    PVR: entering check_out with status 0 and term 3
+< T0010 C01    PVR: entering check_out with status 0 and term write(2 = 3)
+< T0010 C01    PVR: entering check_out with status 4 and term 2 = 3
+37,40c20
+< 2 = 3T0012 C01    PVR: entering check_out with status 4 and term nl
+< T0013 C01   prove nl
+< T0013 C01    PVR: entering check_out with status 4 and term write("
+< ")
+---
+> 2 = 3T0013 C01   prove nl
+44d23
+< T0014 C01   PVR: entering check_out with status 4 and term fail
+48d26
+< T0016 C01     PVR: entering check_out with status 4 and term 2
+51,54d28
+< T0019 C01    PVR: entering check_out with status 0 and term write(A: 2 + 1 = A + 2)
+< T0019 C01    PVR: entering check_out with status 0 and term A: 2 + 1 = A + 2
+< T0019 C01    PVR: entering check_out with status 0 and term 2 + 2
+< T0019 C01    PVR: entering check_out with status 0 and term 2 + 1
+57,58d30
+< T0020 C01     PVR: entering check_out with status 4 and term 2
+< T0020 C01     PVR: entering check_out with status 4 and term 2
+60,61d31
+< T0020 C01      PVR: entering check_out with status 4 and term 1
+< T0020 C01      PVR: entering check_out with status 4 and term 2
+63,64d32
+< T0021 C01     PVR: entering check_out with status 0 and term real
+< T0021 C01     PVR: entering check_out with status 0 and term 3
+66,69d33
+< T0022 C01    PVR: entering check_out with status 0 and term real
+< T0022 C01    PVR: entering check_out with status 0 and term 4
+< T0022 C01    PVR: entering check_out with status 0 and term write(3 = 4)
+< T0022 C01    PVR: entering check_out with status 4 and term 3 = 4
+71,74c35
+< 3 = 4T0024 C01    PVR: entering check_out with status 4 and term nl
+< T0025 C01   prove nl
+< T0025 C01    PVR: entering check_out with status 4 and term write("
+< ")
+---
+> 3 = 4T0025 C01   prove nl
+78d38
+< T0026 C01   PVR: entering check_out with status 4 and term fail
+82d41
+< T0028 C01     PVR: entering check_out with status 4 and term 3
+85,88d43
+< T0031 C01    PVR: entering check_out with status 0 and term write(A: 3 + 1 = A + 2)
+< T0031 C01    PVR: entering check_out with status 0 and term A: 3 + 1 = A + 2
+< T0031 C01    PVR: entering check_out with status 0 and term 3 + 2
+< T0031 C01    PVR: entering check_out with status 0 and term 3 + 1
+91,92d45
+< T0032 C01     PVR: entering check_out with status 4 and term 2
+< T0032 C01     PVR: entering check_out with status 4 and term 3
+94,95d46
+< T0032 C01      PVR: entering check_out with status 4 and term 1
+< T0032 C01      PVR: entering check_out with status 4 and term 3
+97,98d47
+< T0033 C01     PVR: entering check_out with status 0 and term real
+< T0033 C01     PVR: entering check_out with status 0 and term 4
+100,103d48
+< T0034 C01    PVR: entering check_out with status 0 and term real
+< T0034 C01    PVR: entering check_out with status 0 and term 5
+< T0034 C01    PVR: entering check_out with status 0 and term write(4 = 5)
+< T0034 C01    PVR: entering check_out with status 4 and term 4 = 5
+105,108c50
+< 4 = 5T0036 C01    PVR: entering check_out with status 4 and term nl
+< T0037 C01   prove nl
+< T0037 C01    PVR: entering check_out with status 4 and term write("
+< ")
+---
+> 4 = 5T0037 C01   prove nl
+112d53
+< T0038 C01   PVR: entering check_out with status 4 and term fail
+116d56
+< T0040 C00     PVR: entering check_out with status 4 and term 4
+119,122d58
+< T0043 C00    PVR: entering check_out with status 0 and term write(A: 4 + 1 = A + 2)
+< T0043 C00    PVR: entering check_out with status 0 and term A: 4 + 1 = A + 2
+< T0043 C00    PVR: entering check_out with status 0 and term 4 + 2
+< T0043 C00    PVR: entering check_out with status 0 and term 4 + 1
+125,126d60
+< T0044 C00     PVR: entering check_out with status 4 and term 2
+< T0044 C00     PVR: entering check_out with status 4 and term 4
+128,129d61
+< T0044 C00      PVR: entering check_out with status 4 and term 1
+< T0044 C00      PVR: entering check_out with status 4 and term 4
+131,132d62
+< T0045 C00     PVR: entering check_out with status 0 and term real
+< T0045 C00     PVR: entering check_out with status 0 and term 5
+134,137d63
+< T0046 C00    PVR: entering check_out with status 0 and term real
+< T0046 C00    PVR: entering check_out with status 0 and term 6
+< T0046 C00    PVR: entering check_out with status 0 and term write(5 = 6)
+< T0046 C00    PVR: entering check_out with status 4 and term 5 = 6
+139,142c65
+< 5 = 6T0048 C00    PVR: entering check_out with status 4 and term nl
+< T0049 C00   prove nl
+< T0049 C00    PVR: entering check_out with status 4 and term write("
+< ")
+---
+> 5 = 6T0049 C00   prove nl
+146d68
+< T0050 C00   PVR: entering check_out with status 4 and term fail

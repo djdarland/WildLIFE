@@ -1,0 +1,12 @@
+8c8
+< one(abc,def,fgh(a,b,c,d),ijk,lmn(e,f,g(h,i,j),h,i(12,23,34,45)),[a,b,c,d],cons(a,[b],10000),[def|def])
+---
+> one(abc,_A: def,fgh(a,b,c,d),ijk,lmn(e,f,g(h,i,j),h,i(12,23,34,45)),[a,b,c,d],cons(a,[b],10000),[_A|_A])
+11c11
+<     def,
+---
+>     _A: def,
+17c17
+<     [def|def])
+---
+>     [_A|_A])

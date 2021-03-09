@@ -1,0 +1,106 @@
+#!/bin/csh -f
+#
+# Test program for Wild-LIFE
+#
+#	test *.lf
+#   or
+#	test program
+#
+# This program run Wild-LIFE over one or several test programs and records the
+# differences in the standard and error outputs.
+#
+#
+# Read-only files:
+#	program.lf	Life source code
+#	program.in	Life user input
+#	program.ref	Reference standard output
+#	program.referr	Reference error output
+#
+# Output files:
+#	program.out	Most recent standard output
+#	program.err	Most recent error output
+#	program.refdiff Difference between .out and .ref files
+#	program.errdiff Difference between .err and .referr files
+#
+
+
+# Make all files rw by everyone
+umask 000
+
+
+# Version of Wild-LIFE to use:
+set WLIFE = "~/bin/wild_life"
+
+
+# clear
+#echo "Testing interpreter: $WLIFE"
+#echo "Date: `date`"
+#echo ""
+# echo ""
+# echo "                       Wild-LIFE test suite"
+# echo "                       --------------------"
+# echo ""
+# echo "interpreter: $WLIFE"
+# echo ""
+# echo ""
+# echo ""
+
+
+    set life_tests = 0
+    set life_tests_match = 0
+    set life_tests_differ = 0
+    set life_tests_out_differ = 0
+    set life_tests_err_differ = 0
+# Run the test suite
+foreach I ($*)
+    @ life_tests ++ 
+    echo "echo test number $life_tests"
+#   echo $I
+
+if(-e LF/$I:r.lf) then
+
+# Remove any core dumps
+   rm -f core
+
+# Run Wild-LIFE
+   (echo 'load("LF/' $I:r.lf '")?' | tr -d ' ' ;echo "" ; \
+	cat IN/$I:r.in  ; echo "halt?") | \
+	($WLIFE |  \
+egrep -v '(Loading|already loaded|Version|customizing|Copyright|Garbage|Exiting|X interface)' > OUT/$I:r.out \
+        ) |& \
+        sed "s/.......s cpu (.*)//" > ERR/$I:r.err
+
+# Check for core dump
+   if(-e core) then
+	echo "          ***    C O R E   D U M P  ! !       ***"
+   endif
+
+# Calculate the differences
+    (diff OUT/$I:r.out REFOUT_UPDATED/$I:r.refout > REFDIFF/$I:r.refdiff) >& /dev/null
+    (diff ERR/$I:r.err REFERR_UPDATED/$I:r.referr > ERRDIFF/$I:r.errdiff) >& /dev/null
+    
+# Report them to the developer
+    if((`wc -c < REFDIFF/$I:r.refdiff` != 0) || (`wc -c < ERRDIFF/$I:r.errdiff` != 0)) then
+    echo "./work.sh $I:r"
+    @ life_tests_differ ++
+    else
+    echo "echo ./$I:r -- Matches Perfectly"
+    @ life_tests_match ++
+    endif
+    if (`wc -c < REFDIFF/$I:r.refdiff` == 0) then
+    rm -f REFDIFF/$I:r.refdiff
+    else
+    @ life_tests_out_differ ++
+    endif
+    if (`wc -c < ERRDIFF/$I:r.errdiff` == 0) then
+    rm -f ERRDIFF/$I:r.errdiff
+    else
+    @ life_tests_err_differ ++
+    endif
+    end
+    echo "echo $life_tests Total Tests completed"
+    echo "echo $life_tests_match Total Tests match"
+    echo "echo $life_tests_differ Total Tests differ"
+    echo "echo $life_tests_out_differ Total Tests out differ"
+    echo "echo $life_tests_err_differ Total Tests err differ"
+	

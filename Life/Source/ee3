@@ -1,0 +1,70 @@
+echo "WildLife Difference Utility"
+echo "diff .h file & compared with 1.02 version?"
+echo "enter 0 to proceed 999 to quit"
+echo "Compare Files by selecting file then view differences with 111"
+read select
+while [ $select -ne 999 ]
+do 
+echo "-----------"
+echo ".h files for wild life"
+echo "-----------"
+echo "1 built_ins.h"
+echo "2 c_life.h"
+echo "3 copy.h"
+echo "4 error.h"
+echo "5 extern.h"
+echo "6 info.h"
+echo "7 interrupt.h"
+echo "8 lefun.h"
+echo "9 list.h"
+echo "10 login.h"
+echo "11 memory.h"
+echo "12 modules.h"
+echo "13 parser.h"
+echo "14 print.h"
+echo "15 proto.h"
+echo "16 raw.h"
+echo "17 sys.h"
+echo "18 token.h"
+echo "19 trees.h"
+echo "20 types.h"
+echo "21 xdisplaylist.h"
+echo "22 xpred.h"
+echo "111 View Differences"
+
+echo "777 NOTES_DJD.txt"
+
+echo "999 quit"
+echo "select"
+read select
+case $select in
+1) diff ../../Life-1.02/Source/built_ins.h built_ins.h >diffs.out ;;
+2) diff ../../Life-1.02/Source/c_life.h c_life.h >diffs.out ;;
+3) diff ../../Life-1.02/Source/copy.h copy.h >diffs.out ;;
+4) diff ../../Life-1.02/Source/error.h error.h >diffs.out ;;
+5) diff ../../Life-1.02/Source/extern.h extern.h >diffs.out ;;
+6) diff ../../Life-1.02/Source/info.h info.h >diffs.out ;;
+7) diff ../../Life-1.02/Source/interrupt.h interrupt.h >diffs.out ;;
+8) diff ../../Life-1.02/Source/lefun.h lefun.h >diffs.out ;;
+9) diff ../../Life-1.02/Source/list.h list.h >diffs.out ;;
+10) diff ../../Life-1.02/Source/login.h login.h >diffs.out ;;
+11) diff ../../Life-1.02/Source/memory.h memory.h >diffs.out ;;
+12) diff ../../Life-1.02/Source/modules.h modules.h >diffs.out ;;
+13) diff ../../Life-1.02/Source/parser.h parser.h >diffs.out ;;
+14) diff ../../Life-1.02/Source/print.h print.h >diffs.out ;;
+15) diff ../../Life-1.02/Source/proto.h proto.h >diffs.out ;;
+16) diff ../../Life-1.02/Source/raw.h raw.h >diffs.out ;;
+17) diff ../../Life-1.02/Source/sys.h sys.h >diffs.out ;;
+18) diff ../../Life-1.02/Source/token.h token.h >diffs.out ;;
+19) diff ../../Life-1.02/Source/trees.h  trees.h >diffs.out ;;
+20) diff ../../Life-1.02/Source/types.h  types.h >diffs.out ;;
+21) diff ../../Life-1.02/Source/xdisplaylist.h  xdisplaylist.h >diffs.out ;;
+22) diff ../../Life-1.02/Source/xpred.h xpred.h >diffs.out ;;
+
+111) $EDITOR diffs.out ;;
+
+777) $EDITOR NOTES_DJD.txt;;
+
+esac
+done
+

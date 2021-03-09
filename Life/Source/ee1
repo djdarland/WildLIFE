@@ -1,0 +1,80 @@
+echo "WildLife Edit Utility"
+echo "Edit any .h file & compared with 1.02 version on top?"
+echo "enter 0 to proceed 999 to quit"
+read select
+while [ $select -ne 999 ]
+do 
+echo "-----------"
+echo ".h files for wild life"
+echo "-----------"
+echo "Version 1.02 Vs. Version 2.16 -- ALL OBSOLETE -- BOTH WRITE PROTECTED"
+echo "1 built_ins.h"
+echo "2 c_life.h"
+echo "3 copy.h"
+echo "4 error.h"
+echo "5 extern.h"
+echo "6 info.h"
+echo "7 interrupt.h"
+echo "8 lefun.h"
+echo "9 list.h"
+echo "10 login.h"
+echo "11 memory.h"
+echo "12 modules.h"
+echo "13 parser.h"
+echo "14 print.h"
+echo "16 raw.h"
+echo "17 sys.h"
+echo "18 token.h"
+echo "19 trees.h"
+echo "20 types.h"
+echo "21 xdisplaylist.h"
+echo "22 xpred.h"
+echo "NEW - REPLACEMENTS -- CAN BE EDITED"
+echo "30 def_const.h"
+echo "31 def_config.h"
+echo "32 def_macro.h"
+echo "33 def_struct.h"
+echo "34 def_glob.h"
+echo "35 def_proto.h"
+echo "36 defs.h"
+
+echo "777 NOTES_DJD.txt"
+echo "999 quit"
+echo "select"
+read select
+case $select in
+1) $EDITOR ../../Life-1.02/Source/built_ins.h ../../Life-2.16/Source/built_ins.h ;;
+2) $EDITOR ../../Life-1.02/Source/c_life.h ../../Life-2.16/Source/c_life.h ;;
+3) $EDITOR ../../Life-1.02/Source/copy.h ../../Life-2.16/Source/copy.h ;;
+4) $EDITOR ../../Life-1.02/Source/error.h ../../Life-2.16/Source/error.h ;;
+5) $EDITOR ../../Life-1.02/Source/extern.h ../../Life-2.16/Source/extern.h ;;
+6) $EDITOR ../../Life-1.02/Source/info.h ../../Life-2.16/Source/info.h ;;
+7) $EDITOR ../../Life-1.02/Source/interrupt.h ../../Life-2.16/Source/interrupt.h ;;
+8) $EDITOR ../../Life-1.02/Source/lefun.h ../../Life-2.16/Source/lefun.h ;;
+9) $EDITOR ../../Life-1.02/Source/list.h ../../Life-2.16/Source/list.h ;;
+10) $EDITOR ../../Life-1.02/Source/login.h ../../Life-2.16/Source/login.h ;;
+11) $EDITOR ../../Life-1.02/Source/memory.h ../../Life-2.16/Source/memory.h ;;
+12) $EDITOR ../../Life-1.02/Source/modules.h ../../Life-2.16/Source/modules.h ;;
+13) $EDITOR ../../Life-1.02/Source/parser.h ../../Life-2.16/Source/parser.h ;;
+14) $EDITOR ../../Life-1.02/Source/print.h ../../Life-2.16/Source/print.h ;;
+16) $EDITOR ../../Life-1.02/Source/raw.h ../../Life-2.16/Source/raw.h ;;
+17) $EDITOR ../../Life-1.02/Source/sys.h ../../Life-2.16/Source/sys.h ;;
+18) $EDITOR ../../Life-1.02/Source/token.h ../../Life-2.16/Source/token.h ;;
+19) $EDITOR ../../Life-1.02/Source/trees.h  ../../Life-2.16/Source/trees.h ;;
+20) $EDITOR ../../Life-1.02/Source/types.h  ../../Life-2.16/Source/types.h ;;
+21) $EDITOR ../../Life-1.02/Source/xdisplaylist.h  ../../Life-2.16/Source/xdisplaylist.h ;;
+22) $EDITOR ../../Life-1.02/Source/xpred.h ../../Life-2.16/Source/xpred.h ;;
+
+30) $EDITOR def_const.h;;
+31) $EDITOR def_config.h;;
+32) $EDITOR def_macro.h;;
+33) $EDITOR def_struct.h;;
+34) $EDITOR def_glob.h;;
+35) $EDITOR def_proto.h;;
+36) $EDITOR defs.h;;
+
+777) $EDITOR NOTES_DJD.txt;;
+
+esac
+done
+

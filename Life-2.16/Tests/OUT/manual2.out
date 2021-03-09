@@ -1,0 +1,26 @@
+
+*** Yes
+> > 
+*** Yes
+X = bike.
+--1> 
+*** No
+> > 
+*** Yes
+X = truck.
+--1> 
+*** Yes
+X = car.
+--1> > 
+*** No
+> > 
+*** Yes
+X = rolls_royce.
+--1> 
+*** No
+> > 
+*** Yes
+X = truck.
+--1> 
+*** No
+> > 

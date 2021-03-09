@@ -1,0 +1,16 @@
+copy_file(F1,F2) :-
+       open_in(F1,S1),         % open the source file,
+                               % select it for input;
+       open_out(F2,S2),        % open the target file...
+       open_out(stdout,S3),    % set the output stream to stdout
+       write("Copying from """,F1,""" to """,F2,""" ... "),
+       set_output(S2),         % set the output to file #2
+       repeat,
+       get(X),                 % read a character
+       ((X=end_of_file,        % if end of file #1 is reached
+         close(S1), close(S2), % then close both files
+         write("done."),       % [output reset to stdout]
+         !)                    % and cut out the repeat loop
+       ;                       % else
+        (put(X),               % output the character
+         fail)).               % and fail to repeat loop

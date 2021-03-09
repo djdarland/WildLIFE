@@ -1,0 +1,139 @@
+%	$Id: shell_interface.lf,v 1.2 1994/12/09 00:24:12 duchier Exp $	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                             %
+%               INTERFACE BETWEEN THE SHELL AND THE PARSER                    %
+%                                                                             %
+%                                                                             %
+%                                                                             %
+%                                                                             %
+%                                                                             %
+%                                                                             %
+% Author: Bruno Dumant                                                        %
+%                                                                             %
+% copyright 1992 Digital Equipment Corporation                                %
+% All rights reserved                                                         %
+%                                                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+module("shell") ?
+open("parser") ?
+open("tokenizer") ?
+
+%%%
+%%% tokenizing
+%%%
+
+module("tokenizer") ?
+public( next_shell_token ) ?
+
+next_shell_token ->
+ 	L
+    |           
+        (
+	    call_once(read_new_shell_token(Tok,copy_term(rest_chars))) = TT,
+	    ( 
+		TT :== false, !, fail
+	    ;
+		Tok :== none, !,
+		rest_token <<- "the end of the line",
+		L = []
+	    ;
+		rest_token <<- `Tok,
+		fail 
+	    )
+	;
+	    L = [copy_term(rest_token)|`next_shell_token]
+	).
+
+read_new_shell_token( Tok, X) :- 
+	void_chars(0 => X, rest => R1),!,
+	(
+	    R1 = [], !, Tok = none
+	;
+	    token( 0 => R1, Tok, rest => R2),
+	    rest_chars <<- R2
+	).
+
+%
+% parsing
+%
+
+module("parser") ?
+public( first_shell_parse,next_shell_parse,sh_query ) ?
+
+
+first_shell_parse(Chars,Vars,Expr,Type,ExistVars,End) :-
+	init_shell_parse,
+	rest_chars <<- Chars,
+	read_new_shell_expr( next_shell_token, Bool, Expr, T, LeftToken, 
+	                     vars => Vars ),
+        cond( Bool,
+	      cond(  T :== assertion,
+		     Type = declaration,
+		     Type = sh_query ),
+	      Type = error),
+        ExistVars = cond (features(Vars) :== [], false),
+	End = (LeftToken :== []).
+
+next_shell_parse( Vars, Expr, Type, End) :-
+	NT = next_shell_token,
+	read_new_expr( NT, Bool, Expr, T, LeftToken, 
+	               vars => Vars),
+        cond( Bool,
+              cond(  T :== assertion,
+	             Type = declaration,
+		     Type = sh_query ),
+	      Type = error ),
+        End = (LeftToken :== []).
+
+read_new_shell_expr( R1, Bool, Expr, T, LeftToken,
+	             vars => Vars) :- 
+	(
+	    expr( Expr, vars => Vars, mask => 0,
+	          0 => R1, rest => R2, max => 1200),
+	    (
+		Expr :< string, T = sh_query, 
+		NE = root_sort(Expr), Expr <- `( @ = system(NE))
+	    ;
+		parser_C(["."],false,R2,LeftToken), T = assertion
+	    ;
+	        parser_C(["?"],false,R2,LeftToken), T = sh_query 
+	    ),
+	    Bool = true,
+	    !
+	;
+	    Bool = false
+	).
+
+init_shell_parse :- 
+	rest_token <<- "the beginning of the line".
+
+
+%
+% printing variables
+%
+
+module("shell") ?
+
+print_vars (@(vars => X)) :- 
+	cond( F:features(X) :\== [],
+	      (
+		  build_write_term(F,X) = WT,
+		  pretty_write(WT),nl
+	      )).
+
+build_write_term([A],X) -> `( A = Val ) | Val = project(A,X).
+build_write_term([A|B],X) -> 
+	`( A = Val ),build_write_term(B,X) | Val =  project(A,X).
+
+
+write_parse_error :-
+	nl_err, write_err(
+		"**** Syntax error at line ",current_line_number," near: "),
+	cond( R:copy_term(rest_token) :=< string,
+	      write(R),
+	      cond( R :=< variable,
+	            write_err(project(1,R)),
+		    writeq_err(project(1,R)))),
+        nl_err.
+

@@ -1,0 +1,53 @@
+113a114,165
+> *** No
+> > c <<- letters(a,b,c), check ?
+> 
+> a=_A: p(_B: 5,_C: letters(_A,_B,_C))
+> b=5
+> c=_A: letters(p(_B: 5,_A),_B,_A)
+> d=@
+> e=@
+> f=@
+> 
+> *** Yes
+> --1> 
+> *** No
+> > a <<- q(a,b,c), check?
+> 
+> a=_A: q(_A,_B: 5,_C: letters(_A,_B,_C))
+> b=5
+> c=_A: letters(_B: q(_B,_C: 5,_A),_C,_A)
+> d=@
+> e=@
+> f=@
+> 
+> *** Yes
+> --1> 
+> *** No
+> > d <<- exam(b,a,c), check ?
+> 
+> a=_A: q(_A,_B: 5,_C: letters(_A,_B,_C))
+> b=5
+> c=_A: letters(_B: q(_B,_C: 5,_A),_C,_A)
+> d=exam(_A: 5,_B: q(_B,_A,_C: letters(_B,_A,_C)),_C)
+> e=@
+> f=@
+> 
+> *** Yes
+> --1> 
+> *** No
+> > e = a, check ?
+> > 
+> > d = exam(A,B,C), write(A,B,C), check ?
+> 5B: q(B,A: 5,C: letters(B,A,C))C: letters(B: q(B,A: 5,C),A,C)
+> a=B: q(B,A: 5,C: letters(B,A,C))
+> b=5
+> c=C: letters(B: q(B,A: 5,C),A,C)
+> d=exam(A: 5,B: q(B,A,C: letters(B,A,C)),C)
+> e=@
+> f=@
+> 
+> *** Yes
+> A = 5, B = q(B,A,C), C = letters(B,A,C).
+> --1> alt?
+> 

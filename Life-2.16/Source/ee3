@@ -1,0 +1,70 @@
+echo "WildLife Difference Utility"
+echo "diff .h file & compared with 1.02 version?"
+echo "enter 0 to proceed 999 to quit"
+read select
+while [ $select -ne 999 ]
+do 
+echo "-----------"
+echo ".h files for wild life"
+echo "-----------"
+echo "1 built_ins.h"
+echo "2 c_life.h"
+echo "3 copy.h"
+echo "4 error.h"
+echo "5 extern.h"
+echo "6 info.h"
+echo "7 interrupt.h"
+echo "8 lefun.h"
+echo "9 list.h"
+echo "10 login.h"
+echo "11 memory.h"
+echo "12 modules.h"
+echo "13 parser.h"
+echo "14 print.h"
+echo "15 proto.h"
+echo "16 raw.h"
+echo "17 sys.h"
+echo "18 token.h"
+echo "19 trees.h"
+echo "20 types.h"
+echo "21 xdisplaylist.h"
+echo "22 xpred.h"
+echo "111 View Differences"
+
+echo "777 NOTES_DJD.txt"
+echo "888 NOTES_HAK.txt"
+echo "999 quit"
+echo "select"
+read select
+case $select in
+1) diff $LIFE_ORIG/Source/built_ins.h built_ins.h >diffs.out ;;
+2) diff $LIFE_ORIG/Source/c_life.h c_life.h >diffs.out ;;
+3) diff $LIFE_ORIG/Source/copy.h copy.h >diffs.out ;;
+4) diff $LIFE_ORIG/Source/error.h error.h >diffs.out ;;
+5) diff $LIFE_ORIG/Source/extern.h extern.h >diffs.out ;;
+6) diff $LIFE_ORIG/Source/info.h info.h >diffs.out ;;
+7) diff $LIFE_ORIG/Source/interrupt.h interrupt.h >diffs.out ;;
+8) diff $LIFE_ORIG/Source/lefun.h lefun.h >diffs.out ;;
+9) diff $LIFE_ORIG/Source/list.h list.h >diffs.out ;;
+10) diff $LIFE_ORIG/Source/login.h login.h >diffs.out ;;
+11) diff $LIFE_ORIG/Source/memory.h memory.h >diffs.out ;;
+12) diff $LIFE_ORIG/Source/modules.h modules.h >diffs.out ;;
+13) diff $LIFE_ORIG/Source/parser.h parser.h >diffs.out ;;
+14) diff $LIFE_ORIG/Source/print.h print.h >diffs.out ;;
+15) diff $LIFE_ORIG/Source/proto.h proto.h >diffs.out ;;
+16) diff $LIFE_ORIG/Source/raw.h raw.h >diffs.out ;;
+17) diff $LIFE_ORIG/Source/sys.h sys.h >diffs.out ;;
+18) diff $LIFE_ORIG/Source/token.h token.h >diffs.out ;;
+19) diff $LIFE_ORIG/Source/trees.h  trees.h >diffs.out ;;
+20) diff $LIFE_ORIG/Source/types.h  types.h >diffs.out ;;
+21) diff $LIFE_ORIG/Source/xdisplaylist.h  xdisplaylist.h >diffs.out ;;
+22) diff $LIFE_ORIG/Source/xpred.h xpred.h >diffs.out ;;
+
+111) $EDITOR diffs.out ;;
+
+777) $EDITOR NOTES_DJD.txt;;
+888) $EDITOR NOTES_HAK.txt;;
+
+esac
+done
+

@@ -1,0 +1,106 @@
+
+
+a <| a.
+a <| @.
+
+
+1234 <| 1234.
+1234 <| int.
+1234 <| real.
+1234 <| @.
+
+
+int <| int.
+int <| real.
+int <| @.
+
+
+a little rope <| a little rope.
+a little rope <| string.
+a little rope <| @.
+
+
+string <| string.
+string <| @.
+
+
+3.14159 <| 3.14159.
+3.14159 <| real.
+3.14159 <| @.
+
+
+real <| real.
+real <| @.
+
+
+[a,b,c,d] <| [a,b,c,d].
+[a,b,c,d] <| list.
+[a,b,c,d] <| cons.
+[a,b,c,d] <| @.
+
+
+list <| list.
+list <| @.
+
+
+cons <| list.
+cons <| cons.
+cons <| @.
+
+
+[] <| list.
+[] <| [].
+[] <| @.
+
+
+@ <| @.
+
+
+@(hello => world) <| @.
+@(hello => world) <| @(hello => world).
+
+
+small <| @.
+small <| small.
+small <| big.
+
+
+big <| @.
+big <| big.
+
+
+sad <| @.
+sad <| sad.
+sad <| funny.
+
+
+funny <| @.
+funny <| funny.
+
+
+dead_mouse <| @.
+dead_mouse <| small.
+dead_mouse <| big.
+dead_mouse <| sad.
+dead_mouse <| funny.
+dead_mouse <| dead_mouse.
+
+
+cheshire_cat <| @.
+cheshire_cat <| big.
+cheshire_cat <| funny.
+cheshire_cat <| cheshire_cat.
+
+*** Yes
+> > 
+*** Yes
+> > 
+*** Yes
+A =  $p( $a, $b, $c).
+--1> 
+*** No
+A =  $p( $a, $b, $c, $@).
+--1> > 
+*** Yes
+A = @(4 =>  $goodbye).
+--1> 

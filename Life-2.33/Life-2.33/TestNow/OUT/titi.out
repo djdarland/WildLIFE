@@ -1,0 +1,62 @@
+
+*** Yes
+> > 
+% 'point' is undefined.
+
+*** Yes
+> 
+*** Yes
+A = true.
+--1> 
+dynamic(point)?
+point -> 0.
+
+*** Yes
+A = true.
+> 
+*** No
+--1> 
+dynamic(point)?
+point -> 0.
+
+*** Yes
+> 
+*** Yes
+> 
+dynamic(point)?
+point -> 0.
+
+*** Yes
+> 
+*** No
+--1> 
+dynamic(point)?
+point -> 0.
+
+*** Yes
+> 
+*** Yes
+A = true.
+--1> 
+dynamic(point)?
+point -> 16.
+
+*** Yes
+A = true.
+> 
+*** No
+--1> 
+dynamic(point)?
+point -> 16.
+
+*** Yes
+> 
+*** Yes
+> 
+dynamic(point)?
+point -> 2064.
+
+*** Yes
+> 
+*** No
+--1> 

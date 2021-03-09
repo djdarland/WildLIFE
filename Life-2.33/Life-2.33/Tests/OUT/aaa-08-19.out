@@ -1,0 +1,19 @@
+
+*** Yes
+> > 
+*** Yes
+> |    
+*** Yes
+> 
+one(abc,_A: def,fgh(a,b,c,d),ijk,lmn(e,f,g(h,i,j),h,i(12,23,34,45)),[a,b,c,d],cons(a,[b],10000),[_A|_A])
+
+one(abc,
+    _A: def,
+    fgh(a,b,c,d),
+    ijk,
+    lmn(e,f,g(h,i,j),h,i(12,23,34,45)),
+    [a,b,c,d],
+    cons(a,[b],10000),
+    [_A|_A])
+*** No
+> 

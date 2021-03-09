@@ -1,0 +1,42 @@
+%
+%		WILD-LIFE TESTING
+%
+%		How predicate is input
+%
+%	mix of assert and retract
+%
+% def_predicate(X): creates a predicate with no definition; if the predicate
+% has already been defined, it doesn't change its definition.
+%
+def_predicate(X) :-
+	Y=root_sort(X),
+	asserta(Y), retract(Y), !.
+% def_predicate(X) :- asserta(root_sort(X)),retract(root_sort(X)),!.
+%
+%	Non-monotonic reasonning
+%
+% If someone has been decorated, then he is a hero. But, if someday he becomes
+% a reckless driver, then he may no longer be considered as a hero.
+%
+% initial database
+%
+dynamic(decorated)?
+dynamic(roadhog)?
+decorated(riri).
+decorated(fifi).
+roadhog(fifi).
+roadhog(loulou).
+%
+% program
+%
+mod_db(X):-hero1(X),!.
+mod_db(X):-assert(hero1(X)).
+
+new_db(X):- decorated(X),mod_db(X),fail.
+new_db(X):- roadhog(X),retract(hero1(X)).
+new_db(X).
+
+hero(X):-new_db(X),hero1(X).
+
+def_predicate(`hero1)?
+

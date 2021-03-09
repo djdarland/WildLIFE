@@ -1,0 +1,13 @@
+
+
+titi(0) -> true | setq(point,0).
+titi(N) -> titi(N-1) & titi(N-1).
+
+tata(0) -> true | X=point+1, setq(point,X).
+tata(N) -> tata(N-1) & tata(N-1).
+
+% non_strict(setq)?
+% 
+% setq(X,V) :- Value = eval(V), retract((X->@)), !, assert((X->Value)).
+% setq(X,V) :- dynamic(X), Value = eval(V), assert((X->Value)).
+% 

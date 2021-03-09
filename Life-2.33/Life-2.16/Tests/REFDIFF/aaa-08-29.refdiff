@@ -1,0 +1,124 @@
+4d3
+< andor1.referr
+5a5
+> andor1.referr
+41d40
+< boolpred.referr
+43c42
+< bruno_disj.referr
+---
+> boolpred.referr
+44a44
+> bruno_disj.referr
+56,57d55
+< comp_struct.referr
+< compose.referr
+58a57,58
+> compose.referr
+> comp_struct.referr
+64d63
+< curry1.referr
+66a66
+> curry1.referr
+80d79
+< delay.referr
+81a81
+> delay.referr
+104d103
+< eoftest.referr
+106a106
+> eoftest.referr
+111d110
+< fact.referr
+112a112
+> fact.referr
+114d113
+< feat_order.referr
+116c115
+< feature.referr
+---
+> feat_order.referr
+117a117
+> feature.referr
+127d126
+< glb.referr
+129,131c128
+< glob_gc.referr
+< glob_test2.referr
+< global.referr
+---
+> glb.referr
+133a131,133
+> global.referr
+> glob_gc.referr
+> glob_test2.referr
+140d139
+< intdiv.referr
+142a142
+> intdiv.referr
+145d144
+< isatest.referr
+146a146
+> isatest.referr
+148d147
+< lazy.referr
+149a149
+> lazy.referr
+164d163
+< manual1.referr
+166a166
+> manual1.referr
+177d176
+< module_test1.referr
+178a178
+> module_test1.referr
+207d206
+< parse.referr
+208a208
+> parse.referr
+213d212
+< persistent.referr
+214a214
+> persistent.referr
+220a221,222
+> print1.referr
+> print2.referr
+224,225d225
+< print1.referr
+< print2.referr
+237d236
+< pyth.referr
+238a238
+> pyth.referr
+252d251
+< rootsort.referr
+253a253
+> rootsort.referr
+268d267
+< str.referr
+272a272
+> str.referr
+274d273
+< subs.referr
+276c275
+< t.referr
+---
+> subs.referr
+299d297
+< testsl.referr
+300a299
+> testsl.referr
+301a301
+> t.referr
+308d307
+< varlevel.referr
+309a309
+> varlevel.referr
+311d310
+< wam.referr
+312a312
+> wam.referr
+314d313
+< write.referr
+315a315
+> write.referr

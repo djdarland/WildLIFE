@@ -1,0 +1,198 @@
+% FILE. . . . . /usr/local-europa/hak/life/color_edit.lf
+% EDIT BY . . . Hassan Ait-Kaci
+% ON MACHINE. . Europa
+% STARTED ON. . Mon Apr 18 19:08:49 1994
+
+% Last modified on Mon Nov 14 15:24:34 1994 by Hak
+
+module("color_edit") ?
+public(color_edit) ?
+
+import("xtools_utils")?
+open("xtools")?
+
+persistent(main_panel) ?
+persistent(color_window) ?
+
+global(quit)?
+
+persistent(hue_step)? hue_step <<- 1?
+
+persistent(r_value)? r_value <<- 0 ?
+persistent(g_value)? g_value <<- 0 ?
+persistent(b_value)? b_value <<- 0 ?
+
+deep_box <| frame.
+deep_box <| field.
+
+:: deep_box(frame_state => true).
+
+set_up :-
+	H = 200,
+	
+	S1 = vsbar(H,B1,r), B1 = meterbox(S1,r),
+	S2 = vsbar(H,B2,g), B2 = meterbox(S2,g),
+	S3 = vsbar(H,B3,b), B3 = meterbox(S3,b),
+	
+	same_size([B1,B2,B3]),
+	
+	M1 = vc_list [S1,v_box(10),B1],
+	M2 = vc_list [S2,v_box(10),B2],
+	M3 = vc_list [S3,v_box(10),B3],
+	
+	Sliders = padded_box
+	  (frame_box(hc_list [M1,h_box(10),M2,h_box(10),M3],
+		     padding => P:10),
+	   padding => P),
+	
+	Sliders = @(width => W),
+	
+	QuitButton = push_button(text => "Quit",
+				 action => quit_edit),
+
+	StepButton = text_field_button(text => psi2str(hue_step),
+				       offset => 0,
+				       action => set_hue(StepButton)),
+
+	Controls = vr_list [ frame_box(ColorBox,padding=>5),
+			     v_box(20),
+			     QuitButton,
+			     v_box(20),
+			     hc_list [ text_box(text => "Hue Step"),
+				       h_box(5),
+				       StepButton ]
+			   ],
+
+	ColorBox = deep_box(width => W,height => W/2),
+	
+	TitleBox = fancy_text_box
+	  (text => Title:"Color Editor",
+	   font => title_font,
+	   colors => [red_color,green_color,blue_color]),
+	
+	Panel = panel(title => Title,
+		      r_slider => S1.slider, r_meter => B1,
+		      g_slider => S2.slider, g_meter => B2,
+		      b_slider => S3.slider, b_meter => B3,
+		      hue_button => StepButton,
+		      color_box => ColorBox)
+	  containing vc_list [v_box(10),
+			      hc_list [Sliders,h_box(10),Controls,h_box(20)],
+			      TitleBox,
+			      v_box(10)],
+	main_panel <<- Panel.
+
+vsbar(Height,TextBox,Color) ->
+	v_slide_bar
+	  (height => Height,
+	   slider => S:v_slider(min => 0,
+				max => 255,
+				color => Color,
+				color_id => c_id(Color),
+				value => c_value(Color),
+				action => set_meter(S,TextBox)))
+	  containing S.
+
+meterbox(SlideBar,Color) ->
+	B:text_field_button(height => H,
+			    width => H,
+			    text => "    ", %psi2str(c_value(Color)),
+			    offset => 0,
+			    action => set_color_slider(B,SlideBar.slider)).
+
+set_color_slider(BT:@(text => T),
+	   Slider:@(max => Max,min => Min,color => C)) :-
+	V = parse(T),
+	V :< real,
+	V >= Min,
+	V =< Max,
+	T <<- int2str(FV:round(V)),
+	refresh_look(BT),
+	move_slider(Slider,FV),
+	reset_color(C,FV),
+	write("red = ", c_value(r),
+	      ", green = ", c_value(g),
+	      ", blue = ", c_value(b)),
+	set_color_box(c_value(r),c_value(g),c_value(b)).
+
+set_meter(@(color => C,value => V),BT:@(text => T)) :-
+	reset_color(C,FV),
+	set_color_box(c_value(r),c_value(g),c_value(b)),
+	T <<- int2str(FV:round(V)),
+	refresh_look(BT).
+
+set_hue(HB:@(text => T)) :-
+	V = parse(T),
+	V :< real,
+	V >= Min,
+	V =< Max, !,
+	T <<- int2str(FV:floor(V)),
+	refresh_look(HB),
+	hue_step <<- FV.	
+set_hue(HB:@(text => T)) :-
+	beep,
+	write("Bad hue value -- must be a number!"),
+	nl,
+	T <<- psi2str(hue_step),
+	refresh_look(HB).
+
+round(V) -> floor(V/hue_step)*hue_step.
+
+c_value(r) -> copy_term(r_value).
+c_value(g) -> copy_term(g_value).
+c_value(b) -> copy_term(b_value).
+
+c_id(r) -> red_color.
+c_id(g) -> green_color.
+c_id(b) -> blue_color.
+
+reset_color(r,Value) :-	r_value <<- Value.
+reset_color(g,Value) :-	g_value <<- Value.
+reset_color(b,Value) :-	b_value <<- Value.
+
+set_color_box(R,G,B) :-
+	Box = (main_panel.color_box) & @(X,Y,W,H),
+	Color = new_color(R,G,B),
+	xFillRectangle(color_window,X+1,Y+1,W-2,H-2,color => Color),
+	xFreeColor(color_window,Color).
+
+def_font(title_font,
+	 new_font(cond(life_demo#using_demo_fonts,
+		       "terminal_bold_narrow28",
+		       "-adobe-helvetica-bold-r-narrow--25-180-100-100-p-116-*")))?
+
+def_color(main_colors,red_color,red)?
+def_color(main_colors,green_color,'lime green')?
+def_color(main_colors,blue_color,blue)?
+
+def_color(highlight_colors,red_color,orange)?
+def_color(highlight_colors,green_color,'spring green')?
+def_color(highlight_colors,blue_color,'cornflower blue')?
+
+def_color(shade_colors,red_color,maroon)?
+def_color(shade_colors,green_color,'dark green')?
+def_color(shade_colors,blue_color,'midnight blue')?
+
+quit_edit :- set_choice(quit), fail.
+
+init_panel(P) :-
+	color_window <<- P.color_box.mother.window,
+	HT = (HB:(P.hue_button)).text, HT <<- psi2str(hue_step),
+	refresh_look(HB),
+	move_slider(P.r_slider,R:c_value(r)),
+	TR = (RM:(P.r_meter)).text, TR <<- psi2str(R), refresh_look(RM),
+	move_slider(P.g_slider,G:c_value(g)),
+	TG = (GM:(P.g_meter)).text, TG <<- psi2str(G), refresh_look(GM),
+	move_slider(P.b_slider,B:c_value(b)),
+	TB = (BM:(P.b_meter)).text, TB <<- psi2str(B), refresh_look(BM),
+	set_color_box(R,G,B).
+
+color_edit :-
+	set_up,
+	( quit = get_choice,
+	  create_box(P:copy_term(main_panel)),
+	  init_panel(P)
+	;
+	  succeed
+	).
+

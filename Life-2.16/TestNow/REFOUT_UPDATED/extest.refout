@@ -1,0 +1,393 @@
+
+*** Yes
+> > 
+*** Yes
+X = workstudy(advisor => don(assistant => _A: person,
+                             secretary => _B: workstudy(advisor => faculty(assistant => person,
+                                                                           secretary => staff),
+                                                        representative => _B,
+                                                        roommate => person)),
+              helper => simon(advisor => faculty(assistant => person,secretary => staff),
+                              roommate => person,
+                              spouse => _A),
+              roommate => _B).
+
+--1> 
+*** No
+> 
+*** Yes
+K = 1.71122e+98.
+--1> 
+*** No
+> 2: prime
+3: prime
+5: prime
+7: prime
+11: prime
+13: prime
+17: prime
+19: prime
+23: prime
+29: prime
+31: prime
+37: prime
+41: prime
+43: prime
+47: prime
+53: prime
+59: prime
+61: prime
+67: prime
+71: prime
+73: prime
+79: prime
+83: prime
+89: prime
+97: prime
+
+*** No
+> > A cat is a furry feline
+
+*** Yes
+> > soap_opera(characters => [_A: dick,_B: jane,_C: harry],
+           husband => _A,
+           mailman => _C,
+           wife => _B)
+*** Yes
+> > 
+ SEND     9567
++MORE    +1085
+-----    -----
+MONEY    10652
+
+
+*** No
+> > Task 1: **********
+                      ----------
+
+Task 2: ********************
+            --------------------
+
+Task 3: ******************************
+            ------------------------------
+
+Task 4:                     ******************
+                                ------------------
+
+Task 5:                               ********
+                                             --------
+
+Task 6:                                       ***
+                                                  ---
+
+Task 7:                                          ****
+            
+
+*** Yes
+> > Task 1: ******************************
+            ------------------------------
+
+Task 2: ********************
+            --------------------
+
+Task 3:                     ******************
+                                ------------------
+
+Task 4:                                          ****
+            
+Task 5:                                       ***
+                                                  ---
+
+Task 6:                               ********
+                                             --------
+
+Task 7: **********
+                      ----------
+
+
+*** Yes
+> > Task 1: **********
+                      ----------
+
+Task 2: ********************
+            --------------------
+
+Task 3: ******************************
+            ------------------------------
+
+Task 4:                     ******************
+                                ------------------
+
+Task 5:                               ********
+                                             --------
+
+Task 6:                                       ***
+                                                  ---
+
+Task 7:                                          ****
+            
+
+*** Yes
+> > Task 1:                                             **
+            
+Task 2:                                           **
+                                                      --
+
+Task 3:                                           **
+                                                      --
+
+Task 4:                                         **
+                                                    --
+
+Task 5:                                       **
+                                                  --
+
+Task 6:                                       **
+                                                  --
+
+Task 7:                                     **
+                                                --
+
+Task 8:                                   **
+                                              --
+
+Task 9:                                   **
+                                              --
+
+Task 10:                                 **
+                                            --
+
+Task 11:                               **
+                                          --
+
+Task 12:                               **
+                                          --
+
+Task 13:                             **
+                                        --
+
+Task 14:                           **
+                                      --
+
+Task 15:                           **
+                                      --
+
+Task 16:                         **
+                                    --
+
+Task 17:                       **
+                                  --
+
+Task 18:                       **
+                                  --
+
+Task 19:                     **
+                                --
+
+Task 20:                   **
+                              --
+
+Task 21:                   **
+                              --
+
+Task 22:                 **
+                            --
+
+Task 23:               **
+                          --
+
+Task 24:           **
+                      --
+
+Task 25:             **
+                        --
+
+Task 26:           **
+                      --
+
+Task 27:           **
+                      --
+
+Task 28:         **
+                    --
+
+Task 29:       **
+                  --
+
+Task 30:       **
+                  --
+
+Task 31:     **
+                --
+
+Task 32:   **
+              --
+
+Task 33:   **
+              --
+
+Task 34: **
+            --
+
+
+*** Yes
+> > 
+	2	7	6
+
+	9	5	1
+
+	4	3	8
+
+Magic Total = 15
+
+	2	9	4
+
+	7	5	3
+
+	6	1	8
+
+Magic Total = 15
+
+	4	3	8
+
+	9	5	1
+
+	2	7	6
+
+Magic Total = 15
+
+	4	9	2
+
+	3	5	7
+
+	8	1	6
+
+Magic Total = 15
+
+	6	1	8
+
+	7	5	3
+
+	2	9	4
+
+Magic Total = 15
+
+	6	7	2
+
+	1	5	9
+
+	8	3	4
+
+Magic Total = 15
+
+	8	1	6
+
+	3	5	7
+
+	4	9	2
+
+Magic Total = 15
+
+	8	3	4
+
+	1	5	9
+
+	6	7	2
+
+Magic Total = 15
+
+*** No
+> > [1,2,3,4,5,6,8,9,10,12,15,16,18,20,24,25,27,30,32,36,40,45,48,50,54,60,64,72,75,80,81,90,96,100,108,120,125,128,135,144,150,160,162,180,192,200,216,225,240,243,250,256,270,288,300,320,324,360,375,384,400,405,432,450,480,486,500,512,540,576,600,625,640,648,675,720,729,750,768,800,810,864,900,960,972,1000]
+
+*** Yes
+> > 
+*** Yes
+--1> 
+*** No
+> Distributeur de Snacks et Boissons de DEC PRL.
+
+La machine contient:
+
+       cake(prix => 3,quantite => 3)
+       lion(prix => 3,quantite => 7)
+       bounty(prix => 3.5,quantite => 2)
+       raider(prix => 3.5,quantite => 3)
+       kit_kat(prix => 4,quantite => 7)
+       gini(prix => 5,quantite => 2)
+       perrier(prix => 5,quantite => 9)
+       oasis(prix => 5,quantite => 2)
+       coca(prix => 5,quantite => 1)
+       coca_light(prix => 5,quantite => 1)
+       piece(prix => 0.5,quantite => 1)
+       piece(prix => 1,quantite => 3)
+       piece(prix => 2,quantite => 2)
+       piece(prix => 5,quantite => 2)
+       piece(prix => 10,quantite => 1)
+
+Que voulez vous acheter ? 
+Vous avez commande un cake
+
+Vous devez payer 3F.
+
+Donnez une piece de F ? La machine rend: 1F 1F
+
+Prenez votre cake dans le distributeur SVP.
+
+
+-----------------------------------------------------
+Distributeur de Snacks et Boissons de DEC PRL.
+
+La machine contient:
+
+       cake(prix => 3,quantite => 2)
+       lion(prix => 3,quantite => 7)
+       bounty(prix => 3.5,quantite => 2)
+       raider(prix => 3.5,quantite => 3)
+       kit_kat(prix => 4,quantite => 7)
+       gini(prix => 5,quantite => 2)
+       perrier(prix => 5,quantite => 9)
+       oasis(prix => 5,quantite => 2)
+       coca(prix => 5,quantite => 1)
+       coca_light(prix => 5,quantite => 1)
+       piece(prix => 0.5,quantite => 1)
+       piece(prix => 1,quantite => 1)
+       piece(prix => 2,quantite => 2)
+       piece(prix => 5,quantite => 3)
+       piece(prix => 10,quantite => 1)
+
+Que voulez vous acheter ? Il n'y en a pas a vendre...
+Recommencez...
+Que voulez vous acheter ? 
+Vous avez commande un raider
+
+Vous devez payer 3.5F.
+
+Donnez une piece de F ? Donnez une piece de F ? Donnez une piece de F ? Donnez une piece de F ? La machine rend: 0.5F 1F
+
+Prenez votre raider dans le distributeur SVP.
+
+
+-----------------------------------------------------
+Distributeur de Snacks et Boissons de DEC PRL.
+
+La machine contient:
+
+       cake(prix => 3,quantite => 2)
+       lion(prix => 3,quantite => 7)
+       bounty(prix => 3.5,quantite => 2)
+       raider(prix => 3.5,quantite => 2)
+       kit_kat(prix => 4,quantite => 7)
+       gini(prix => 5,quantite => 2)
+       perrier(prix => 5,quantite => 9)
+       oasis(prix => 5,quantite => 2)
+       coca(prix => 5,quantite => 1)
+       coca_light(prix => 5,quantite => 1)
+       piece(prix => 1,quantite => 3)
+       piece(prix => 2,quantite => 3)
+       piece(prix => 5,quantite => 3)
+       piece(prix => 10,quantite => 1)
+
+Que voulez vous acheter ? 
+
+*** Yes
+> > > 

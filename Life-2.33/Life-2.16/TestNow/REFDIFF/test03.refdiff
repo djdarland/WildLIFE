@@ -1,0 +1,36 @@
+35d34
+< bytedata <| built_in.
+81,90d79
+< % 'process_no_children' is undefined.
+< 
+< % 'process_exited' is undefined.
+< 
+< % 'process_signaled' is undefined.
+< 
+< % 'process_stopped' is undefined.
+< 
+< % 'process_continued' is undefined.
+< 
+141,142d129
+< % 'begin_raw' is undefined.
+< 
+145,150d131
+< % 'end_raw' is undefined.
+< 
+< % 'get_raw' is undefined.
+< 
+< % 'in_raw' is undefined.
+< 
+158,169d138
+< 
+< % 'put_raw' is undefined.
+< 
+< % 'reset_window_flag' is undefined.
+< 
+< % 'window_flag' is undefined.
+< 
+< % '(' is undefined.
+< 
+< % ')' is undefined.
+< 
+< % 'ftruncate' is undefined.

@@ -1,0 +1,200 @@
+
+*** Yes
+> > > |    |    |    |    |    |    |    |    |    |    |    |    |    
+% non_strict(non_strict)?
+% 'non_strict' is a built-in predicate.
+
+% non_strict(dynamic)?
+% 'dynamic' is a built-in predicate.
+
+% non_strict(delay_check)?
+% 'delay_check' is a built-in predicate.
+
+% 'assert' is a built-in predicate.
+
+% 'asserta' is a built-in predicate.
+
+% 'retract' is a built-in predicate.
+
+% 'clause' is a built-in predicate.
+
+non_strict(load)?
+load :-
+        @ = current_module,
+        @ = features(load,"built_ins"),
+        (loading,
+        !,
+        load_2(@,load) ; loading <<- true,
+        top_load <<- get_choice,
+        load_2(@,load),
+        !,
+        loading <<- false ; open_out("stdout",@),
+        open_in("stdin",@),
+        set_module(@),
+        loading <<- false,
+        fail).
+
+% 'load_2' is undefined.
+
+% 'load_3' is undefined.
+
+% 'load_path' is undefined.
+
+life_ext -> {".lf";"";(load_suffixes | is_function(` load_suffixes));".life"}.
+
+non_strict(listing)?
+listing :-
+        listing_2(features(listing,"built_ins"),listing).
+
+% 'listing_2' is undefined.
+
+% 'listing_3' is undefined.
+
+% 'listing_4' is undefined.
+
+% 'listing_4a' is undefined.
+
+% 'listing_5' is undefined.
+
+% 'listing_6' is undefined.
+
+non_strict(op)?
+op(@,@,@,functor => @,kind => @,precedence => @) :-
+        trace(@,@),
+        (op_2(@,@,@),
+        trace(@,@) ; trace(@,@),
+        fail).
+
+non_strict(op)?
+op(@,@,@,functor => @,kind => @,precedence => @) :-
+        trace(@,@),
+        (op_2(@,@,@),
+        trace(@,@) ; trace(@,@),
+        fail).
+
+% 'op_2' is undefined.
+
+% 'op_3' is undefined.
+
+call_handler(@) :-
+        is_sort(@),
+        !,
+        write_err("*** Error: the sort '"),
+        writeq_err(@),
+        write_err("' occurs where a predicate or function is expected."),
+        nl_err,
+        abort.
+call_handler(@) :-
+        !,
+        write_err("*** Error: '"),
+        writeq_err(@),
+        write_err("' is not a predicate or a function."),
+        nl_err,
+        abort.
+
+nl :-
+        write("
+").
+
+\+ @ :-
+        @,
+        !,
+        fail.
+\+ :-
+        succeed.
+
+non_strict(bagof)?
+bagof(@,
+      @) -> @ | @ <<- [],(evalin(@), @ <<- [evalin(@)|copy_pointer(@)], fail ; @ <- copy_term(@)).
+
+reduce(@,@,[@|@]) -> apply(@,reduce(@,@,@),functor => @).
+reduce(@,@,[]) -> @.
+
+map(@,[@|@]) -> [apply(@,functor => @)|map(@,@)].
+map(@,[]) -> [].
+
+maprel(@,[@|@]) :-
+        !,
+        root_sort(@) & @(@),
+        maprel(@,@).
+maprel(@,[]) :-
+        succeed.
+
+append([@|@],list) -> [@|append(@,list)].
+append([],list) -> list.
+
+length([@|@]) -> 1 + length(@).
+length([]) -> 0.
+
+[] <| list.
+
+cons <| list.
+
+% 'car' is undefined.
+
+% 'cdr' is undefined.
+
+% 'repeat' is a built-in predicate.
+
+% 'where' is undefined.
+
+% 'and' is a built-in function.
+
+% 'or' is a built-in function.
+
+% 'not' is a built-in function.
+
+% 'xor' is a built-in function.
+
+% 'int2str' is a built-in function.
+
+% 'num' is undefined.
+
+str(@) -> cond(is_value(@),strval(@),psi2str(@)).
+
+strval(string) -> string.
+strval(int) -> int2str(int).
+
+"" $== "" -> true.
+string $== string -> asc(string) =:= asc(string) and lenstreq(substr(string,
+                                                                     2,
+                                                                     strlen(string)),
+                                                              substr(string,
+                                                                     2,
+                                                                     strlen(string)),
+                                                              strlen(string),
+                                                              strlen(string)).
+
+string $\== string -> not string $== string.
+
+string $< string -> string $=< string and not string $== string.
+
+"" $=< string -> true.
+string $=< "" -> false.
+string $=< string -> asc(string) < asc(string) or asc(string) =:= asc(string) and lenstrle(substr(string,
+                                                                                                  2,
+                                                                                                  strlen(string)),
+                                                                                           substr(string,
+                                                                                                  2,
+                                                                                                  strlen(string)),
+                                                                                           strlen(string),
+                                                                                           strlen(string)).
+
+string $> string -> not string $=< string.
+
+string $>= string -> not string $=< string or string $== string.
+
+% 'set' is undefined.
+
+% 'setq' is a built-in predicate.
+
+@ ^ int -> cond(int < 0,1 / pwr(@,- int),pwr(@,int)).
+
+% 'pwr' is undefined.
+
+max(@,@) -> cond(@ > @,@,@).
+
+min(@,@) -> cond(@ > @,@,@).
+
+*** Yes
+> 

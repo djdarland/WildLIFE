@@ -1,0 +1,5 @@
+absolute(V:real) -> cond(V>=0,V,-V).
+A=absolute(X)?
+X= -34?
+.
+A=cond(true,foo,bar)?

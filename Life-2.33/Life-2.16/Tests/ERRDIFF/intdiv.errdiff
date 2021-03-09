@@ -1,0 +1,8 @@
+1c1
+< *** Error: division by zero in 0 // 0.
+---
+> *** Error: division by zero in B: 0 // B.
+6c6
+< *** Error: division by zero in 0 // 0.
+---
+> *** Error: division by zero in B: 0 // B.

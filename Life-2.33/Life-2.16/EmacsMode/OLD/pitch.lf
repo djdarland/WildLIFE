@@ -1,0 +1,1171 @@
+%% not definition required RS6000 prolog 
+%% not(P) :- call(P), !, fail.
+%% not(P). 
+%%	 member and append predicates from the Art of Prolog.
+%% member(X,[X|Xs]).
+%% member(X,[Y|Ys]) :- member(X,Ys).
+%% append([],Ys,Ys).
+%% append([X|Xs],Ys,[X|Zs]) :- append(Xs,Ys,Zs).
+%% predicate eq defined for use with not above 
+%%	eq(A,B) :-
+%%	A = B.
+%% 
+%% deck representation follows                                        
+%% for each suite these is a predicate which is true of cards of that 
+%% suite represented as a list of data for that card. The data is :
+%% [card number(as represented in deck and other lists of cards , 
+%% sequence value in this suite,
+%% suite,
+%% name of card,
+%% points for taking this card,
+%% points for playing this card]  
+%%
+%% print_nl(X) :- write(X), nl. 
+%% print_bl(X) :- write(X).
+print(X) :- write(X).
+
+
+
+heart([0,2,hearts,c_2_of_hearts,0,1]).
+heart([1,3,hearts,c_3_of_hearts,0,0]).
+heart([2,4,hearts,c_4_of_hearts,0,0]).
+heart([3,5,hearts,c_5_of_hearts,0,0]).
+heart([4,6,hearts,c_6_of_hearts,0,0]).
+heart([5,7,hearts,c_7_of_hearts,0,0]).
+heart([6,8,hearts,c_8_of_hearts,0,0]).
+heart([7,9,hearts,c_9_of_hearts,0,0]).
+heart([8,10,hearts,c_10_of_hearts,1,0]).
+heart([52,11,hearts,low_joker,1,0]).
+heart([53,12,hearts,high_joker,1,0]).
+heart([22,13,hearts,j_of_diamonds,1,0]).
+heart([9,14,hearts,j_of_hearts,1,0]).
+heart([10,15,hearts,q_of_hearts,0.0]).
+heart([11,16,hearts,k_of_hearts,0,0]).
+heart([12,17,hearts,a_of_hearts,0,1]).
+diamond([13,2,diamonds,c_2_of_diamonds,0,1]).
+diamond([14,3,diamonds,c_3_of_diamonds,0,0]).
+diamond([15,4,diamonds,c_4_of_diamonds,0,0]).
+diamond([16,5,diamonds,c_5_of_diamonds,0,0]).
+diamond([17,6,diamonds,c_6_of_diamonds,0,0]).
+diamond([18,7,diamonds,c_7_of_diamonds,0,0]).
+diamond([19,8,diamonds,c_8_of_diamonds,0,0]).
+diamond([20,9,diamonds,c_9_of_diamonds,0,0]).
+diamond([21,10,diamonds,c_10_of_diamonds,1,0]).
+diamond([52,11,diamonds,low_joker,1,0]).
+diamond([53,12,diamonds,high_joker,1,0]).
+diamond([9,13,diamonds,j_of_hearts,1,0]).
+diamond([22,14,diamonds,j_of_diamonds,1,0]).
+diamond([23,15,diamonds,q_of_diamonds,0,0]).
+diamond([24,16,diamonds,k_of_diamonds,0,0]).
+diamond([25,17,diamonds,a_of_diamonds,0,1]).
+spade([26,2,spades,c_2_of_spades,0,1]).
+spade([27,3,spades,c_3_of_spades,0,0]).
+spade([28,4,spades,c_4_of_spades,0,0]).
+spade([29,5,spades,c_5_of_spades,0,0]).
+spade([30,6,spades,c_6_of_spades,0,0]).
+spade([31,7,spades,c_7_of_spades,0,0]).
+spade([32,8,spades,c_8_of_spades,0,0]).
+spade([33,9,spades,c_9_of_spades,0,0]).
+spade([34,10,spades,c_10_of_spades,1,0]).
+spade([52,11,spades,low_joker,1,0]).
+spade([53,12,spades,high_joker,1,0]).
+spade([48,13,spades,j_of_clubs,1,0]).
+spade([35,14,spades,j_of_spades,1,0]).
+spade([36,15,spades,q_of_spades,0,0]).
+spade([37,16,spades,k_of_spades,0,0]).
+spade([38,17,spades,a_of_spades,0,1]).
+club([39,2,clubs,c_2_of_clubs,0,1]).
+club([40,3,clubs,c_3_of_clubs,0,0]).
+club([41,4,clubs,c_4_of_clubs,0,0]).
+club([42,5,clubs,c_5_of_clubs,0,0]).
+club([43,6,clubs,c_6_of_clubs,0,0]).
+club([44,7,clubs,c_7_of_clubs,0,0]).
+club([45,8,clubs,c_8_of_clubs,0,0]).
+club([46,9,clubs,c_9_of_clubs,0,0]).
+club([47,10,clubs,c_10_of_clubs,1,0]).
+club([52,11,clubs,low_joker,1,0]).
+club([53,12,clubs,high_joker,1,0]).
+club([35,13,clubs,j_of_spades,1,0]).
+club([48,14,clubs,j_of_clubs,1,0]).
+club([49,15,clubs,q_of_clubs,0,0]).
+club([50,16,clubs,k_of_clubs,0,0]).
+club([51,17,clubs,a_of_clubs,0,1]).
+valid_bid(Val) :- 2 =< Val , Val =< 7.
+valid_bid(Val) :- Val = pass.
+valid_suite(hearts).
+valid_suite(diamonds).
+valid_suite(spades).
+valid_suite(clubs).
+
+%%/* the card predicate combines infomation of all suits */
+%%	
+card([No,Val,Suite,Name,Pt_taken,Pt_played]) :- 
+	heart([No,Val,Suite,Name,Pt_taken,Pt_played]). 
+card([No,Val,Suite,Name,Pt_taken,Pt_played]) :- 
+        diamond([No,Val,Suite,Name,Pt_taken,Pt_played]).
+card([No,Val,Suite,Name,Pt_taken,Pt_played]) :- 
+        spade([No,Val,Suite,Name,Pt_taken,Pt_played]).
+card([No,Val,Suite,Name,Pt_taken,Pt_played]) :- 
+        club([No,Val,Suite,Name,Pt_taken,Pt_played]).
+valid_card(Name,Suite,H) :-		
+	card([No,Val,Suite,Name,Pt_taken,Pt_played]),
+	member(No,H).
+%% /* some predicates follow which are used for initialization */
+
+bind_teams([[dennis,dick],[sussy,john]]).
+bind_players([dennis,sussy,dick,john]).
+succ_player(dennis,sussy).
+succ_player(sussy,dick).
+succ_player(dick,john).
+succ_player(john,dennis).
+partner(dennis,dick).
+partner(dick,dennis).
+partner(sussy,john).
+partner(john,sussy).
+bind_dealer(dennis).
+bind_played([[],[],[],[]]).
+bind_taken([[],[],[],[]]).
+bind_score([0,0]).
+%%/*******************************************************************/
+%%	/* The main predicate for invoking a game of pitch follows        */
+%% /* to invoke a game the query - play_game(R,S). - may be used.     */
+%% /******************************************************************/
+
+play_game(Teams,Scores) :- 
+	%%	trace(true),
+	bind_teams(Teams),
+        bind_players(Players),
+        bind_score(Scores),bind_dealer(Dealer),
+	load("shuffle.lf"), 
+	%%        open_out("pitch.log"),
+        play_hand(Players,Teams,Scores,Dealer,Deck,0).
+play_hand(Players,Teams,Scores,Dealer,Deck,Cnt) :- done(Teams,Scores).
+play_hand(Players,Teams,Scores,Dealer,Deck,Cnt) :-
+	
+        bind_played(Played),
+        load("is_out.lf"),
+        bind_taken(Taken),
+	%%	/*		shell('shuffle >shuffle.p'),  */
+	bind_deck(Deck,Cnt),
+        deal(Players,Deck,Newdeckx,Hands,Dealer),
+        bid(Players,Hands,Dealer,Bidder,Bid,Suite),
+        print_bl(bid_is),
+        print_bl(Bidder),
+        print_bl(Bid),
+        print_nl(Suite),
+        discard(Players,Hands,Hands2,Suite),
+        deal2(Players,Newdeckx,Hands2,Hands3,Dealer,Bidder),
+        discard(Players,Hands3,Hands4,Suite),
+	abolish(is_out,1), 
+	consult('is_out.pl'), 
+	play_cards(Players,Hands4,Played,Taken,Bidder,Suite,
+		   Newplayed,Newtaken,Npret,Ntret),
+        score(Players,Teams,Npret,Ntret,Scores,Newscores,Bidder,Bid,Suite), 
+        succ_player(Dealer,Newdealer),
+	%%        Cnt2 is Cnt + 1,
+        Cnt2 = Cnt + 1,
+        play_hand(Players,Teams,Newscores,Newdealer,Newdeck,Cnt2).
+%% /* game is over when score reaches 21 */
+done(Teams,[S1,S2]) :- S1 >= 21.
+done(Teams,[S1,S2]) :- S2 >= 21. 
+%%/* deal cards 1st round.  Each player gets 9 cards */
+deal(Players,Deck,Newdeckx,Hands,Dealer) :- print_nl(p_deal),
+        Deck = [C1,C2,C3,C4,C5,C6,C7,C8,C9,C10,C11,C12,C13,C14,C15,
+		C16,C17,C18,C19,C20,C21,C22,C23,C24,C25,C26,C27,C28,C29,C30,
+		C31,C32,C33,C34,C35,C36,C37,C38,C39,C40,C41,C42,C43,C44,C45,
+		C46,C47,C48,C49,C50,C51,C52,C53,C54],
+        !,
+        
+        Newdeckx = [C37,C38,C39,C40,C41,C42,C43,C44,
+		    C45,C46,C47,C48,C49,C50,C51,C52,C53,C54],
+        
+        Hands = [[C1,C2,C3,C13,C14,C15,C25,C26,C27],
+		 [C4,C5,C6,C16,C17,C18,C28,C29,C30],
+		 [C7,C8,C9,C19,C20,C21,C31,C32,C33],
+		 [C10,C11,C12,C22,C23,C24,C34,C35,C36]],
+        print_nl(Hands).
+%%/* rules foer what a player can bid follow */
+%%/*
+can_bid(4,Hand,Suite1,Bidder) :- 
+        member(No1,Hand),
+        member(No2,Hand),
+        card([No1,2,Suite1,Name1,Pt_taken1,Pt_played1]),
+        card([No2,17,Suite2,Name2,Pt_taken2,Pt_played2]),
+        Suite1 = Suite2.
+can_bid(3,Hand,Suite,Bidder) :- 
+        member(No1,Hand),
+        card([No1,17,Suite,Name1,Pt_taken1,Pt_played1]).
+can_bid(2,Hand,Suite1,Bidder) :- 
+        member(No1,Hand),
+        member(No2,Hand),
+        card([No1,2,Suite1,Name1,Pt_taken1,Pt_played1]),
+        card([No2,Val2,Suite2,Name2,Pt_taken2,Pt_played2]),
+        Val2 >= 10,
+        Suite1 = Suite2.
+can_bid(0,Hand,pass,Bidder).
+%%*/
+%% /* the bidding process is described below */
+bid(Players,Hands,Dealer,Bidder,Bid,Suite) :- print_nl(p_bid),
+        succ_player(Dealer,Bidder1),
+        get_hand(Players,Hands,Bidder1,Hand1),
+        trybid(Bidder1,Hand1,0,pass,pass,Maxbidder1,Maxbid1,Maxsuite1),
+        succ_player(Bidder1,Bidder2),
+        get_hand(Players,Hands,Bidder2,Hand2),
+        trybid(Bidder2,Hand2,Maxbid1,Maxbidder1,Maxsuite1,
+	       Maxbidder2,Maxbid2,Maxsuite2),
+        succ_player(Bidder2,Bidder3),
+        get_hand(Players,Hands,Bidder3,Hand3),
+        trybid(Bidder3,Hand3,Maxbid2,Maxbidder2,Maxsuite2,
+	       Maxbidder3,Maxbid3,Maxsuite3),
+        succ_player(Bidder3,Bidder4),
+        get_hand(Players,Hands,Bidder4,Hand4),
+        trybid(Bidder4,Hand4,Maxbid3,Maxbidder3,Maxsuite3,
+	       Bidder5,Bid5,Suite5),
+        no_bid(Dealer,Bidder5,Bid5,Suite5,Bidder,Bid,Suite).
+no_bid(Dealer,Bidder5,Bid5,Suite5,Bidder,Bid,Suite) :-
+	Bid5 = 0,
+	Bidder = Dealer,
+	Bid = 2,
+	Suite = spades.
+no_bid(Dealer,Bidder5,Bid5,Suite5,Bidder,Bid,Suite) :-
+	not (Bid5 = 0),
+	Bidder = Bidder5,
+	Bid = Bid5,
+	Suite = Suite5.
+
+%% /* get hand provodes a list of cards associated with a player */
+get_hand(Players,Hands,P1,H1) :-
+        Players = [P1,P2,P3,P4],
+        Hands = [H1,H2,H3,H4].
+get_hand(Players,Hands,P2,H2) :-
+        Players = [P1,P2,P3,P4],
+        Hands = [H1,H2,H3,H4].
+get_hand(Players,Hands,P3,H3) :-
+        Players = [P1,P2,P3,P4],
+        Hands = [H1,H2,H3,H4].
+get_hand(Players,Hands,P4,H4) :-
+        Players = [P1,P2,P3,P4],
+        Hands = [H1,H2,H3,H4].
+%%/* put_hand updates a list of cards associated with a player */
+put_hand(Players,Hands,P1,Hand,Newhands) :-
+        Players = [P1,P2,P3,P4],
+        Hands = [H1,H2,H3,H4],
+        Newhands = [Hand,H2,H3,H4].
+put_hand(Players,Hands,P2,Hand,Newhands) :-
+        Players = [P1,P2,P3,P4],
+        Hands = [H1,H2,H3,H4],
+        Newhands = [H1,Hand,H3,H4].
+put_hand(Players,Hands,P3,Hand,Newhands) :-
+        Players = [P1,P2,P3,P4],
+        Hands = [H1,H2,H3,H4],
+        Newhands = [H1,H2,Hand,H4].
+put_hand(Players,Hands,P4,Hand,Newhands) :-
+        Players = [P1,P2,P3,P4],
+        Hands = [H1,H2,H3,H4],
+        Newhands = [H1,H2,H3,Hand].
+%%/* current player can bid higher than high bid so far */
+trybid(Bidder2,Hand2,Maxbid1,Maxbidder1,Maxsuite1,
+       Maxbidder2,Maxbid2,Maxsuite2) :-
+        not(Bidder2 = dennis),
+        max_bid(Bidval,Hand2,Suite,Bidder2),
+        Bidval > Maxbid1, 
+        print_bl(Bidder2),
+        print_bl(bids),
+        print_nl(Bidval),
+        Maxbidder2 = Bidder2,
+        Maxbid2 = Bidval,
+        Maxsuite2 = Suite.
+%%/* current player can not bid higher than high bid so far */
+trybid(Bidder2,Hand2,Maxbid1,Maxbidder1,Maxsuite1,
+       Maxbidder2,Maxbid2,Maxsuite2) :-
+        not(Bidder2 = dennis),
+        max_bid(Bidval,Hand2,Suite,Bidder2),
+        Bidval =< Maxbid1,
+        Maxbidder2 = Maxbidder1,
+        Maxbid2 = Maxbid1,
+        Maxsuite2 = Maxsuite1.
+%% /* rule repeated 3 times for 3 chances for valid answer */
+trybid(dennis,Hand2,Maxbid1,Maxbidder1,Maxsuite1,
+       Maxbidder2,Maxbid2,Maxsuite2) :-
+        display_hand(Hand2),
+        print_bl(enter),
+        print_bl(bid),
+        print_nl(value),
+        read(Bidval),
+        valid_bid(Bidval),
+        print_bl(enter),
+        print_bl(bid),
+        print_nl(suite),
+        read(Suite),
+        valid_suite(Suite),!,
+        trybid_b(dennis,Hand2,Maxbid1,Maxbidder1,Maxsuite1,
+		 Maxbidder2,Maxbid2,Maxsuite2,Bidval,Suite).
+trybid(dennis,Hand2,Maxbid1,Maxbidder1,Maxsuite1,
+       Maxbidder2,Maxbid2,Maxsuite2) :-
+        display_hand(Hand2),
+        print_bl(enter),
+        print_bl(bid),
+        print_nl(value),
+        read(Bidval),
+        valid_bid(Bidval),
+        print_bl(enter),
+        print_bl(bid),
+        print_nl(suite),
+        read(Suite),
+        valid_suite(Suite),!,
+        trybid_b(dennis,Hand2,Maxbid1,Maxbidder1,Maxsuite1,
+		 Maxbidder2,Maxbid2,Maxsuite2,Bidval,Suite).
+trybid(dennis,Hand2,Maxbid1,Maxbidder1,Maxsuite1,
+       Maxbidder2,Maxbid2,Maxsuite2) :-
+        display_hand(Hand2),
+        print_bl(enter),
+        print_bl(bid),
+        print_nl(value),
+        read(Bidval),
+        valid_bid(Bidval),
+        print_bl(enter),
+        print_bl(bid),
+        print_nl(suite),
+        read(Suite),
+        valid_suite(Suite),!,
+        trybid_b(dennis,Hand2,Maxbid1,Maxbidder1,Maxsuite1,
+		 Maxbidder2,Maxbid2,Maxsuite2,Bidval,Suite).
+trybid_b(dennis,Hand2,Maxbid1,Maxbidder1,Maxsuite1,
+	 Maxbidder2,Maxbid2,Maxsuite2,Bidval,Suite) :-
+        Bidval > Maxbid1, 
+        print_bl(Bidder2),
+        print_bl(bids),
+        print_nl(Bidval),
+        Maxbidder2 = dennis,
+        Maxbid2 = Bidval,
+        Maxsuite2 = Suite.
+trybid_b(dennis,Hand2,Maxbid1,Maxbidder1,Maxsuite1,
+	 Maxbidder2,Maxbid2,Maxsuite2,Bidval,Suite) :-
+        Bidval = pass,
+        Maxbidder2 = Maxbidder1,
+        Maxbid2 = Maxbid1,
+        Maxsuite2 = Maxsuite1.
+
+%%/* max bid appear in order lowest to highest */
+
+
+max_bid(7,Hand,Suite,Bidder) :- can_bid(7,Hand,Suite,Bidder),!.
+max_bid(6,Hand,Suite,Bidder) :- can_bid(6,Hand,Suite,Bidder),!.
+max_bid(5,Hand,Suite,Bidder) :- can_bid(5,Hand,Suite,Bidder),!.
+max_bid(4,Hand,Suite,Bidder) :- can_bid(4,Hand,Suite,Bidder),!.
+max_bid(3,Hand,Suite,Bidder) :- can_bid(3,Hand,Suite,Bidder),!.
+max_bid(2,Hand,Suite,Bidder) :- can_bid(2,Hand,Suite,Bidder),!.
+max_bid(0,Hand,Suite,Bidder) :- can_bid(0,Hand,Suite,Bidder),!.
+
+%%/* delete item (card) from list of items (cards) */
+delete(Item,List,Newlist) :-
+        discard_item(Item,List,Nl,[],Newlist).
+
+
+discard_item(Item,List,Nl,Partl,Newlist) :-
+        List = [Item | Nl],
+        Partl2 = Partl,
+        discard_item(Item,Nl,Nl2,Partl2,Newlist).
+discard_item(Item,List,Nl,Partl,Newlist) :-
+        List = [Item],
+        Partl2 = Partl,
+        discard_item(Item,[],Nl2,Partl2,Newlist).
+
+discard_item(Item,List,Nl,Partl,Newlist) :-
+        List = [I | Nl],
+        not(I = Item), 
+        Partl2 = [I | Partl],
+        discard_item(Item,Nl,Nl2,Partl2,Newlist).
+discard_item(Item,List,Nl,Partl,Newlist) :-
+        List = [I],
+        not(I = Item),
+        Partl2 = [I,Part],
+        discard_item(Item,[],Nl2,Partl2,Newlist).
+
+discard_item(Item,List,Nl,Partl,Newlist) :-
+        List = [],!,
+        Newlist = Partl.
+%%%%/* once suite is determined by high bidder players must discard cards
+%%  not of that suite (except left jack & jokers) & also not retain more 
+%%	than 6 cards*/
+discard(Players,Hands,Hands2,Suite) :- print_nl(p_discard),
+        Hands = [H1,H2,H3,H4],
+        discard_non_suite(H1,Nh1,[],Hand1,Suite),
+        discard_non_suite(H2,Nh2,[],Hand2,Suite),
+        discard_non_suite(H3,Nh3,[],Hand3,Suite),
+        discard_non_suite(H4,Nh4,[],Hand4,Suite),
+        discard_excess(Hand1,Newhand1,Suite),
+        discard_excess(Hand2,Newhand2,Suite),
+        discard_excess(Hand3,Newhand3,Suite),
+        discard_excess(Hand4,Newhand4,Suite),
+        Hands2 = [Newhand1,Newhand2,Newhand3,Newhand4],
+        print_nl(Hands2).
+discard_non_suite(H,Nh,Parthand,Hand,Suite) :-
+        H = [No | Nh],
+        card([No,Val,Suite2,Name,Pt_taken,Pt_played]),
+        Suite = Suite2,
+        append(Parthand , [No] ,Parthand2),
+        discard_non_suite(Nh,Nh2,Parthand2,Hand,Suite).
+discard_non_suite(H,Nh,Parthand,Hand,Suite) :-
+        H = [No | Nh],
+        not(card([No,Val,Suite,Name,Pt_taken,Pt_played])),
+	%%	/*   print_nl(discarded),
+        print_nl(Name), %% */
+	discard_non_suite(Nh,Nh2,Parthand,Hand,Suite).
+discard_non_suite(H,Nh,Parthand,Hand,Suite) :-
+        Hand = Parthand, !.
+discard_excess(Hand,Newhand,Suite) :-
+        length(Hand,Len),
+        Len =< 6, 
+        Newhand = Hand.
+discard_excess(Hand,Newhand,Suite) :-
+        length(Hand,Len),
+        Len > 6,
+        card([No,Val,Suite,Name,Pt_taken,Pt_played]),
+        member(No,Hand),
+        2 < Val,
+        10 > Val,
+	%%	/*    print_nl(excess),
+	%%        print_nl(Name), */
+        delete(No,Hand,Newhand2),
+        discard_excess(Newhand2,Newhand,Suite).
+discard_excess(Hand,Newhand,Suite) :-
+        length(Hand,Len),
+        Len > 6,
+        card([No,Val,Suite,Name,Pt_taken,Pt_played]),
+        member(No,Hand),
+        15 = Val,
+	%%     /*   print_nl(excess2),
+	%%        print_nl(Name), */
+        delete(No,Hand,Newhand2),
+        discard_excess(Newhand2,Newhand,Suite).
+discard_excess(Hand,Newhand,Suite) :-
+        length(Hand,Len),
+        Len > 6,
+        card([No,Val,Suite,Name,Pt_taken,Pt_played]),
+        member(No,Hand),
+        16 = Val,
+        delete(No,Hand,Newhand2),
+        discard_excess(Newhand2,Newhand,Suite).
+discard_excess(Hand,Newhand,Suite) :-
+        length(Hand,Len),
+        Len > 6,
+        card([No,Val,Suite,Name,Pt_taken,Pt_played]),
+        member(No,Hand),
+        2 = Val,
+        delete(No,Hand,Newhand2),
+        discard_excess(Newhand2,Newhand,Suite).
+
+%%/* after discarding players (other than the bidder) receive enough
+%%cards th raise their total cards to 6.  The bidder gets to look through
+%%whatever is then left */
+
+deal2(Players,Newdeck,Hands2,Hands3,Dealer,Bidder) :- 
+        print_nl(p_deal2),
+        succ_player(Dealer,P1),
+        extras(Players,Newdeck,Newdeck2,Hands2,Hands2a,P1,Bidder),
+        succ_player(P1,P2),
+        extras(Players,Newdeck2,Newdeck3,Hands2a,Hands2b,P2,Bidder),
+        succ_player(P2,P3),
+        extras(Players,Newdeck3,Newdeck4,Hands2b,Hands2c,P3,Bidder),
+        succ_player(P3,P4),
+        extras(Players,Newdeck4,Newdeck5,Hands2c,Hands2d,P4,Bidder),
+        remaining(Players,Newdeck5,Hands2d,Hands3,Bidder),
+        print_nl(final_hands),
+        print_nl(Hands3).
+
+extras(Players,Newdeck,Newdeck2,Hands2,Hands2a,P1,Bidder) :-
+        P1 = Bidder, ! ,
+        Newdeck2 = Newdeck,
+        Hands2a = Hands2.
+extras(Players,Newdeck,Newdeck2,Hands2,Hands2a,P1,Bidder) :-
+        Newdeck = [], ! ,
+        Newdeck2 = Newdeck,
+        Hands2a = Hands2.
+extras(Players,Newdeck,Newdeck2,Hands2,Hands2a,P1,Bidder) :-
+        get_hand(Players,Hands2,P1,H1),
+        length(H1,Len),
+        Len = 6, ! ,
+        Newdeck2 = Newdeck,
+        Hands2a = Hands2.
+extras(Players,Newdeck,Newdeck2,Hands2,Hands2a,P1,Bidder) :-
+        get_hand(Players,Hands2,P1,H1),
+        length(H1,Len),
+        Len < 6,
+        Newdeck = [No | Newdeck3],
+        H1a = [No | H1],
+        put_hand(Players,Hands2,P1,H1a,Hands3),
+        extras(Players,Newdeck3,Newdeck2,Hands3,Hands2a,P1,Bidder).
+
+
+remaining(Players,Newdeck5,Hands2d,Hands3,Bidder) :-
+        get_hand(Players,Hands2d,Bidder,H1),
+        append(H1,Newdeck5,H1a),
+        put_hand(Players,Hands2d,Bidder,H1a,Hands3).
+
+%%/* each player plays a card the highest card wins */
+play_cards(Players,Hands,Played,Taken,Leader,Suite,Newplayed,Newtaken,
+	   Npret,Ntret) :- 
+	Hands = [H1,H2,H3,H4],
+	sort_by_val(H1,H1s,Suite),
+	sort_by_val(H2,H2s,Suite),
+	sort_by_val(H3,H3s,Suite),
+	sort_by_val(H4,H4s,Suite),
+	Hands2 = [H1s,H2s,H3s,H4s], %%/* sorted hands */
+	print_bl(dennis),
+	print_nl(hand),
+	display_hand(H1s),
+	%%	/*	print_nl('sussy hand2'),
+	%%		display_hand(H2s),
+	%%		print_nl('dick hand3'),
+	%%		display_hand(H3s),
+	%%		print_nl('john hand4'),
+	%%		display_hand(H4s), */
+        play_card([Players,Hands2,Played,Taken,Leader,
+		   Newhands,Newplayed,Newtaken,Newleader,Suite]),
+        play_cards(Players,Newhands,Newplayed,Newtaken,Newleader,Suite,
+		   Np,Nt,Npret,Ntret).  
+%%/* a hand ends when all players are out of cards */
+play_cards(Players,Hands,Played,Taken,Leader,Suite,Newplayed,Newtaken,
+	   Npret,Ntret) :- 
+        out(Players,Hands), !,
+        Npret =Played,
+        Ntret = Taken.
+
+out(Players,Hands) :- 
+        Hands = [[],[],[],[]], !,
+	print_nl(p_out).
+play_card([Players,Hands,Played,Taken,Leader,Newhands,Newplayed,
+	   Newtaken,Newleader,Suite]) :-
+        play_1card([Players,Hands,Played,Leader,Newhands1,Newplayed1,
+		    0,none,Newhigh1,Newwhohigh1,[],Newcards1,Suite]),
+        succ_player(Leader,P2),
+        play_1card([Players,Newhands1,Newplayed1,P2,Newhands2,Newplayed2,
+		    Newhigh1,Newwhohigh1,Newhigh2,Newwhohigh2,
+		    Newcards1,Newcards2,Suite]),
+        succ_player(P2,P3),
+        play_1card([Players,Newhands2,Newplayed2,P3,Newhands3,Newplayed3,
+		    Newhigh2,Newwhohigh2,Newhigh3,Newwhohigh3,
+		    Newcards2,Newcards3,Suite]),
+        succ_player(P3,P4),
+        play_1card([Players,Newhands3,Newplayed3,P4,Newhands,Newplayed,
+		    Newhigh3,Newwhohigh3,Newhigh4,Newwhohigh4,
+		    Newcards3,Newcards4,Suite]),
+        summary_cards_taken([Players,Taken,Newtaken,Newhigh4,Newwhohigh4,
+			     Newcards4,Newleader]).
+play_1card([Players,Newhands1,Newplayed1,P2,Newhands2,Newplayed2,
+	    Newhigh1,Newwhohigh1,Newhigh2,Newwhohigh2,
+	    Newcards1,Newcards2,Suite]) :-
+        not(P2 = dennis),
+        get_hand(Players,Newhands1,P2,H2),
+        best_card(Players,P2,H2,Newplayed1,Newtaken1,Newcards1,Card1,
+		  Suite,Newhigh1,Newwhohigh1),
+        card([Card1,Val,Suite,Name,Pt_taken,Pt_played]),
+        Val > Newhigh1, ! ,
+        print_bl(P2),
+        print_bl(plays),
+        print_nl(Name),
+        delete(Card1,H2,Nh2),
+        Newhigh2 = Val,
+        Newwhohigh2 = P2,
+        put_hand(Players,Newhands1,P2,Nh2,Newhands2),
+        get_hand(Players,Newplayed1,P2,Pl1),
+        Pl2 = [Card1 | Pl1],
+        Newcards2 = [Card1 | Newcards1],
+	%% /*      print_bl(newcards2),print_nl(Newcards2) */
+        put_hand(Players,Newplayed1,P2,Pl2,Newplayed2). %%$ /* was , */
+%%   /*    print_bl(newplayed2),print_nl(Newplayed2). %% */
+play_1card([Players,Newhands1,Newplayed1,P2,Newhands2,Newplayed2,
+	    Newhigh1,Newwhohigh1,Newhigh2,Newwhohigh2,
+	    Newcards1,Newcards2,Suite]) :-
+        not(P2 = dennis),
+        get_hand(Players,Newhands1,P2,H2),
+        best_card(Players,P2,H2,Newplayed1,Newtaken1,Newcards1,Card1,
+		  Suite,Newhigh1,Newwhohigh1),
+        card([Card1,Val,Suite,Name,Pt_taken,Pt_played]),
+        Val < Newhigh1, ! ,
+        print_bl(P2),
+        print_bl(plays),
+        print_nl(Name),
+        delete(Card1,H2,Nh2),
+        Newhigh2 = Newhigh1,
+        Newwhohigh2 = Newwhohigh1,
+        put_hand(Players,Newhands1,P2,Nh2,Newhands2),
+        get_hand(Players,Newplayed1,P2,Pl1),
+        Pl2 = [Card1 | Pl1],
+        Newcards2 = [Card1 | Newcards1],
+	%%	/*     print_bl(newcards2),print_nl(Newcards2), */
+	put_hand(Players,Newplayed1,P2,Pl2,Newplayed2). %% /* was , */
+%%  /*     print_bl(newplayed2),print_nl(Newplayed2).%% */
+play_1card([Players,Newhands1,Newplayed1,P2,Newhands2,Newplayed2,
+	    Newhigh1,Newwhohigh1,Newhigh2,Newwhohigh2,
+	    Newcards1,Newcards2,Suite]) :-
+        get_hand(Players,Newhands1,P2,H2),
+        H2 = [],!,
+	asserta(is_out(P2)), 
+	print_bl(P2),
+	print_nl(is_out),
+        Newhigh2 = Newhigh1,
+        Newhands2 = Newhands1,
+        Newplayed2 = Newplayed1,
+        Newcards2 = Newcards1, 
+        Newwhohigh2 = Newwhohigh1.
+%% /* rule repeated 3 times for 3 chances */
+play_1card([Players,Newhands1,Newplayed1,dennis,Newhands2,Newplayed2,
+	    Newhigh1,Newwhohigh1,Newhigh2,Newwhohigh2,
+	    Newcards1,Newcards2,Suite]) :-
+        get_hand(Players,Newhands1,dennis,H2),
+        print_bl(play),
+        print_bl(what),
+        print_nl(card),
+        read(Name),
+        valid_card(Name,Suite,H2),!,
+        play_1card_b([Players,Newhands1,Newplayed1,dennis,Newhands2,Newplayed2,
+		      Newhigh1,Newwhohigh1,Newhigh2,Newwhohigh2,
+		      Newcards1,Newcards2,Suite],Name,H2).
+play_1card([Players,Newhands1,Newplayed1,dennis,Newhands2,Newplayed2,
+	    Newhigh1,Newwhohigh1,Newhigh2,Newwhohigh2,
+	    Newcards1,Newcards2,Suite]) :-
+        get_hand(Players,Newhands1,dennis,H2),
+        print_bl(play),
+        print_bl(what),
+        print_nl(card),
+        read(Name),
+        valid_card(Name,Suite,H2),!,
+        play_1card_b([Players,Newhands1,Newplayed1,dennis,Newhands2,Newplayed2,
+		      Newhigh1,Newwhohigh1,Newhigh2,Newwhohigh2,
+		      Newcards1,Newcards2,Suite],Name,H2).
+play_1card([Players,Newhands1,Newplayed1,dennis,Newhands2,Newplayed2,
+	    Newhigh1,Newwhohigh1,Newhigh2,Newwhohigh2,
+	    Newcards1,Newcards2,Suite]) :-
+        get_hand(Players,Newhands1,dennis,H2),
+        print_bl(play),
+        print_bl(what),
+        print_nl(card),
+        read(Name),
+        valid_card(Name,Suite,H2),!,
+        play_1card_b([Players,Newhands1,Newplayed1,dennis,Newhands2,Newplayed2,
+		      Newhigh1,Newwhohigh1,Newhigh2,Newwhohigh2,
+		      Newcards1,Newcards2,Suite],Name,H2).
+
+play_1card_b([Players,Newhands1,Newplayed1,dennis,Newhands2,Newplayed2,
+	      Newhigh1,Newwhohigh1,Newhigh2,Newwhohigh2,
+	      Newcards1,Newcards2,Suite],Name,H2) :-
+        card([Card1,Val,Suite,Name,Pt_taken,Pt_played]),
+        Val > Newhigh1, ! ,
+        print_bl(dennis),
+        print_bl(plays),
+        print_nl(Name),
+        delete(Card1,H2,Nh2),
+        Newhigh2 = Val,
+        Newwhohigh2 = dennis,
+        put_hand(Players,Newhands1,dennis,Nh2,Newhands2),
+        get_hand(Players,Newplayed1,dennis,Pl1),
+        Pl2 = [Card1 | Pl1],
+        Newcards2 = [Card1 | Newcards1],
+	%%/*      print_bl(newcards2),print_nl(Newcards2), */
+        put_hand(Players,Newplayed1,dennis,Pl2,Newplayed2).  %% /* was , */
+%%    /*    print_bl(newplayed2),print_nl(Newplayed2). */
+
+
+play_1card_b([Players,Newhands1,Newplayed1,dennis,Newhands2,Newplayed2,
+	      Newhigh1,Newwhohigh1,Newhigh2,Newwhohigh2,
+	      Newcards1,Newcards2,Suite],Name,H2) :-
+        card([Card1,Val,Suite,Name,Pt_taken,Pt_played]),
+        Val < Newhigh1, ! ,
+        print_bl(dennis),
+        print_bl(plays),
+        print_nl(Name),
+        delete(Card1,H2,Nh2),
+        Newhigh2 = Newhigh1,
+        Newwhohigh2 = Newwhohigh1,
+        put_hand(Players,Newhands1,dennis,Nh2,Newhands2),
+        get_hand(Players,Newplayed1,dennis,Pl1),
+        Pl2 = [Card1 | Pl1],
+        Newcards2 = [Card1 | Newcards1],
+	%%   /*     print_bl(newcards2),print_nl(Newcards2), */
+        put_hand(Players,Newplayed1,dennis,Pl2,Newplayed2). %%/* was , */
+%%/*     print_bl(newplayed2),print_nl(Newplayed2). */
+
+summary_cards_taken([Players,Taken,Newtaken,Newhigh4,Newwhohigh4,
+		     Newcards4,Newleader]):-
+        get_hand(Players,Taken,Newwhohigh4,H2),
+        append(H2,Newcards4,H3),
+	print_bl(Newwhohigh4),
+	print_nl(takes_the_hand),
+        Newleader = Newwhohigh4,
+        put_hand(Players,Taken,Newwhohigh4,H3,Newtaken). %%/* was , */
+%%	  /*     print_bl(newtaken),print_nl(Newtaken). */
+print_nl(X) :- print(X), put(46), put(10), put(13),
+	print(X), put(46), put(10), put(13).
+print_bl(X) :- print(X), put(32),
+	print(X), put(32).
+
+
+score(Players,Teams,Played,Taken,Scores,Newscores,Bidder,Bid,Suite) :- 
+        Scores = [S1,S2],
+	Players = [P1,P2,P3,P4],
+	get_hand(Players,Taken,P1,Card1s_taken1),
+	pts_taken(Card1s_taken1,Suite,Score_addt1,0),
+	get_hand(Players,Played,P1,Card1s_played1),
+	pts_played(Card1s_played1,Suite,Score_addp1,0),
+	get_hand(Players,Taken,P2,Card1s_taken2),
+	pts_taken(Card1s_taken2,Suite,Score_addt2,0),
+	get_hand(Players,Played,P2,Card1s_played2),
+	pts_played(Card1s_played2,Suite,Score_addp2,0),
+	get_hand(Players,Taken,P3,Card1s_taken3),
+	pts_taken(Card1s_taken3,Suite,Score_addt3,0),
+	get_hand(Players,Played,P3,Card1s_played3),
+	pts_played(Card1s_played3,Suite,Score_addp3,0),
+	get_hand(Players,Taken,P4,Card1s_taken4),
+	pts_taken(Card1s_taken4,Suite,Score_addt4,0),
+	get_hand(Players,Played,P4,Card1s_played4),
+	pts_played(Card1s_played4,Suite,Score_addp4,0),
+	%%	Pts1 is Score_addt1 + Score_addp1 + Score_addt3 + 
+	Pts1 = Score_addt1 + Score_addp1 + Score_addt3 + 
+	  Score_addp3,
+	%%	Pts2 is Score_addt2 + Score_addp2 + Score_addt4 + 
+	Pts2 = Score_addt2 + Score_addp2 + Score_addt4 + 
+	  Score_addp4,
+	Teams = [T1,T2],
+	member(Bidder,T1),
+	Pts1 >= Bid, 
+	%%        S1a is S1 + Pts1,
+	%%        S2a is S2 + Pts2, 
+        S1a = S1 + Pts1,
+        S2a = S2 + Pts2, 
+        Newscores = [S1a,S2a],
+        print_nl(p_score),
+        print_nl(Teams),
+        print_nl(Scores),
+        print_nl(Newscores).
+
+score(Players,Teams,Played,Taken,Scores,Newscores,Bidder,Bid,Suite) :- 
+        Scores = [S1,S2],
+	Players = [P1,P2,P3,P4],
+	get_hand(Players,Taken,P1,Card1s_taken1),
+	pts_taken(Card1s_taken1,Suite,Score_addt1,0),
+	get_hand(Players,Played,P1,Card1s_played1),
+	pts_played(Card1s_played1,Suite,Score_addp1,0),
+	get_hand(Players,Taken,P2,Card1s_taken2),
+	pts_taken(Card1s_taken2,Suite,Score_addt2,0),
+	get_hand(Players,Played,P2,Card1s_played2),
+	pts_played(Card1s_played2,Suite,Score_addp2,0),
+	get_hand(Players,Taken,P3,Card1s_taken3),
+	pts_taken(Card1s_taken3,Suite,Score_addt3,0),
+	get_hand(Players,Played,P3,Card1s_played3),
+	pts_played(Card1s_played3,Suite,Score_addp3,0),
+	get_hand(Players,Taken,P4,Card1s_taken4),
+	pts_taken(Card1s_taken4,Suite,Score_addt4,0),
+	get_hand(Players,Played,P4,Card1s_played4),
+	pts_played(Card1s_played4,Suite,Score_addp4,0),
+	%%	Pts1 is Score_addt1 + Score_addp1 + Score_addt3 + 
+	Pts1 = Score_addt1 + Score_addp1 + Score_addt3 + 	  Score_addp3,
+	%%	Pts2 is Score_addt2 + Score_addp2 + Score_addt4 + 
+	Pts2 =  Score_addt2 + Score_addp2 + Score_addt4 + 
+	  Score_addp4,
+	Teams = [T1,T2],
+	member(Bidder,T2),
+	Pts2 >= Bid, 
+	%%      S1a is S1 + Pts1,
+	%%      S2a is S2 + Pts2, 
+        S1a = S1 + Pts1,
+        S2a = S2 + Pts2, 
+        Newscores = [S1a,S2a],
+        print_nl(p_score),
+        print_nl(Teams),
+        print_nl(Scores),
+        print_nl(Newscores).
+
+score(Players,Teams,Played,Taken,Scores,Newscores,Bidder,Bid,Suite) :- 
+        Scores = [S1,S2],
+	Players = [P1,P2,P3,P4],
+	get_hand(Players,Taken,P1,Card1s_taken1),
+	pts_taken(Card1s_taken1,Suite,Score_addt1,0),
+	get_hand(Players,Played,P1,Card1s_played1),
+	pts_played(Card1s_played1,Suite,Score_addp1,0),
+	get_hand(Players,Taken,P2,Card1s_taken2),
+	pts_taken(Card1s_taken2,Suite,Score_addt2,0),
+	get_hand(Players,Played,P2,Card1s_played2),
+	pts_played(Card1s_played2,Suite,Score_addp2,0),
+	get_hand(Players,Taken,P3,Card1s_taken3),
+	pts_taken(Card1s_taken3,Suite,Score_addt3,0),
+	get_hand(Players,Played,P3,Card1s_played3),
+	pts_played(Card1s_played3,Suite,Score_addp3,0),
+	get_hand(Players,Taken,P4,Card1s_taken4),
+	pts_taken(Card1s_taken4,Suite,Score_addt4,0),
+	get_hand(Players,Played,P4,Card1s_played4),
+	pts_played(Card1s_played4,Suite,Score_addp4,0),
+	%%	Pts1 is Score_addt1 + Score_addp1 + Score_addt3 + 
+	Pts1 = Score_addt1 + Score_addp1 + Score_addt3 + 
+	  Score_addp3,
+	%%	Pts2 is Score_addt2 + Score_addp2 + Score_addt4 + 
+	Pts2 = Score_addt2 + Score_addp2 + Score_addt4 + 
+	  Score_addp4,
+	Teams = [T1,T2],
+	member(Bidder,T1),
+	Pts1 < Bid, 
+	%%        S1a is S1 - Bid,
+	%%        S2a is S2 + Pts2, 
+        S1a = S1 - Bid,
+        S2a = S2 + Pts2, 
+        Newscores = [S1a,S2a],
+	print_nl(bidder_went_set),
+        print_nl(p_score),
+        print_nl(Teams),
+        print_nl(Scores),
+        print_nl(Newscores).
+
+score(Players,Teams,Played,Taken,Scores,Newscores,Bidder,Bid,Suite) :- 
+        Scores = [S1,S2],
+	Players = [P1,P2,P3,P4],
+	get_hand(Players,Taken,P1,Card1s_taken1),
+	pts_taken(Card1s_taken1,Suite,Score_addt1,0),
+	get_hand(Players,Played,P1,Card1s_played1),
+	pts_played(Card1s_played1,Suite,Score_addp1,0),
+	get_hand(Players,Taken,P2,Card1s_taken2),
+	pts_taken(Card1s_taken2,Suite,Score_addt2,0),
+	get_hand(Players,Played,P2,Card1s_played2),
+	pts_played(Card1s_played2,Suite,Score_addp2,0),
+	get_hand(Players,Taken,P3,Card1s_taken3),
+	pts_taken(Card1s_taken3,Suite,Score_addt3,0),
+	get_hand(Players,Played,P3,Card1s_played3),
+	pts_played(Card1s_played3,Suite,Score_addp3,0),
+	get_hand(Players,Taken,P4,Card1s_taken4),
+	pts_taken(Card1s_taken4,Suite,Score_addt4,0),
+	get_hand(Players,Played,P4,Card1s_played4),
+	pts_played(Card1s_played4,Suite,Score_addp4,0),
+	%%	Pts1 is Score_addt1 + Score_addp1 + Score_addt3 + 
+	Pts1 = Score_addt1 + Score_addp1 + Score_addt3 + 
+	  Score_addp3,
+	%%	Pts2 is Score_addt2 + Score_addp2 + Score_addt4 + 
+	Pts2 = Score_addt2 + Score_addp2 + Score_addt4 + 
+	  Score_addp4,
+	Teams = [T1,T2],
+	member(Bidder,T2),
+	Pts2 < Bid, 
+	%%        S1a is S1 + Pts1,
+	%%        S2a is S2 - Bid, 
+        S1a = S1 + Pts1,
+        S2a = S2 - Bid, 
+        Newscores = [S1a,S2a],
+	print_nl(bidder_went_set),
+	print_nl(p_score),
+        print_nl(Teams),
+        print_nl(Scores),
+        print_nl(Newscores).
+
+pts_taken(Card1s_taken1,Suite,Score_add1,Temp) :-
+        Card1s_taken1 = [Card1 | Card1s_left],
+	card([Card1,Val,Suite,Name,Pt_taken,Pt_played]),
+	%%        Temp2 is Temp + Pt_taken,
+        Temp2 = Temp + Pt_taken,
+        pts_taken(Card1s_left,Suite,Score_add1,Temp2).
+pts_taken(Card1s_taken1,Suite,Score_add1,Temp) :-
+        Card1s_taken1 = [], ! ,
+	%%        Score_add1 is Temp.
+        Score_add1 = Temp.
+
+pts_played(Card1s_played1,Suite,Score_add1,Temp) :-
+        Card1s_played1 = [Card1 | Card1s_left],
+	card([Card1,Val,Suite,Name,Pt_taken,Pt_played]),
+	%%        Temp2 is Temp + Pt_played,
+        Temp2 = Temp + Pt_played,
+        pts_played(Card1s_left,Suite,Score_add1,Temp2).
+pts_played(Card1s_played1,Suite,Score_add1,Temp) :-
+        Card1s_played1 = [], ! ,
+	%%        Score_add1 is Temp.
+        Score_add1 = Temp.
+
+%%/* lead highest card left */
+best_card(Players,P2,H2,Newplayed1,Newtaken1,Newcards1,Card1,
+	  Suite,Newhigh1,Newwhohigh1) :-
+	not(am_last_to_play(Players,P2,H2,Newplayed1,Newtaken1,Newcards1,
+			    Card1,Suite)),
+	have_highest_card_left(Players,P2,H2,Newplayed1,Newtaken1,Newcards1,
+			       Cardx,Suite),
+	Card1 = Cardx,
+	%%	/*	print_nl(have_highest_card), */
+	card([Card1,Val,Suite,Name,Pt_taken,Pt_played]).
+%% /* take point card - last (with smallest card that woll take because sorted*/
+best_card(Players,P2,H2,Newplayed1,Newtaken1,Newcards1,Card1,
+	  Suite,Newhigh1,Newwhohigh1) :-
+	am_last_to_play(Players,P2,H2,Newplayed1,Newtaken1,Newcards1,
+			Card1,Suite),
+	pt_card_played(Players,P2,H2,Newplayed1,Newtaken1,Newcards1,
+		       Cardp,Suite),
+	have_higher_card_left(Players,P2,H2,Newplayed1,Newtaken1,Newcards1,
+			      Cardx,Suite),
+	not(partner(P2,Newwhohigh1)),
+	Card1 = Cardx,
+	%%	/*	print_nl(take_pt_card_last), */
+	card([Card1,Val,Suite,Name,Pt_taken,Pt_played]).
+%%/* save point cards playing last */
+best_card(Players,P2,H2,Newplayed1,Newtaken1,Newcards1,Card1,
+	  Suite,Newhigh1,Newwhohigh1) :-
+	am_last_to_play(Players,P2,H2,Newplayed1,Newtaken1,Newcards1,
+			Card1,Suite),
+	can_save_point(Players,P2,H2,Newplayed1,Newtaken1,Newcards1,
+		       Cardx,Suite),
+	Card1 = Cardx,
+	%%	/*	print_nl(can_save_point), */
+	card([Card1,Val,Suite,Name,Pt_taken,Pt_played]).
+%%/* opponent has played high card - plays small card */
+best_card(Players,P2,H2,Newplayed1,Newtaken1,Newcards1,Card1,
+	  Suite,Newhigh1,Newwhohigh1) :-
+	not(have_highest_card_left(Players,P2,H2,Newplayed1,Newtaken1,Newcards1,
+				   Cardw,Suite)),
+	not(partner(P2,Newwhohigh1)),
+	have_small_card(Players,P2,H2,Newplayed1,Newtaken1,Newcards1,
+			Cardx,Suite),
+	Card1 = Cardx,
+	card([Card1,Val,Suite,Name,Pt_taken,Pt_played]).
+%%/*	print_nl(play_small_card). */
+
+%%/* partner has played high card - plays point card */
+best_card(Players,P2,H2,Newplayed1,Newtaken1,Newcards1,Card1,
+	  Suite,Newhigh1,Newwhohigh1) :-
+	not(have_highest_card_left(Players,P2,H2,Newplayed1,Newtaken1,Newcards1,
+				   Cardw,Suite)),
+	partner(P2,Newwhohigh1),
+	have_point_card(Players,P2,H2,Newplayed1,Newtaken1,Newcards1,
+			Cardx,Suite),
+	Card1 = Cardx,
+	card([Card1,Val,Suite,Name,Pt_taken,Pt_played]).
+%%/*	print_nl(play_point_card). */
+
+%%/* no special rule applied so play any card */
+best_card(Players,P2,H2,Newplayed1,Newtaken1,Newcards1,Card1,
+	  Suite,Newhigh1,Newwhohigh1) :-
+        H2 = [Card1 | H3],
+        card([Card1,Val,Suite,Name,Pt_taken,Pt_played]).
+
+have_highest_card_left(Players,P2,H2,Newplayed1,Newtaken1,Newcards1,
+		       Cardx,Suite) :-
+	member(Cardx,H2),
+	card([Cardx,Val,Suite,Name,Pt_taken,Pt_played]),
+	not(exists_higher_card_not_in_list(Newcards1,Suite,Val,Newplayed1)).
+exists_higher_card_not_in_list(Newcards1,Suite,Val,Newplayed1) :-
+	card([Card2,Val2,Suite,Name,Pt_taken,Pt_played]),
+	Val2 > Val,
+	not(sub_member(Card2,Newplayed1,Newcards1)).
+sub_member(Card2,Newplayed1,Newcards1) :-
+	member(Pl,Newplayed1),
+	not(member(Card2,Newcards1)),
+	member(Card2,Pl).
+
+point_card_played(Players,P2,H2,Newplayed1,Newtaken1,Newcards1,
+		  Card1,Suite) :-
+	member(Card,Newcards1),
+	card([Card,Val,Suite,Name,Pt_taken,Pt_played]),
+	Pt_taken > 0.
+am_first_to_play(Players,P2,H2,Newplayed1,Newtaken1,Newcards1,
+		 Card1,Suite) :-
+	length(Newcards1,Len),
+	Len = 0.	
+am_last_to_play(Players,P2,H2,Newplayed1,Newtaken1,Newcards1,
+		Card1,Suite) :-
+	length(Newcards1,Len),
+	Len = 3.	
+am_last_to_play(Players,P2,H2,Newplayed1,Newtaken1,Newcards1,
+		Card1,Suite) :-
+	length(Newcards1,Len),
+	succ_player(P2,P3),
+	is_out(P3),
+	Len = 2.	
+am_last_to_play(Players,P2,H2,Newplayed1,Newtaken1,Newcards1,
+		Card1,Suite) :-
+	length(Newcards1,Len),
+	succ_player(P2,P3),
+	is_out(P3),
+	succ_player(P3,P4),
+	is_out(P4),
+	Len = 1.	
+point_card_may_be_played(Players,P2,H2,Newplayed1,Newtaken1,Newcards1,
+			 Card1,Suite) :-
+	not(am_last_to_play(Players,P2,H2,Newplayed1,Newtaken1,Newcards1,
+			    Card1,Suite)),
+	card([Card2,Val2,Suite,Name,Pt_taken,Pt_played]),
+	Pt_taken > 0,
+	not(sub_member(Card2,Newplayed1)).
+can_save_point(Players,P2,H2,Newplayed1,Newtaken1,Newcards1,
+	       Cardx,Suite) :-
+	am_last_to_play(Players,P2,H2,Newplayed1,Newtaken1,Newcards1,
+			Cardx,Suite),
+	member(Cardx,H2),
+	card([Cardx,Val,Suite,Name,Pt_taken,Pt_played]),
+	Pt_taken > 0,
+	not(exists_higher_card_in_list(Val,Newcards1,Suite)).
+exists_higher_card_in_list(Val,Newcards1,Suite) :-
+	member(Card2,Newcards1),
+	card([Card2,Val2,Suite,Name,Pt_taken,Pt_played]),
+	Val2 > Val.
+
+partner_played_highest_card_so_far(Players,P2,H2,Newplayed1,Newtaken1,
+				   Newcards1,Card1,Suite,Newhigh1,Newwhohigh1) :-
+	partner(P2,Newwhohigh1).
+
+have_small_card(Players,P2,H2,Newplayed1,Newtaken1,Newcards1,
+		Cardx,Suite) :-
+	member(Cardx,H2),
+	card([Cardx,Val,Suite,Name,Pt_taken,Pt_played]),
+	Val < 10.
+have_point_card(Players,P2,H2,Newplayed1,Newtaken1,Newcards1,
+		Cardx,Suite) :-
+	member(Cardx,H2),
+	card([Cardx,Val,Suite,Name,Pt_taken,Pt_played]),
+	Pt_taken > 0.
+
+
+display_hand(H) :-
+	H = [C | H2],
+	card([C,Val,Suite,Name,Pt_taken,Pt_played]),
+	print_bl(C),
+	print_nl(Name),
+	display_hand(H2).
+display_hand([]).
+
+pt_card_played(Players,P2,H2,Newplayed1,Newtaken1,Newcards1,
+	       Cardp,Suite) :-
+	member(Cardp,Newcards1),
+	card([Cardp,Val,Suite,Name,Pt_taken,Pt_played]),
+	Pt_taken > 0.
+
+have_higher_card_left(Players,P2,H2,Newplayed1,Newtaken1,Newcards1,
+		      Cardx,Suite) :-
+	member(Cardx,H2),
+	card([Cardx,Val,Suite,Name,Pt_taken,Pt_played]),
+	not(exists_higher_card_in_list(Newcards1,Suite,Val)).
+
+exists_higher_card_in_list(Newcards1,Suite,Val) :-
+	card([Card2,Val2,Suite,Name,Pt_taken,Pt_played]),
+	Val2 > Val,
+	member(Card2,Newcards1).
+sort_by_val(H,Hs,Suite) :-
+	get_vals(H,V,Suite),
+	sort(V,Vs),
+	get_nos(Vs,Hs,Suite).
+get_vals([],[],Suite).
+get_vals(H,V,Suite) :-
+	H = [No | Nos],
+	card([No,Val,Suite,Name,Pt_taken,Pt_played]),
+	get_vals(Nos,Vals,Suite),
+	V = [Val | Vals].
+get_nos([],[],Suite).
+get_nos(V,H,Suite) :-
+	V = [Val | Vals],
+	card([No,Val,Suite,Name,Pt_taken,Pt_played]),
+	get_nos(Vals,Nos,Suite),
+	H = [No | Nos].
+minimimd(N1,N2,N1) :- N1 =< N2.
+minimimd(N1,N2,N2) :- N2 =< N1.
+can_bid(Guess,Hand,Suite1,Bidder) :-
+	member(S,[diamonds,clubs,spades,hearts]),
+	can_bid_suite(Guess2,Hand,S,Bidder),
+	Suite1 = S,
+	minimimd(7,Guess2,Guess).
+can_bid(0,Hand,pass,Bidder).
+bind_cs(0.6,0.04,0.04,1.0,0.2,dennis).
+bind_cs(0.6,0.04,0.04,1.0,0.2,dick).
+bind_cs(0.5,0.05,0.05,1.0,0.2,sussy).
+bind_cs(0.5,0.05,0.05,1.0,0.2,john).
+can_bid_suite(Guess,Hand,Suite1,Bidder) :- 
+	discard_non_suite(Hand,Nh1,[],Handsuite,Suite1),
+	get_vals(Handsuite,Vals,Suite1),
+	no_high_cards(Vals,No_high),
+	%%	/*	print_bl(no_high),print_nl(No_high), */
+	tot_face(Vals,Tot_face),
+	%%	/*	print_bl(no_face),print_nl(Tot_face), */
+	tot_pts(Vals,Tot_pts),
+	%%	/*	print_bl(no_pts),print_nl(Tot_pts), */
+	no_sure(Vals,No_sure),
+	%%	/*	print_bl(no_sure),print_nl(No_sure), */
+	length(Vals,No_cds),
+	%%/*	print_bl(no_cds),print_nl(No_cds), */
+	bind_cs(C1,C2,C3,C4,C5,Bidder),
+	%%	Guessf1 is C1 * No_high ,
+	%%        Guessf2 is Guessf1 + C2 * Tot_face,
+	%%	Guessf3 is Guessf2 + C3 * Tot_pts,
+	%%	Guessf4 is Guessf3 + C4 * No_sure,
+	%%	Guessf5 is Guessf4 + C5 * No_cds,
+	%%	Guess is floor(Guessf5).
+
+	Guessf1 = C1 * No_high ,
+        Guessf2 = Guessf1 + C2 * Tot_face,
+	Guessf3 = Guessf2 + C3 * Tot_pts,
+	Guessf4 = Guessf3 + C4 * No_sure,
+	Guessf5 = Guessf4 + C5 * No_cds,
+	Guess = floor(Guessf5).
+
+no_high_cards(Vals,6) :-
+	member(17,Vals),
+	member(16,Vals),
+	member(15,Vals),
+	member(14,Vals),
+	member(13,Vals),
+	member(12,Vals),!.
+no_high_cards(Vals,5) :-
+	member(17,Vals),
+	member(16,Vals),
+	member(15,Vals),
+	member(14,Vals),
+	member(13,Vals),!.
+no_high_cards(Vals,4) :-
+	member(17,Vals),
+	member(16,Vals),
+	member(15,Vals),
+	member(14,Vals),!.
+no_high_cards(Vals,3) :-
+	member(17,Vals),
+	member(16,Vals),
+	member(15,Vals),!.
+no_high_cards(Vals,2) :-
+	member(17,Vals),
+	member(16,Vals),!.
+no_high_cards(Vals,1) :-
+	member(17,Vals),!.
+no_high_cards(Vals,0) :-
+	not(member(17,Vals)),!.
+
+tot_face([],0). 
+tot_face(Vals,Tot_face) :-
+	Vals = [V1 | Vs],
+	V1 > 10,!,
+	tot_face(Vs,Tot2),
+	%%	Tot_face is V1 + Tot2. 
+	Tot_face = V1 + Tot2. 
+tot_face(Vals,Tot_face) :-
+	Vals = [V1 | Vs],
+	V1 =< 10,!,
+	tot_face(Vs,Tot2),
+	Tot_face = Tot2.
+tot_pts([],0).
+tot_pts(Vals,Tot_pts) :-
+	Vals = [V1 | Vs],
+	V1 > 9,
+	V1 < 14,!,
+	tot_pts(Vs,Tot2),
+	%%	Tot_pts is V1 + Tot2. 
+	Tot_pts = V1 + Tot2. 
+tot_pts(Vals,Tot_pts) :-
+	Vals = [V1 | Vs],
+	V1 < 10,!,
+	tot_pts(Vs,Tot2),
+	Tot_pts = Tot2. 
+tot_pts(Vals,Tot_pts) :-
+	Vals = [V1 | Vs],
+	V1 < 10,!,
+	tot_pts(Vs,Tot2),
+	Tot_pts = Tot2. 
+no_sure(Vals,2) :-
+	member(2,Vals),
+	member(17,Vals),!.
+no_sure(Vals,1) :-
+	member(2,Vals),
+	not(member(17,Vals)),!.
+no_sure(Vals,1) :-
+	not(member(2,Vals)),
+	member(17,Vals),!.
+no_sure(Vals,0) :-
+	not(member(2,Vals)),
+	not(member(17,Vals)),!.

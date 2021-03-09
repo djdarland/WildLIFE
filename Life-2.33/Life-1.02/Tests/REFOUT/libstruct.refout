@@ -1,0 +1,397 @@
+
+*** Yes
+> > 
+*** Yes
+> > 
+
+testing: tata +>= toto
+	true
+
+*** No
+> 
+
+testing: toto +>= tata
+	false
+
+*** No
+> 
+
+testing: (@, @)+>=(C, C)
+	true
+
+*** No
+> 
+
+testing: (C, C)+>=(@, @)
+	false
+
+*** No
+> 
+
+testing: [@|@] +>= [C,C]
+	true
+
+*** No
+> 
+
+testing: [C|C] +>= [@|@]
+	false
+
+*** No
+> 
+
+testing: foo(a,s,d) +>= foo(a,s,d,@)
+	true
+
+*** No
+> 
+
+testing: foo(a,s,d,@) +>= foo(a,s,d)
+	false
+
+*** No
+> > 
+
+*** Yes
+> > 
+
+testing: tata +> toto
+	true
+
+*** No
+> 
+
+testing: toto +> tata
+	false
+
+*** No
+> 
+
+testing: (@, @)+>(C, C)
+	true
+
+*** No
+> 
+
+testing: (C, C)+>(@, @)
+	false
+
+*** No
+> 
+
+testing: [@|@] +> [C|C]
+	true
+
+*** No
+> 
+
+testing: [C|C] +> [@|@]
+	false
+
+*** No
+> 
+
+testing: foo(a,s,d) +> foo(a,s,d,@)
+	true
+
+*** No
+> 
+
+testing: foo(a,s,d,@) +> foo(a,s,d)
+	false
+
+*** No
+> > 
+
+*** Yes
+> > 
+
+testing: tata == toto
+	false
+
+*** No
+> 
+
+testing: toto == tata
+	false
+
+*** No
+> 
+
+testing: (@, @)==(C, C)
+	false
+
+*** No
+> 
+
+testing: (C, C)==(@, @)
+	false
+
+*** No
+> 
+
+testing: [@|@] == [C,C]
+	false
+
+*** No
+> 
+
+testing: [C|C] == [@|@]
+	false
+
+*** No
+> 
+
+testing: foo(a,s,d) == foo(a,s,d,@)
+	false
+
+*** No
+> 
+
+testing: foo(a,s,d,@) == foo(a,s,d)
+	false
+
+*** No
+> > > |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    
+
+
+testing: big(tom(brain => slow_witted,father => tax_collector,favorite_exclamation => arghh!!,friend => john(face => spotty,teeth => yellow),hair => knotted,hands => clumsy,mother => witch,nose => long(spots => ugly,warts => red))) == big(tom(brain => slow_witted,father => tax_collector,favorite_exclamation => arghh!!,friend => john(face => spotty,teeth => yellow),hair => knotted,hands => clumsy,mother => witch,nose => long(spots => ugly,warts => red)))
+	true
+
+
+
+testing: true
+	true
+
+
+
+testing: true
+	true
+
+*** No
+> > 
+
+testing: tata +=< toto
+	false
+
+*** No
+> 
+
+testing: toto +=< tata
+	true
+
+*** No
+> 
+
+testing: (@, @)+=<(C, C)
+	false
+
+*** No
+> 
+
+testing: (C, C)+=<(@, @)
+	true
+
+*** No
+> 
+
+testing: [@|@] +=< [C,C]
+	false
+
+*** No
+> 
+
+testing: [C|C] +=< [@|@]
+	true
+
+*** No
+> 
+
+testing: foo(a,s,d) +=< foo(a,s,d,@)
+	false
+
+*** No
+> 
+
+testing: foo(a,s,d,@) +=< foo(a,s,d)
+	true
+
+*** No
+> > 
+
+*** Yes
+> > 
+
+testing: tata +< toto
+	false
+
+*** No
+> 
+
+testing: toto +< tata
+	true
+
+*** No
+> 
+
+testing: (@, @)+<(C, C)
+	false
+
+*** No
+> 
+
+testing: (C, C)+<(@, @)
+	true
+
+*** No
+> 
+
+testing: [@|@] +< [C,C]
+	false
+
+*** No
+> 
+
+testing: [C|C] +< [@|@]
+	true
+
+*** No
+> 
+
+testing: foo(a,s,d) +< foo(a,s,d,@)
+	false
+
+*** No
+> 
+
+testing: foo(a,s,d,@) +< foo(a,s,d)
+	true
+
+*** No
+> > 
+
+*** Yes
+> > 
+
+testing: tata +>< toto
+	true
+
+*** No
+> 
+
+testing: toto +>< tata
+	true
+
+*** No
+> 
+
+testing: (@, @)+><(C, C)
+	true
+
+*** No
+> 
+
+testing: (C, C)+><(@, @)
+	true
+
+*** No
+> 
+
+testing: [@|@] +>< [C,C]
+	true
+
+*** No
+> 
+
+testing: [C|C] +>< [@|@]
+	true
+
+*** No
+> 
+
+testing: foo(a,s,d) +>< foo(a,s,d,@)
+	true
+
+*** No
+> 
+
+testing: foo(a,s,d,@) +>< foo(a,s,d)
+	true
+
+*** No
+> > |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    
+
+
+testing: big(tom(brain => slow_witted,father => tax_collector,favorite_exclamation => arghh!!,friend => john(face => spotty,teeth => yellow),hair => knotted,hands => clumsy,mother => witch,nose => long(spots => ugly,warts => red))) \== big(tom(brain => slow_witted,father => tax_collector,favorite_exclamation => arghh!!,friend => john(face => spotty,teeth => yellow),hair => knotted,hands => clumsy,mother => witch,nose => long(spots => ugly,warts => red)))
+	false
+
+
+
+testing: false
+	false
+
+
+
+testing: false
+	false
+
+*** No
+> > 
+
+testing: write(charley)
+	write(charley)
+
+*** No
+> > 
+
+testing: a :== c
+	false
+
+
+testing: true
+	true
+
+
+testing: false
+	false
+
+
+testing: false
+	false
+
+
+testing: false
+	false
+
+
+testing: false
+	false
+
+
+testing: true
+	true
+
+
+testing: false
+	false
+
+*** No
+> > > 
+*** Yes
+> 
+*** Yes
+> 
+*** Yes
+> 
+*** Yes
+> 
+*** Yes
+> 
+*** Yes
+> > 
+
+testing: f(b,c) +>< f(X,X)
+	false
+
+*** No
+> 

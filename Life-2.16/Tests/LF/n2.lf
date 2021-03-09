@@ -1,0 +1,16 @@
+% N2 test
+
+sum(0,N) :- !, write("S=",N),nl.
+sum(M,N) :- N<<-N+M,sum(M-1,N).
+
+time(X) :- X<3000, !,
+        S=cpu_time,
+        sum(X,0),
+        D=cpu_time-S,
+	gc,
+        write("X=",X),nl,
+        % write("D/X=",floor(10000*D/X)),nl,
+        % write("D/X2=",floor(1000000*D/X/X)),nl,
+        time(2*X).
+
+time(100)?

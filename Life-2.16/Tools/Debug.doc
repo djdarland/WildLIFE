@@ -1,0 +1,360 @@
+#	$Id: Debug.doc,v 1.2 1994/12/08 23:46:45 duchier Exp $	
+Richard Meyer							June 16th 1993
+
+
+
+
+
+			A Simple Debugger for LIFE
+			==========================
+
+
+
+
+
+This document describes a small debugging module for LIFE. It works both on
+predicates and functions, although support for predicates is somewhat better
+than that for functions. The debugger works by reading then re-writing the
+corresponding clauses, this is closer to placing spy-points than systematic
+debugging.
+
+
+
+
+1- Predicates: the extended box model:
+--------------------------------------
+
+The flow of execution for each predicate is modelled as a box (as is often the
+case with Prolog debuggers) however with this debugger the box isn't quite
+black and it is possible to have a look at what's going on inside.
+
+Whenever the predicate is called, the box is entered via the 'CALL' stream, the
+first clause is selected and the goals in the clause are called in succession.
+If the predicate succeeds, the system exits through the 'SUCCess' stream. If
+the predicate is forces to retry, the system enters the 'REDO' stream and
+either re-enters one of the goals' 'REDO' boxes or tries the next clause. If
+there are no more clauses, the system exits via the 'FAIL' stream.
+
+This is what it looks like:
+
+			PREDICATE (in its box)
+		     +-------------------+
+		     |                   |
+ CALL clause #1 ------->GOAL#1.1	 |
+		     |	GOAL#1.2,	 |
+		     |	GOAL#1.3 etc...	---> clause #1 SUCCess
+		     |                   |
+		     |  GOAL#2.1, <--------- REDO clause #2
+		     |	GOAL#2.2,	 |
+		     |	GOAL#2.3 etc...	---> clause #2 SUCCess
+		     |                   |
+		     |		  <--------- REDO clause #3 etc...
+		     |                   |
+ FAIL <-----------------
+		     |                   |
+		     +-------------------+
+
+
+The debugger allows you to monitor movement to and from the box as well as
+within it.
+
+
+
+2- Functions:
+-------------
+
+A similar approach is taken, although currying and residuation are NOT
+implemented account (unfortunately).
+
+This is what function calls look like:
+
+CALL --> match PATTerns --> EVALuate value --> such-that GOALs --> SUCCess
+     --> RESIduate--^
+     --> CURRy
+
+
+
+3- Using the debugger:
+----------------------
+
+The debugger is implemented as a module which must be loaded and opened:
+
+	> import("debug.lf")?
+
+One the entire application has been loaded, it is possible to choose which
+predicates will be debugged.
+
+	> debug(Name,Level,Verbose)?
+
+Where 'Name' is the name of the function or predicate to debug, 'Level' may be
+'fail', 'clause' or 'goal' and 'Verbose' is 'true' or 'false'. The default mode
+is 'debug(2=>clause,3=>true)'.
+
+
+Debugging code may be removed and the original rules restored using:
+
+	> undebug(Name)?
+
+You may invoke 'debug' several times over the same predicate or function with
+different level or verbose values. The original clauses will be used.
+
+
+
+4- Using the different levels:
+------------------------------
+
+The 'Level' allows you to determine how much output (and overhead) you want to
+get from Wild-LIFE.
+
+For predicates:
+
+	o 'fail' mode: reports FAIL only.
+	This is minimalistic but very useful for finding out where a program
+	fails. This mode also puts minimal overhead on the interpretrer. Use
+	it on predicates which should never fail.
+
+	o 'clause' mode: reports CALL, SUCC, REDO, CUT! and FAIL.
+	This is the normal mode (a slight extension of Prolog's model).
+
+	o 'goal' mode: reports CALL, GOAL, SUCC, REDO, CUT! and FAIL
+	This gives detailed information as to which goal in the predicate is
+	being called. Use this sparingly as this can get quite wordy.
+
+
+For functions:
+
+	o 'fail' mode: reports FAIL only.
+
+	o 'clause' mode: reports EVAL, SUCC, FAIL.
+
+	o 'goal' mode: reports PATT, EVAL, GOAL, SUCC, FAIL
+
+
+
+5- An example predicate:
+------------------------
+
+First, load all the clauses of your program, in this example we have:
+
+	p(X) :- X={one;two}.
+	p(three).
+	p(X) :- Y/3=X,Y=2*Z,Z=6.
+	p(X) :- X=five
+		;
+		X=six.
+	p(Y) :- p(X),!,Y={'VIII';'IX'}.
+	p('0x1010').
+
+	app([H|T],L,[H|R]) :- !,app(T,L,R).
+	app([],L,L).
+
+
+Then, load the debugging library (don't forget to open the module):
+
+	> import("debug.lf")?
+	*** File "Tools/debug.lf" loaded
+
+	*** Yes
+
+
+Next, decide which predicates to debug:
+
+	> debug(p,goal)?
+	-SPY--> p: level=goal, verbose=true
+
+	*** Yes
+
+
+And now, just use the predicate normally:
+
+	> p(X),nl,write("X=",X),nl,fail ?
+	-CALL-> p(@): entry call
+	-GOAL-> p#1.1: @ = one
+	-SUCC-> p#1: succeeds
+	
+	X=one
+	
+	p#1.1: @ = two
+	-SUCC-> p#1: succeeds
+	
+	X=two
+	
+	-REDO-> p: try clause #2
+	-GOAL-> p#2.1: succeed
+	-SUCC-> p#2: succeeds
+	
+	X=three
+	
+	-REDO-> p: try clause #3
+	-GOAL-> p#3.1: real~ = @
+	-GOAL-> p#3.2: real~ = real~  % Sub-goal #2 of clause #3 for 'p'
+	-GOAL-> p#3.3: real~ = 6
+	-SUCC-> p#3: succeeds
+	
+	X=4
+	
+	-REDO-> p: try clause #4
+	-GOAL-> p#4.1: @ = five
+	-SUCC-> p#4: succeeds
+	
+	X=five
+	
+	-REDO-> p#4: retry disjunction
+	-GOAL-> p#4.1: @ = six
+	-SUCC-> p#4: succeeds
+	
+	X=six
+	
+	-REDO-> p: try clause #5
+	-GOAL-> p#5.1: p(@)
+	-CALL-> p(@): entry call
+	-GOAL-> p#1.1: @ = one
+	-SUCC-> p#1: succeeds
+	-CUT!-> p#5.2: cut!
+	-GOAL-> p#5.3: @ = VIII
+	-SUCC-> p#5: succeeds
+	
+	X=VIII
+	
+	p#5.3: @ = IX
+	-SUCC-> p#5: succeeds
+	
+	X=IX
+	
+	-FAIL-> p#5: fails and alternatives cut
+	
+	*** No
+
+	>
+
+Now let's debug 'app' at a less verbose level:
+
+	> debug(app,clause,false)?
+	-SPY--> app: level=clause, verbose=false
+	
+	*** Yes
+	--1> 
+	
+	*** No
+	> app(A,B)?
+	-CALL-> app: entry call
+	-CUT!-> app#1: cut!
+	-CALL-> app: entry call
+	-CUT!-> app#1: cut!
+	-CALL-> app: entry call
+	-CUT!-> app#1: cut!
+	-CALL-> app: entry call
+	-CUT!-> app#1: cut!		% Oops looping.
+	-CALL-> app: entry call
+	-CUT!-> app#1: cut!
+	-CALL-> app: entry call
+	-CUT!-> app#1: cut!
+	-CALL-> app: entry call
+	-CUT!-> app#1: cut!
+	-CALL-> app: entry call^C-CUT!-> 
+	*** Command (q,c,a,s,t,h)?a
+	
+	*** Abort
+	> app([1,2,3],R,[1,2,3,4,5,6])?
+	-CALL-> app: entry call
+	-CUT!-> app#1: cut!
+	-CALL-> app: entry call
+	-CUT!-> app#1: cut!
+	-CALL-> app: entry call
+	-CUT!-> app#1: cut!
+	-CALL-> app: entry call
+	-REDO-> app: try clause #2
+	-SUCC-> app#2: succeeds
+	-SUCC-> app#1: succeeds
+	-SUCC-> app#1: succeeds
+	-SUCC-> app#1: succeeds
+	
+	*** Yes
+	R = [4,5,6].
+	--1> ;
+	-FAIL-> app: fails
+	-FAIL-> app#1: fails and alternatives cut
+	-FAIL-> app#1: fails and alternatives cut
+	-FAIL-> app#1: fails and alternatives cut
+	
+	*** No
+	>
+
+
+
+6- An example function:
+-----------------------
+
+	> import("debug")?
+	*** File "./Tools/debug.lf" loaded
+
+	> debug(append)?
+	Added debugging code to function 'append': level=clause,
+	verbose=true, clauses=2
+
+	*** Yes
+
+	> 
+	> A=append([a,b,c],[d,e,f])?
+	<EVAL> append([],[d,e,f]): clause #1, result=[d,e,f]
+	<EVAL> append([c],[d,e,f]): clause #2, result=[c,d,e,f]
+	<EVAL> append([b,c],[d,e,f]): clause #2, result=[b,c,d,e,f]
+	<EVAL> append([a,b,c],[d,e,f]): clause #2, result=[a,b,c,d,e,f]
+
+	*** Yes
+	A = [a,b,c,d,e,f].
+	--1> ;
+
+	*** No
+
+	>
+	> A=append([a,b,c],4)?
+	<FAIL> append([a,b,c],4): fails
+
+	*** No
+
+
+
+7- Understanding how it works:
+------------------------------
+
+This debugger works by retracting your original clauses and re-writing them
+with additional trace and execution control instructions. Use 'listing' to
+examine the generated code.
+
+All tracing is local to the clause, if alternatives are pruned using '!' at a
+higher level in the program, then failures and retries for the predicate being
+debugged will not be visible - this is a useful feature.
+
+The use of the debugger should in no way alter the semantics of the program,
+however some changes will be visible:
+
+	o using 'trace' will become (even more) difficult,
+
+	o assert, asserta, retract and clause will NOT work correctly,
+
+	o residuations on the calling predicate itself will be released more
+	  frequently (very rare),
+
+	o memory usage will be bigger, although this has been reduced as much
+	  as possible by using local failure.
+
+
+
+8- Possible enhancements: loads!!
+-------------------------
+
+	o improve support for functions:
+		- calls,
+		- currying,
+		- residuation.
+
+	o deal with 'trace' mode and hide all added calls,
+
+	o add a feature to allow source coverage monitoring,
+
+	o add support for sorts,
+
+	o debug an entire file,
+
+	o write modified clauses to a file.

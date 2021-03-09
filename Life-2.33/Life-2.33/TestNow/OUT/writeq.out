@@ -1,0 +1,107 @@
+
+*** Yes
+> > > '"foo"'
+*** Yes
+> foo
+*** Yes
+> 'f oo'
+*** Yes
+> f_oo
+*** Yes
+> 'XX'
+*** Yes
+> '_X'
+*** Yes
+> sX
+*** Yes
+> 'X'
+*** Yes
+> =
+*** Yes
+> ===
+*** Yes
+> '=(='
+*** Yes
+> fFF
+*** Yes
+> '_'
+*** Yes
+> ' '
+*** Yes
+> " "
+*** Yes
+> 'f '
+*** Yes
+> 'X '
+*** Yes
+> '* '
+*** Yes
+> '1'
+*** Yes
+> 123
+*** Yes
+> '123'
+*** Yes
+> '12_2'
+*** Yes
+> ' 12323232432'
+*** Yes
+> '12323232432'
+*** Yes
+> d12323232432
+*** Yes
+> d12323232432_
+*** Yes
+> '= -'
+*** Yes
+> &&
+*** Yes
+> '%'
+*** Yes
+> 'f%'
+*** Yes
+> f_
+*** Yes
+> f_
+*** Yes
+> '_f'
+*** Yes
+> '          @  '
+*** Yes
+> ' '
+*** Yes
+> 
+*** No
+> ''
+*** Yes
+> ''''
+*** Yes
+> ''''''''''
+*** Yes
+> '_feefwe'
+*** Yes
+> dfdf_efef
+*** Yes
+> dFEfeeff_efwef_wfw435fef_e
+*** Yes
+> 'dfd f_efef'
+*** Yes
+> 'dFE eeff_efwef_wfw435fef_e'
+*** Yes
+> 'Dfdf_efef'
+*** Yes
+> 'DFEfeeff_efwef_wfw435fef_e'
+*** Yes
+> 
+*** No
+> **
+*** Yes
+> '*_*'
+*** Yes
+> 
+*** No
+> '(())(('
+*** Yes
+> 'a('
+*** Yes
+> 

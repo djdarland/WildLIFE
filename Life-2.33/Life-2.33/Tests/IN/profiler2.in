@@ -1,0 +1,15 @@
+import("profiler")?
+profile(merge,level=>clause)?
+
+hamming?
+
+write_stats?
+unprofile(merge,level=>clause)?
+
+listing(merge)?
+hamming?
+profile(merge,level=>clause)?
+profile(merge,level=>clause)?
+unprofile(merge,level=>clause)?
+.
+hamming?

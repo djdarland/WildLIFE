@@ -1,0 +1,3 @@
+setq(aborthook,foo)?
+foo :- write("I'm outta here!"), nl.
+abort?

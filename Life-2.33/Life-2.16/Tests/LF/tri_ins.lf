@@ -1,0 +1,48 @@
+
+%%%%%%%
+% tri par insertion
+% Par Christophe Bonnet
+
+% Interesting because of use of strip, root_sort, and <- built-ins.
+
+%% pour les nombres :
+
+n_insert(N,[M|L]) :- N>M, !, n_insert(N,L).
+n_insert(N,L) :-
+        LL=strip(L) & root_sort(L),% Create a new "head" pointing to attributes.
+        L <- [N|LL]. % Insert N at the head of the list.
+
+n_tri_ins([],L).
+n_tri_ins([A|T],L) :- n_insert(A,L), n_tri_ins(T,L).
+
+n_trie_ins(L) -> LL | n_tri_ins(L,LL:[]).
+
+%% pour n'importe quel ordre :
+
+insert(N,[M|L],Order) :- Order(N,M), !, insert(N,L,Order).
+insert(N,L) :-
+        LL=strip(L) & root_sort(L),
+        L <- [N|LL].
+
+tri_ins([],L).
+tri_ins([A|T],L,Order) :- insert(A,L,Order), tri_ins(T,L,Order).
+
+trie_ins(L,order=>Order) -> LL | tri_ins(L,LL:[],Order).
+
+strleq("",string,_,_) -> true.
+strleq(string,"",_,_) -> false.
+strleq(S1:string,S2:string) -> or(C1:asc(S1) < C2:asc(S2),
+                                  and(C1=:=C2,
+                                      lenstrleq(substr(S1,2,L1:strlen(S1)),
+                                                substr(S2,2,L2:strlen(S2)),
+                                                L1,L2))).
+
+lenstrleq("",string,_,_) -> true.
+lenstrleq(string,"",_,_) -> false.
+lenstrleq(S1,S2,L1,L2) -> or(C1:asc(S1) < C2:asc(S2),
+                             and(C1=:=C2,
+                                 lenstrleq(substr(S1,2,LL1:(L1-1)),
+                                           substr(S2,2,LL2:(L2-1)),
+                                           LL1,LL2))).
+
+

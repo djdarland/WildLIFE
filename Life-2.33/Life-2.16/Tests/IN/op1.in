@@ -1,0 +1,1 @@
+A=bagof(q(B,C,D),op(B,C,D))?

@@ -1,0 +1,96 @@
+118,121c118,121
+< > > <EVAL> append([],[d,e,f]): clause #2, result=[d,e,f]
+< <EVAL> append([c],[d,e,f]): clause #1, result=[c,d,e,f]
+< <EVAL> append([b,c],[d,e,f]): clause #1, result=[b,c,d,e,f]
+< <EVAL> append([a,b,c],[d,e,f]): clause #1, result=[a,b,c,d,e,f]
+---
+> > > <EVAL> append([],[d,e,f]): clause #1, result=[d,e,f]
+> <EVAL> append([c],[d,e,f]): clause #2, result=[c,d,e,f]
+> <EVAL> append([b,c],[d,e,f]): clause #2, result=[b,c,d,e,f]
+> <EVAL> append([a,b,c],[d,e,f]): clause #2, result=[a,b,c,d,e,f]
+132,134c132,134
+< A = @, C = @, G = [a,b|@], H = @~.
+< ----2> <EVAL> append([b|@~],[hello]): clause #1, result=[b|@]
+< <EVAL> append([a,b|@~],[hello]): clause #1, result=[a,b|@]
+---
+> A = @, C = @, G = [a,b|C], H = @~.
+> ----2> <EVAL> append([b|@~],[hello]): clause #2, result=[b|@]
+> <EVAL> append([a,b|@~],[hello]): clause #2, result=[a,b|@]
+137,140c137,140
+< A = [a,b|@], C = @~, G = [a,b|@~], H = [hello].
+< ------3> <EVAL> append([],[hello]): clause #2, result=[hello]
+< <EVAL> append([e],[hello]): clause #1, result=[e,hello]
+< <EVAL> append([d,e],[hello]): clause #1, result=[d,e,hello]
+---
+> A = [_A: a,_B: b|@], C = @~, G = [_A,_B|C], H = [hello].
+> ------3> <EVAL> append([],[hello]): clause #1, result=[hello]
+> <EVAL> append([e],[hello]): clause #2, result=[e,hello]
+> <EVAL> append([d,e],[hello]): clause #2, result=[d,e,hello]
+143c143
+< A = [a,b,d,e,hello], C = [d,e], G = [a,b,d,e], H = [hello].
+---
+> A = [_A: a,_B: b,_C: d,_D: e|H], C = [_C,_D], G = [_A,_B|C], H = [hello].
+145a146
+> A = [_A: a,_B: b|@], C = @~, G = [_A,_B|C], H = [hello].
+147a149
+> A = @, C = @, G = [a,b|C], H = @~.
+149a152
+> A = @, G = @~, H = @~.
+156,163c159,166
+< > > > <PATT> append([a,b,c],[d,e,f]): pattern matches clause #1
+< <PATT> append([b,c],[d,e,f]): pattern matches clause #1
+< <PATT> append([c],[d,e,f]): pattern matches clause #1
+< <PATT> append([],[d,e,f]): pattern matches clause #2
+< <EVAL> append([],[d,e,f]): clause #2, result=[d,e,f]
+< <EVAL> append([c],[d,e,f]): clause #1, result=[c,d,e,f]
+< <EVAL> append([b,c],[d,e,f]): clause #1, result=[b,c,d,e,f]
+< <EVAL> append([a,b,c],[d,e,f]): clause #1, result=[a,b,c,d,e,f]
+---
+> > > > <PATT> append([a,b,c],[d,e,f]): pattern matches clause #2
+> <PATT> append([b,c],[d,e,f]): pattern matches clause #2
+> <PATT> append([c],[d,e,f]): pattern matches clause #2
+> <PATT> append([],[d,e,f]): pattern matches clause #1
+> <EVAL> append([],[d,e,f]): clause #1, result=[d,e,f]
+> <EVAL> append([c],[d,e,f]): clause #2, result=[c,d,e,f]
+> <EVAL> append([b,c],[d,e,f]): clause #2, result=[b,c,d,e,f]
+> <EVAL> append([a,b,c],[d,e,f]): clause #2, result=[a,b,c,d,e,f]
+174,187c177,190
+< A = @, C = @, G = [a,b|@], H = @~.
+< ----2> <PATT> append([a,b|@],[hello]): pattern matches clause #1
+< <PATT> append([b|@],[hello]): pattern matches clause #1
+< <EVAL> append([b|@~],[hello]): clause #1, result=[b|@]
+< <EVAL> append([a,b|@~],[hello]): clause #1, result=[a,b|@]
+< 
+< *** Yes
+< A = [a,b|@], C = @~, G = [a,b|@~], H = [hello].
+< ------3> <PATT> append([d,e],[hello]): pattern matches clause #1
+< <PATT> append([e],[hello]): pattern matches clause #1
+< <PATT> append([],[hello]): pattern matches clause #2
+< <EVAL> append([],[hello]): clause #2, result=[hello]
+< <EVAL> append([e],[hello]): clause #1, result=[e,hello]
+< <EVAL> append([d,e],[hello]): clause #1, result=[d,e,hello]
+---
+> A = @, C = @, G = [a,b|C], H = @~.
+> ----2> <PATT> append([a,b|@],[hello]): pattern matches clause #2
+> <PATT> append([b|@],[hello]): pattern matches clause #2
+> <EVAL> append([b|@~],[hello]): clause #2, result=[b|@]
+> <EVAL> append([a,b|@~],[hello]): clause #2, result=[a,b|@]
+> 
+> *** Yes
+> A = [_A: a,_B: b|@], C = @~, G = [_A,_B|C], H = [hello].
+> ------3> <PATT> append([d,e],[hello]): pattern matches clause #2
+> <PATT> append([e],[hello]): pattern matches clause #2
+> <PATT> append([],[hello]): pattern matches clause #1
+> <EVAL> append([],[hello]): clause #1, result=[hello]
+> <EVAL> append([e],[hello]): clause #2, result=[e,hello]
+> <EVAL> append([d,e],[hello]): clause #2, result=[d,e,hello]
+190c193
+< A = [a,b,d,e,hello], C = [d,e], G = [a,b,d,e], H = [hello].
+---
+> A = [_A: a,_B: b,_C: d,_D: e|H], C = [_C,_D], G = [_A,_B|C], H = [hello].
+192a196
+> A = [_A: a,_B: b|@], C = @~, G = [_A,_B|C], H = [hello].
+194a199
+> A = @, C = @, G = [a,b|C], H = @~.
+196a202
+> A = @, G = @~, H = @~.

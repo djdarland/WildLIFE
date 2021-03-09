@@ -1,0 +1,5 @@
+import("structures")?
+import("io")?
+
+non_strict(test)?
+test(X) :- nl,nl,writeln("testing: ",X),writeln("	",evalin(X)),fail.

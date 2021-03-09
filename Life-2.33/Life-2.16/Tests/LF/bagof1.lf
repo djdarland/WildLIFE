@@ -1,0 +1,17 @@
+  
+p({1;2;3}).
+
+q({fact; +(2 => 44);sqrt}).
+
+ex1 :-
+        L=bagof(X,p(X)),
+        write(L),
+        nl.
+
+ex2 :-
+        L=bagof(F(5),q(F)),
+        write(L),
+        nl.
+
+fact(0) -> 1.
+fact(N:int) -> N*fact(N-1).

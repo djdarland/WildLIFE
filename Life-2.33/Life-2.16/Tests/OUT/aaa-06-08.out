@@ -1,0 +1,11 @@
+
+*** Yes
+> > 
+*** Yes
+> @
+*** Yes
+A = @, B = @(bacon => b,eggs => a)~.
+--1> [a,b,c]
+*** Yes
+A = [a,b,c], B = @(bacon => b,eggs => a,toast => c).
+----2> 

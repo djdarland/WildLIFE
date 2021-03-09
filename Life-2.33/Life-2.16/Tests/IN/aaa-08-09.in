@@ -1,0 +1,2 @@
+p(X:int) :- write('X =',X), nl.
+X={1;int;real}, implies(p(X)), fail?

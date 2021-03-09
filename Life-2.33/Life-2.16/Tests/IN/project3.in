@@ -1,0 +1,19 @@
+set_daemon_on(X) ?
+X=toto?
+X = @(set => true)?
+.
+set_daemon_on(X) ?
+X=toto?
+X.set = true ?
+X = @(set => @)?
+.
+A=f(X), X=p(Y)?
+Y.1=1?
+Y.3=3?
+Y.2=2?
+.
+A=p(X)?
+X.1=1?
+X.2=2?
+X.3=3?
+.

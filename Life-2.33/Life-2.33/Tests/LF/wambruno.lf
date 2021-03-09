@@ -1,0 +1,260 @@
+
+% FILE. . . . . /udir/dicosmo/life/code/repair_list
+% EDIT BY . . . Roberto Di Cosmo
+% ON MACHINE. . Prl341
+% STARTED ON. . Thu Sep 18 16:10:30 1992
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%
+% Repair buggy list sort definitions
+%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% The built ins of the current version of  Wild_Life treat lists in a special
+% way, that renders it impossible to write programs  that navigate prsi terms
+% in a general uniform way.
+%
+% This file  provides the necessary   (not necessarily  efficient) workaround
+% while waiting for the definitive solution (in the compiler?).
+%
+% The functions features, root_sort, project, listify_body and bodify_list are
+% provided here  in a _n form that  works uniformly  on  psi-terms, even when
+% they are lists.
+%
+
+%
+% Examples of applications are  to be found in dissolve.life, wam_bruno.life,
+% name_top_vars.life
+%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%
+% To  avoid residuation  on variables, I fire  the function anyway, and  then
+% check what I have in hand, in the internal functions
+%
+
+features_n(X) -> N | var(X), N=[],!; N=features_internal(X).
+features_internal([])    -> [].
+features_internal([X|T]) -> [hd,tl].
+features_internal(X)     -> features(X).
+
+root_sort_n(X) -> N | var(X), N=@,!; N=root_sort_internal(X).
+root_sort_internal([])    -> nil.
+root_sort_internal([X|T]) -> cons.
+root_sort_internal(X)     -> root_sort(X).
+
+project_n(A,X) -> N | var(X), N=X.A,!; N=project_internal(A,X).
+project_internal(hd,[X|T]) -> X.
+project_internal(tl,[X|T]) -> T.
+project_internal(tl,[])    -> [].
+project_internal(A,X)      -> X.A.
+
+%
+% Rebuild listify_body and  bodify_list using  the  repaired sort  navigation
+% functions
+%
+
+listify_body_n(A) -> map(feature_subterm_n(2 => A),features_n(A)).
+
+feature_subterm_n(A,B) -> A, project_n(A,B).
+
+%
+% Specially handle new list sort manipulation
+%
+bodify_list_n([])                -> @.
+bodify_list_n([(hd, X),(tl, Y)]) -> [X|Y].
+bodify_list_n([(A, B)|C:@])      -> D:bodify_list_n(C) | B = project_n(A,D).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% FILE. . . . . /udir/dicosmo/life/code/name_top_vars
+% EDIT BY . . . Roberto Di Cosmo
+% ON MACHINE. . Prl341
+% STARTED ON. . Thu Sep 24 16:10:30 1992
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Take a psi-term and return a copy of it  where all variables satisfying the
+% predicate "var"   (i.e.,  by  this time, being    of   sort @)    are named
+% consistently, by moving  them down  the sort hierarchy  to the  appropriate
+% string sort.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% load(repair_list)?
+
+%
+% The function genvar yields a new variable name each time it is called
+%
+
+setq(my_gen_sym,0)?
+
+genvar -> strcon("U",int2str(N)) | N = my_gen_sym, setq(my_gen_sym,N+1).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% The  function `name_vars' takes a psi-term  and returns a  copy of it where
+% all variables satisfying the predicate "var" (i.e., by  this time, being of
+% sort  @) are named  consistently, by moving   them down to  the appropriate
+% string sort.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+name_vars(X) -> Y | Y = copy_term(X), name_top_vars(Y,[]).
+
+name_vars_from_to(X,N,M) -> Y | setq(my_gen_sym,N),
+                                Y = name_vars(X),
+                                M = my_gen_sym.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%
+% Since  the  root_sort of  a  list is  not "cons",  with  features "head" and
+% "tail", this function needs to use the  repaired life  version  of features
+% called features_n to navigate in every psi-term uniformly
+%
+% We  need here also a   table of already  seen elements  to avoid looping on
+% cyclic structures; the updated table is given back as the last argument
+%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+name_top_vars(X,Table,[X|Table])
+       :- call_once(var(X)),!, X = genvar.
+name_top_vars(X,Table,NewTable)
+       :- name_top_vars_body(features_n(X),X,[X|Table],NewTable).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% The   function `name_top_vars_body'  takes a  list   of pairs  of  the form
+% (attribute,psi-term) and a table  and returns a pair  made up of  a similar
+% list and a new table.
+
+name_top_vars_body([],X,Table,Table)
+       :- !.
+name_top_vars_body([A|T],X,Table,NewTable)
+       :- Z=project_n(A,X),
+            cond(memq(Z,Table),
+                 name_top_vars_body(T,X,Table,NewTable),
+                 (name_top_vars(Z,Table,NT), name_top_vars_body(T,X,NT,NewTable))).
+
+%
+% true iff X occurs in the list passed as second argument
+%
+
+memq(X,[])    -> false.
+memq(X,[Y|T]) -> cond(X===Y,true,memq(X,T)).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%
+%
+%		Unification WAM
+%
+%
+%
+
+% load(name_top_vars)?
+
+%
+%  map function, from left to right.
+%
+lrmap(F,[]) -> [].
+lrmap(F,[E|L]) -> [F(E)|L1] | L1=lrmap(F,L).
+
+joliwam(V,T) :- joli(wam(V,T)).
+
+wam(V,T) -> aplati(lrmap(transequ,expandequ(equ(V,T)))).
+
+%
+%
+% Expansion de l'equation de depart
+%
+%
+expandequ(equ(V,T1)) -> [equ(V,T2)|expand(Listequ)]
+                              | split(T1,T2,Listequ).
+
+expand(Listequ) -> aplati(map(expandequ,Listequ)).
+
+
+split(T1,T2,Listequ) :-
+                       Kmax = length(features(T1)),
+                      (Kmax=0, !, T2=T1, Listequ=[];
+                       aplat(T1,Kmax,[],T2,Listequ) ). 
+
+aplat(T1,0,Listequ,root_sort(T1),Listequ):- !.
+
+aplat(T1,N,Listprov,T2,Listequ) :- 
+                    projete(N,T1,T2,A),
+                    (
+                    var(A),!, aplat(T1,N-1,Listprov,T2,Listequ);
+		    gc,
+                    aplat(T1,N-1,[equ(T2.N,A)|Listprov],T2,Listequ)
+                    ).
+
+projete(N,T1,T2,A) :- 
+                    ( features(P:(T1.N))=[], !, T2.N=P ;
+                      A=P, T2.N=@ ).
+ 
+
+
+%
+%
+% Premiere passe: traduction elementaire
+%
+%
+
+consta(X) :- nonvar(X),arity(X)=0.
+
+transequ(equ(V,T)) -> { ([get_const(V,T)] | consta(T),!) ;
+                        ([get_struct(V,root_sort(T),arity(T))| transsup(T)]
+                        | V=reg(U))}.
+
+% For map:
+my_project(A,B) -> B.A.
+
+transsup(T) -> lrmap(transarg,map(my_project(2=>T),features(T))).
+
+transarg(Arg) -> { (unify_const(Arg) | consta(Arg),!) ;
+                   (unify_variable(Arg) | var(Arg),Arg=reg(U),!) ;
+                   unify_value(Arg)}.
+
+
+
+%
+%
+% Ecriture
+%
+%
+
+joli(X) :- setq(my_gen_sym,1), joli_internal(name_vars(X)).
+joli_internal([]).
+joli_internal([Inst|Listinst]) :- joli_write(Inst), joli_internal(Listinst),!.
+
+joli_write(get_struct(V,Foncteur,Arite)) :- nl, 
+             write("get_struct ",V," ",Foncteur,"/",Arite).
+joli_write(get_const(V,Const)) :-  nl, 
+             write("get_const ",V," ",Const).
+joli_write(unify_const(Const)) :- nl, write("unify_const ",Const),!.
+joli_write(unify_variable(Var)) :- nl, write("unify_variable ",Var),!.
+joli_write(unify_value(Var)) :- nl, write("unify_value ",Var),!.
+
+%
+%
+% Fonctions  et predicats utiles
+%
+%
+
+arity(T) -> length(features(T)).
+
+aplati([]) -> [].
+aplati([L1|L2]) -> append(L1,aplati(L2)).

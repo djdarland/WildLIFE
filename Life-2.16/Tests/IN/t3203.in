@@ -1,0 +1,8 @@
+%
+%		WILD_LIFE TESTING
+%
+%	How predicate is input: using load
+%
+listing(pred)?
+pred(X)?
+;

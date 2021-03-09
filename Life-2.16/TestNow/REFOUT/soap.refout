@@ -1,0 +1,30 @@
+
+*** Yes
+> > 
+*** Yes
+C = [dick,jane,harry].
+--1> 
+*** No
+> 
+*** Yes
+S = soap_opera(characters => [_A: dick,_B: jane,_C: harry],
+               husband => _A,
+               mailman => _C,
+               wife => _B).
+
+--1> 
+*** No
+> 
+*** Yes
+A = jane, B = harry.
+--1> 
+*** No
+> 
+*** Yes
+A = cleopatra.
+--1> 
+*** Yes
+A = jane.
+--1> 
+*** No
+> > 

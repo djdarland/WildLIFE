@@ -1,0 +1,21 @@
+
+*** Yes
+> > 
+*** Yes
+> 
+aa(c => d) :-
+        succeed.
+
+bb(c => d,e => f) :-
+        succeed.
+
+*** Yes
+> 
+*** Yes
+X = aa(c => d), Y = bb(c => d,e => f).
+--1> 
+*** No
+X = aa(c => d), Y = bb(c => d,e => f).
+--1> 
+*** No
+> 

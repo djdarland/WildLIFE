@@ -1,0 +1,44 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Copyright 1992 Digital Equipment Corporation
+% All Rights Reserved
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+module("prime") ?
+public(primes_to,prime) ? 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% A prime number is a positive integer whose number of proper factors is
+% exactly one.
+
+prime :=  P:posint | number_of_factors(P) = one.
+ 
+posint := I:int | I>0.
+
+number_of_factors(N) -> cond (N < 2, {}, factors_from(N,2)).
+
+factors_from(N:int,P:int) -> 
+	cond(P*P > N,
+             one,
+             cond(R:(N/P) =:= floor(R),
+                  many,
+                  factors_from(N,P + 1) 
+             ) 
+        ).
+
+primes_to(N:int) :-
+	write(posint_stream_to(N) & prime), 
+	nl,
+	fail.
+
+posint_stream_to(N:int) ->
+	cond(N < 1,
+             {},
+             {1;1 + posint_stream_to(N-1)}
+        ).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

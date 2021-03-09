@@ -1,0 +1,28 @@
+5c5
+< A = ===(a), X = a.
+---
+> A = ===(X), X = a.
+8c8
+< A = ===(a), B = true, X = a.
+---
+> A = ===(X), B = true, X = a.
+10a11
+> A = ===(X), X = a.
+13c14
+< A = ===(a), B = true, X = a.
+---
+> A = ===(X), B = true, X = a.
+15a17
+> A = ===(X), X = a.
+18c20
+< A = ===(a), B = false, X = a.
+---
+> A = ===(X), B = false, X = a.
+20a23
+> A = ===(X), X = a.
+23c26
+< A = ===(a), B = false, X = a.
+---
+> A = ===(X), B = false, X = a.
+25a29
+> A = ===(X), X = a.

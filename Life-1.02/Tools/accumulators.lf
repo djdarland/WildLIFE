@@ -1,0 +1,1154 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%                   EXPANDING ACCUMULATORS AND HIDDEN ARGUMENTS
+%
+% This file contains a preprocessor to add automatically accumulators and
+% passed arguments to predicates; in particular, it may be used to write DCG
+% like rules, in which psi-terms replace the standard prolog terms.
+%
+% All the necessary files are automatically loaded if they are in the same
+% directory.
+%
+% AUTHOR
+%
+% Bruno Dumant
+%
+% Copyright 1992-1993 Digital Equipment Corporation
+% All Rights Reserved
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%	$Id: accumulators.lf,v 1.2 1994/12/08 23:49:47 duchier Exp $	
+
+module("accumulators") ?
+
+import("std_expander") ?
+open("acc_declarations") ? 
+
+public(  --> , :--,
+	 grammars_expander,accumulators_expander,
+	 with, is, insert, inv, glob, init,
+	 acc_info, pred_info, pass_info, clear_acc_def,
+	 acc_auto,
+	 in, out, dcg,
+	 set_C, reset_C,
+	 std_expander,comma,define,macro,
+	 clauses,context,code,check_expansion,meta) ?
+
+%%% operators
+op(1200,xfy,-->) ?
+non_strict(-->) ?
+
+op(1200,xfy,:--) ?
+non_strict(:--) ?
+
+op(500,xfy,=>) ?
+op(800,xfy,with) ?
+op(700,xfx,is)?
+
+op( 1100, xfy, point_virgule) ?
+
+%%% persistent and global variables
+
+persistent(macros_table) ?
+persistent('C_function_name') ?
+
+global(file,line,gram) ?
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% main predicates
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+std_expander(accumulators_expander,
+	     leaf => acc_leaf,
+	     save => acc_save,
+	     merge => acc_merge,
+	     head => acc_head,
+	     init => acc_init) ?
+
+std_expander(grammars_expander,
+	     leaf => acc_leaf,
+	     save => gram_save,
+	     merge => acc_merge,
+	     head => acc_head,
+	     init => gram_init)?
+
+acc_init(in_clauses => Cl,out_clauses => Cl,
+	 file => File,line => Line) :-
+	file = {File;"?"},
+	line = {Line;"?"},!,
+	gram <- false.
+
+gram_init(in_clauses => Cl,out_clauses => Cl,
+	  file => File,line => Line) :-
+	file = {File;"?"},
+	line = {Line;"?"},!,
+	gram <- true.
+
+acc_head(Lhs,Lhs,
+	 in_code => Code,out_code => Code,
+	 in_context => InContext,out_context => OutContext,
+	 in_clauses => Cl,out_clauses => Cl) :-
+        PredName = root_sort(Lhs),
+	ContextParams = list_of_accs(PredName,gram),
+ 	bind_params(ContextParams, Lhs, In, Out, Pass),
+	InContext.accs = In,
+	InContext.fold = true, 
+	InContext.pass = Pass,
+	OutContext.accs = Out, 
+	OutContext.pass = Pass,
+	OutContext.fold = @.
+
+acc_save(in_code => Code1,out_code => Code2,
+	 in_context => @(accs => In,pass => Pass,fold => Fold),
+	 out_context => @(accs => Out,pass => Pass,fold => Fold)
+	) :-
+	Code1 = (link_accs(features(In),false,In,Out) comma Code2).
+		    
+gram_save(in_code => Code1,out_code => Code2,
+	  in_context => @(accs => In,pass => Pass,fold => Fold),
+	  out_context => @(accs => Out,pass => Pass,fold => NewFold)
+	 ) :-
+	Code1 = (link_other_accs( features(In),
+				  false,dcg,In,Out)
+		 comma Code2),
+	In.dcg = Out.dcg,
+	NewFold = false(false).
+		    
+acc_merge(in_code => Code,out_code => Code,
+	  in1 => @(accs => In,pass => Pass,fold => Fold1), 
+	  in2 => @(accs => In,pass => Pass,fold => Fold2),
+	  out => @(accs => In,pass => Pass,fold => Fold)) :-
+	Fold = Fold1 and Fold2.
+
+acc_leaf(Leaf,
+	 in_code => Code1,out_code => Code2,
+	 in_clauses => Cl,out_clauses => Cl,
+	 in_context => Co1,out_context => Co2) :-
+	( has_feature(Leaf,acc_expand_pred_table,Pred),!,
+	  root_sort(Pred) & @(Leaf,
+			      in_code => Code1,out_code => Code2,
+			      in_context => Co1,out_context => Co2)
+	;
+	  acc_pred_xpand(Leaf,
+			 in_code => Code1,out_code => Code2,
+			 in_context => Co1,out_context => Co2)
+	).
+
+persistent(acc_expand_pred_table) ?
+non_strict(add_pred) ?
+
+add_pred(Symbol,Pred) :-
+	acc_expand_pred_table.psi2str(Symbol) <<- Pred.
+
+
+add_pred([],xpand_acc_dcg) ?
+add_pred(cons,xpand_acc_dcg) ?
+add_pred(!,xpand_cut) ?
+add_pred(disj,xpand_code) ?
+add_pred(with,xpand_with) ?
+add_pred((+),xpand_acc) ?
+add_pred(is,xpand_unif) ?
+add_pred(insert,xpand_insert) ?
+add_pred(meta,xpand_meta) ?
+add_pred(@,xpand_interpret) ?
+	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% translation of the symbols
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% accumulating 
+
+non_strict(xpand_acc) ?
+
+xpand_acc(A+B,
+	  in_code => Code1,out_code => Code2,
+	  in_context => @(accs => In,pass => Pass,fold => Fold),
+	  out_context => @(accs => Out,pass => Pass,fold => Fold)) :-  
+	(
+	    get_pass_info(B,A,Val,acc_pred => AccPred),!,
+	    (
+		AccPred :< @,!,
+		cond( has_feature(B,Pass,Passed),
+		      Passed = Val,
+		      out_of_context_warning(B)
+		    )
+	    ;
+		accumulation_error(B)
+	    )
+	;    
+	    get_acc_info(B,A,InAcc,OutAcc,acc_pred => AccPred),!,
+	    (
+		AccPred :< @,!,
+		cond(  has_feature(B,In,InAcc),
+		       Out.B = OutAcc,
+		       out_of_context_warning(B)
+		    )
+	    ;
+	        accumulation_error(B)
+	    )
+	;
+	    non_declared_error(B)
+	),
+	Code1 = (link_other_accs(features(In,current_module),
+				   true, B, In, Out) 
+		 comma AccPred
+		 comma Code2).
+
+%%% accumulate in dcg
+
+xpand_acc_dcg(Terms,
+	      in_code => Code1,out_code => Code2,
+	      in_context => @(accs => In,pass => Pass,fold => Fold),
+	      out_context => @(accs => Out,pass => Pass,fold => true)) :-
+        cond( has_feature(dcg,In,Xs),
+	      (
+		  C = 'C'(Terms,Fold,Xs,Ys),
+		  Out.dcg = Ys
+	      ),
+	      out_of_context_warning(dcg)
+	    ),
+	Code1 = (link_other_accs(features(In),true,dcg,In,Out) 
+		 comma C
+		 comma Code2). 
+
+
+%%% unify with the current value of an accumulator or passed argument
+
+xpand_unif(A is B,
+	   in_code => Code1,out_code => Code2,
+	   in_context => @(accs => In,pass => Pass,fold => Fold),
+	   out_context => @(accs => Out,pass => Pass,fold => Fold)) :-  
+        cond( A :< @ and has_feature(A,In,AIn),
+	      cond( B :< @ and has_feature(B,In,BIn),
+		    Expr = (BIn = AIn),
+		    cond( B :< @ and has_feature(B,Pass,BPass),
+			  Expr = (BPass = AIn),
+			  Expr = (AIn = B)
+			)
+		  ),
+	      cond( A :< @ and has_feature(A,Pass,APass),
+		    cond( B :< @ and has_feature(B,In,BIn),
+			  Expr = (BIn = APass),
+			  cond( B :< @ and has_feature(B,Pass,BPass),
+				Expr = (BPass = APass),
+				Expr = (B = APass)
+			      )
+			),
+		    cond( B :< @ and has_feature(B,In,InB),
+			  Expr = (A = InB),
+			  cond( B :< @ and has_feature(B,Pass,BPass),
+				Expr = (A = BPass),
+				non_declared_error2(A,B) 
+			      )
+			)
+		  )
+	    ),
+	Code1 = (link_accs(features(In),true,In,Out) comma Expr comma Code2) .
+
+
+%%% insert in a chain
+
+xpand_insert( insert(X,Y,Acc),
+	      in_code => Code1,out_code => Code2,
+	      in_context => @(accs => In,pass => Pass,fold => Fold),
+	      out_context => @(accs => Out,pass => Pass,fold => Fold)) :-
+        cond( has_feature(Acc,In,AccIn),
+	      Expr = (X = AccIn, Y = Out.Acc),
+	      non_declared_error(Acc)
+	    ),
+	link_other_accs( features(In,current_module), true, Acc, In, Out),
+	Code1 = (Expr comma Code2).
+
+%%% cut
+
+xpand_cut( _,
+	   in_code => Code1,out_code => Code2,
+	   in_context => @(accs => In,pass => Pass,fold => true),
+	   out_context => @(accs => In,pass => Pass,fold => false)) :-
+	Code1 = (!,Code2).
+
+xpand_cut( _,
+	   in_code => Code1,out_code => Code2,
+	   in_context => @(accs => In,pass => Pass,fold => Bool:false),
+	   out_context => @(accs => Out,pass => Pass,fold => false)) :-
+	cond(   Bool.1 :== false,
+	        (
+		    link_other_accs(features(In),true,dcg,In,Out),
+		    Code1 = (In.dcg = Out.dcg,!,Code2 )
+	        ),
+	        ( In = Out, Code1 = (!,Code2) )
+	    ).
+
+%%% insertion of code
+
+xpand_code(Term,
+	   in_code => Code1,out_code => Code2,
+	   in_context => @(accs => In,pass => Pass,fold => true),
+	   out_context => @(accs => In,pass => Pass,fold => false)) :-  
+	!,Code1 = (transLifeCode(Term) comma Code2).
+xpand_code(Term,
+	   in_code => Code1,out_code => Code2,
+	   in_context => @(accs => In,pass => Pass,fold => Bool:false),
+	   out_context => @(accs => Out,pass => Pass,fold => false)) :-
+	cond(   Bool.1 :== false,
+	        (
+		    link_other_accs(features(In),
+		                    true,dcg,In,Out),
+		    Code1 = ( In.dcg = Out.dcg,
+		              transLifeCode( Term) comma Code2)
+	        ),
+	        ( In = Out, Code1 = (transLifeCode( Term) comma Code2))
+	    ).
+
+%%% meta
+
+xpand_meta(meta(NonTerm,ListofParams),
+	   in_code => Code1,out_code => Code2,
+	   in_context => @(accs => In,pass => Pass,fold => FoldOk),
+	   out_context => @(accs => Out,pass => Pass,fold => NewFoldOk)) :-
+	cond( Bool:gram,
+	      NewFoldOk = true,
+	      NewFoldOk = FoldOk
+	    ),
+	(
+	    ListofParams = {[];cons},!
+	;
+	    ListofParams <- [copy_pointer(ListofParams)]
+	),
+	(
+	    Bool,!,
+	    (
+		s_member(ListofParams,dcg),!,
+		List = ListofParams 
+	    ;
+		List = [dcg|ListofParams]
+	    )
+	;
+	    List = ListofParams
+	),
+	part_parameters(List,NonTerm,PredAccs,PredPassed),
+	    
+	%% dealing with accumulators
+	part_sort(Fin:features(In,current_module),
+		  PredAccs,CommonAccs,OnlyContextAccs,NonContextAccs),
+	bind_accs(CommonAccs, Args, In, Out),
+	init_accs(NonContextAccs, Args),
+	
+	%% dealing with passed arguments
+	part_sort(features(Pass,current_module),
+		  PredPassed,CommonPass,_,NonContextPass),
+	bind_passed(CommonPass, Args, Pass),
+	init_passed(NonContextPass, Args),
+	
+	%% NewTerm
+	Code1 =  
+	(link_accs(OnlyContextAccs,true,In, Out)
+	 comma `(NonTerm & Args) comma Code2
+	).
+
+%%% non-terminals
+
+acc_pred_xpand(NonTerm,
+	       in_code => Code1,out_code => Code2,
+	       in_context => @(accs => In,pass => Pass,fold => FoldOk),
+	       out_context => @(accs => Out,pass => Pass,fold => NewFoldOk)) :-
+
+        PredName = root_sort(NonTerm),
+	cond( Bool:gram,
+	      NewFoldOk = true,
+	      NewFoldOk = FoldOk
+	    ),
+	(
+	    expandable(PredName),!,
+	    List = list_of_accs(PredName,Bool),
+	    part_parameters(List,PredName,PredAccs,PredPassed),
+	    
+	    %% dealing with accumulators
+	    part_sort(Fin:features(In,current_module),
+		      PredAccs,CommonAccs,OnlyContextAccs,NonContextAccs),
+	    bind_accs(CommonAccs, NonTerm, In, Out),
+	    init_accs(NonContextAccs, NonTerm),
+	    
+	    %% dealing with passed arguments
+	    part_sort(features(Pass,current_module),
+		      PredPassed,CommonPass,_,NonContextPass),
+	    bind_passed(CommonPass, NonTerm, Pass),
+	    init_passed(NonContextPass, NonTerm),
+	    
+	    %% NewTerm
+	    Code1 =  
+	    (link_accs(OnlyContextAccs,true,In, Out)
+	     comma NonTerm comma Code2
+	    )
+	;
+	    (gram,!,
+	     bind_accs([dcg],NonTerm,In,Out),
+	     link_other_accs(features(In),true,dcg,In,Out)
+	    ;
+	     link_accs(features(In),true,In,Out)
+	    ),
+	    Code1 = (NonTerm comma Code2)
+	).
+	     
+	     
+%%% meta_symbols
+
+xpand_interpret(Symbols,
+	   in_code => Code1,out_code => Code2,
+	   in_context => @(accs => In,pass => Pass,fold => FoldOk),
+	   out_context => @(accs => Out,pass => Pass,fold => true)) :-
+	Bool = gram,
+	CName = root_sort('C_function_name'),
+        Code1 =
+	( interpret_symbols(Symbols,
+			    in_context => @(accs => In,pass => Pass),
+			    out_context => @(accs => Out,pass => Pass),
+			    gram => Bool,
+			    c_name => CName) comma Code2),
+	interpretation_warning,
+	Out = create_out(features(In)).
+
+%%% Contexts 
+
+xpand_with( @(Expression,Constraints),
+	    in_code => Code1,out_code => Code2,
+	    in_context => @(accs => In,pass => Pass,fold => FoldOk),
+	    out_context => @(accs => Out,pass => Pass,fold => NewFoldOk)) :-
+        create_context(Constraints,
+	               cur_ctxt => CC:@(In,Out,Pass),
+		       new_ctxt => NC:@(NewIn,NewOut,NewPass),
+		       globals => Globals,
+		       used => Used),
+	add_other_parameters(NC,CC,Used,Globals),
+	accumulators_expander_traverse(Expression,NewExpression,
+				       in_code => Code1,
+				       out_code => Code2,
+				       in_context => @(accs => NewIn,
+						       pass => NewPass,
+						       fold => FoldOk),
+				       out_context => @(accs => NewOut,
+							pass => NewPass,
+							fold => NewFoldOk)).
+
+	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Dealing with contexts.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+create_context(Constraints,
+	       cur_ctxt => CC,new_ctxt => NC,
+	       globals => Globals,used => Used) :-	             
+	cond( Constraints :== , ,
+	      create_conjunction(Constraints,	  
+				 cur_ctxt => CC,new_ctxt => NC,
+				 globals => Globals,used => Used),
+	      cond( Constraints :== with,
+		    (
+			create_context(Constraints.1,
+				       cur_ctxt => CC,new_ctxt => NC,
+				       globals => Globals,used => Used),
+			create_context(Constraints.2,
+				       cur_ctxt => CC,new_ctxt => NC,
+				       globals => Globals,used => Used)
+		    ),
+		    cond( Constraints :== =,
+			  create_relation(Constraints,	  
+					  cur_ctxt => CC,new_ctxt => NC,
+					  globals => Globals,used => Used),
+			  @ = create_acc(Constraints,	  
+					 cur_ctxt => CC,new_ctxt => NC,
+					 globals => Globals,used => Used)
+			))).
+
+create_conjunction(@(A,B),	  
+		   cur_ctxt => CC,new_ctxt => NC,
+		   globals => Globals,used => Used) :-
+	!,
+	create_context(A,	  
+	               cur_ctxt => CC,new_ctxt => NC,
+		       globals => Globals,used => Used),
+	create_context(B,	  
+	               cur_ctxt => CC,new_ctxt => NC,
+		       globals => Globals,used => Used).
+
+
+create_relation(@(A,B),	  
+		cur_ctxt => CC,new_ctxt => NC,
+		globals => Globals,used => Used) :-
+	!,
+	create_acc(A,cur_ctxt => CC,new_ctxt => NC,
+		   globals => Globals,used => Used) 
+	=
+	create_acc(B,cur_ctxt => CC,new_ctxt => NC,
+		   globals => Globals,used => Used).
+
+create_acc(A,
+	   cur_ctxt => CC,new_ctxt => NC,
+	   globals => Globals,used => Used) ->
+        cond( A :== =>,
+	      create_composition(A,
+				 cur_ctxt => CC,new_ctxt => NC,
+				 globals => Globals,used => Used),
+	      cond( A :== glob,
+		    create_global(A.1,
+				  cur_ctxt => CC,new_ctxt => NC,
+				  globals => Globals,used => Used),
+		    cond( A :== inv,
+			  create_inverse(A.1,
+					 cur_ctxt => CC,new_ctxt => NC,
+					 globals => Globals,used => Used),
+			  cond( A :== init,
+				create_init(A.1,A.2,
+					    cur_ctxt => CC,new_ctxt => NC,
+					    globals => Globals,used => Used),
+				create_local(A,
+					     cur_ctxt => CC,new_ctxt => NC,
+					     globals => Globals,used => Used)
+			      )))).
+
+
+create_composition(@(A,B),
+		   cur_ctxt => CC,new_ctxt => NC,
+		   globals => Globals,used => Used) -> @(In,Out) |
+        In = (Aacc:create_acc(A,
+	                      cur_ctxt => CC,new_ctxt => NC,
+		              globals => Globals,used => Used)).1,
+	Out = (Bacc:create_acc(B,
+	                       cur_ctxt => CC,new_ctxt => NC,
+		               globals => Globals,used => Used)).2,
+	Aacc.2 = Bacc.1.
+
+
+create_global(A,
+	      cur_ctxt => @(In,Out,Pass),new_ctxt => NC,
+	      globals => Globals,used => Used) ->
+	cond( has_feature(A,In,AIn),
+	      ( strip(A) & @(AIn,Out.A) | Globals.A = true ),
+	      ( @ | undefined_global_error(A) )
+	    ).
+
+create_inverse(A,
+	       cur_ctxt => CC,new_ctxt => NC,
+	       globals => Globals,used => Used) -> @(Out,In) |
+        @(In,Out) = create_acc(A,
+	                       cur_ctxt => CC,new_ctxt => NC,
+			       globals => Globals,used => Used).
+
+create_init(Loc,Restriction,
+	    cur_ctxt => CC,new_ctxt => NC,
+	    globals => Globals,used => Used) ->
+	create_local(Loc,
+	             cur_ctxt => CC,new_ctxt => NC,
+	             globals => Globals,used => Used) & @(IS,OS) |
+	(
+	    get_pass_info(Loc,start => S),!,
+	    S = IS
+	;
+	    get_acc_info(Loc,in_start => IN, out_start => OUT),!,
+	    cond( Restriction :== in,
+		  IS = IN,
+		  cond( Restriction :== out,
+			OS = OUT,
+			( IS = IN, OS = OUT)
+		      )
+		)
+	;
+		initialization_error(Loc)
+	).
+
+create_local(A,
+	     cur_ctxt => CC,new_ctxt => NC,
+	     globals => Globals,used => Used) ->
+	cond( A :< @,
+	      cond( is_passed(A),
+		    (
+			A |
+			NC.3.A = A.1,
+			Used.A = true
+		    ),
+		    cond( is_acc(A),
+			  create_new_local(A,
+					   cur_ctxt => CC,new_ctxt => NC,
+					   globals => Globals,used => Used),
+			  (true | non_declared_error(A))
+			)
+		  ),
+	      strip(A)
+	    ).
+
+create_new_local(A,
+		 cur_ctxt => CC,new_ctxt => @(In,Out,Pass),
+		 globals => Globals,used => Used) ->
+	strip(A) & @(In.A,Out.A) |
+	Used.A = true.
+
+
+add_other_parameters(NC:@(NewIn,NewOut,NewPass),
+		     CC:@(In,Out,Pass),Used,Globals) :-
+	add_other_accs(features(In),In,Out,NewIn,NewOut,Used,Globals),
+	add_other_passed(features(Pass),Pass,NewPass,Used,Globals).
+
+add_other_accs([]) :- !.
+add_other_accs([A|B],In,Out,NewIn,NewOut,Used,Globals) :-
+	cond( has_feature(A,Used),
+	      %% a local A has been created: the glob value has to be linked if
+	      %% it not used.
+	      cond( has_feature(A,Globals),
+		    succeed, 
+		    In.A = Out.A
+		  ),
+	      cond( has_feature(A,Globals),
+		    succeed,
+		    (			
+			In.A = NewIn.A,
+			Out.A = NewOut.A
+		    )
+		  )
+	    ),  
+	add_other_accs(B,In,Out,NewIn,NewOut,Used,Globals).
+
+
+add_other_passed([]) :- !.
+add_other_passed([A|B],Passed,NewPassed,Used,Globals) :-
+	cond( has_feature(A,Used),
+	      succeed,	      
+	      cond( has_feature(A,Globals),
+		    succeed,
+		    Passed.A = NewPassed.A
+		  )
+	    ),  
+	add_other_passed(B,Passed,NewPassed,Used,Globals).
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% interpreting symbols
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+non_strict(interpret_symbols) ?
+
+C:interpret_symbols(Symbols,
+		    in_context => In,
+		    out_context => Out,
+		    gram => G,
+		    c_name => Name)  :-
+	( Symbols :< @,!,
+	  CN = root_sort('C_function_name'),
+	  CG = root_sort(gram),
+	  set_C(Name),
+	  gram <- G,
+	  accumulators_expander_traverse(Symbols,
+					 in_code => X,
+					 out_code => succeed,
+					 in_context => In, 
+					 out_context => Out),
+	  X,
+	  set_C(CN),
+	  gram <- CG
+	;
+	  residuate(Symbols,C)
+	).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Macros
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% acc_auto
+%%% allows to avoid the + sign, thanks to a new declaration.
+%%% should not be documented. Doesn't work with modules.
+
+acc_auto(A,B) :-
+	make_acc_auto(A,B).
+
+
+associate_expanders(acc_auto,acc_auto_expander) ?
+acc_auto_expander(acc_auto(A,B),in_clauses => In,out_clauses => In) :-
+	make_acc_auto(A,B).
+
+
+%%%term_expansion(acc_auto(A,B),[]) :-
+%%%	make_acc_auto(A,B).
+make_acc_auto([Name1|Names],AccName) :-
+	define(Name1,Name1+AccName),
+	make_acc_auto(Names,AccName).
+make_acc_auto([]).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Some debugging
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+std_expander(check_pred,init => acc_init,
+	     head => check_head,
+	     leaf => check_leaf) ?
+
+check_head(Lhs,Lhs,
+	   in_code => Code,out_code => Code,
+	   in_context => Context,out_context => Context,
+	   in_clauses => Cl,out_clauses => Cl) :-
+        ( expandable(Lhs),!,
+	  non_expanded_warning(Lhs,file,line)
+	;
+	  succeed
+	).
+
+check_leaf(Leaf,
+	   in_code => Code1,out_code => Code2,
+	   in_context => Context,out_context => Context,
+	   in_clauses => Cl,out_clauses => Cl) :-
+        ( expandable(Leaf),!,
+	  non_expanded_warning(Leaf,file,line)
+	;
+	  succeed
+	),
+	Code1 = (Leaf comma Code2).
+
+
+
+%%% Toggling check expansion
+
+%%%C:check_expansion :-
+%%%	(
+%%%	    has_feature(1,C,X),!,
+%%%	    (
+%%%		X :== @,!,
+%%%		X = root_sort(check_expansion_flag)
+%%%	    ;
+%%%		X :== true,!,
+%%%		set_check_expansion
+%%%	    ;
+%%%		X :== false,
+%%%		reset_check_expansion
+%%%	    )
+%%%	;
+%%%	    ( check_expansion_flag,!,
+%%%	      reset_check_expansion
+%%%	    ;
+%%%	      set_check_expansion
+%%%	    )
+%%%	).
+
+check_expansion :-
+	set_check_expansion.
+
+set_check_expansion :-
+	remove_expanders(:-,check_pred),
+	add_expanders_a(:-,check_pred,:-),
+	set_error_expander,
+	check_expansion_flag <<- true.
+
+reset_check_expansion :-
+	remove_expanders(:-,check_pred),
+	reset_error_expander,
+	check_expansion_flag <<- false.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Predefined accumulators
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% dcg accumulator declaration
+
+acc_info( dcg, Term, Xs, Ys, acc_pred => 'C'(Term,false,Xs,Ys)) ?
+%%,in_name => 0, out_name => rest) ?
+
+
+default_C( Terms: list, true, Xs, Ys ) -> 
+	succeed | Xs = termSequence(Terms, Ys).
+default_C( Terms: list, false, Xs, Ys) -> 
+	Xs = termSequence(Terms, Ys).
+
+
+set_C(Function_name) :-
+	set_func_arg('C'(Terms,FoldOk,Xs,Ys),
+	                  Function_name(Terms,FoldOk,Xs,Ys)),
+	'C_function_name' <<- `Function_name.
+
+reset_C :- 
+	set_func_arg('C'(Terms,FoldOk,Xs,Ys), 
+	                  default_C(Terms,FoldOk,Xs,Ys)),
+	'C_function_name' <<- `default_C.
+
+dynamic('C') ?
+'C'(Terms,FoldOk,Xs,Ys) ->  
+	default_C(Terms,FoldOk,Xs,Ys).
+
+'C_function_name' <<- `default_C ?
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Standard symbols used
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+associate_expanders(-->,grammars_expander,:-) ?
+associate_expanders(:--,accumulators_expander,:-) ?
+
+(A :-- B) :-
+	accumulators_expander(@(A,B),file => "?",line => "?",
+			      in_clauses => Cl,out_clauses => []),
+	maprel(assert,Cl).
+
+
+(A --> B) :-
+	grammars_expander(@(A,B),file => "?",line => "?",
+			  in_clauses => Cl,out_clauses => []),
+	maprel(assert,Cl). 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% special treatments
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%% Inserting Life code
+
+non_strict(transLifeCode) ?
+
+transLifeCode({A|B}) ->  A point_virgule transLifeCode(B).
+transLifeCode({}) -> fail.
+transLifeCode([]) -> fail.
+
+
+%%% dcg accumulator: handling terminals
+
+termSequence( [], Ys)     -> Ys.
+termSequence( [T|Ts], Ys) -> [T|termSequence( Ts, Ys)].
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Errors
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+accumulation_error(Acc) :-
+	nl_err,
+	write_err("*** Error: In file """,file,""" near line ",line),nl_err,
+	write_err("    Accumulator ",Acc,
+	          " has no accumulation predicate."),
+	fail.
+
+undefined_global_error(A) :-
+	nl_err,
+	write_err("*** Error: In file """,file,""" near line ",line),nl_err, 
+	write_err("           ",A," should appear in global context."),
+	fail.
+
+initialization_error(A) :-
+	nl_err,
+	write_err("*** Error: In file """,file,""" near line ",line),nl_err,
+	write_err("           No initialization information for accumulator: ",
+		  A,"."),
+	fail.
+
+non_declared_error(A) :-
+	nl_err,
+	write_err("*** Error: In file """,file,""" near line ",line),nl_err,
+	write_err("           ",A," is not declared as an accumulator "),
+	nl_err,
+	write_err("           or a passed argument."),
+	fail.
+
+non_declared_error2(A,B) :-
+	nl_err,
+	write_err("*** Error: In file """,file,""" near line ",line),nl_err,
+	write_err("           Nor ",A," or ",B," is declared as an ",
+		  "accumulator "),
+	nl_err,
+	write_err("           or a passed argument."),
+	fail.
+
+pred_info_error(Acc,PredName) :-
+	nl_err,
+	write_err("*** Error: ",Acc," appearing in pred_info(",PredName,")"),
+	nl_err,
+	write_err("           is not declared as an accumulator ",
+		  "or a passed argument."),
+	fail.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Warnings
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+out_of_context_warning(B) :- quiet,!.
+out_of_context_warning(B) :-
+	nl_err,
+	write_err("*** Warning: In file ",file," near line ",line),nl_err,
+	write_err("             Attempt to accumulate in ",B,
+	          " not appearing in the context."),
+	nl_err.
+
+interpretation_warning :- quiet,!.
+interpretation_warning :-
+	nl_err,
+	write_err("*** Warning: In file ",file," near line ",line),nl_err,
+	write_err("             a symbol has to be interpreted."),
+	nl_err.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Dealing with parameters
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ 
+
+%%% bind arguments of a term with In, Out or Pass
+
+bind_params([]) :- !.
+bind_params( [A|B], X, In, Out, Pass) :-
+	bind_param( A, X, In, Out, Pass),
+	bind_params( B, X, In, Out, Pass).
+
+bind_param(A,X,In,Out,Pass) :-
+	(
+	    is_passed(A),!,
+	    X.A = Pass.A
+	;
+	    get_acc_info( A, in_name => InName, out_name => OutName),
+	    !,
+	    X.InName = InVal,
+	    In.A = InVal,
+	    X.OutName = OutVal,
+	    Out.A = OutVal
+	;
+	    pred_info_error(A,root_sort(X))
+	).
+
+%%% bind arguments of a term with In, Out
+
+bind_accs([]) :- !.
+bind_accs( [A|B], X, In, Out) :- 
+	bind_acc( A, X, In, Out),
+	bind_accs( B, X, In, Out).
+
+bind_acc(A,X,In,Out) :-
+	(
+	    get_acc_info(A,in_name => InName,out_name => OutName)
+	;
+	    InName = strcon("in_",psi2str(A)),
+	    OutName = strcon("out_",psi2str(A))
+	),!,
+	X.InName = InVal,
+	In.A = InVal,
+	X.OutName = OutVal,
+	Out.A = OutVal.
+
+%%% bind arguments of a term with Pass
+
+bind_passed([]) :- !.
+bind_passed( [A|B], X, Pass) :- 
+	X.A = Pass.A,
+	bind_passed( B, X, Pass).
+
+%%% link all accumulators of a list but one
+
+link_other_accs([],_,C,In,Out) -> succeed |
+        cond( has_feature(C,In),
+	      Out.C = @).
+link_other_accs([A|B],true,C,In,Out) -> succeed |
+	cond( A :\== C,
+	      In.A = Out.A),
+	link_other_accs(B,true,C,In,Out).
+link_other_accs([A|B],false,C,In,Out) -> R |
+	cond( A :\== C,
+	      (
+		  Tin.A = In.A,
+		  Tout.A = Out.A
+	      )
+	    ),
+	link_other_accs_false(B,C,In,Out,Tin,Tout),
+	cond( features(Tin) :== [],
+	      R = succeed,
+	      R = (Tin:accs = Tout:accs)
+	    ).
+
+link_other_accs_false([A|B],C,In,Out,Tin,Tout) :-
+	!,
+	cond( A :\== C,
+	      (
+		  Tin.A = In.A,
+		  Tout.A = Out.A
+	      )
+	    ),
+	link_other_accs_false(B,C,In,Out,Tin,Tout).
+link_other_accs_false([],C,In,Out) :- 
+        cond( has_feature(C,In),
+	      Out.C = @).
+
+
+%%% link accumulators
+
+link_accs([]) -> succeed.
+link_accs([A|B],true,In,Out) -> succeed |
+        In.A = Out.A,
+       	link_accs(B,true,In,Out).
+
+link_accs(Fin,false,In,Out) -> R |
+	cond(Fin :== [],
+	     R = succeed,
+	     (true |
+	      add_features(Fin,Out),
+	      R = (copy_pointer(In)&accs = copy_pointer(Out)&accs)
+	     )).
+
+add_features([A|B],T) :-
+	!,
+	T.A = @,
+	add_features(B,T).
+add_features([]).
+	
+
+
+%%% give parameters their initial value
+
+init_accs([]) :- !.
+init_accs([A|B],NonTerm) :-
+	(
+	   get_acc_info(A,in_name => InName, out_name => OutName,
+	                 in_start => In, out_start => Out),
+            NonTerm.InName = In,
+	    NonTerm.OutName = Out
+	;
+	    succeed
+	),!,
+	init_accs(B,NonTerm).
+
+init_passed([]) :- !.
+init_passed([A|B],NonTerm) :-
+	get_pass_info(A,start => Start),!,
+	NonTerm.A = Start,
+	init_passed(B,NonTerm).
+
+%%% create out
+
+create_out([A|B]) -> C:create_out(B) | C.A = @ .
+create_out([]) -> @.
+
+%%% partition passed arguments and accumulators in a list
+
+part_parameters([],PredName,[],[]) :- !.
+part_parameters(L,PredName,Accs,Passed) :-
+	part_params_2(L,PredName,[],Accs,[],Passed).
+
+part_params_2([],PredName,L1,L1,L2,L2) :- !.
+part_params_2([A|B],PredName,L1,L3,L4,L6) :-
+	cond( is_passed(A),
+	      (
+		  L1 = L2,
+		  L5 = [A|L4]
+	      ),
+	      cond( is_acc(A),
+		    (
+			L5 = L4,
+			L2 = [A|L1]
+		    ),
+		    pred_info_error(A,PredName)
+		  )
+	    ),
+	part_params_2(B,PredName,L2,L3,L5,L6).
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Utilities
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+map_pred([A|B],P) :-
+	!,
+	copy_pointer(P) & @(A),
+	map_pred(B,P).
+map_pred([]).
+
+
+s_member([A|B],C) -> cond( A :\== C,s_member(B,C)).
+s_member([]) -> false.
+
+
+
+%%% setq for functions WITH arguments
+
+non_strict(set_func_arg) ?
+set_func_arg(A,B) :- 
+	R = root_sort(A),
+	retract(( R -> @ )),
+	assert(( A -> B )). 
+
+
+
+%%% list of the features of a term
+
+feats(Term) -> feat_values2(features(Term),Term).
+feat_values2([F1|Fs],Term) -> [Term.F1|feat_values2(Fs,Term)].
+feat_values2([]) -> [].
+
+
+A point_virgule B ->  cond( A :=< fail, B, cond( B :=< fail, A, (A;B))).
+
+%%% flattenning a list of lists
+
+flatten([A|B]) -> append(A,flatten(B)).
+flatten([]) -> [].
+
+
+%%% part_sort(L1,L2,L3,L4,L5): L3 is L1 inter L2, L4 is L1 \ L3, L5 is L2 \ L3
+
+part_sort([],L2,[],[],L2) :- !.
+part_sort(L1:[A|NewL1],L2,Intersect,RestL1,RestL2) :-
+	cond( memberAndRest_sort(A,L2,InterRestL2),
+	      (
+		  part_sort(NewL1,InterRestL2,Intersect2,RestL1,RestL2),
+		  Intersect = [A|Intersect2]
+	      ),
+	      (
+		  part_sort(NewL1,L2,Intersect,RestNewL1,RestL2),
+		  RestL1 = [A|RestNewL1]
+	      )).
+
+memberAndRest_sort(A,[],Rest) -> false.
+memberAndRest_sort(A,[B|C],Rest) ->
+	cond( A :== B,
+	      ( true | Rest = C),
+	      memberAndRest_sort(A,C,OtherRest) | Rest = [B|OtherRest] ).
+
+%
+% member in a list of sorts, using :==
+%
+
+sort_member(X,[Y|S]) -> cond( X :== Y,
+	                      true,
+			      sort_member(X,S)).
+sort_member(X,[]) -> false.
+
+
+%%% difference of list of sorts: sorts_list_diff(A,B) -> A \ (A inter B)
+
+sorts_list_diff([A|B],C) ->
+	cond(   sort_member(A,C),
+	        sorts_list_diff(B,C),
+		[A|sorts_list_diff(B,C)]
+	    ).
+sorts_list_diff([],L) -> [].
+

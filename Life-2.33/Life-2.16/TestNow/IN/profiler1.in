@@ -1,0 +1,18 @@
+fact(0) -> 1.
+fact(N) -> N*fact(N-1).
+app([],L,L).
+app([X|L1],L2,[X|L3]) :- app(L1,L2,L3).
+import("profiler")?
+profile(fact,app,level=>call)?
+
+A=fact(5)?
+
+write_stats(fact)?
+write_stats(app)?
+app(A,B,[1,2,3])?
+;
+write_stats(app)?
+;
+;
+;
+write_stats(app)?

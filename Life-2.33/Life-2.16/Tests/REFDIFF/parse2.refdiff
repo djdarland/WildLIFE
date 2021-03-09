@@ -1,0 +1,8 @@
+5c5
+< F = f(@,g(@,@)), Status = declaration, X = @, Y = @.
+---
+> F = f(X,g(Y,X)), Status = declaration, X = @, Y = @.
+10c10
+< F = (@ = 2), S = error, V = true, X = @.
+---
+> F = (X = 2), S = error, V = true, X = @.

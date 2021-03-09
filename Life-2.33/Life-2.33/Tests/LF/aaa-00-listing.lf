@@ -1,0 +1,9 @@
+listing(23)?
+listing(+)?
+q(A,A,B,B) -> A * B.
+listing(q)?
+p(A,B,C,D).
+listing(p)?
+listing(23,+,-)?
+w(a,b,c).
+listing(w)?

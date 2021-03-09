@@ -1,0 +1,187 @@
+
+                            A PARSER FOR LIFE            
+
+  
+  NAME
+
+  parser: A complete parser for Life, including extensions to the standard
+          syntax of Life (the standard syntax being that defined by the
+          wild_LIFE parser), and the possibility to use local functions. 
+
+
+  USAGE
+
+      syntax(filename) ? 
+
+  parses the file filename and writes the obtained psi-terms in the file
+  filename_expr.
+  Beware: the obtained file cannot necessarily be loaded by wild_LIFE, because
+  ':' is not always printed out correctly by writeq.
+    
+  All the necessary files are automatically loaded if they are in the same
+  directory.
+
+
+  FILES
+
+  The file parser.lf contains the parser.
+
+  The other files are:
+  - tokenizer.lf  : the tokenizer used to provide inputs to the parser
+  - accumulators.lf, std_expander.lf and acc_declarations.lf  
+
+  All these files are automatically loaded if they are in the same directory. 
+
+  They must be loaded with expand_load(true). 
+
+  DESCRIPTION  
+
+  This parser is written like an attribute grammar, and translated in a Life
+  program by the grammar translator (file expander.lf). The inputs of
+  this grammars are the tokens produced by the tokenizer in Life (file
+  tokenizer.lf). This grammar needs to know one token in advance to work.
+
+  Extensions of the standard syntax:
+
+  - Expressions may be used at label places:
+     foo( expr => bar ) 
+           where expr is any life expression is syntactic sugar for:
+     ( X:foo | project(expr,X) = bar )
+
+  - expr1.expr2 is syntactic sugar for project(expr2,expr1). It is an infix,
+    left associative operator of precedence 300 ( more than & and :, but less
+    than any other operator).
+    conditions of use:
+    - after a sequence of digits, . is first considered as the floating point,
+      then as project:
+        152.143 is parsed as the real 152.143
+        152.(143) is parsed as project(143,152)
+        152.143.345 is parsed as project(345,152.143)
+        152 .143    is parsed as project(143,145)
+    - . is considered as an operator iff it is not followed by a void
+      character (space, tab, nl, )
+    - . cannot be defined by op.
+  - if <expr1> then <expr2> else <expr3> 
+       can be used instead of
+    cond(<expr1> , <expr2> ,<expr3>); 
+    The then and the else branches may be omitted; any expression of precedence
+    less than 999 (, is of precedence 1000) is allowed:
+    there is no maximum precedence; "if" "then" and "else" are tokens; 
+    predicates are allowed in the if branch.
+
+  Local Functions:
+  - lambda(attributes)(expr) defines a local function where all the
+    variables appearing in attributes are local to the expression. This works
+    also with recursive functions. For instance, factorial could be defined
+    by :
+    Fact = '*lambda*'(X)(cond(X =:= 0, 1, X*Fact(X-1))) ?
+  - The possible syntaxes for application are the following:
+    - X(args) 
+        where X is a variable that has to be instantiated to a function
+        (local or not) at runtime, and args the list of arguments of the
+        function. 
+    - (expr)(args) 
+  - let X = expr in expr2 
+      is syntactic sugar for 
+      (lambda(X)(expr2))(expr)
+
+
+  A Grammar for Life
+  Here is an informal presentation of the grammar used in the parser.
+  
+  %%%%%%%%%%%%%%%%% Terms %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  
+  term --> 
+	[construct],
+	(attributes ; []).
+  term --> 
+	[variable],
+	( attributes ;  %% application
+	  [] ).
+  term --> 
+	liste,
+	(attributes ; []). 
+  term -->
+	disjunction,
+	(attributes ; []).      
+  term -->                     
+	["lambda"],
+	attributes,        %% all variables inside attributes are made local 
+                           %% to the term 
+	expression.
+  term --> 
+	["let"],
+	[variable],[atom(=)],expression, %% variable is local
+        ["in"],
+	expression.
+
+  attributes -->     %% , is not considered as an operator in this context,
+                     %% but as a syntactic object 
+	["("],
+	list_attributes.
+  list_attributes -->     
+	attribute,
+	( [] ; atom(,), list_attributes).
+  attribute -->
+	expression,
+	( [atom(=>)], expression ; []).
+
+  liste -->          %% , and | are not considered as operators in this
+                     %% context, but as syntactic objects 
+	["["],
+	( ["]"] ; end_list ).
+  end_list -->
+	expression,
+	( ["]"] ; [atom(,)], end_list ; [atom(|)],expression, ["]"] ).
+
+  disjunction -->    %% ; is not considered as an operator in this context,
+                     %% but as a syntactic object 
+	["{"],
+	( ["}"] ; end_disjunction ).
+  end_disjunction -->
+	expression,
+	( ["}"] ; end_disjunction ).
+
+
+  %%%%%%%%%%%%%%%%% Expressions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  
+  expression -->                      
+	start_expression,
+	end_expression.     %% precedence of end_expression is greater than
+                            %% that of start_expression
+  start_expression -->
+	["("],expression,[")"],
+	(
+	   attributes       %% application
+        ;
+           []
+	).
+  start_expression -->
+	prefix_operator,
+	(  
+            expression      %% accepted precedence depends on the operator
+        ; 
+            attributes      %% the operator is used as a constructor
+        ; 
+            [] ).
+  start_expression --> term.
+  end_expression -->
+	sub_expression,  
+	end_expression.     %% precedence of end_expression is greater than 
+                            %% that of sub_expression
+  end_expression --> [].
+  sub_expression -->
+	operator,
+	(
+	   []               %% postfix operator
+        ;
+           expression       %% infix operator
+	).  
+ 
+
+  AUTHOR 
+
+  Bruno Dumant
+
+  Copyright 1992 Digital Equipment Corporation
+  All Rights Reserved

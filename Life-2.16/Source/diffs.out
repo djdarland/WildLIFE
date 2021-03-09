@@ -1,0 +1,220 @@
+18c18
+< 
+---
+> #include "memory.h"
+33c33
+< void eval_global_var(); /*  RM: Feb 10 1993  */
+---
+> void eval_global_var(ptr_psi_term); /*  RM: Feb 10 1993  */
+223c223,224
+< 		      TRUE,var->type,&resflag,&rescode);
+---
+> 		      TRUE,(GENERIC)var->type,
+> 		      &resflag,&rescode);
+229c230
+< 	result=glb_code(resflag,rescode,TRUE,othervar->type,
+---
+> 	result=glb_code(resflag,rescode,TRUE,(GENERIC)othervar->type,
+248c249
+<             push_ptr_value(int_ptr,&((*r)->sortflag));
+---
+>             push_ptr_value(int_ptr,(GENERIC *)&((*r)->sortflag));
+263c264
+<           push_ptr_value(int_ptr,&((*r)->sortflag));
+---
+>           push_ptr_value(int_ptr,(GENERIC *)&((*r)->sortflag));
+276c277
+<     push_ptr_value(resid_ptr,r);
+---
+>     push_ptr_value(resid_ptr,(GENERIC *)r);
+279c280
+<       result=glb_code(TRUE,var->type,TRUE,othervar->type,&resflag,&rescode);
+---
+>       result=glb_code(TRUE,(GENERIC)var->type,TRUE,(GENERIC)othervar->type,&resflag,&rescode);
+304c305
+<     push_ptr_value(int_ptr,&(g->pending));
+---
+>     push_ptr_value(int_ptr,(GENERIC *)&(g->pending));
+350c351
+<     print_resid_message(resid_aim->a,resid_vars);
+---
+>     print_resid_message(resid_aim->aaaa_1,resid_vars);
+386,387c387,388
+<   funct=(ptr_psi_term )resid_aim->a;
+<   result=(ptr_psi_term )resid_aim->b;
+---
+>   funct=(ptr_psi_term )resid_aim->aaaa_1;
+>   result=(ptr_psi_term )resid_aim->bbbb_1;
+412c413
+<     if (trailflag) push_ptr_value(resid_ptr,&(t->resid));
+---
+>     if (trailflag) push_ptr_value(resid_ptr,(GENERIC *)&(t->resid));
+419c420
+< 	push_ptr_value(int_ptr,&(g->pending));
+---
+> 	push_ptr_value(int_ptr,(GENERIC *)&(g->pending));
+422c423
+< 	push_ptr_value(goal_ptr,&(g->next));
+---
+> 	push_ptr_value(goal_ptr,(GENERIC *)&(g->next));
+427c428
+<         Traceline("releasing %P\n",g->a);
+---
+>         Traceline("releasing %P\n",g->aaaa_1);
+463c464
+<   push_ptr_value(resid_ptr,g);
+---
+>   push_ptr_value(resid_ptr,(GENERIC *)g);
+484,485c485,486
+<   
+<   funct=(ptr_psi_term )aim->a;
+---
+>  
+>   funct=(ptr_psi_term )aim->aaaa_1;
+489c490
+<   push2_ptr_value(int_ptr,&(funct->status),(funct->status & SMASK));
+---
+>   push2_ptr_value(int_ptr,(GENERIC *)&(funct->status),(GENERIC)(funct->status & SMASK));
+491d491
+< 
+494,495c494,495
+<   result=(ptr_psi_term )aim->b;
+<   rule=(ptr_pair_list )aim->c;
+---
+>   result=(ptr_psi_term )aim->bbbb_1;
+>   rule=(ptr_pair_list )aim->cccc_1;
+524c524
+<       while (rule && (rule->a==NULL || rule->b==NULL)) {
+---
+>       while (rule && (rule->aaaa_2==NULL || rule->bbbb_2==NULL)) {
+540c540
+< 	    head=eval_copy(rule->a,STACK);
+---
+> 	    head=eval_copy(rule->aaaa_1,STACK);
+543,544c543,544
+< 	head=quote_copy(rule->a,STACK);
+<         body=eval_copy(rule->b,STACK);
+---
+> 	head=quote_copy(rule->aaaa_2,STACK);
+>         body=eval_copy(rule->bbbb_2,STACK);
+548c548
+<           push_choice_point(eval,funct,result,rule->next);
+---
+>           push_choice_point(eval,funct,result,(GENERIC)rule->next);
+551,552c551,552
+<         /* RESID */ push_goal(eval_cut,body,cutpt,rb); /* 13.6 */
+<         /* RESID */ push_goal(match,funct,head,rb);
+---
+>         /* RESID */ push_goal(eval_cut,body,(ptr_psi_term)cutpt,(GENERIC)rb); /* 13.6 */
+>         /* RESID */ push_goal(match,funct,head,(GENERIC)rb);
+573c573
+< /* RESID */ match_attr1(u,v,rb)
+---
+> /* RESID */ void match_attr1(u,v,rb)
+584c584
+<       cmp=featcmp((*u)->key,v->key);
+---
+>       cmp=featcmp((*u)->key,v->key,FEATCMP);
+589c589
+<   	/* RESID */ push_goal(match,(*u)->data,v->data,rb);
+---
+>   	/* RESID */ push_goal(match,(ptr_psi_term)(*u)->data,(ptr_psi_term)v->data,(GENERIC)rb);
+613c613
+< /* RESID */ match_attr2(u,v,rb)
+---
+> /* RESID */ void match_attr2(u,v,rb)
+629c629
+<       cmp=featcmp((*u)->key,v->key);
+---
+>       cmp=featcmp((*u)->key,v->key,FEATCMP);
+664c664
+< /* RESID */ match_attr3(u,v,rb)
+---
+> /* RESID */ void match_attr3(u,v,rb)
+675c675
+<       cmp=featcmp((*u)->key,v->key);
+---
+>       cmp=featcmp((*u)->key,v->key,FEATCMP);
+742,743c742,743
+<   u=(ptr_psi_term )aim->a;
+<   v=(ptr_psi_term )aim->b;
+---
+>   u=(ptr_psi_term )aim->aaaa_1;
+>   v=(ptr_psi_term )aim->bbbb_1;
+746c746
+<   rb=(ptr_resid_block)aim->c;
+---
+>   rb=(ptr_resid_block)aim->cccc_1;
+758c758
+<                 success=(strcmp((char *)u->value,(char *)v->value)==0);
+---
+>                 success=(lf_strcmp((char *)u->value,(char *)v->value)==0);
+833,834c833,834
+< long check_out();
+< long eval_args();
+---
+> long check_out(ptr_psi_term);
+> long eval_args(ptr_node);
+858c858
+<     flag = check_out(n->data) && flag;
+---
+>     flag = check_out((ptr_psi_term)n->data) && flag;
+894c894
+<      Errorline("embedded functions appeared in %P.\n",resid_aim->a);
+---
+>      Errorline("embedded functions appeared in %P.\n",resid_aim->aaaa_1);
+909c909
+<     push_psi_ptr_value(t,&(t->coref));
+---
+>     push_psi_ptr_value(t,(GENERIC *)&(t->coref));
+913c913
+<     push_goal(eval,copy,result,t->type->rule);
+---
+>     push_goal(eval,copy,result,(GENERIC)t->type->rule);
+952c952
+<   push2_ptr_value(int_ptr,&(t->status),(t->status & SMASK));
+---
+>   push2_ptr_value(int_ptr,(GENERIC *)&(t->status),(GENERIC)(t->status & SMASK));
+1028d1027
+<   
+1032a1032,1033
+>   Traceline("PVR: entering check_out with status %d and term %P\n",
+>             t->status,t); /* for brunobug.lf PVR 14.2.94 */
+1066a1068
+> 
+1109,1111c1111,1113
+< void deref_rec_body();
+< void deref_rec_args();
+< void deref_rec_args_exc();
+---
+> void deref_rec_body(ptr_psi_term);
+> void deref_rec_args(ptr_node);
+> void deref_rec_args_exc(ptr_node,long);
+1136c1138
+< 	    push_ptr_value(int_ptr,&(t->status)); /*  RM: Jul 15 1993  */
+---
+> 	    push_ptr_value(int_ptr,(GENERIC *)&(t->status)); /*  RM: Jul 15 1993  */
+1179c1181
+< 	    push_ptr_value(int_ptr,&(t->status));/*  RM: Jul 15 1993  */
+---
+> 	    push_ptr_value(int_ptr,(GENERIC *)&(t->status));/*  RM: Jul 15 1993  */
+1223,1226c1225,1228
+<   if (set&1 && !featcmp(str,"1")) return TRUE;
+<   if (set&2 && !featcmp(str,"2")) return TRUE;
+<   if (set&4 && !featcmp(str,"3")) return TRUE;
+<   if (set&8 && !featcmp(str,"4")) return TRUE;
+---
+>   if (set&1 && !featcmp(str,"1",FEATCMP)) return TRUE;
+>   if (set&2 && !featcmp(str,"2",FEATCMP)) return TRUE;
+>   if (set&4 && !featcmp(str,"3",FEATCMP)) return TRUE;
+>   if (set&8 && !featcmp(str,"4",FEATCMP)) return TRUE;
+1336,1337c1338,1339
+<       n->a= (GENERIC) &(t->type->global_value);
+<       n->b= NULL;
+---
+>       n->aaaa_3= (GENERIC) &(t->type->global_value);
+>       n->bbbb_3= NULL;
+1352c1354
+<     push_psi_ptr_value(t,&(t->coref));
+---
+>     push_psi_ptr_value(t,(GENERIC *)&(t->coref));

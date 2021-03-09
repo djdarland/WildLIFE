@@ -1,0 +1,2 @@
+*** Error: argument in print_depth(...) must be positive or zero.
+*** Error: argument in print_depth(-1) must be positive or zero.

@@ -1,0 +1,26 @@
+hanoi(1,A,B,C,[[A,B]]).
+
+
+hanoi(N,A,B,C,Ms:ensuite(Ms1,[[A,B]|Ms2])) :-
+		N>1=true,
+		hanoi(N-1,A,C,B,Ms1),
+		hanoi(N-1,C,B,A,Ms2),
+		% 15.9 Because asserta is now nonstrict:
+		MMs=Ms, asserta(hanoi(N,A,B,C,MMs) :- !),
+		write('Solved problem for N=',N),
+		nl.
+
+
+ensuite([],A:list) 	
+		-> A.
+ensuite([H|T],M) 	
+		-> [H|ensuite(T,M)].
+
+test(N:int) :-
+		hanoi(N,A,B,C,M),
+		write('Solution:'),
+		nl,
+		write(M).
+
+dynamic(hanoi)?
+

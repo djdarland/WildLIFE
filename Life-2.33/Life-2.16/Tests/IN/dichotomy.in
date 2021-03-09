@@ -1,0 +1,4 @@
+X1=solve(poly,-5,0)?
+X2=solve(poly,0,3)?
+X3=solve(poly,3,6)?
+X=solve(poly,-5,4)?

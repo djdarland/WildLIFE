@@ -1,0 +1,9 @@
+%
+%		Wild_life testing
+%
+%		Overflow of memory
+%
+%
+delay_check(bachi)?
+bachi := X:real | exp(X)=bachi.
+dumb(bachi).

@@ -1,0 +1,48 @@
+%
+% Translating grammars into LIFE
+%
+%
+% The syntax of the rules is the following:
+% Head --> List of Symbols # List of clauses ?
+%
+% The list of clauses can be used as a list of constraints on attributes of
+% the non-terminals.  The symbols are any psi terms with no feature named
+% "words": This feature is used to translate a non-terminal into a predicate.
+% See the files *.gr for examples of grammars, and the corresponding *.in for
+% examples of queries.
+%
+
+op(999,xfy,-->)?
+op(995,xfy,#)?
+op(990,xfy,,)?
+op(500,xfy,\\)?
+
+non_strict(-->)?
+non_strict(#)?
+
+(Lhs --> Rhs) :- R=transregle(Lhs,Rhs), assert(R).
+
+%
+% transregle: translates the grammar rules into clauses
+%
+transregle(Lhs, Rhs # Chs )
+                        -> (trad(Xs\\Ys,Lhs) :- trad(Xs\\Ys,Rhs),Chs ).
+transregle(Lhs ,Rhs) -> (trad(Xs\\Ys,Lhs) :- trad(Xs\\Ys,Rhs)).
+
+non_strict(transregle)?
+
+%
+% trad is used to translate a list of symbols of the grammar into a list of
+% literals.
+%
+trad(Xs\\Ys,(Symb,Autres)) -> trad(Xs\\Ys1,Symb),trad(Ys1\\Ys,Autres) |
+                             nonvar(Autres) .
+
+trad(Xs\\Ys,Term:list) -> succeed | Xs=sequence(Term,Ys).
+trad(Xs\\Ys,NonTerm) -> Psi | Psi=NonTerm, Psi.words=(Xs\\Ys).
+
+sequence([],Ys)-> Ys.
+sequence([T|Ts],Ys)-> [T|sequence(Ts,Ys)].
+
+
+

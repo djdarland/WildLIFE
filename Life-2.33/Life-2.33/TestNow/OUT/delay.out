@@ -1,0 +1,12 @@
+
+*** Yes
+> > 
+*** Yes
+A = person.
+--1> 
+*** Yes
+A = person(best_friend => cleopatra,nose => pretty).
+--1> 
+*** Yes
+A = person(best_friend => cleopatra(@,best_friend => cleopatra),nose => pretty).
+--1> 

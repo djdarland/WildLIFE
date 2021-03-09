@@ -1,0 +1,5 @@
+truck <| vehicle.
+mobile(vehicle).
+useful(truck).
+mobile(X),useful(X)?
+.

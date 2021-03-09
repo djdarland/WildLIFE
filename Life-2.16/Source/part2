@@ -1,0 +1,51 @@
+simple_load("/usr/local/lib/life/Source/term_expansion.lf") ?
+simple_load("/usr/local/lib/life/Source/onlinedoc.lf")?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% X start up.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% PVR 13.10.93
+
+% persistent(x_loaded), x_loaded<<-false?
+
+% public(x_loaded)?
+% persistent(x_loaded)?
+% x_loaded<<-false?
+
+% public(load_x)?
+% dynamic(load_x)?
+% 
+% load_x :-
+% 	retract(load_x :- G),
+% 	assert((load_x :- write_err("*** X library already loaded."),nl)),
+% 	quiet_write("Loading X library..."),
+% 	simple_load("/usr/local/lib/life/xpublic.lf"),      % RM: Jan 13 1993 
+% 	simple_load("/usr/local/lib/life/xconstants.lf"),
+% 	simple_load("/usr/local/lib/life/xtables.lf"),
+% 	simple_load("/usr/local/lib/life/xgetset.lf"),
+% 	simple_load("/usr/local/lib/life/xpred.lf").
+% 
+%%  simple_load("/usr/local/lib/life/xfunctions.lf"),  % RM: Mar 11 1993 
+% 
+  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Get ready for user input
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% The 'user' module:
+
+display_modules(false) ?
+
+module("user")?
+open_module("built_ins")?
+open_module("syntax")?
+% PVR 13.10.93 open_module("x")?
+init,
+initrandom(real_time)?
+
+% display_modules(false)?   % BD June 10 1993
+% display_module_status?

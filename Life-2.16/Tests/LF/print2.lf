@@ -1,0 +1,3 @@
+fact(0) -> 1.
+fact(N:int) -> N*fact(N-1).
+

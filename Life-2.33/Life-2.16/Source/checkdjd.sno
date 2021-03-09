@@ -1,0 +1,8 @@
+	it = 22
+one line = input :f(end)
+    line fence arb . part1 "CHECKDJD 0000001" . part2 arb . part3 rpos(0) :f(two)
+    it = it + 1
+    output = part1 "CHECKDJD " it part3 :(one)
+two output = line :(one)
+
+end

@@ -1,0 +1,722 @@
+======================================================================
+			    Wild_Life 1.02
+
+Intelligent Software Group                      http://www.isg.sfu.ca/
+Simon Fraser University                         isg@cs.sfu.ca
+======================================================================
+
+This is a new release of the Wild Life system that includes bug fixes
+and introduces a number of experimental extensions.  The system is
+subject to the same copyright restrictions as previous versions except
+for the new extensions which are copyright 1994-95 Intelligent
+Software Group, Simon Fraser University.
+
+----------------------------------------------------------------------
+			EXTENSIONS AT A GLANCE
+----------------------------------------------------------------------
+
+SYNTAX
+  The usual character escape sequence notation is now permitted in
+  strings; e.g. you can use \n to represent a newline.
+
+HACKER'S INTERFACE
+  1. a declarative interface to handle arguments in C function /
+     predicate primitives.
+  2. an extensible way to add new opaque values using the "bytedata"
+     interface.
+
+EXTENSIONS
+  At the moment, all extensions have been placed in module "sys" with
+  source code in file sys.c.  Documentation is available in
+  Doc/Sys.doc.
+
+  * Bit Vectors
+  * Regular Expressions using Henry Spencer's regexp package
+  * Streams and stream based IO (unix interface + interface a la Perl)
+  * Unix file interface
+  * Unix socket + tcp/ip interface
+  * Unix fork / process interface
+  * lazy project
+  * wait on feature
+
+INSTALLATION
+  The distribution now includes a "configure" script that will create
+  a make file and configure the system for your architecture.  In
+  addition to the usual GNU options, the configure script accepts the
+  following:
+
+	--with-x=no	or	--without-x
+	--with-gc=no	or	--without-gc
+	--with-memory=nnnn
+
+  INSTALL has additional information relevant to the use of the
+  configure script.
+
+  Move to the subdirectory Source containing the source code of the
+  wild life interpreter:
+
+	cd Source
+
+  Configure the package for your architecture:
+
+	./configure
+
+  If you plan to hack the code you may want to execute "make depend"
+  now, otherwise it's not necessary.
+
+  Compile the wild life interpreter:
+
+	make
+
+  or e.g. "make CFLAGS=-O" to override the typicall "-g -O" default.
+  Finally install the package:
+
+	make install
+
+  This will move the executable to ${exec_prefix}/bin and will install
+  all libraries etc in ${prefix}/lib/life.  By default ${exec_prefix}
+  and ${prefix} are both "/usr/local" but can be overriden using the
+  following options to configure:
+
+	--prefix="/another/prefix"
+	--exec-prefix="/another/exec/prefix"
+
+  or you can edit the resulting Makefile.
+
+  If your X include files and/or libraries are in non standard places,
+  you may also use:
+
+	--x-includes="/your/X/include/directory"
+	--x-libraries="/your/X/libraries/directory"
+
+  The automated configuration has been tested on:
+
+  	DEC Alpha OSF/1 v3		OSF/1		DEC Alpha
+	SunOS 4.1.3 1 sun4m		SunOS		Sun4
+	SunOS 5.4 sun4m sparc		Solaris		Sun4
+	IRIX 5.3 IP22 mips		IRIX		SGI
+
+  If you succeed in configuring/compiling the release on some other
+  system, please send email with details to life-bugs@cs.sfu.ca or
+  duchier@cs.sfu.ca.
+
+----------------------------------------------------------------------
+Dr. Denys Duchier			Intelligent Software Group
+email: duchier@cs.sfu.ca		School of Computing Science
+tel: (604) 291-5711			Simon Fraser University
+fax: (604) 291-3045			Burnaby, B.C. V5A 1S6 Canada
+----------------------------------------------------------------------
+
+		 THE REST OF THIS FILE IS A SLIGHTLY
+		   UPDATED VERSION OF THE OLD 1.01
+			     README FILE
+
+======================================================================
+			    Wild_Life 1.01
+
+Richard Meyer                            Digital Equipment Corporation
+Peter Van Roy                            Paris Research Laboratory
+======================================================================
+
+----------------------------------------------------------------------
+			     INTRODUCTION
+----------------------------------------------------------------------
+
+The Wild_Life 1.01 system and all documentation and programs provided
+with it are Copyright 1991-93 Digital Equipment Corporation, Paris
+Research Laboratory.  All Rights Reserved.
+
+LIFE is a programming language integrating logic and functional
+programming, feature types with inheritance, and constraint logic
+programming.  LIFE was conceived at MCC by Hassan Ait-Kaci.
+
+The Wild_Life interpreter is the first implementation of the LIFE
+language available to the general public.  It is a product of the
+Paradise project and its follow-on, the Proteus project, at DEC PRL.
+Research activities of Paradise dealt with issues pertaining to
+general purpose programming by specifying executable constraints,
+including theoretical foundations, implementation, and development of
+applications.  Research activities of Proteus deal with LIFE
+implementation and application issues.  Since the demise of PRL,
+research and development of the LIFE programming language has moved to
+the Intelligent Software Group, at Simon Fraser University, chaired by
+Hassan Ait-Kaci.
+
+Wild_Life has been designed to be a robust tool for prototyping
+applications that require representing and manipulating complex data
+structures or that have complex dependencies between data structures.
+It comes with several powerful tools (including a preprocessor,
+parsers, a graphical interface toolkit and an Emacs LIFE mode) to aid
+in prototyping.
+
+Wild_Life has been extensively tested on DECstations running Ultrix
+and has been designed to be easily portable to many other systems.  We
+are committed to support this system.  We would appreciate for you to
+send your name and address to life-users-request@cs.sfu.ca.  That will
+make it easier for us to notify you of upgrades.  We solicit feedback
+on any aspect of the system: bug reports, functionality, extensions,
+user manual, user interface, examples, etc.  If you extend the system,
+we would like to know exactly what you did and why.
+
+----------------------------------------------------------------------
+			   ACKNOWLEDGMENTS
+----------------------------------------------------------------------
+
+The Wild_Life interpreter was first implemented by Richard Meyer,
+under the guidance of Hassan Ait-Kaci, then considerably debugged and
+extended by Peter Van Roy.  It has been extended and is currently
+maintained by Denys Duchier.  Jean-Claude Herve wrote the X11
+interface. Seth Copen Goldstein added a number of built-ins.  Bruno
+Dumant has written many vital LIFE programs including a graphic
+toolkit, powerful accumulator and expander preprocessors and useful
+library functions.  Arnaud Venet wrote the profiler and SuperLint (a
+user configurable C style checker).  Kathleen Milsted wrote the
+extended user-interface shell.
+
+Many thanks to the users who helped improve the portability of
+Wild_Life, in particular Osman Buyukisik, Jeremy Fitzhardinge, Sven
+Hartrumpf, Peter Ludemann, Fernando Pereira, Jose Pereira, Ralf
+Scheidhauer and Danny Thomas.
+
+We also would like to thank Sergio Antoy, Mike Carifio, Denys Duchier,
+Adam Farquhar, Damien Genthial, Mark Graves, Georgios Grivas, Francois
+Jacquenet, Kim JongHyeok, Marija Kulas, Tim Lindholm, Pierre
+Malraison, Michael Mehl, Gilles Serasset, Kent Tong, Luis Torgo,
+A. Sadegh Saidi, Stefan Svenberg, and S. Bharadwaj Yadavalli.
+
+----------------------------------------------------------------------
+		   CONTENTS OF THE Life-1.02/ DIRECTORY
+----------------------------------------------------------------------
+
+- README: This document.
+
+- LICENSE: The license agreement for the system.  Essentially, the
+  system is freely usable and modifiable for non-commercial purposes.
+
+- Doc/: The system documentation.  The PostScript document handbook.ps
+  is a tutorial and reference manual of roughly 150 pages.  The Ascii
+  text wild_life.1 is a man page for the system.
+
+- EmacsMode/: Documentation and source code for an Emacs LIFE mode.
+
+- Examples/: A large number of LIFE programs giving a good feel for
+  the language and how it can be used.
+
+- Tools/: A series of toolkits to aid LIFE development, which includes
+  a sophisticated preprocessor, a debugger and a graphic library.
+
+- Lib/: A number of LIFE program libraries.
+
+- CLife/: A simple program showing how to call LIFE from C.
+
+- Source/:
+  - The C and LIFE source code of the interpreter.
+  - A Makefile to build the interpreter (wild_life) and the C-LIFE
+    library (c_life.a and c_life.h).
+
+- Tests/: A test suite to check that the interpreter has been
+  correctly compiled on your system.
+
+- regexp/: Henry Spencer's regexp package extended with last_regsize
+
+----------------------------------------------------------------------
+			     INSTALLATION
+----------------------------------------------------------------------
+
+1. Uncompress and untar the file Life-1.02.tar.gz.  This creates the
+   Life-1.02/ directory.
+
+2. Execute 'cd Life-1.02/Source'.
+
+3. Read and edit the Makefile to take into account all
+   platform-specific details (see also further on).
+
+4. Run 'make depend' to create the correct include file dependencies
+   for your system. You may get two benign warnings:
+
+	makedepend: warning:  cannot open "Life.c"
+	makedepend: warning:  cannot open "Info.c"
+
+   What to do if you don't have the 'makedepend' command:
+   a. You may have the 'mkdep' command instead.  Edit the definition
+      of variable MKDEP in the Makefile and try again.
+   b. If you don't 'makedepend' or 'mkdep', then you can try using the
+      Makefile as is.  This means you will use the dependencies that
+      are valid for MIPS/Ultrix.  If these dependencies are not
+      completely correct for your machine, you will have to edit the
+      Makefile to make them correct.
+
+5. Run 'make' to create the executable 'wild_life'.  The complete
+   system including the .o files and the executable needs about 6 MB
+   of disk space.
+
+6. Run the test-suite: do "cd Life-1.02/Tests" and "check_all".  This
+   is a useful step to ensure that everything works as expected.  The
+   Tests/ subdirectory may be removed to save space (see below).  See
+   Tests/README for more information.
+
+7. To get superlint (the 'testsl' test) working under Solaris, you may
+   need to edit Examples/SuperLint/c_utils.lf.  Change the definition
+   of cpp_name to cpp_name -> "/usr/ccs/lib/cpp" (or give directory
+   where cpp is stored).
+
+----------------------------------------------------------------------
+			     THE MAKEFILE
+----------------------------------------------------------------------
+
+The Makefile comes set up for the following standard configuration:
+
+	4M words of memory available at run-time (=16MB on a 32-bit
+	machine)
+	compiles using "cc"
+	optimising level -O2
+	memory alignment is 8 (valid for both 32 and 64-bit machines)
+	include the garbage collector
+	include the X11 library
+	include the raw terminal I/O interface
+
+All of these options can be changed as required for your system.
+
+Remarks:
+
+1. The Makefile documents the list of changes necessary for the other
+   platforms.  Please read and edit the Makefile to incorporate these
+   changes.
+
+2. Always run "make depend" before compiling.  This is necessary since
+   different platforms have header files in different places.
+
+3. Some platforms have the X11 library in a nonstandard place.  If
+   this the case for your platform, you will have to add a '-I <X11
+   pathname>' to the definition of CCFLAGS.
+
+4. To compile Wild_Life without the X interface, remove the -DX11
+   macro from CCFLAGS and remove -lX11 from LOADFLAGS.
+
+5. To compile Wild_Life without the raw (unbuffered) terminal I/O
+   interface, add the -DNORAW macro to CCFLAGS.  The only program
+   provided that uses the raw interface is Tools/shell.lf.
+
+6. If you have automounted filesystems, then for safety you should
+   replace `pwd` in the Makefile by the absolute pathname.
+   
+----------------------------------------------------------------------
+			     PORTABILITY
+----------------------------------------------------------------------
+
+The system passes the tests for the following platforms:
+
+   DECstation (MIPS/Ultrix)
+   ALPHAstation (Alpha/OSF-1)
+   SPARCstation (SPARC/SunOS)
+   SGI machine (SGI/IRIX)
+   PC compatible 386 or 486 (Linux)
+   HP710 machine (HPUX)
+
+The X interface works on all of these platforms.
+The unbuffered terminal interface works on Ultrix, OSF/1, and Linux.
+
+If you get the interpreter to work on any other platform, we would
+appreciate it if you would send us a list of the changes that were
+necessary and if you would run the test suite and notify us of any
+non-trivial differences with the correct output.
+
+----------------------------------------------------------------------
+		       SYSTEM-RELATED COMMENTS
+----------------------------------------------------------------------
+
+1. On startup, the interpreter loads an optional .wild_life
+   customization file. It looks for this file first in the current
+   directory and then in your home directory. If none is found then
+   none is loaded.
+2. The interpreter may be run from anywhere and copied to anywhere and
+   executed there. However, the Life1.01/ directory must remain in the
+   same place, since the interpreter uses several files in it during
+   startup.
+3. The subdirectory Tests/ contains a series of test programs. They
+   may be run by cd'ing to Tests/ and running the script check_all
+   (without arguments). The script creates *.refdiff and *.errdiff
+   files (in the directories Tests/REFDIFF and Tests/ERRDIFF) that
+   show the differences between the obtained results and the correct
+   results. After running it, you may see some small differences.
+   Tests/README gives a list of those differences that may be safely
+   ignored.  The Tests/ directory is rather large (more than 3 MB). It
+   may be removed to save space.
+4. By default, the system has a memory space of 4 MB and has a virtual
+   image of somewhat more than twice this size (because of the
+   dual-space garbage collection algorithm used). Size of the memory
+   space can be changed by specifying the command line argument
+   "-memory=NNNN" where "NNNN" is the number of words the system will
+   allocate. Because of the half-space GC, the total number of bytes
+   allocated will be 2*NNNN*word_size.
+
+----------------------------------------------------------------------
+PORTING LIFE PROGRAMS FROM VERSION 0.91 TO VERSION 1.01
+----------------------------------------------------------------------
+
+The cleanup of version 1.01 relative to version 0.91 results in the
+following changes that may have an effect on programs written
+originally for version 0.91.
+
+1. The following built-ins have changed names.
+
+   In 1.01            In 0.91
+   ------             -------
+   root_sort	      rootsort
+   X.F		      project(F,X)
+   call_once(P)       prove(P)
+   real_time	      realtime
+   local_time	      localtime
+   cpu_time	      cputime
+
+2. The following built-ins behave differently.
+
+   X:Y                In 1.01 only one of the terms X and Y may be
+		      different from @. In 0.91, if both are different
+		      from @ then this is parsed as a call to X&Y. In
+		      1.01 all calls to X&Y must be explicit.
+
+   cond(C,I,E)        In 1.01, the condition C may be a predicate.  In
+		      this case the behavior is identical to
+		      cond(call_once(C),I,E). That is, success/failure
+		      maps to true/false, and only the first solution
+		      of C is used.
+
+   A and B, A or B,   In 1.01, the boolean calculation functions do
+   A xor B, not A     all deterministic local inversions.
+
+   has_feature(F,X)   In 1.01, this no longer residuates until the
+		      feature name F is different from @. It
+		      immediately returns true or false.
+
+   children(X),       In 1.01, the behavior of the built-in sorts has
+   parents(X)         been cleaned up. The hierarchy of built-in sorts
+		      has no more quirks.
+
+   asc(S)	      In 1.01, S must be a string.  The result is the
+		      ASCII code of the first character of the string.
+		      An error message is given if S is not a string.
+
+   chr(I)             In 1.01, I must be an integer.  The result is a
+		      string of length one containing the character
+		      whose ASCII code is I.
+
+   system(S)          In 1.01, this gives an error message if S is not
+		      a string, instead of residuating.
+
+   assert, asserta,   In 1.01, these four built-ins are non-strict,
+   clause, retract    that is, they do not evaluate their arguments.
+
+3. The following built-ins are boolean functions in 1.01 instead of
+   predicates, as is true in 0.91. This means that they no longer
+   need be arguments of call_once when used in a function position.
+
+   var(X)
+   nonvar(X)
+   is_function(X)
+   is_predicate(X)
+   is_sort(X)
+
+4. The following built-ins have been removed.
+
+   freeze(G)    
+   where
+   inf
+   undefined	The same effect is given by {}, which evaluates to
+		bottom.
+
+5. The syntax F(A) is parsed as apply(functor=>F,A) instead of
+   '*apply*'('*functor*'=>F,A). The function '*apply*' is now called
+   'apply'.
+
+6. The following operators have changed precedence and/or kind.
+
+   Name	 	In 1.01	In 0.91	  Reason
+   ----         ------- -------   ------
+   :		  50	  150	  Prolog compatibility
+   `		  75 fy	  695 fx  Usability
+   &		 100	  150	  Usability
+   - (prefix)	 200	  500	  Prolog compatibility
+   \ (prefix)	 200	  500	  Prolog compatibility
+   mod		 400	  300	  Prolog compatibility
+   (comparisons) 600	  670	  Usability
+   and		 650	  680	  Usability
+   or		 675	  690	  Usability
+
+7. The following operators have been removed.
+
+   Name Prec. Kind
+   ---- ----- ----
+   :-	1200  fx
+   +     500  fx
+
+8. The following operators have been added.
+
+   Name Prec. Kind  Reason		  Operation
+   ---- ----- ----  ------                ---------
+   .     150  yfx   Usability		  Projection function
+   //	 400  yfx   Prolog compatibility  Integer division function
+   \===  600  xfx   Usability		  Negation of === (term identity)
+   not	 625  fy    Usability		  Boolean negation function
+
+----------------------------------------------------------------------
+	    MAJOR CHANGES IN VERSION 1.01 FROM VERSION 1.0
+----------------------------------------------------------------------
+
+1. Version 1.01 has been made much more portable than version 1.0.
+   With the aid of helpful users, it has been ported to MIPS/Ultrix,
+   Alpha/OSF-1, SPARC/SunOS, SGI/IRIX, and PC/Linux.
+
+2. Version 1.01 contains code for an Emacs LIFE mode written by Bruno
+   Dumant.
+
+3. Various bugs have been fixed.
+
+----------------------------------------------------------------------
+	    MAJOR CHANGES IN VERSION 1.0 FROM VERSION 0.91
+----------------------------------------------------------------------
+
+1. Version 1.0 corresponds to a large rewrite of the system. It now
+   much more mature and has been tested on large programs. In
+   particular, the data representation for lists has been completely
+   changed and is now consistent with all other psi-terms.
+
+2. Version 1.0 has a module system allowing the hiding of data and
+   splitting of large programs into smaller manageable chunks with
+   separate name-spaces.
+
+3. Two new concepts have been introduced:
+
+   - Global variables: logical variables with module-wide scope.
+
+   - Persistent terms: terms that do not go away on backtracking.
+     They can be used to record data generated in differents parts
+     of the search-tree ('bagof' is a typical example).
+
+   We believe that these two concepts provide a clean replacement for
+   assert and retract in most cases.
+
+4. Built-ins have been polished. For example, all built-ins taking
+   variable numbers of arguments now do so in a consistent
+   way. Feature (field) selection is done using the '.' operator.
+
+5. The manual has been completely updated and made consistent with the
+   system.
+
+6. Various bugs have been fixed.
+
+----------------------------------------------------------------------
+	   MAJOR CHANGES IN VERSION 0.91 FROM VERSION 0.90
+----------------------------------------------------------------------
+
+1. It accepts the '-q' (q for quiet) command line option. Enabling
+   this option results in completely silent output, i.e., no user
+   interface information (prompts, variable values, Yes/No messages,
+   startup banner, exit banner) will be printed. This allows Wild_Life
+   to be used as an element of a Unix pipe with minimal
+   hassle. Errors, warnings, trace messages, program output (with the
+   write statement etc.), and file I/O are still output. As before,
+   errors and warnings are output to stderr, trace information to
+   stdout. In 'verbose' mode the user interface information returns,
+   which allows the user to inspect a misbehaving Wild_Life when it is
+   being used as a pipe element.
+
+2. Garbage collection messages are only printed in 'verbose' mode.
+
+3. It has a user-definable abort capability. A call to
+   'setq(aborthook,foo)' makes 'foo' the abort predicate. When the
+   system does an abort, it will initialize itself and then call 'foo'
+   as the first goal. This ability is used in the 'shell' example
+   program. A call to 'setq(aborthook,abort)' restores the internal
+   abort. If aborthook is undefined, then the internal abort is used.
+
+4. It is more portable: The system has been modified to compile and
+   run under SPARCstations and RS/6000 systems.
+
+5. The example program 'shell' has been added and the documentation of
+   example programs has been improved.
+
+6. Various bugs have been fixed.
+
+----------------------------------------------------------------------
+			  THE LIFE LANGUAGE
+----------------------------------------------------------------------
+
+LIFE (Logic, Inheritance, Functions, and Equations) is an experimental
+programming language with a powerful facility for structured type
+inheritance. It reconciles styles from functional programming, logic
+programming, and object-oriented programming. It subsumes, and fully
+contains the functionality of, the precursor languages LOGIN and
+Le_Fun.  The syntax of Wild_Life has been kept as close as possible to
+that of the Edinburgh family of Prolog so that Prolog compatibility is
+easy to achieve.
+
+From a theoretical point of view, LIFE implements a constraint logic
+programming language with equality (unification) and entailment
+(matching) constraints over order-sorted feature terms. The interplay
+of unification and matching provides an implicit coroutining facility
+thanks to an automatic suspension mechanism. This allows interleaving
+interpretation of relational and functional expressions which specify
+structural dependencies on objects.
+
+The basic data structure is the order-sorted feature term, or
+psi-term.  Psi-terms are a natural generalization of first-order
+terms. A psi-term may be viewed as being to a Prolog term what an
+open-ended dynamic record is to a static array. That is, a psi-term
+has named fields and fields may be added at run-time. Psi-terms may be
+cyclic, which means they are rooted graphs and that the occur-check
+problem of Prolog goes away.
+
+A program in LIFE consists of a declaration of the sort hierarchy
+constraining psi-terms, along with functions and predicates defining
+operations on psi-terms. Functions are called with matching (i.e., an
+implication constraint) and they suspend if the truth of the
+implication cannot be determined. Predicates are called with
+unification (i.e., an equality constraint) and they force the equality
+to be true. They may try more than one possible value with
+backtracking. In other words, a function waits for its actual
+arguments to carry as much information as imposed by its formal
+arguments, whereas a predicate takes the initiative of synthesizing
+missing information using its definition's argument patterns. These
+two modes of computation are complementary and allow an elegant
+programming style.
+
+----------------------------------------------------------------------
+		  DOCUMENTATION AND EXAMPLE PROGRAMS
+----------------------------------------------------------------------
+
+The subdirectory Doc/ contains the Wild_Life handbook in both
+PostScript and dvi formats. It also contains a man page and
+documentation for the tools.
+
+The subdirectory Examples/ contains example programs. These are in
+separate modules. They can be loaded from anywhere with the 'import'
+command without an explicit path, since import searches the same
+directories as the 'load' command. The argument of import must be a
+string (delimited with double quotes "..."). See the file
+Examples/DEMOS_README for more information.
+
+The Paradise project has written many articles and research reports on
+various aspects of LIFE. Please check the WWW page at URL
+http://www.isg.sfu.ca/life/ or the ftp directory at
+ftp://ftp.isg.sfu.ca/pub/hak/prl
+
+----------------------------------------------------------------------
+	     EXAMPLE: RUNNING THE SEND+MORE=MONEY PUZZLE
+----------------------------------------------------------------------
+
+This program finds all assignments of different digits from 0 through
+9 to the letters in SEND+MORE=MONEY so that the addition is correct.
+
+% wild_life
+Wild_Life Interpreter Version 1.02 Mon Jan 30 13:00:57 PST 1995
+Copyright (C) 1991-93 DEC Paris Research Laboratory
+Extensions, Copyright (C) 1994-1995 Intelligent Software Group, SFU
+No customizing file loaded.
+> import("solve")?
+*** Loading File "/usr/local/Life/Source/Examples/solve.lf"
+
+*** Yes
+> solve?
+
+ SEND     9567
++MORE    +1085
+-----    -----
+MONEY    10652
+
+
+*** No
+> 
+
+----------------------------------------------------------------------
+			    BUG REPORTING
+----------------------------------------------------------------------
+
+If you find what you think is a new bug, please, first read the manual
+carefully to see if it really is a bug. If it is, try to find the
+*smallest* program that illustrates the bug and mail it to
+life-bugs@cs.sfu.ca together with a script that shows the bug. An
+especially sensitive way to find bugs is to do your work in 'verbose'
+mode, which tells you what is happening to the system stacks.
+
+----------------------------------------------------------------------
+		    THE MOST IMPORTANT KNOWN BUGS
+----------------------------------------------------------------------
+
+1. In most cases, the arguments of functions are evaluated before the
+   functions themselves. This rule is violated in one case: when an
+   argument is shared.  For example, in the expression s(f(X:g(Y)),X),
+   the call g(Y) is shared. g(Y) may in some cases be evaluated
+   _after_ the call to f. This is not a problem for user-defined
+   functions and "clean" (i.e., residuating, or order- independent)
+   built-ins (e.g., arithmetic). It is only a problem for order-
+   dependent built-ins (e.g., sort comparisons). The simplest way to
+   avoid this problem is to make sure that order-dependent built-ins
+   do not have shared arguments.
+
+2. Recursive sort declarations need special care: they should be
+   accompanied by a 'delay_check' directive and they must be used in a
+   particular way, otherwise the interpreter goes into an infinite
+   loop when trying to satisfy the sort's constraints. This is
+   explained in the handbook.  'delay_check' is propagated correctly
+   to a sort's children.
+
+3. The system is not complete for disentailment of equality
+   constraints that are introduced in the actual arguments of a
+   function call.  Specifically, the system does not detect that two
+   actual arguments are nonunifiable if this detection requires
+   looking at the subterms of the corresponding formal arguments.
+   However, the system _is_ complete for all other cases of
+   disentailment of equality constraints.  In particular, the system
+   is complete if all the equality constraints are in the definition
+   of the function.
+
+4. Arithmetic on non-IEEE machines may cause exceptions which
+   currently are not trapped by the system.
+
+5. The system incorrectly handles deep guards, that is, evaluable
+   terms (which includes functions, predicates, and disjunctions)
+   inside the heads of function definitions (but evaluable terms
+   inside the heads of predicate definitions are handled
+   correctly). This has to do with the global/local variable
+   distinction: function calls do not change their arguments.
+
+----------------------------------------------------------------------
+		  RELEVANT ELECTRONIC MAIL ADDRESSES
+----------------------------------------------------------------------
+
+Here are email addresses that are relevant to LIFE and Wild_Life:
+
+   life-users@cs.sfu.ca
+
+      This is a moderated mailing list of people using LIFE or
+      interested in specific aspects of LIFE, whether theory,
+      implementation, or applications. It is meant as a public forum
+      to answer questions and share programs and ideas. It is not
+      meant to report bugs, although it may be used to ask public
+      opinions about surprising behavior of Wild_Life that may turn
+      out to be a bug and to warn others against confirmed bugs.
+
+   life-users-request@cs.sfu.ca
+   life-request@cs.sfu.ca
+
+      This address is to be used to request to be put on, or removed
+      from, the life-users mailing list.
+
+   life-bugs@cs.sfu.ca
+
+      When you strongly suspect a bug (i.e., after reading the manual
+      and possibly polling life-users's opinion about the symptoms),
+      please try to find the *smallest* program that illustrates the
+      bug and mail it to this address together with a script that
+      shows the bug.  Include information on the hardware and
+      operating system.
+
+   isg-general@cs.sfu.ca
+
+      This is SFU's local LIFE community.  That is, all the people
+      involved with some activity in the Intelligent Software Group at
+      Simon Fraser University, or interested in seminar announcements,
+      etc... Use this for general communication of matters of interest
+      to the local community only.
+======================================================================

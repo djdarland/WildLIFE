@@ -1,0 +1,14 @@
+
+*** Yes
+> > 
+*** Yes
+X = 1.
+--1> 
+*** Yes
+F = 1 + 3, G = 4, S = declaration, X = 1.
+----2> 
+*** No
+--1> 
+*** Yes
+F = 1 + 3, S = error, V = true, X = 1.
+----2> 

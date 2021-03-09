@@ -1,0 +1,6 @@
+p(A) :- write(A) , nl.
+mresiduate([A,B],(p(A),p(B)))?
+A=2?
+
+B=6?
+

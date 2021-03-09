@@ -1,0 +1,16 @@
+% FILE. . . . . /_/udir7/_/hassan/life/part
+% EDIT BY . . . Hassan Ait-Kaci
+% ON MACHINE. . Prl316
+% STARTED ON. . Fri Apr 12 17:38:02 1991
+
+% Last modified on Fri Jan 24 14:36:57 MET 1992 by mezhoud
+%      modified on Fri Apr 12 17:40:03 1991 by Hassan
+
+leq(0,X).
+leq(Y+1,X) :- (1=<X)=true,
+	      leq(Y,X-1).
+
+part([],0).
+part([H|T],X) :- leq(H,X),
+		 (H=\=0)=true,
+		 part(T,X-H).

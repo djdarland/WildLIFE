@@ -1,0 +1,34 @@
+Wild_Life Interpreter Version 2.07 Wed Jun 22 18:53:44 CDT 2016
+Copyright (C) 1991-93 DEC Paris Research Laboratory
+Extensions, Copyright (C) 1994-1995 Intelligent Software Group, SFU
+*** Loading File "djd_listing.lf"
+
+q(@,@,@,@) :-
+        succeed.
+
+% '1' is a value of sort 'int'.
+
+% '2' is a value of sort 'int'.
+
+% '1.5' is a value of sort 'real'.
+
+% '7.9' is a value of sort 'real'.
+
+% "1.5" is a value of sort 'string'.
+
+% "abc" is a value of sort 'string'.
+
+non_strict(listing)?
+listing :-
+        listing_2(features(listing,"built_ins"),listing).
+
+% '+' is a built-in function.
+
+% '*' is a built-in function.
+
+% non_strict(eval(8 + 7))?
+% 'eval' is a built-in function.
+
+% '0.877583' is a value of sort 'real'.
+> 
+*** Exiting Wild_Life  [0.017s cpu, 0.000s gc (0.0%)]

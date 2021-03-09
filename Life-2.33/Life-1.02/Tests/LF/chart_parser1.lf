@@ -1,0 +1,91 @@
+% a top-down chart parser in life
+% ge 21 dec 93, 13 jan 94
+
+% See ~vanroy/People/Gregor.Erbach
+
+% ---------------------------------------------------------------------------
+% * Gregor Erbach - Universitaet des Saarlandes - Computational Linguistics
+% *
+% *         Im Stadtwald - POB 1150 - D-66041 Saarbruecken - Germany
+% *
+% *   erbach@coli.uni-sb.de * Tel +49/681 302-4117 * Fax +49/681 302-4351
+% *
+% ---------------------------------------------------------------------------
+
+% rules:   rule(lhs => Cat,rhs => List-of-Cat)
+% lexicon: lex(Word) -> Cat
+% item:    item(begin => B, end => E, cat => C, rest => List-of-Cat)
+dynamic(item)?
+
+% clear the item database
+rec :-
+     retract(item),
+     fail.
+% predict the startsymbol at node 0
+rec :-
+     predict(node => 0, cat => startsymbol),
+     fail.
+% scanning
+rec(String) :-
+     app(X,[Word|_],String),
+     add_item(item(begin => N:length(X), 
+                   end => N+1, 
+                   cat => lex(Word), rest => [])
+             ), 
+     fail.
+% look up results
+rec(String,Cat) :-
+     item(begin => 0, end => length(String), cat => Cat, rest => []).
+
+predict(node => N, cat => C) :-
+     \+((item(begin => N, end => N, cat => Cat),  subsumes(Cat,C))),
+     rule(lhs => C, rhs => RHS),
+     add_item(item(begin => N, end => N, cat => C, rest => RHS)),
+     fail.
+predict.
+
+% assert the item
+add_item(Item) :-
+     assert(Item),
+     fail.
+% apply fundamental rule for passive item
+add_item(item(begin => Mid, end => E, cat => C, rest => [])) :- 
+     item(begin => B, end => M, rest => [C1|Rest], cat => Cat),
+     nl, write(unify(M,Mid)),
+     M = Mid,  write('   done'), 
+     C = C1,
+     add_item(item(begin => B, end => E, cat => Cat, rest => Rest)),
+     fail.
+% apply fundamental rule for active item
+add_item(item(begin => B, end => Mid, cat => Cat, rest => [F|Rest])) :-
+     item(begin => Mid, end => E, cat => F, rest => []),
+     add_item(item(begin => B, end => E, cat => Cat, rest => Rest)),
+     fail.
+% predict first category of active item
+add_item(item(end => E, rest => [F|_])) :-
+     predict(node => E, cat => F).
+
+subsumes(X,X).   % not quite correct
+
+% append
+app([],L,L).
+app([X|L1],L2,[X|L3]) :- app(L1,L2,L3).
+
+% a mini grammar for testing
+startsymbol -> s.
+
+rule(lhs => s(Tns),
+     rhs => [np(Num), vp(Num,Tns)]).
+
+rule(lhs => vp(Num,Tns),
+     rhs => [vi(Num,Tns)]).
+
+rule(lhs => vp(Num,Tns),
+     rhs => [vt(Num,Tns), np(_)]).
+
+lex(john) ->  np(sg).
+lex(they) -> np(pl).
+lex(sleep) -> vi(pl,pres).
+lex(sleeps) -> vi(sg,pres).
+lex(hit) -> vt(pl,pres).
+lex(hits) -> vt(sg,pres).

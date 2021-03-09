@@ -1,0 +1,5 @@
+persistent(trouble)?
+trouble <<- with_harry?
+write(trouble)?
+.
+write(trouble)?

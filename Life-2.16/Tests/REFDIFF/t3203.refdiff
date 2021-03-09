@@ -1,0 +1,8 @@
+6,8c6,8
+< pred(@) :-
+<         qred(@),
+<         rred(@,@).
+---
+> pred(_A) :-
+>         qred(_B),
+>         rred(_A,_B).

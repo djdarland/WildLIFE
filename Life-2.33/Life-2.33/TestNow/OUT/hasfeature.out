@@ -1,0 +1,62 @@
+
+*** Yes
+> > 
+*** Yes
+A = false, S = @.
+--1> 
+*** No
+> 
+*** Yes
+S = @(@ => 2).
+--1> 
+*** Yes
+A = true, S = @(@ => 2).
+--1> > 
+*** Yes
+A = s(q,w,e,f => r).
+--1> 
+*** Yes
+A = s(q,w,e,f => r).
+--1> 
+*** No
+A = s(q,w,e,f => r).
+--1> 
+*** Yes
+A = s(q,w,e,f => r).
+--1> 
+*** No
+A = s(q,w,e,f => r).
+--1> 
+*** No
+A = s(q,w,e,f => r).
+--1> 
+*** Yes
+A = s(q,w,e,f => r), X = '2'.
+--1> 
+*** Yes
+A = s(q,w,e,f => r), X = '2'.
+--1> 
+*** No
+A = s(q,w,e,f => r), X = '2'.
+--1> 
+*** No
+A = s(q,w,e,f => r).
+--1> 
+*** Yes
+A = s(q,w,e,f => r), X = '4'.
+--1> 
+*** No
+A = s(q,w,e,f => r), X = '4'.
+--1> > 
+*** Yes
+A = s(q,w,e,f => r).
+--1> 
+*** Yes
+A = s(q,w,e,f => r).
+--1> 
+*** No
+A = s(q,w,e,f => r).
+--1> 
+*** No
+A = s(q,w,e,f => r).
+--1> > 

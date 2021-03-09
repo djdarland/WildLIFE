@@ -1,0 +1,39 @@
+
+*** Yes
+> > 
+*** Yes
+A = "123456789qwertyuiouyhbv".
+--1> 
+*** Yes
+A = "123456789qwertyuiouyhbv", 
+B = "123456789qwertyuiouyhbv123456789qwertyuiouyhbv".
+
+----2> 
+*** Yes
+A = "123456789qwertyuiouyhbv", 
+B = "123456789qwertyuiouyhbv123456789qwertyuiouyhbv", 
+C = "123456789qwertyuiouyhbv123456789qwertyuiouyhbv123456789qwertyuiouyhbv123456789qwertyuiouyhbv".
+
+------3> 
+*** Yes
+A = "123456789qwertyuiouyhbv", 
+B = "123456789qwertyuiouyhbv123456789qwertyuiouyhbv", 
+C = "123456789qwertyuiouyhbv123456789qwertyuiouyhbv123456789qwertyuiouyhbv123456789qwertyuiouyhbv", 
+D = "123456789qwertyuiouyhbv123456789qwertyuiouyhbv123456789qwertyuiouyhbv123456789qwertyuiouyhbv123456789qwertyuiouyhbv123456789qwertyuiouyhbv123456789qwertyuiouyhbv123456789qwertyuiouyhbv".
+
+--------4> 
+*** Yes
+A = "123456789qwertyuiouyhbv", 
+B = "123456789qwertyuiouyhbv123456789qwertyuiouyhbv", 
+C = "123456789qwertyuiouyhbv123456789qwertyuiouyhbv123456789qwertyuiouyhbv123456789qwertyuiouyhbv", 
+D = "123456789qwertyuiouyhbv123456789qwertyuiouyhbv123456789qwertyuiouyhbv123456789qwertyuiouyhbv123456789qwertyuiouyhbv123456789qwertyuiouyhbv123456789qwertyuiouyhbv123456789qwertyuiouyhbv".
+
+--------4> 
+*** Yes
+A = "123456789qwertyuiouyhbv", 
+B = "123456789qwertyuiouyhbv123456789qwertyuiouyhbv", 
+C = "123456789qwertyuiouyhbv123456789qwertyuiouyhbv123456789qwertyuiouyhbv123456789qwertyuiouyhbv", 
+D = "123456789qwertyuiouyhbv123456789qwertyuiouyhbv123456789qwertyuiouyhbv123456789qwertyuiouyhbv123456789qwertyuiouyhbv123456789qwertyuiouyhbv123456789qwertyuiouyhbv123456789qwertyuiouyhbv", 
+E = "123456789qwertyuiouyhbv123456789qwertyuiouyhbv123456789qwertyuiouyhbv123456789qwertyuiouyhbv123456789qwertyuiouyhbv123456789qwertyuiouyhbv123456789qwertyuiouyhbv123456789qwertyuiouyhbv123456789qwertyuiouyhbv123456789qwertyuiouyhbv123456789qwertyuiouyhbv123456789qwertyuiouyhbv123456789qwertyuiouyhbv123456789qwertyuiouyhbv123456789qwertyuiouyhbv123456789qwertyuiouyhbv".
+
+----------5> 

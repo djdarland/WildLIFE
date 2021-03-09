@@ -1,0 +1,7 @@
+%% had syntax error - "man" was a built in - changed to student & it worked
+
+:: person(age => int).
+student <| person.
+A = student?
+
+

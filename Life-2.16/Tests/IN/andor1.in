@@ -1,0 +1,38 @@
+% again lines missing after No's
+
+A=B and C?
+B=false?
+
+C=false?
+
+B=true?
+
+B=false?
+
+B=C?
+
+B=A?
+
+A=true?
+
+A=false?
+
+.
+A=B or C?
+B=false?
+
+C=false?
+
+B=true?
+
+B=false?
+
+B=C?
+
+B=A?
+
+A=true?
+
+A=false?
+
+.

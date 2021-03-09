@@ -1,0 +1,75 @@
+2a3,76
+> > > 
+> *** Yes
+> A = student(advisor => faculty(assistant => A,secretary => _A: staff),
+>             roommate => employee(representative => _A)).
+> 
+> --1> 
+> *** Yes
+> A = student(advisor => faculty(assistant => A,secretary => _A: staff),
+>             roommate => employee(representative => _A)), 
+> B = employee(advisor => don(assistant => _B: student,secretary => elena),
+>              helper => simon(spouse => _B),
+>              roommate => _C: student(representative => _C)).
+> 
+> ----2> 
+> *** Yes
+> A = workstudy(advisor => don(assistant => A,
+>                              secretary => _A: elena(representative => _A)),
+>               helper => simon(spouse => A),
+>               roommate => _A), 
+> B = A.
+> 
+> ------3> 
+> *** No
+> A = student(advisor => faculty(assistant => A,secretary => _A: staff),
+>             roommate => employee(representative => _A)), 
+> B = employee(advisor => don(assistant => _B: student,secretary => elena),
+>              helper => simon(spouse => _B),
+>              roommate => _C: student(representative => _C)).
+> 
+> ----2> 
+> *** No
+> A = student(advisor => faculty(assistant => A,secretary => _A: staff),
+>             roommate => employee(representative => _A)).
+> 
+> --1> 
+> *** No
+> > > 
+> *** Yes
+> A = workstudy(advisor => don(assistant => A,
+>                              secretary => _A: elena(representative => _A)),
+>               helper => simon(spouse => A),
+>               roommate => _A).
+> 
+> --1> 
+> *** No
+> > > 
+> *** No
+> > 
+> *** Yes
+> A = student(advisor => faculty(assistant => A,secretary => _A: staff),
+>             roommate => employee(representative => _A)).
+> 
+> --1> 
+> *** Yes
+> A = student(advisor => faculty(assistant => A,secretary => _A: staff),
+>             roommate => employee(representative => _A)).
+> 
+> ----2> 
+> *** Yes
+> A = workstudy(advisor => faculty(assistant => A,secretary => _A: staff),
+>               roommate => employee(representative => _A)).
+> 
+> ------3> 
+> *** No
+> A = student(advisor => faculty(assistant => A,secretary => _A: staff),
+>             roommate => employee(representative => _A)).
+> 
+> ----2> 
+> *** No
+> A = student(advisor => faculty(assistant => A,secretary => _A: staff),
+>             roommate => employee(representative => _A)).
+> 
+> --1> 
+> *** No

@@ -1,0 +1,53 @@
+
+posint := X:int | X>=0.
+
+main :- write(2.3 & posint), nl, fail.
+main :- write(2 & posint), nl, fail.
+main :- write(0 & posint), nl, fail.
+main :- write((-2) & posint), nl, fail.
+main :- write((-2.3) & posint), nl, fail.
+
+main :- write("*******"), nl, fail.
+
+main :- write(2.3 & int), nl, fail.
+main :- write(2 & int), nl, fail.
+main :- write(0 & int), nl, fail.
+main :- write((-2) & int), nl, fail.
+main :- write((-2.3) & int), nl, fail.
+
+main :- write("*******"), nl, fail.
+
+main :- write(2.3 & real), nl, fail.
+main :- write(2 & real), nl, fail.
+main :- write(0 & real), nl, fail.
+main :- write((-2) & real), nl, fail.
+main :- write((-2.3) & real), nl, fail.
+
+main :- write("*******"), nl, fail.
+main :- write("*******"), nl, fail.
+
+main :- write(posint & 2.3), nl, fail.
+main :- write(posint & 2), nl, fail.
+main :- write(posint & 0), nl, fail.
+main :- write(posint & (-2)), nl, fail.
+main :- write(posint & (-2.3)), nl, fail.
+
+main :- write("*******"), nl, fail.
+
+main :- write(int & 2.3), nl, fail.
+main :- write(int & 2), nl, fail.
+main :- write(int & 0), nl, fail.
+main :- write(int & (-2)), nl, fail.
+main :- write(int & (-2.3)), nl, fail.
+
+main :- write("*******"), nl, fail.
+
+main :- write(real & 2.3), nl, fail.
+main :- write(real & 2), nl, fail.
+main :- write(real & 0), nl, fail.
+main :- write(real & (-2)), nl, fail.
+main :- write(real & (-2.3)), nl, fail.
+
+main.
+
+main?

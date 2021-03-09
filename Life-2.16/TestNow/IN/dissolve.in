@@ -1,0 +1,14 @@
+jolidissolve("X:s(X)")?
+dissolve_psi(Y:s(Y))?
+dissolve_psi(s)?
+dissolve_psi(s(Z,Z:a))?
+dissolve_psi(s(W:a,Q:b))?
+dissolve_psi([_])?
+dissolve_psi(('=A,writeq(A),write(A)?'=A,writeq(A),write(A)))?
+dissolve_psi([1,2,3,4])?
+dissolve_psi(s(t(u(v(w(x(y)))))))?
+
+
+
+
+

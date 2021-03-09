@@ -1,0 +1,4 @@
+foo(a => int) -> 1.
+foo(b => int) -> 2.
+X = foo(b => 0)?
+Y = X(a => string)?

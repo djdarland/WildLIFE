@@ -1,0 +1,12 @@
+
+module("a")?
+
+public(aa)?
+
+aa(c=>d).
+
+module("b")?
+
+public(bb,c,e)?
+
+bb(c=>d,e=>f).

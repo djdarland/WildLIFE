@@ -1,0 +1,6 @@
+< echo ./aaa-09-02B -- Matches Perfectly
+> ./work.sh aaa-09-02B
+< echo ./z_gctoken1 -- Matches Perfectly
+> ./work.sh z_gctoken1
+< echo ./z_maurice -- Matches Perfectly
+> ./work.sh z_maurice

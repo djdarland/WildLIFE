@@ -1,0 +1,9 @@
+
+% Create a sequence of new variables with given prefix:
+p(0) :- !.
+p(_A,S) :-
+        _B = strcon(S,int2str(_A)),
+        _C = strcon(_B,"."),
+        @ = parse(_C),
+        p(_A - 1, S).
+

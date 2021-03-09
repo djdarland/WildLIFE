@@ -1,0 +1,1170 @@
+9c9
+< #include <unistd.h>
+---
+> 
+23c23
+< #include "token.h"
+---
+> 
+33d32
+< FILE *bi_list;
+125c124
+< long all_public_symbols();  /* RM: Jan 28 1994  */
+---
+> int all_public_symbols();  /* RM: Jan 28 1994  */
+166c165
+<     stack_insert(FEATURECMP,(GENERIC)one,&(cons->attr_list),(GENERIC)head);
+---
+>     stack_insert(featcmp,one,&(cons->attr_list),head);
+168c167
+<     stack_insert(FEATURECMP,(GENERIC)two,&(cons->attr_list),(GENERIC)tail);
+---
+>     stack_insert(featcmp,two,&(cons->attr_list),tail);
+186c185
+<     stack_insert(FEATURECMP,(GENERIC)one,&(pair->attr_list),(GENERIC)left);
+---
+>     stack_insert(featcmp,one,&(pair->attr_list),left);
+188c187
+<     stack_insert(FEATURECMP,(GENERIC)two,&(pair->attr_list),(GENERIC)right);
+---
+>     stack_insert(featcmp,two,&(pair->attr_list),right);
+213c212
+<      GENERIC s;
+---
+>      char *s;
+217c216
+<   t->value=(GENERIC)heap_copy_string((GENERIC)s);
+---
+>   t->value=(GENERIC)heap_copy_string(s);
+228,229c227,228
+<      GENERIC s;
+<      long n;
+---
+>      char *s;
+>      int n;
+290c289
+< 	  tail=stack_cons((ptr_psi_term)tree->data,(ptr_psi_term)tail);
+---
+> 	  tail=stack_cons(tree->data,tail);
+294c293
+< 	  tail=stack_cons((ptr_psi_term)new,(ptr_psi_term)tail);
+---
+> 	  tail=stack_cons(new,tail);
+300c299
+< 	tail=stack_cons((ptr_psi_term)tree->data,(ptr_psi_term)tail);
+---
+> 	tail=stack_cons(tree->data,tail);
+306c305
+< 	tail=stack_cons((ptr_psi_term)new,(ptr_psi_term)tail);
+---
+> 	tail=stack_cons(new,tail);
+362a362
+>   
+375,376c375,376
+< 	  push_ptr_value(def_ptr,(GENERIC *)&(t->type));
+< 	  push_ptr_value(int_ptr,(GENERIC *)&(t->status));
+---
+> 	  push_ptr_value(def_ptr,&(t->type));
+> 	  push_ptr_value(int_ptr,&(t->status));
+420,421c420,421
+< 	  push_ptr_value(def_ptr,(GENERIC *)&(t->type));
+< 	  push_ptr_value(int_ptr,(GENERIC *)&(t->status));
+---
+> 	  push_ptr_value(def_ptr,&(t->type));
+> 	  push_ptr_value(int_ptr,&(t->status));
+453c453
+<     push_ptr_value(def_ptr,(GENERIC *)&(t->type));
+---
+>     push_ptr_value(def_ptr,&(t->type));
+496c496
+<     push_ptr_value(int_ptr,(GENERIC *)&(t->value));
+---
+>     push_ptr_value(int_ptr,&(t->value));
+504c504
+< 	push_ptr_value(def_ptr,(GENERIC *)&(t->type));
+---
+> 	push_ptr_value(def_ptr,&(t->type));
+538c538
+<   t=aim->aaaa_1;
+---
+>   t=aim->a;
+541c541
+<   arg3=aim->bbbb_1;
+---
+>   arg3=aim->b;
+604c604
+<   t=aim->aaaa_1;
+---
+>   t=aim->a;
+607c607
+<   arg3=aim->bbbb_1;
+---
+>   arg3=aim->b;
+684c684
+<   funct=aim->aaaa_1;
+---
+>   funct=aim->a;
+686c686
+<   result=aim->bbbb_1;
+---
+>   result=aim->b;
+699c699
+<       push_choice_point(eval,arg2,result,(GENERIC)funct->type->rule);
+---
+>       push_choice_point(eval,arg2,result,funct->type->rule);
+729c729
+<   t=aim->aaaa_1;
+---
+>   t=aim->a;
+732c732
+<   arg3=aim->bbbb_1;
+---
+>   arg3=aim->b;
+796c796
+<   t=aim->aaaa_1;
+---
+>   t=aim->a;
+799c799
+<   arg3=aim->bbbb_1;
+---
+>   arg3=aim->b;
+862c862
+<   t=aim->aaaa_1;
+---
+>   t=aim->a;
+865c865
+<   arg3=aim->bbbb_1;
+---
+>   arg3=aim->b;
+929c929
+<   t=aim->aaaa_1;
+---
+>   t=aim->a;
+960c960
+<             push_goal(prove,arg1,(ptr_psi_term)DEFRULES,(GENERIC)NULL);
+---
+>             push_goal(prove,arg1,DEFRULES,NULL);
+994c994
+<   push_goal(unify,tmp,arg,(GENERIC)NULL);
+---
+>   push_goal(unify,tmp,arg,NULL);
+1008c1008
+<   funct=aim->aaaa_1;
+---
+>   funct=aim->a;
+1015c1015
+<     arg3=aim->bbbb_1;
+---
+>     arg3=aim->b;
+1031c1031
+< 	push_goal(unify,arg2,arg3,(GENERIC)NULL);
+---
+> 	push_goal(unify,arg2,arg3,NULL);
+1036c1036
+< 	push_goal(unify,arg1,arg3,(GENERIC)NULL);
+---
+> 	push_goal(unify,arg1,arg3,NULL);
+1044c1044
+< 	push_goal(unify,arg1,arg3,(GENERIC)NULL);
+---
+> 	push_goal(unify,arg1,arg3,NULL);
+1097c1097
+<   funct=aim->aaaa_1;
+---
+>   funct=aim->a;
+1103c1103
+<     arg2=aim->bbbb_1;
+---
+>     arg2=aim->b;
+1150c1150
+<   funct=aim->aaaa_1;
+---
+>   funct=aim->a;
+1157c1157
+<     arg3=aim->bbbb_1;
+---
+>     arg3=aim->b;
+1182c1182
+< 	push_goal(unify,arg2,arg3,(GENERIC)NULL);
+---
+> 	push_goal(unify,arg2,arg3,NULL);
+1184c1184
+< 	push_goal(unify,arg1,arg3,(GENERIC)NULL);
+---
+> 	push_goal(unify,arg1,arg3,NULL);
+1186c1186
+< 	push_goal(unify,arg1,arg2,(GENERIC)NULL);
+---
+> 	push_goal(unify,arg1,arg2,NULL);
+1227c1227
+<   funct=aim->aaaa_1;
+---
+>   funct=aim->a;
+1229c1229
+<   n=find(FEATURECMP,functor->keyword->symbol,funct->attr_list);
+---
+>   n=find(featcmp,functor->keyword->symbol,funct->attr_list);
+1246c1246
+< 	push_goal(eval,other,aim->bbbb_1,(GENERIC)other->type->rule);
+---
+> 	push_goal(eval,other,aim->b,other->type->rule);
+1272c1272
+<   GENERIC label;
+---
+>   char *label;
+1278c1278
+<   funct=aim->aaaa_1;
+---
+>   funct=aim->a;
+1280c1280
+<   result=aim->bbbb_1;
+---
+>   result=aim->b;
+1292c1292
+< 	label=(GENERIC)arg2->value;
+---
+> 	label=(char *)arg2->value;
+1298c1298
+< 	    label=heap_copy_string((GENERIC)thebuffer); /* A little voracious */
+---
+> 	    label=heap_copy_string(thebuffer); /* A little voracious */
+1307c1307
+< 	    label=(GENERIC)arg2->type->keyword->combined_name;
+---
+> 	    label=arg2->type->keyword->combined_name;
+1309c1309
+< 	    label=(GENERIC)arg2->type->keyword->symbol; 
+---
+> 	    label=arg2->type->keyword->symbol; 
+1314c1314
+<       n=find(FEATURECMP,(char *)label,arg1->attr_list);
+---
+>       n=find(featcmp,label,arg1->attr_list);
+1317c1317
+< 	push_goal(unify,result,(ptr_psi_term)n->data,(GENERIC)NULL);
+---
+> 	push_goal(unify,result,n->data,NULL);
+1327c1327
+< 	    push_psi_ptr_value(result,(GENERIC *)&(result->coref));
+---
+> 	    push_psi_ptr_value(result,&(result->coref));
+1330c1330
+< 	  heap_insert(FEATURECMP,label,&(arg1->attr_list),(GENERIC)result->coref);
+---
+> 	  heap_insert(featcmp,label,&(arg1->attr_list),result->coref);
+1340c1340
+< 	    bk_stack_insert(FEATURECMP,label,&(arg1->attr_list),(GENERIC)result);
+---
+> 	    bk_stack_insert(featcmp,label,&(arg1->attr_list),result);
+1342,1343c1342,1343
+< 	    bk_stack_insert(FEATURECMP,label,&(arg1->attr_list),(GENERIC)result);
+< 	    fetch_def_lazy(arg1, arg1->type,arg1->type,NULL,NULL,0,0); // djd added zeros
+---
+> 	    bk_stack_insert(featcmp,label,&(arg1->attr_list),result);
+> 	    fetch_def_lazy(arg1, arg1->type,arg1->type,NULL,NULL);
+1373c1373
+<   t=aim->aaaa_1;
+---
+>   t=aim->a;
+1376c1376
+<   arg3=aim->bbbb_1;
+---
+>   arg3=aim->b;
+1459c1459
+<   t=aim->aaaa_1;
+---
+>   t=aim->a;
+1473c1473
+<   t=aim->aaaa_1;
+---
+>   t=aim->a;
+1475c1475
+<   push_choice_point(prove,t,(ptr_psi_term)DEFRULES,(GENERIC)NULL);
+---
+>   push_choice_point(prove,t,DEFRULES,NULL);
+1488c1488
+<   g=aim->aaaa_1;
+---
+>   g=aim->a;
+1490c1490
+<   result=aim->bbbb_1;
+---
+>   result=aim->b;
+1519c1519
+<   g=aim->aaaa_1;
+---
+>   g=aim->a;
+1521c1521
+<   result=aim->bbbb_1;
+---
+>   result=aim->b;
+1550c1550
+<   g=aim->aaaa_1;
+---
+>   g=aim->a;
+1552c1552
+<   result=aim->bbbb_1;
+---
+>   result=aim->b;
+1581c1581
+<   g=aim->aaaa_1;
+---
+>   g=aim->a;
+1583c1583
+<   result=aim->bbbb_1;
+---
+>   result=aim->b;
+1612c1612
+<   g=aim->aaaa_1;
+---
+>   g=aim->a;
+1614c1614
+<   result=aim->bbbb_1;
+---
+>   result=aim->b;
+1643c1643
+<   if (n && n->left==NULL && n->right==NULL && !featcmp(n->key,one,FEATURECMP)) {
+---
+>   if (n && n->left==NULL && n->right==NULL && !featcmp(n->key,one)) {
+1659c1659
+<   ptr_psi_term t=aim->aaaa_1;
+---
+>   ptr_psi_term t=aim->a;
+1674c1674
+<   ptr_psi_term t=aim->aaaa_1;
+---
+>   ptr_psi_term t=aim->a;
+1691c1691
+<   ptr_psi_term t=aim->aaaa_1;
+---
+>   ptr_psi_term t=aim->a;
+1708c1708
+<   ptr_psi_term t=aim->aaaa_1;
+---
+>   ptr_psi_term t=aim->a;
+1724c1724
+<   ptr_psi_term t=aim->aaaa_1;
+---
+>   ptr_psi_term t=aim->a;
+1759c1759
+<   g=aim->aaaa_1;
+---
+>   g=aim->a;
+1763c1763
+<     n=find(FEATURECMP,one,g->attr_list);
+---
+>     n=find(featcmp,one,g->attr_list);
+1796c1796,1797
+<   t=aim->aaaa_1;
+---
+> 
+>   t=aim->a;
+1806c1807
+< 	push_goal(load,input_state,(ptr_psi_term)file_date,(GENERIC)fn);
+---
+> 	push_goal(load,input_state,file_date,fn);
+1834c1835
+<   funct=aim->aaaa_1;
+---
+>   funct=aim->a;
+1836c1837
+<   result=aim->bbbb_1;
+---
+>   result=aim->b;
+1874c1875
+<   t=aim->aaaa_1;
+---
+>   t=aim->a;
+1928c1929
+<   funct=aim->aaaa_1;
+---
+>   funct=aim->a;
+1930c1931
+<   result=aim->bbbb_1;
+---
+>   result=aim->b;
+1995c1996
+<   n=find(FEATURECMP,two,thelist);
+---
+>   n=find(featcmp,two,thelist);
+2023c2024
+<   funct=aim->aaaa_1;
+---
+>   funct=aim->a;
+2025c2026
+<   result=aim->bbbb_1;
+---
+>   result=aim->b;
+2047c2048
+<           n=find(FEATURECMP,two,funct->attr_list);
+---
+>           n=find(featcmp,two,funct->attr_list);
+2061c2062
+<           n=find(FEATURECMP,three,funct->attr_list);
+---
+>           n=find(featcmp,three,funct->attr_list);
+2104c2105
+< static long c_read(long);
+---
+> static long c_read();
+2120c2121
+<   g=aim->aaaa_1;
+---
+>   g=aim->a;
+2134d2134
+< 
+2140c2140
+< 	n=find(FEATURECMP,two,g->attr_list); /*  RM: Jun  8 1993  */
+---
+> 	n=find(featcmp,two,g->attr_list); /*  RM: Jun  8 1993  */
+2155c2155
+< 	n=find(FEATURECMP,three,g->attr_list);
+---
+> 	n=find(featcmp,three,g->attr_list);
+2195c2195
+< long c_halt()   /*  RM: Jan  8 1993  Used to be 'void' */
+---
+> int c_halt()   /*  RM: Jan  8 1993  Used to be 'void' */
+2202c2202
+< int nl_flag;
+---
+> long nl_flag;
+2235c2235
+< int abort_life(nlflag) /*  RM: Feb 15 1993  */
+---
+> long abort_life(nlflag) /*  RM: Feb 15 1993  */
+2239,2240c2239,2240
+<        !aborthooksym->rule->bbbb_2 ||
+<        aborthooksym->rule->bbbb_2->type==abortsym) {
+---
+>        !aborthooksym->rule->b ||
+>        aborthooksym->rule->b->type==abortsym) {
+2260c2260
+<     push_goal(prove,aborthook,(ptr_psi_term)DEFRULES,(GENERIC)NULL);
+---
+>     push_goal(prove,aborthook,DEFRULES,NULL);
+2262d2261
+<   fprintf(stderr,"\n*** END Abort");
+2264a2264,2266
+> 
+> 
+> 
+2272c2274
+<   t=aim->aaaa_1;
+---
+>   t=aim->a;
+2287c2289
+<   t=aim->aaaa_1;
+---
+>   t=aim->a;
+2312c2314
+<   g=aim->aaaa_1;
+---
+>   g=aim->a;
+2324,2325c2326,2327
+<           p->aaaa_2=heap_psi_term(4);
+<           p->aaaa_2->type=d;
+---
+>           p->a=heap_psi_term(4);
+>           p->a->type=d;
+2327c2329
+<           p->bbbb_2=quote_copy(arg2,HEAP);
+---
+>           p->b=quote_copy(arg2,HEAP);
+2358c2360
+<   g=aim->aaaa_1;
+---
+>   g=aim->a;
+2386c2388
+<   g=aim->aaaa_1;
+---
+>   g=aim->a;
+2422c2424
+<     if (!lf_strcmp(t->type->keyword->symbol,"->")) {
+---
+>     if (!strcmp(t->type->keyword->symbol,"->")) {
+2431c2433
+<     else if (!lf_strcmp(t->type->keyword->symbol,":-")) {
+---
+>     else if (!strcmp(t->type->keyword->symbol,":-")) {
+2457c2459
+<         push_goal(del_clause,head,body,(GENERIC)&(head->type->rule));
+---
+>         push_goal(del_clause,head,body,&(head->type->rule));
+2462c2464
+<       push_goal(clause,head,body,(GENERIC)&(head->type->rule));
+---
+>       push_goal(clause,head,body,&(head->type->rule));
+2482c2484
+<   g=aim->aaaa_1;
+---
+>   g=aim->a;
+2499c2501
+<   g=aim->aaaa_1;
+---
+>   g=aim->a;
+2507,2509c2509,2511
+< void global_error_check(ptr_node,long *,long *);
+< void global_tree(ptr_node);
+< void global_one(ptr_psi_term);
+---
+> void global_error_check();
+> void global_tree();
+> void global_one();
+2523c2525
+<   g=aim->aaaa_1;
+---
+>   g=aim->a;
+2543c2545
+< long *error, *eval;
+---
+> int *error, *eval;
+2635c2637
+<   g=aim->aaaa_1;
+---
+>   g=aim->a;
+2651c2653
+< void persistent_error_check(n, error)
+---
+> persistent_error_check(n, error)
+2653c2655
+< long *error;
+---
+> int *error;
+2674c2676
+< void persistent_tree(n)
+---
+> persistent_tree(n)
+2690c2692
+< void persistent_one(t)
+---
+> persistent_one(t)
+2709c2711
+<   g=aim->aaaa_1;
+---
+>   g=aim->a;
+2720,2721c2722,2723
+< 	    /* push_ptr_value(psi_term_ptr,(GENERIC *)&(arg2->coref)); 9.6 */
+< 	    push_psi_ptr_value(arg2,(GENERIC *)&(arg2->coref));
+---
+> 	    /* push_ptr_value(psi_term_ptr,&(arg2->coref)); 9.6 */
+> 	    push_psi_ptr_value(arg2,&(arg2->coref));
+2753c2755
+<   g=aim->aaaa_1;
+---
+>   g=aim->a;
+2767,2768c2769,2770
+< 	    /* push_ptr_value(psi_term_ptr,(GENERIC *)&(arg2->coref)); 9.6 */
+< 	    push_psi_ptr_value(arg2,(GENERIC *)&(arg2->coref));
+---
+> 	    /* push_ptr_value(psi_term_ptr,&(arg2->coref)); 9.6 */
+> 	    push_psi_ptr_value(arg2,&(arg2->coref));
+2800c2802
+<   g=aim->aaaa_1;
+---
+>   g=aim->a;
+2834c2836
+<   g=aim->aaaa_1;
+---
+>   g=aim->a;
+2862c2864
+<   g=aim->aaaa_1;
+---
+>   g=aim->a;
+2875c2877
+<       ptr_node n=find(FEATURECMP,STREAM,arg1->attr_list);
+---
+>       ptr_node n=find(featcmp,STREAM,arg1->attr_list);
+2917c2919
+<   g=aim->aaaa_1;
+---
+>   g=aim->a;
+2964c2966
+< static long c_put_main(long); /* Forward declaration */
+---
+> static long c_put_main(); /* Forward declaration */
+2983c2985
+<   g=aim->aaaa_1;
+---
+>   g=aim->a;
+3021c3023
+<   g=aim->aaaa_1;
+---
+>   g=aim->a;
+3147c3149
+<   g=aim->aaaa_1;
+---
+>   g=aim->a;
+3185c3187
+<   g=aim->aaaa_1;
+---
+>   g=aim->a;
+3226c3228
+<   g=aim->aaaa_1;
+---
+>   g=aim->a;
+3228c3230
+<   arg3=aim->bbbb_1;
+---
+>   arg3=aim->b;
+3261c3263
+<   g=aim->aaaa_1;
+---
+>   g=aim->a;
+3267,3268c3269,3270
+<   if (arg2) push_choice_point(prove,arg2,(ptr_psi_term)DEFRULES,(GENERIC)NULL);
+<   if (arg1) push_goal(prove,arg1,(ptr_psi_term)DEFRULES,(GENERIC)NULL);
+---
+>   if (arg2) push_choice_point(prove,arg2,DEFRULES,NULL);
+>   if (arg1) push_goal(prove,arg1,DEFRULES,NULL);
+3294c3296
+<   g=aim->aaaa_1;
+---
+>   g=aim->a;
+3296c3298
+<   result=aim->bbbb_1;
+---
+>   result=aim->b;
+3315c3317
+<       push_ptr_value(psi_term_ptr,(GENERIC *)arg1addr);
+---
+>       push_ptr_value(psi_term_ptr,arg1addr);
+3325c3327
+<         n=find(FEATURECMP,(val1?two:three),g->attr_list);
+---
+>         n=find(featcmp,(val1?two:three),g->attr_list);
+3366c3368
+<   GENERIC label;
+---
+>   char *label;
+3369d3370
+<   char *np1;
+3371c3372
+<   funct=aim->aaaa_1;
+---
+>   funct=aim->a;
+3373c3374
+<   result=aim->bbbb_1;
+---
+>   result=aim->b;
+3376c3377,3378
+<   n=find(FEATURECMP,three,funct->attr_list); /*  RM: Feb 10 1993  */
+---
+>   
+>   n=find(featcmp,three,funct->attr_list,&arg3); /*  RM: Feb 10 1993  */
+3393c3395
+<       label=(GENERIC)arg1->value;
+---
+>       label=(char *)arg1->value;
+3397c3399
+<       label=heap_copy_string((GENERIC)thebuffer); /* A little voracious */
+---
+>       label=heap_copy_string(thebuffer); /* A little voracious */
+3399c3401
+<       label=(GENERIC)arg1->type->keyword->combined_name;
+---
+>       label=arg1->type->keyword->combined_name;
+3401c3403
+<       label=(GENERIC)arg1->type->keyword->symbol;
+---
+>       label=arg1->type->keyword->symbol;
+3403c3405
+<     n=find(FEATURECMP,(char *)label,arg2->attr_list);
+---
+>     n=find(featcmp,label,arg2->attr_list);
+3408c3410
+<       push_goal(unify,arg3,(ptr_psi_term)n->data,(GENERIC)NULL);
+---
+>       push_goal(unify,arg3,n->data,NULL);
+3440c3442
+<   funct=aim->aaaa_1;
+---
+>   funct=aim->a;
+3442c3444
+<   result=aim->bbbb_1;
+---
+>   result=aim->b;
+3494c3496
+<   funct=aim->aaaa_1;
+---
+>   funct=aim->a;
+3496c3498
+<   result=aim->bbbb_1;
+---
+>   result=aim->b;
+3585c3587
+< 	result=stack_cons((ptr_psi_term)new,(ptr_psi_term)result);
+---
+> 	result=stack_cons(new,result);
+3596c3598
+< 	result=stack_cons((ptr_psi_term)new,(ptr_psi_term)result);
+---
+> 	result=stack_cons(new,result);
+3649c3651
+<   g=aim->aaaa_1;
+---
+>   g=aim->a;
+3651c3653
+<   result=aim->bbbb_1;
+---
+>   result=aim->b;
+3688c3690
+<   funct=aim->aaaa_1;
+---
+>   funct=aim->a;
+3690c3692
+<   result=aim->bbbb_1;
+---
+>   result=aim->b;
+3718c3720
+<   funct=aim->aaaa_1;
+---
+>   funct=aim->a;
+3720c3722
+<   result=aim->bbbb_1;
+---
+>   result=aim->b;
+3760c3762
+<   funct=aim->aaaa_1;
+---
+>   funct=aim->a;
+3762c3764
+<   result=aim->bbbb_1;
+---
+>   result=aim->b;
+3801c3803
+<   funct = aim->aaaa_1;
+---
+>   funct = aim->a;
+3803c3805
+<   result = aim->bbbb_1;
+---
+>   result = aim->b;
+3832c3834
+<   funct = aim->aaaa_1;
+---
+>   funct = aim->a;
+3834c3836
+<   result = aim->bbbb_1;
+---
+>   result = aim->b;
+3863c3865
+<   funct = aim->aaaa_1;
+---
+>   funct = aim->a;
+3865c3867
+<   result = aim->bbbb_1;
+---
+>   result = aim->b;
+3886c3888
+<   long n;
+---
+>   int n;
+3895c3897
+<   long n1,n2;
+---
+>   int n1,n2;
+3897c3899
+<   funct = aim->aaaa_1;
+---
+>   funct = aim->a;
+3899c3901
+<   result=aim->bbbb_1;
+---
+>   result=aim->b;
+3906,3908c3908,3910
+<     if(get_real_value(result,(REAL *)&(hack.d),&n)  &&
+<        get_real_value(arg1  ,(REAL *)&hi      ,&n1) &&
+<        get_real_value(arg2  ,(REAL *)&lo      ,&n2)) {
+---
+>     if(get_real_value(result,&(hack.d),&n)  &&
+>        get_real_value(arg1  ,&hi      ,&n1) &&
+>        get_real_value(arg2  ,&lo      ,&n2)) {
+3912d3913
+< 
+3919d3919
+< 
+3926d3925
+< 
+3951,3952c3950,3951
+<   long num;
+<   long smaller;
+---
+>   int num;
+>   int smaller;
+3955c3954
+<   funct = aim->aaaa_1;
+---
+>   funct = aim->a;
+3957c3956
+<   result=aim->bbbb_1;
+---
+>   result=aim->b;
+4005c4004
+<   long smaller;
+---
+>   int smaller;
+4008c4007
+<   funct = aim->aaaa_1;
+---
+>   funct = aim->a;
+4038c4037
+<   funct=aim->aaaa_1;
+---
+>   funct=aim->a;
+4040c4039
+<   result=aim->bbbb_1;
+---
+>   result=aim->b;
+4090c4089
+<   funct=aim->aaaa_1;
+---
+>   funct=aim->a;
+4092c4091
+<   result=aim->bbbb_1;
+---
+>   result=aim->b;
+4119c4118
+<         push_goal(prove,arg1,(ptr_psi_term)DEFRULES,NULL);
+---
+>         push_goal(prove,arg1,DEFRULES,NULL);
+4138c4137
+<   g=aim->aaaa_1;
+---
+>   g=aim->a;
+4161c4160
+<         push_psi_ptr_value(arg2,(GENERIC *)&(arg2->coref)); /* 14.12 */
+---
+>         push_psi_ptr_value(arg2,&(arg2->coref)); /* 14.12 */
+4165c4164
+<         push_psi_ptr_value(arg1,(GENERIC *)&(arg1->coref));
+---
+>         push_psi_ptr_value(arg1,&(arg1->coref));
+4170c4169
+<       push_psi_ptr_value(arg1,(GENERIC *)&(arg1->coref));
+---
+>       push_psi_ptr_value(arg1,&(arg1->coref));
+4196c4195
+<   g=aim->aaaa_1;
+---
+>   g=aim->a;
+4231c4230
+<   g=aim->aaaa_1;
+---
+>   g=aim->a;
+4245c4244
+< 	push_psi_ptr_value(arg1,(GENERIC *)&(arg1->coref));
+---
+> 	push_psi_ptr_value(arg1,&(arg1->coref));
+4270c4269
+<   funct=aim->aaaa_1;
+---
+>   funct=aim->a;
+4277c4276
+<     result=aim->bbbb_1;
+---
+>     result=aim->b;
+4298c4297
+<   g=aim->aaaa_1;
+---
+>   g=aim->a;
+4325c4324
+<   funct=aim->aaaa_1;
+---
+>   funct=aim->a;
+4335c4334
+<     result=aim->bbbb_1;
+---
+>     result=aim->b;
+4355c4354
+<   funct=aim->aaaa_1;
+---
+>   funct=aim->a;
+4361c4360
+<     result=aim->bbbb_1;
+---
+>     result=aim->b;
+4392c4391
+<   g=aim->aaaa_1;
+---
+>   g=aim->a;
+4397c4396
+<     push_choice_point(prove,arg1,(ptr_psi_term)DEFRULES,NULL);
+---
+>     push_choice_point(prove,arg1,DEFRULES,NULL);
+4441c4440
+<   g=aim->aaaa_1;
+---
+>   g=aim->a;
+4462c4461
+<     rule=(ptr_pair_list)aim->cccc_1; /* 8.9 */ /* Isn't aim->cccc always NULL? */
+---
+>     rule=(ptr_pair_list)aim->c; /* 8.9 */ /* Isn't aim->c always NULL? */
+4481c4480
+<         while (rule && (rule->aaaa_2==NULL || rule->bbbb_2==NULL)) {
+---
+>         while (rule && (rule->a==NULL || rule->b==NULL)) {
+4492c4491
+< 	    head=eval_copy(rule->aaaa_2,STACK);
+---
+> 	    head=eval_copy(rule->a,STACK);
+4494,4495c4493,4494
+< 	    head=quote_copy(rule->aaaa_2,STACK);
+< 	  body=eval_copy(rule->bbbb_2,STACK);
+---
+> 	    head=quote_copy(rule->a,STACK);
+> 	  body=eval_copy(rule->b,STACK);
+4500c4499
+< 	    push_choice_point(prove,g,(ptr_psi_term)DEFRULES,(GENERIC)rule->next);
+---
+> 	    push_choice_point(prove,g,DEFRULES,rule->next);
+4502c4501
+< 	  push_goal(prove,body,(ptr_psi_term)DEFRULES,NULL);
+---
+> 	  push_goal(prove,body,DEFRULES,NULL);
+4504c4503
+< 	    push_goal(freeze_cut,body,(ptr_psi_term)cutpt,(GENERIC)rb); /* 13.6 */
+---
+> 	    push_goal(freeze_cut,body,cutpt,rb); /* 13.6 */
+4506,4507c4505,4506
+< 	    push_goal(implies_cut,body,(ptr_psi_term)cutpt,(GENERIC)rb);
+< 	  /* RESID */ push_goal(match,arg1,head,(GENERIC)rb);
+---
+> 	    push_goal(implies_cut,body,cutpt,rb);
+> 	  /* RESID */ push_goal(match,arg1,head,rb);
+4567c4566
+<   funct=aim->aaaa_1;
+---
+>   funct=aim->a;
+4569c4568
+<   result=aim->bbbb_1;
+---
+>   result=aim->b;
+4618c4617
+<   funct=aim->aaaa_1;
+---
+>   funct=aim->a;
+4620c4619
+<   result=aim->bbbb_1;
+---
+>   result=aim->b;
+4669c4668
+<   funct=aim->aaaa_1;
+---
+>   funct=aim->a;
+4671c4670
+<   result=aim->bbbb_1;
+---
+>   result=aim->b;
+4732c4731
+<   funct=aim->aaaa_1;
+---
+>   funct=aim->a;
+4734c4733
+<   result=aim->bbbb_1;
+---
+>   result=aim->b;
+4747c4746
+<       t->value=(GENERIC)heap_copy_string((GENERIC)buf);
+---
+>       t->value=(GENERIC)heap_copy_string(buf);
+4751c4750
+< 	t->value=(GENERIC)heap_copy_string((GENERIC)arg1->value);
+---
+> 	t->value=(GENERIC)heap_copy_string((char *)arg1->value);
+4754c4753
+< 	t->value=(GENERIC)heap_copy_string((GENERIC)arg1->type->keyword->symbol);
+---
+> 	t->value=(GENERIC)heap_copy_string(arg1->type->keyword->symbol);
+4776c4775
+<   funct=aim->aaaa_1;
+---
+>   funct=aim->a;
+4778c4777
+<   result=aim->bbbb_1;
+---
+>   result=aim->b;
+4810c4809
+<         t->value=(GENERIC)heap_copy_string((GENERIC)&val[i]);
+---
+>         t->value=(GENERIC)heap_copy_string(&val[i]);
+4840c4839
+<   funct=aim->aaaa_1;
+---
+>   funct=aim->a;
+4842c4841
+<   result=aim->bbbb_1;
+---
+>   result=aim->b;
+4849c4848
+<     push_goal(prove,arg2,(ptr_psi_term)DEFRULES,NULL);
+---
+>     push_goal(prove,arg2,DEFRULES,NULL);
+4917c4916
+<     if (r->aaaa_2!=NULL) return TRUE;
+---
+>     if (r->a!=NULL) return TRUE;
+4933c4932
+< void list_special(t)
+---
+> list_special(t)
+4982c4981
+<   g=aim->aaaa_1;
+---
+>   g=aim->a;
+5051,5053c5050,5052
+<           *a1 = r->aaaa_2; /* Func, pred, or type */
+<           *a2 = r->bbbb_2;
+<           if (r->aaaa_2) {
+---
+>           *a1 = r->a; /* Func, pred, or type */
+>           *a2 = r->b;
+>           if (r->a) {
+5055c5054
+<             if (fp==type) { if (r->bbbb_2==NULL) *a3 = r->aaaa_2; else *a3 = t2; }
+---
+>             if (fp==type) { if (r->b==NULL) *a3 = r->a; else *a3 = t2; }
+5087c5086
+<   t=aim->aaaa_1;
+---
+>   t=aim->a;
+5108c5107
+<   g=aim->aaaa_1;
+---
+>   g=aim->a;
+5133c5132
+<   funct=aim->aaaa_1;
+---
+>   funct=aim->a;
+5173a5173
+> 
+5240c5240
+<   n=find(FEATURECMP,three,n);
+---
+>   n=find(featcmp,three,n);
+5370c5370
+<   funct=aim->aaaa_1;
+---
+>   funct=aim->a;
+5372c5372
+<   result=aim->bbbb_1;
+---
+>   result=aim->b;
+5375c5375
+<   n1=find(FEATURECMP,one,funct->attr_list);
+---
+>   n1=find(featcmp,one,funct->attr_list);
+5380c5380
+<   n2=find(FEATURECMP,two,funct->attr_list);
+---
+>   n2=find(featcmp,two,funct->attr_list);
+5445,5446c5445,5446
+<   funct=aim->aaaa_1;
+<   result=aim->bbbb_1;
+---
+>   funct=aim->a;
+>   result=aim->b;
+5456c5456
+<     arg2->value=(GENERIC)heap_copy_string((GENERIC)arg1->type->keyword->module->module_name);
+---
+>     arg2->value=(GENERIC)heap_copy_string(arg1->type->keyword->module->module_name);
+5476,5477c5476,5477
+<   funct=aim->aaaa_1;
+<   result=aim->bbbb_1;
+---
+>   funct=aim->a;
+>   result=aim->b;
+5487c5487
+<     arg2->value=(GENERIC)heap_copy_string((GENERIC)arg1->type->keyword->combined_name);
+---
+>     arg2->value=(GENERIC)heap_copy_string(arg1->type->keyword->combined_name);
+5512c5512
+<   funct=aim->aaaa_1;
+---
+>   funct=aim->a;
+5514c5514
+<   result=aim->bbbb_1;
+---
+>   result=aim->b;
+5517c5517
+<   n1=find(FEATURECMP,one,funct->attr_list);
+---
+>   n1=find(featcmp,one,funct->attr_list);
+5571c5571
+<   funct=aim->aaaa_1;
+---
+>   funct=aim->a;
+5573c5573
+<   result=aim->bbbb_1;
+---
+>   result=aim->b;
+5576c5576
+<   n1=find(FEATURECMP,one,funct->attr_list);
+---
+>   n1=find(featcmp,one,funct->attr_list);
+5581c5581
+<   n2=find(FEATURECMP,two,funct->attr_list);
+---
+>   n2=find(featcmp,two,funct->attr_list);
+5586c5586
+<   n3=find(FEATURECMP,three,funct->attr_list);
+---
+>   n3=find(featcmp,three,funct->attr_list);
+5675c5675
+<   g=aim->aaaa_1;
+---
+>   g=aim->a;
+5679c5679
+<   n1=find(FEATURECMP,one,g->attr_list);
+---
+>   n1=find(featcmp,one,g->attr_list);
+5684c5684
+<   n2=find(FEATURECMP,two,g->attr_list);
+---
+>   n2=find(featcmp,two,g->attr_list);
+5749c5749
+<   funct=aim->aaaa_1;
+---
+>   funct=aim->a;
+5751c5751
+<   result=aim->bbbb_1;
+---
+>   result=aim->b;
+5754c5754
+<   n1=find(FEATURECMP,one,funct->attr_list);
+---
+>   n1=find(featcmp,one,funct->attr_list);
+5813c5813
+<   t=aim->aaaa_1;
+---
+>   t=aim->a;
+5817c5817
+<   n1=find(FEATURECMP,one,t->attr_list);
+---
+>   n1=find(featcmp,one,t->attr_list);
+5864c5864
+<   funct=aim->aaaa_1;
+---
+>   funct=aim->a;
+5866c5866
+<   result=aim->bbbb_1;
+---
+>   result=aim->b;
+5868c5868
+<   n1=find(FEATURECMP,one,funct->attr_list);
+---
+>   n1=find(featcmp,one,funct->attr_list);
+5896c5896
+<   result=aim->bbbb_1;
+---
+>   result=aim->b;
+5902,5903c5902,5903
+<     str->value=(GENERIC)heap_copy_string((GENERIC)arg_v[i]);
+<     list=stack_cons((ptr_psi_term)str,(ptr_psi_term)list);
+---
+>     str->value=(GENERIC)heap_copy_string(arg_v[i]);
+>     list=stack_cons(str,list);
+6047d6046
+<   bi_list = fopen("bi_list.txt","w");
+6262d6260
+<   fclose(bi_list);

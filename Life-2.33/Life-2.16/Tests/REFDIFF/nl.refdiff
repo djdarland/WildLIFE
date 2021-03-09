@@ -1,0 +1,117 @@
+5,6c5,7
+< S = s(anaphora_in => @,
+<       anaphora_out => [n(class => code(eating_habit => comp),number => singular)|@],
+---
+> S = s(anaphora_in => _A,
+>       anaphora_out => [_B: n(class => _C: code(eating_habit => comp),
+>                              number => _D: singular)|_A],
+12,13c13
+<                                                             lhs => n(class => code(eating_habit => comp),
+<                                                                      number => singular)))),
+---
+>                                                             lhs => _B))),
+16,17c16,17
+<                                                 lhs => iv(number => singular,
+<                                                           subject => code(eating_habit => comp),
+---
+>                                                 lhs => iv(number => _D,
+>                                                           subject => _C,
+22,23c22,24
+< S = ss(anaphora_in => @,
+<        anaphora_out => [n(class => code(eating_habit => comp),number => singular)|@],
+---
+> S = ss(anaphora_in => _A,
+>        anaphora_out => [_B: n(class => _C: code(eating_habit => comp),
+>                               number => _D: singular)|_A],
+29,30c30
+<                                                              lhs => n(class => code(eating_habit => comp),
+<                                                                       number => singular)))),
+---
+>                                                              lhs => _B))),
+33,34c33,34
+<                                                  lhs => iv(number => singular,
+<                                                            subject => code(eating_habit => comp),
+---
+>                                                  lhs => iv(number => _D,
+>                                                            subject => _C,
+41,43c41,45
+< S = s(anaphora_in => @,
+<       anaphora_out => [n(class => food,number => singular),
+<                        pn(class => human(eating_habit => omnivore),gender => male,number => singular)|@],
+---
+> S = s(anaphora_in => _A,
+>       anaphora_out => [_B: n(class => _C: food,number => singular),
+>                        _D: pn(class => _E: human(eating_habit => omnivore),
+>                               gender => male,
+>                               number => _F: singular)|_A],
+46,50c48
+<                         lhs => tree(label => np,
+<                                     lhs => tree(label => snp,
+<                                                 lhs => pn(class => human(eating_habit => omnivore),
+<                                                           gender => male,
+<                                                           number => singular))),
+---
+>                         lhs => tree(label => np,lhs => tree(label => snp,lhs => _D)),
+53,55c51,53
+<                                                 lhs => tv(number => singular,
+<                                                           object => food,
+<                                                           subject => human(eating_habit => omnivore),
+---
+>                                                 lhs => tv(number => _F,
+>                                                           object => _C,
+>                                                           subject => _E,
+60,61c58
+<                                                                                     lhs => n(class => food,
+<                                                                                              number => singular)))))))).
+---
+>                                                                                     lhs => _B))))))).
+65,67c62,66
+< S = ss(anaphora_in => @,
+<        anaphora_out => [n(class => food,number => singular),
+<                         pn(class => human(eating_habit => omnivore),gender => male,number => singular)|@],
+---
+> S = ss(anaphora_in => _A,
+>        anaphora_out => [_B: n(class => _C: food,number => singular),
+>                         _D: pn(class => _E: human(eating_habit => omnivore),
+>                                gender => male,
+>                                number => _F: singular)|_A],
+70,74c69
+<                          lhs => tree(label => np,
+<                                      lhs => tree(label => snp,
+<                                                  lhs => pn(class => human(eating_habit => omnivore),
+<                                                            gender => male,
+<                                                            number => singular))),
+---
+>                          lhs => tree(label => np,lhs => tree(label => snp,lhs => _D)),
+77,79c72,74
+<                                                  lhs => tv(number => singular,
+<                                                            object => food,
+<                                                            subject => human(eating_habit => omnivore),
+---
+>                                                  lhs => tv(number => _F,
+>                                                            object => _C,
+>                                                            subject => _E,
+84,85c79
+<                                                                                      lhs => n(class => food,
+<                                                                                               number => singular)))))))).
+---
+>                                                                                      lhs => _B))))))).
+93,94c87,89
+< S = s(anaphora_in => @,
+<       anaphora_out => [pn(class => dog(eating_habit => carnivore),number => singular)|@],
+---
+> S = s(anaphora_in => _A,
+>       anaphora_out => [_B: pn(class => _C: dog(eating_habit => carnivore),
+>                               number => _D: singular)|_A],
+98,100c93
+<                                     lhs => tree(label => snp,
+<                                                 lhs => pn(class => dog(eating_habit => carnivore),
+<                                                           number => singular))),
+---
+>                                     lhs => tree(label => snp,lhs => _B)),
+103,104c96,97
+<                                                 lhs => iv(number => singular,
+<                                                           subject => dog(eating_habit => carnivore),
+---
+>                                                 lhs => iv(number => _D,
+>                                                           subject => _C,

@@ -1,0 +1,24 @@
+10c10
+< Joe = person(age => int~,today => real~,yob => int~), X = int~.
+---
+> Joe = person(age => X,today => real~,yob => int~), X = int~.
+13c13
+< Joe = person(age => int~~,today => 1992,yob => int~~), X = int~~.
+---
+> Joe = person(age => X,today => 1992,yob => int~~), X = int~~.
+16c16
+< Joe = person(age => 30,today => 1992,yob => 1962), X = 30.
+---
+> Joe = person(age => X,today => 1992,yob => 1962), X = 30.
+24c24
+< Joe = human(age => int~,today => int~,yob => int~), X = int~.
+---
+> Joe = human(age => X,today => int~,yob => int~), X = int~.
+27c27
+< Joe = human(age => int~~,today => 1992,yob => int~~), X = int~~.
+---
+> Joe = human(age => X,today => 1992,yob => int~~), X = int~~.
+30c30
+< Joe = human(age => 30,today => 1992,yob => 1962), X = 30.
+---
+> Joe = human(age => X,today => 1992,yob => 1962), X = 30.
