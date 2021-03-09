@@ -1,4 +1,13 @@
-# WildLIFE
+WildLIFE
+
+3/8/2021
+I noticed and corrected 2 warnings in parser.c and print.c
+I added script file ./ee I like to use for most things.
+It has menus.
+(it has subscripts also).
+I added historical files. (useful to understand how I made changes.)
+
+PREVIOUSLY
 Having got a new (much faster computer) I cloned my WildLIFE code.
 1st time I had done that.
 I had a few things I needed to do.
