@@ -1,0 +1,61 @@
+
+
+                                                                          
+                   LOADING FILES USING THE LIFE PARSER IN LIFE   
+          
+
+ NAME
+
+ loader: an implementation of simple_load that uses the parser written in Life
+         (so that all the syntax extensions are available), and also contains
+         some extensions that allow a usage similar to that of load (except
+         that only one file may be specified).   
+
+ The term_expansion predicate is supported. In particular, grammar rules are
+ expanded automatically if they are written as facts.
+
+ The predicate term_expansion takes a term as first argument and returns a
+ clause or a list of clauses as second argument.
+ It is predefined for grammar rules and standard definitions. It is  possible
+ to extend it to handle new kinds of definitions by adding new clauses to
+ term_expansion. 
+
+ In the current state of the interpreter, the asserta query is necessary to be
+ sure the stated rule will actually be used.  
+
+ 
+ USAGE:
+
+      load_l(Filename) ? 
+ looks for the file Filename.lf or Filename in specified directories, and
+ loads the first it finds. Reloading the same file is not possible.
+
+      load_gr(Filename) ? 
+ looks for the file Filename.gr in specified directories, and
+ loads the first it finds. Reloading the same file is not possible.
+
+      load_in(Filename) ?
+ looks for the file Filename.in in specified directories, and
+ loads the first it finds. Reloading the same file is possible.
+    
+ 
+ FILES
+
+ The file loader.lf contains the loader.
+
+ The other files are:
+ - parser.lf     : the Life parser
+ - tokenizer.lf  : the tokenizer used to provide inputs to the parser
+ - accumulators.lf, std_expander.lf and acc_declarations.lf 
+ 
+ All these files are automatically loaded if they are in the same directory.
+
+ They must be loaded with expand_load(true).
+
+ AUTHOR
+
+ Bruno Dumant
+
+ Copyright 1992 Digital Equipment Corporation
+ All Rights Reserved
+ 

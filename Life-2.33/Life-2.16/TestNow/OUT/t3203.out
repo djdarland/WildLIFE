@@ -1,0 +1,16 @@
+
+*** Yes
+> > > > > > > 
+pred(a) :-
+        succeed.
+pred(@) :-
+        qred(@),
+        rred(@,@).
+
+*** Yes
+> 
+*** Yes
+X = a.
+--1> 
+*** No
+> 

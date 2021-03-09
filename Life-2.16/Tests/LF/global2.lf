@@ -1,0 +1,6 @@
+my_glob(Reference,S) :-
+        C = S + 1,
+        global(Reference <- C).
+
+my_glob(foo1,1),
+my_glob(foo2,1) ?

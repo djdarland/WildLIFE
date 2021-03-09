@@ -1,0 +1,14 @@
+p(-300)?
+
+
+A=asc(2*X)?
+
+
+A=asc(string)?
+
+
+thingy<| string.
+
+A=asc(thingy&"hello")?
+
+

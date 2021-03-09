@@ -1,0 +1,85 @@
+1,82c1
+< 
+< *** Yes
+< > > > > > 
+< *** Yes
+< > 
+< *** Yes
+< Djd_zero = djd_int(djd_val => 0).
+< --1> 
+< *** Yes
+< Djd_one = djd_int(djd_val => 1), Djd_zero = djd_int(djd_val => 0).
+< ----2> 
+< *** Yes
+< Djd_five = djd_int(djd_val => 5), 
+< Djd_one = djd_int(djd_val => 1), 
+< Djd_zero = djd_int(djd_val => 0).
+< 
+< ------3> 
+< *** Yes
+< Djd_five = djd_int(djd_val => 5), 
+< Djd_one = djd_int(djd_val => 1), 
+< Djd_seven = djd_int(djd_val => 7), 
+< Djd_zero = djd_int(djd_val => 0).
+< 
+< --------4> 
+< *** Yes
+< Djd_five = djd_int(djd_val => 5), 
+< Djd_one = djd_int(djd_val => 1), 
+< Djd_seven = djd_int(djd_val => 7), 
+< Djd_zero = djd_int(djd_val => 0), 
+< X = djd_int(djd_val => 10).
+< 
+< ----------5> 
+< *** Yes
+< Djd_five = djd_int(djd_val => 5), 
+< Djd_one = djd_int(djd_val => 1), 
+< Djd_seven = djd_int(djd_val => 7), 
+< Djd_zero = djd_int(djd_val => 0), 
+< X = djd_int(djd_val => 10), 
+< Y = djd_int(djd_val => 10).
+< 
+< ------------6> 
+< *** No
+< ----------5> ----------5> 
+< *** Yes
+< Djd_five = djd_int(djd_val => 5), 
+< Djd_one = djd_int(djd_val => 1), 
+< Djd_seven = djd_int(djd_val => 7), 
+< Djd_zero = djd_int(djd_val => 0), 
+< X = djd_int(djd_val => 10).
+< 
+< 
+< *** No
+< --------4> 
+< *** Yes
+< Djd_five = djd_int(djd_val => 5), 
+< Djd_one = djd_int(djd_val => 1), 
+< Djd_seven = djd_int(djd_val => 7), 
+< Djd_zero = djd_int(djd_val => 0).
+< 
+< --------4> 
+< *** Yes
+< Djd_five = djd_int(djd_val => 5), 
+< Djd_one = djd_int(djd_val => 1), 
+< Djd_seven = djd_int(djd_val => 7), 
+< Djd_zero = djd_int(djd_val => 0).
+< 
+< --------4> |    
+< *** Yes
+< Djd_five = djd_int(djd_val => 5), 
+< Djd_one = djd_int(djd_val => 1), 
+< Djd_seven = djd_int(djd_val => 7), 
+< Djd_zero = djd_int(djd_val => 0).
+< 
+< 
+< *** No
+< ------3> 
+< *** No
+< ----2> 
+< *** No
+< --1> 
+< *** No
+< > > 
+---
+> 2

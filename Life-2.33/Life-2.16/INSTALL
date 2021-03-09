@@ -1,0 +1,60 @@
+Basic Installation
+==================
+6/29/2016 (2.13) Dennis J. Darland.
+I have reverted to the original .set_up and related files.
+I went back to the Life-1.02.tar.gz file as I originally received it.
+However my make file is only set up to gernerate the executable wild_life
+and it copies it to ~/bin.
+I have set up the .set_up and other files to be in ~/life_local
+I only edited them to change the paths to them within each other.
+I also edited the Makefile for wild_life to correspond.
+I believe I have them all correct now.
+This was done in 1.02 using the Makefile, sed, etc.
+It would be good to make the Makefile do that, but that is more complicated.
+The life_local files are found in life_local-2.13.tar.gz which should be copied to ~ and unpacked.
+After unpacking the main archive (which you have done if you are reading this, run make in the Source/regep and then Source directories.
+There are still bugs.
+Within the script ./ee in the Source directory, you can do many things including running the Test Suite, and viewing the results etc.
+
+=======================================================================
+
+6/20/2016 Dennis J. Darland
+Same procedure except is now Life-2.07.tar.gz
+Also a new wild_life-mode.el is provided - it is useful mostly for indentation 
+and syntax highlighting.
+
+The local tar file is unchanged.
+
+-----------------------------------------------------------------
+6/16/2016 Dennis J. Darland
+
+I do not know how to set up configure scripts - or have way of testing them.
+
+As far as I know the following os all needed to set up WildLife 2.05
+on either SUSE Linux, Ubuntu Linux or cygwin.
+
+select a directory to install and copy Life-2.05.tar.gz there
+then tar -xzvf Life-2.05.tar.gz
+then copy local_life-2.05.tar.gz to ~
+this will create a "local" directory there - if you already have a "local" directory there you may need to make some adjustment
+then tar -xzvf local_life-2.02.tar.gz
+
+Then go to directory you untarred Life-2.05 to
+Then go to Source subdirectory
+Then go to regexp subdirectory
+use the command 'make'
+cd ..
+use the command 'make' again
+
+-----------------------------------------------------------------
+6/20/2016
+I found the tests are run with the quiet -q option so wl is no longer
+provided wild_life has the current VERSION in the Makefile and the DATE
+it is compiled is used. 
+
+Then wild_life can be executed in the Source Directory; The Makefile
+also copies it to ~/bin.
+-----------------------------------------------------------------
+
+
+

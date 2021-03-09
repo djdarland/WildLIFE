@@ -1,0 +1,7 @@
+delay_check(foo)?
+:: X:foo | write(X).
+listing?
+f(X,Y:{1;2}) -> X+Y.
+write(Y)?
+;
+

@@ -1,0 +1,24 @@
+
+nl,nl,write("*** TESTING THE TOKENIZER ***") ?
+
+nl,write(call_once(number(V,0 =>[51,52,50,46,56,57,48],rest=>[]))) ?
+
+nl,write((call_once( non_quoted_atom(V,0 =>[116,
+     111,
+     116,
+     111],rest=>[]))))?
+
+nl,write((call_once( variable(V, 0 =>[95,
+     82,
+     101,
+     55,
+     56,
+     57],rest=>[]))))?
+
+nl,write(call_once(tokenize("FILES/preparser.1",L))), nl, pretty_write(L) ?
+
+nl,nl, write("*** TESTING THE EXPRESSIONS  ***") ?
+
+nl,tokenize("FILES/preparser.2",L), 
+write(call_once(list_express( 0 => L, list => List, rest => []))),
+nl,pretty_write(List), nl,nl ?

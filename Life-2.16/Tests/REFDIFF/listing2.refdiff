@@ -1,0 +1,8 @@
+2c2
+< :: positive | positive > 0.
+---
+> :: _A: positive | _A > 0.
+5c5
+< :: zero | zero = 0.
+---
+> :: _A: zero | _A = 0.

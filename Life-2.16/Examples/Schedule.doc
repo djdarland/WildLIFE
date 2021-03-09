@@ -1,0 +1,48 @@
+
+                        A LITTLE PERT SCHEDULER
+
+
+ NAME
+
+ schedule: A demo using constraints on sorts and residuation to achieve
+           performance and conciseness.
+
+
+ USAGE (see examples)
+ In a query, declare the tasks you consider and the information you have
+ about them:
+       A1 = task( duration => 34, prerequisites => [A2,A3]), ...
+            %%% A2 and A3 must be defined in the same query, and are references
+            %%% to tasks that must be performed before A1 
+
+ when all tasks are declared, they may be visualized with
+       visAllTasks(List_of_Tasks)?
+
+ See the sample inputs in schedule.lf
+
+
+ FILES
+ The file schedule.lf contains the scheduler. 
+
+
+ DESCRIPTION
+ 
+ All constraints are set during the type check, and they are released as soon
+ as if enough information is known.
+ Each time a task is defined, the earlyStart field is initialized with the
+ earlyCalc function. This function takes the list of prerequisites as argument,
+ and residuates on the tasks which are still undefined.
+ 
+ Defining the task also sets a set of constraints on the lateStart field of
+ the prerequisites. Here again, these constraints residuate until enough
+ information is known.
+
+ This way, every necessary computation is done once and only once.
+
+
+ AUTHOR
+
+ Bruno Dumant
+
+ Copyright 1992 Digital Equipment Corporation
+ All rights reserved

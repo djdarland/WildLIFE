@@ -1,0 +1,26 @@
+
+*** Yes
+> > 
+*** Yes
+X = comp(func1 => comp(func1 => succ,func2 => succ),func2 => succ).
+--1> 
+*** Yes
+X = comp(func1 => comp(func1 => succ,func2 => succ),func2 => succ), Y = 26.
+--1> > 
+*** Yes
+X = comp(func1 => comp(func1 => comp(func1 => comp(func1 => succ,func2 => succ),
+                                     func2 => succ),
+                       func2 => comp(func1 => comp(func1 => succ,func2 => succ),
+                                     func2 => succ)),
+         func2 => succ).
+
+--1> 
+*** Yes
+X = comp(func1 => comp(func1 => comp(func1 => comp(func1 => succ,func2 => succ),
+                                     func2 => succ),
+                       func2 => comp(func1 => comp(func1 => succ,func2 => succ),
+                                     func2 => succ)),
+         func2 => succ), 
+Y = 7.
+
+--1> > 

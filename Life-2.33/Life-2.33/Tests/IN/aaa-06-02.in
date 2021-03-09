@@ -1,0 +1,4 @@
+listlen([]) -> 0.
+listlen([_ | L]) -> s(listlen(L)).
+write(listlen([a, b, c]))?
+write(listlen([_ , _ | _]))?

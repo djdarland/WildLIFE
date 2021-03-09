@@ -1,0 +1,488 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%	$Id: xtools_b.lf,v 1.3 1996/02/01 23:19:01 vorbeck Exp $	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% XTOOLS: BOXES
+%
+% Author: Bruno Dumant
+% (c) Copyright 1993 - Digital Equipment Corporation 
+% All Rights Reserved
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% interface
+
+public( l_above,c_above,r_above,             %% l: left       v: vertical
+	l_below,c_below,r_below,             %% r: right      b: bottom
+	t_left_of,c_left_of,b_left_of,       %% c: center     h: horizontal
+	t_right_of,c_right_of,b_right_of,    %% t: top
+
+	ll_aligned,lr_aligned,lc_aligned,rr_aligned,rc_aligned,
+	tt_aligned,tb_aligned,tc_aligned,bb_aligned,bc_aligned,
+	cc_v_aligned,cc_h_aligned,
+
+	containing,contains,      
+        
+	init_box,create_box,create_boxes,
+	box,v_box,h_box,null_box,t_box,
+
+	widget,
+
+	same_size,same_height,same_width,
+	vl_list,vc_list,vr_list,
+	ht_list,hc_list,hb_list,
+	menu_list,
+	array,
+
+        move_widget
+       ) ?
+
+
+%%% Operators
+  
+op(500,xfy,l_above)?
+op(500,xfy,c_above)?
+op(500,xfy,r_above)?
+op(500,xfy,l_below)?
+op(500,xfy,c_below)?
+op(500,xfy,r_below)?
+op(500,xfy,t_left_of)?
+op(500,xfy,c_left_of)?
+op(500,xfy,b_left_of)?
+op(500,xfy,t_right_of)?
+op(500,xfy,c_right_of)?
+op(500,xfy,b_right_of)?
+op(600,xfy,containing)?
+op(650,xfx,contains)?
+
+op(650,xfx,ll_aligned) ?
+op(650,xfx,lr_aligned) ?
+op(650,xfx,lc_aligned) ?
+op(650,xfx,rr_aligned) ?
+op(650,xfx,rc_aligned) ?
+
+op(650,xfx,tt_aligned) ?
+op(650,xfx,tb_aligned) ?
+op(650,xfx,tc_aligned) ?
+op(650,xfx,bb_aligned) ?
+op(650,xfx,bc_aligned) ?
+
+op(650,xfx,cc_v_aligned) ?
+op(650,xfx,cc_h_aligned) ?
+
+op(350,fx,vl_list) ?
+op(350,fx,vc_list) ?
+op(350,fx,vr_list) ?
+op(350,fx,ht_list) ?
+op(350,fx,hc_list) ?
+op(350,fx,hb_list) ?
+op(350,fx,menu_list) ?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% box
+
+:: box( X,Y,DX,DY,
+	width => DX,height => DY,
+	border => B,
+	mother => M).
+
+
+%%% widget: a box with an associated window
+
+:: widget(window => W,color_id => C).
+widget <| box.
+
+ig(A) -> cond( A :=< widget, 0, 1).
+
+
+%%% init_box
+
+init_box(Box:box(created => @)) :-
+	( 
+	    has_feature(id,Box),!
+	;
+	    find_size(Box),
+	    Box.id = Id:gen_id,
+	    Box.mother.daughters.Id = Box,
+	    cond( Box :\=< widget,
+	        Box.window = Box.mother.window
+	    )
+	).
+
+%%% create_box
+
+create_box(Box:box(created => C)) :-
+	( 
+	    C :\== true,!,
+            cond( has_feature(constructor,Box,P),
+	        P
+	    ),
+	    cond( Box :< look,
+	        draw_look(Box)
+	    ),
+	    cond( has_feature(daughters,Box,Daughters),
+	        create_daughters(Daughters)
+	    ),
+	    C = true
+	;
+	    succeed
+	).
+
+create_daughters(Daughters) :-
+	create_daughters2(features(Daughters),Daughters).
+
+create_daughters2([]) :- !.
+create_daughters2([A|B],Daughters) :-
+	create_box(Daughters.A),
+	create_daughters2(B,Daughters).
+
+create_boxes(L) :- maprel(create_box,L).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% definition of the operations on boxes
+
+B1:box(X1,Y1,DX1,DY1,mother => M1) l_above B2:box(X2,Y2,DX2,DY2,mother => M2) 
+    -> box(X1,Y1,max(DX1,DX2),DY1+DY2,mother => M1,id => 0) |
+        M1 = M2,
+        X2 = X1,
+	Y2 = Y1 + DY1,
+	init_box(B1),
+	init_box(B2).
+
+B1:box(X1,Y1,DX1,DY1,mother => M1) r_above B2:box(X2,Y2,DX2,DY2,mother => M2) 
+    ->	box(X,Y1,max(DX1,DX2),DY1+DY2,mother => M1,id => 0) |
+        M1 = M2,
+	cond( DDX:(DX2 - DX1) >= 0,
+	    X = X2,
+	    X = X1
+	),
+        X1 = X2 + DDX,
+   	Y2 = Y1 + DY1,
+	init_box(B1),
+	init_box(B2).
+
+B1:box(X1,Y1,DX1,DY1,mother => M1) c_above B2:box(X2,Y2,DX2,DY2,mother => M2) 
+    ->	box(X,Y1,max(DX1,DX2),DY1+DY2,mother => M1,id => 0) |
+        M1 = M2,
+	cond( DDX:(DX2 - DX1) >= 0,
+	    X = X2,
+	    X = X1
+	),
+        X1 = X2 + DDX/2,
+	Y2 = Y1 + DY1,
+	init_box(B1),
+	init_box(B2).
+
+B1 l_below B2 ->
+	B2 l_above B1.
+
+B1 r_below B2 ->
+	B2 r_above B1.
+
+B1 c_below B2 ->
+	B2 c_above B1.
+
+
+B1:box(X1,Y1,DX1,DY1,mother => M1) t_left_of B2:box(X2,Y2,DX2,DY2,mother => M2)
+    -> box(X1,Y1,DX1 + DX2,max(DY1,DY2),mother => M1,id => 0) |
+        M1 = M2,
+        Y2 = Y1,
+	X2 = X1 + DX1,
+	init_box(B1),
+	init_box(B2).
+
+B1:box(X1,Y1,DX1,DY1,mother => M1) b_left_of B2:box(X2,Y2,DX2,DY2,mother => M2)
+    -> box(X1,Y,DX1 + DX2,max(DY1,DY2),mother => M1,id => 0) |
+        M1 = M2,
+	cond( DDY:(DY2 - DY1) >= 0,
+	    Y = Y2,
+	    Y = Y1
+	),
+        Y1 = Y2 + DDY,
+   	X2 = X1 + DX1,
+	init_box(B1),
+	init_box(B2).
+
+B1:box(X1,Y1,DX1,DY1,mother => M1) c_left_of B2:box(X2,Y2,DX2,DY2,mother => M2)
+    ->	box(X1,Y,DX1 + DX2,max(DY1,DY2),mother => M1,id => 0) |      
+	M1 = M2,
+	cond( DDY:(DY2 - DY1) >= 0,
+	    Y = Y2,
+	    Y = Y1
+	),
+        Y1 = Y2 + DDY/2,
+	X2 = X1 + DX1,
+	init_box(B1),
+	init_box(B2).
+
+B1 t_right_of B2 -> B2 t_left_of B1.
+
+B1 b_right_of B2 -> B2 b_left_of B1.
+
+B1 c_right_of B2 -> B2 c_left_of B1.
+
+
+B1:box containing B2:box  -> B1 |
+        B1 contains B2.
+
+B1:box(X1,Y1,DX1,DY1,border => Border) contains B2:box(width => DX2,
+	                                               height => DY2) :-
+	Border = {num(d_border);real},!,
+	cond( B1 :=< widget,
+	      B2 = @(Dx,Dy,mother => B1),
+	      (
+		  true |
+		  B2 = @(X2,Y2,mother => B1.mother),
+		  Dx = X2 - X1,
+		  Dy = Y2 - Y1
+	      )
+	    ),
+	Dx = {Border;real},!,
+	Dy = {root_sort(Border);real},!, 
+	init_box(B2),
+	DX1 = {0;real},DY1 = {0;real},
+	DX1 <- max(Dx + DX2 + Border,DX1),
+	DY1 <- max(Dy + DY2 + Border,DY1),!,
+	init_box(B1),
+	!.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% simple placement constraints
+
+B1:box(X1) ll_aligned B2:box(X1) :- 
+	init_box(B1),
+	init_box(B2).
+B1:box(X1) lr_aligned B2:box(X2,_,DX2) :- 
+	X2 + DX2 = X1,
+	init_box(B1),
+	init_box(B2).
+B1:box(X1) lc_aligned B2:box(X2,_,DX2) :- 
+	X2 + DX2/2 = X1,
+	init_box(B1),
+	init_box(B2).
+B1:box(X1,_,DX1) rr_aligned B2:box(X2,_,DX2) :- 
+	X1 = X2 + DX2 - DX1,
+	init_box(B1),
+	init_box(B2).
+B1:box(X1,_,DX1) rc_aligned B2:box(X2,_,DX2) :-
+	X1 = X2 + DX2/2 - DX1,
+	init_box(B1),
+	init_box(B2).
+B1:box(X1,_,DX1) cc_v_aligned B2:box(X2,_,DX2) :- 
+	X1 = X2 + (DX2-DX1)/2,
+	init_box(B1),
+	init_box(B2).
+
+B1:box(_,Y1) tt_aligned B2:box(_,Y1) :-
+	init_box(B1),init_box(B2).
+B1:box(_,Y1) tb_aligned B2:box(_,Y2,_,DY2) :- 
+	Y1 = Y2 + DY2,
+	init_box(B1),
+	init_box(B2).
+B1:box(_,Y1) tc_aligned B2:box(_,Y2,_,DY2) :- 
+	Y1 = Y2 + DY2/2,
+	init_box(B1),
+	init_box(B2).
+B1:box(_,Y1,_,DY1) bb_aligned B2:box(_,Y2,_,DY2) :- 
+	Y1 = Y2 + DY2 - DY1,
+	init_box(B1),
+	init_box(B2).
+B1:box(_,Y1,_,DY1) bc_aligned B2:box(_,Y2,_,DY2) :- 
+	Y1 = Y2 + DY2/2 - DY1,
+	init_box(B1),
+	init_box(B2).
+B1:box(_,Y1,_,DY1) cc_h_aligned B2:box(_,Y2,_,DY2) :- 
+	Y1 = Y2 + (DY2 - DY1)/2,
+	init_box(B1),
+	init_box(B2).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% some special boxes
+
+%%% t_box: a box with text
+
+:: T:t_box(text => string,
+	   h_space => H,
+	   v_space => V).
+
+t_box <| box.
+
+
+%%% v_box, h_box, null_box
+
+v_box(N) -> box(width => 0,height => N,id => 0).
+h_box(N) -> box(width => N,height => 0,id => 0).
+
+null_box <| box.
+:: null_box(width => 0,height => 0,id => 0).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% utilities
+
+%%% vertical and horizontal lists
+
+vl_list([A|B]) -> A l_above vl_list(B).
+vl_list([]) -> null_box.
+
+vc_list([A|B]) -> A c_above vc_list(B).
+vc_list([]) -> null_box.
+
+vr_list([A|B]) -> A r_above vr_list(B).
+vr_list([]) -> null_box.
+
+ht_list([A|B]) -> A t_left_of ht_list(B).
+ht_list([]) -> null_box.
+
+hc_list([A|B]) -> A c_left_of hc_list(B).
+hc_list([]) -> null_box.
+
+hb_list([A|B]) -> A b_left_of hb_list(B).
+hb_list([]) -> null_box.
+
+
+%%% arrays
+
+array([]) -> null_box.
+array(L,N:int) -> Array |
+        (A,B) = split_list(L,N),
+	same_height(A),
+	Array = ht_list(A) l_above array(B,N).
+
+
+split_list(L,0) -> ([],L).    
+split_list([],N:int) -> ([],[]).
+split_list([H|T],N)  -> ([H|R],L) | (R,L)=split_list(T,N-1).
+
+
+%%% menu list
+
+menu_list L -> 
+	B
+    |
+        same_size(L),
+	B = vl_list(L).
+
+
+%%% constrain boxes to the same size
+%%% Beware: persistent variables not allowed
+
+same_size(L) :-
+	!,
+	same_size2(L,0,0).
+
+same_size2([A:box(width => DX,height => DY)|B],RX,RY) :-
+	!,
+	find_size(A),
+	RX <- max(num(DX),RX),
+	RY <- max(num(DY),RY),
+	DX <- RX,
+	DY <- RY,
+	same_size2(B,RX,RY).
+	
+same_size2([]).
+
+%%% constrain boxes to the same height
+%%% Beware: persistent variables not allowed
+
+same_height(L) :-
+	!,
+	same_height2(L,0).
+
+same_height2([A:box(height => DY)|B],RY) :-
+	!,
+	SY = get_size(A).2,
+	RY <- max(num(SY),RY),
+	DY <- RY,
+	same_height2(B,RY).
+	
+same_height2([]).
+
+%%% constrain boxes to the same height
+%%% Beware: persistent variables not allowed
+
+same_width(L) :-
+	!,
+	same_width2(L,0).
+
+same_width2([A:box(width => DX)|B],RX) :-
+	!,
+	SX = get_size(A).1,
+	RX <- max(num(SX),RX),
+	DX <- RX,
+	same_width2(B,RX).
+	
+same_width2([]).
+
+
+num(X) -> root_sort(X).
+
+
+find_size(Box:box(width =>DX,height=>DY)) :-
+        (
+	    Box :< t_box,!,
+	    Box = @(text => Text,font_id => F,
+	            h_space => H, v_space => V,
+		    offset => Offset),
+	    !,
+	    xQueryTextExtents(default_display,Font:text_font(F),Text,
+	                      font_ascent => FA, font_descent => FD,
+			      text_width => W),
+	    H = {d_h_space;real},
+	    V = {d_v_space;real},
+	    Offset = {d_offset; real},
+	    !,
+	    DX = {W + H + abs(Offset); real},
+	    DY = {FA + FD + V;real},
+	    !
+	;
+	    DX = {10;real},
+	    DY = {10;real},
+	    !
+	).
+
+get_size(Box:box(width =>DX,height=>DY)) -> (SX,SY) |
+        (
+	    Box :< t_box,!,
+	    Box = @(text => Text,font_id => F,
+	            h_space => H, v_space => V),
+	    !,
+	    xQueryTextExtents(default_display,Font:text_font(F),Text,
+	                      font_ascent => FA, font_descent => FD,
+			      text_width => W),
+	    H = {d_h_space;real},
+	    V = {d_v_space;real},
+	    !,
+	    SX = {W + H;real} & num(DX),
+	    SY = {FA + FD + V;real} & num(DY),
+	    !
+	;
+	    SX = {10;real} & num(DX),
+	    SY = {10;real} & num(DY),
+	    !
+	).
+
+move_widget(Box:widget,X,Y) :-
+	xMoveWindow(Box.window,X,Y),
+        Box.1 <- num(X),
+	Box.2 <- num(Y).
+
+
+global(id_counter <- 1)?
+gen_id -> num(id_counter) | id_counter <- id_counter + 1. 
+

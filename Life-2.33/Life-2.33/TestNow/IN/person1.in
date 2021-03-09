@@ -1,0 +1,12 @@
+Joe=person(today=>1992,yob=>1942)?
+
+Joe=person(age=>X)?
+Joe=person(today=>1992)?
+X=30?
+.
+Joe=human(today=>1992,yob=>1942)?
+
+Joe=human(age=>X)?
+Joe=human(today=>1992)?
+X=30?
+.

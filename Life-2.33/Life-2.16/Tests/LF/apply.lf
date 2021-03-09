@@ -1,0 +1,15 @@
+quadruple -> *(2=>4).
+pick_arg({5;3;7}).
+pick_func({quadruple;fact}).
+test :-	R=F(A),
+	pick_arg(A),
+	pick_func(F),
+	write(	'function ',F,
+		' applied to argument ',A,
+		' is ', R),
+	nl,
+	fail.
+
+fact(0) -> 1.
+fact(N:int) -> N*fact(N-1).
+

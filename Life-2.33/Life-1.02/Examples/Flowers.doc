@@ -1,0 +1,96 @@
+       
+
+                 DRAWING FLOWERS WITH REWRITE SYSTEMS                      
+                                                                             
+                                                                             
+ NAME:                                                                 
+     
+ flowers: a program that lets you draw floral compositions
+
+ This program is  based on the following book:                               
+                                                                             
+               THE ALGORITHMIC BEAUTY OF PLANTS                              
+                                                                             
+     by Przemyslaw Prusinkiewicz and Aristid Lindenmayer                     
+                (Springer Verlag,1990)                                       
+                                                                             
+ This book shows how the growth and shape of plants may be modeled using     
+ rewrite systems called Lindenmayer Systems (L-systems for short), and     
+ how these systems can be used to generate images.                           
+                                                                             
+ The kind of flowers that can be drawn with this program are obtained with a
+ variant of one of the grammars of this book.
+
+
+ USAGE
+
+ To start this program, just type 
+   > load("flowers") ?
+   > main ?                                     
+                  
+ After a while, a panel of 5 buttons appears.
+
+ 1- Drawing Init
+    Clicking on Drawing Init causes a panel to appear, containing the drawing
+    parameters.
+    X and Y are the coordinates of the starting point of the flower in the
+      window (in pixels); They may also be set by clicking in the drawing pad
+      when no drawing is being performed (see 4- Draw). The origin of the
+      window is its upper left corner. The X axis is left-right, the Y axis is
+      top-down. The Z axis goes inside the screen.
+    ax, ay, az are the next starting angle values: they correspond to rotations
+      of the initial turtle around the X,Y and Z axises (in degrees).
+    Complexity is an integer between 2 and 8: The higher this number, the more
+      complex the flower drawn. This numbers corresponds to the number of
+      derivations in the rewrite system. Adding 1 to the complexity makes the
+      flower about twice bigger. 
+    Zoom: It may be necessary to adjust the zoom factor if the complexity is
+      changed. 
+
+ 2- Palette
+    Clicking on Palette makes a new panel appear, with a color palette and
+    buttons describing the parts of the flower whose colors can be modified. 
+    Once one of these parts has been chosen, clicking on a new color makes its
+    color change immediately. 
+    The colors of the different parts of a flower in the process of being
+    drawn are always consistent with the colors shown in the palette.
+
+ 3- PostScript Output
+    Clicking on PostScript Output lets the user save the current drawing in a
+    PostScript file.
+
+ 4- Draw
+    Clicking on draw makes the drawing pad appear, and a flower being drawn.
+    Clicking in the drawing pad during the drawing makes it stop. 
+    Clicking in the drawing pad when no drawing is being performed sets the
+    starting point of the next flower to be drawn.
+
+ 5- Quit
+    Causes the program to stop.   
+
+
+ FILES 
+
+ The flowers.lf file contains the definition of the user interface and the
+ definition of the L-System used to draw the flowers.
+                                                                             
+ The other files are:                                                        
+ - flo_utils.lf : contains a number of utilities.                            
+ - flo_gram.lf  : contains the L-Systems translator and the predefined       
+                  symbols definitions                                        
+ - flo_xtools.lf: contains all the xToolkit: definition of button types,...  
+ - flo_custom.lf: contains all the customizable stuff: look of the interface,
+                  default values for the flowers.                            
+                                                                             
+                                                                             
+ flowers.lf is the main file of the demo. All the other files are 
+ automatically loaded if they are in the same directory. 
+                                                                             
+
+
+ AUTHOR 
+
+ Bruno Dumant          
+
+ Copyright 1992 Digital Equipment Corporation
+ All Rights Reserved

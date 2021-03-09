@@ -1,0 +1,8 @@
+#!/bin/sh
+if xset q | grep /usr/local/lib/life/Demo/Fonts > /dev/null ; \
+then exit 1 ; \
+else xset fp+ /usr/local/lib/life/Demo/Fonts 2>&1 | grep "bad font path" > \
+/dev/null ; \
+fi 
+
+

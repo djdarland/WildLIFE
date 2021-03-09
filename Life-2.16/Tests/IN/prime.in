@@ -1,0 +1,8 @@
+A=prime?
+A=11?
+.
+B=prime?
+B=9?
+.
+primes_to(100)?
+primes_to_gc(50)?

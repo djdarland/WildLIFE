@@ -1,0 +1,4 @@
+p :- write(aha), retract(p:-B),retract(p:-C).
+p :- write(boo).
+p?
+;

@@ -1,0 +1,8 @@
+A=[]?
+A=features(A)?
+.
+A=[1,2]?
+A=features(A)?
+.
+A=features(local_time)?
+.

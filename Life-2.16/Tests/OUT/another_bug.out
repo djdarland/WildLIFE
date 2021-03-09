@@ -1,0 +1,150 @@
+
+*** Yes
+> > 
+*** Yes
+> *** Tracing is turned on.
+
+*** Yes
+> T0001 C00    PVR: entering check_out with status 4 and term p(@)
+T0002 C00   prove p(@)
+T0002 C00    PVR: entering check_out with status 0 and term {1;2;3;4}
+T0003 C00   unify @ with {1;2;3;4}
+T0003 C00    setting up function call {1;2;3;4}
+T0004 C00    evaluate {1;2;3;4}
+T0004 C01     PVR: entering check_out with status 4 and term 1
+T0005 C01    unify @ with 1
+T0006 C01   unify @ with 1
+T0007 C01    PVR: entering check_out with status 0 and term write(1 + 1 = 1 + 2)
+T0007 C01    PVR: entering check_out with status 0 and term 1 + 1 = 1 + 2
+T0007 C01    PVR: entering check_out with status 0 and term 1 + 2
+T0007 C01    PVR: entering check_out with status 0 and term 1 + 1
+T0008 C01   prove built-in write(1 + 1 = 1 + 2)
+T0008 C01    setting up function call 1 + 2
+T0008 C01     PVR: entering check_out with status 4 and term 2
+T0008 C01     PVR: entering check_out with status 4 and term 1
+T0008 C01     setting up function call 1 + 1
+T0008 C01      PVR: entering check_out with status 4 and term 1
+T0008 C01      PVR: entering check_out with status 4 and term 1
+T0009 C01     evaluate 1 + 1
+T0009 C01     PVR: entering check_out with status 0 and term real
+T0009 C01     PVR: entering check_out with status 0 and term 2
+T0010 C01    evaluate 1 + 2
+T0010 C01    PVR: entering check_out with status 0 and term real
+T0010 C01    PVR: entering check_out with status 0 and term 3
+T0010 C01    PVR: entering check_out with status 0 and term write(2 = 3)
+T0010 C01    PVR: entering check_out with status 4 and term 2 = 3
+T0011 C01   prove built-in write(2 = 3)
+2 = 3T0012 C01    PVR: entering check_out with status 4 and term nl
+T0013 C01   prove nl
+T0013 C01    PVR: entering check_out with status 4 and term write("
+")
+T0014 C01   prove built-in write("
+")
+
+T0014 C01   PVR: entering check_out with status 4 and term fail
+T0015 C01  prove built-in fail
+T0015 C00     backtracking
+T0016 C00    evaluate {2;3;4}
+T0016 C01     PVR: entering check_out with status 4 and term 2
+T0017 C01    unify @ with 2
+T0018 C01   unify @ with 2
+T0019 C01    PVR: entering check_out with status 0 and term write(2 + 1 = 2 + 2)
+T0019 C01    PVR: entering check_out with status 0 and term 2 + 1 = 2 + 2
+T0019 C01    PVR: entering check_out with status 0 and term 2 + 2
+T0019 C01    PVR: entering check_out with status 0 and term 2 + 1
+T0020 C01   prove built-in write(2 + 1 = 2 + 2)
+T0020 C01    setting up function call 2 + 2
+T0020 C01     PVR: entering check_out with status 4 and term 2
+T0020 C01     PVR: entering check_out with status 4 and term 2
+T0020 C01     setting up function call 2 + 1
+T0020 C01      PVR: entering check_out with status 4 and term 1
+T0020 C01      PVR: entering check_out with status 4 and term 2
+T0021 C01     evaluate 2 + 1
+T0021 C01     PVR: entering check_out with status 0 and term real
+T0021 C01     PVR: entering check_out with status 0 and term 3
+T0022 C01    evaluate 2 + 2
+T0022 C01    PVR: entering check_out with status 0 and term real
+T0022 C01    PVR: entering check_out with status 0 and term 4
+T0022 C01    PVR: entering check_out with status 0 and term write(3 = 4)
+T0022 C01    PVR: entering check_out with status 4 and term 3 = 4
+T0023 C01   prove built-in write(3 = 4)
+3 = 4T0024 C01    PVR: entering check_out with status 4 and term nl
+T0025 C01   prove nl
+T0025 C01    PVR: entering check_out with status 4 and term write("
+")
+T0026 C01   prove built-in write("
+")
+
+T0026 C01   PVR: entering check_out with status 4 and term fail
+T0027 C01  prove built-in fail
+T0027 C00     backtracking
+T0028 C00    evaluate {3;4}
+T0028 C01     PVR: entering check_out with status 4 and term 3
+T0029 C01    unify @ with 3
+T0030 C01   unify @ with 3
+T0031 C01    PVR: entering check_out with status 0 and term write(3 + 1 = 3 + 2)
+T0031 C01    PVR: entering check_out with status 0 and term 3 + 1 = 3 + 2
+T0031 C01    PVR: entering check_out with status 0 and term 3 + 2
+T0031 C01    PVR: entering check_out with status 0 and term 3 + 1
+T0032 C01   prove built-in write(3 + 1 = 3 + 2)
+T0032 C01    setting up function call 3 + 2
+T0032 C01     PVR: entering check_out with status 4 and term 2
+T0032 C01     PVR: entering check_out with status 4 and term 3
+T0032 C01     setting up function call 3 + 1
+T0032 C01      PVR: entering check_out with status 4 and term 1
+T0032 C01      PVR: entering check_out with status 4 and term 3
+T0033 C01     evaluate 3 + 1
+T0033 C01     PVR: entering check_out with status 0 and term real
+T0033 C01     PVR: entering check_out with status 0 and term 4
+T0034 C01    evaluate 3 + 2
+T0034 C01    PVR: entering check_out with status 0 and term real
+T0034 C01    PVR: entering check_out with status 0 and term 5
+T0034 C01    PVR: entering check_out with status 0 and term write(4 = 5)
+T0034 C01    PVR: entering check_out with status 4 and term 4 = 5
+T0035 C01   prove built-in write(4 = 5)
+4 = 5T0036 C01    PVR: entering check_out with status 4 and term nl
+T0037 C01   prove nl
+T0037 C01    PVR: entering check_out with status 4 and term write("
+")
+T0038 C01   prove built-in write("
+")
+
+T0038 C01   PVR: entering check_out with status 4 and term fail
+T0039 C01  prove built-in fail
+T0039 C00     backtracking
+T0040 C00    evaluate {4}
+T0040 C00     PVR: entering check_out with status 4 and term 4
+T0041 C00    unify @ with 4
+T0042 C00   unify @ with 4
+T0043 C00    PVR: entering check_out with status 0 and term write(4 + 1 = 4 + 2)
+T0043 C00    PVR: entering check_out with status 0 and term 4 + 1 = 4 + 2
+T0043 C00    PVR: entering check_out with status 0 and term 4 + 2
+T0043 C00    PVR: entering check_out with status 0 and term 4 + 1
+T0044 C00   prove built-in write(4 + 1 = 4 + 2)
+T0044 C00    setting up function call 4 + 2
+T0044 C00     PVR: entering check_out with status 4 and term 2
+T0044 C00     PVR: entering check_out with status 4 and term 4
+T0044 C00     setting up function call 4 + 1
+T0044 C00      PVR: entering check_out with status 4 and term 1
+T0044 C00      PVR: entering check_out with status 4 and term 4
+T0045 C00     evaluate 4 + 1
+T0045 C00     PVR: entering check_out with status 0 and term real
+T0045 C00     PVR: entering check_out with status 0 and term 5
+T0046 C00    evaluate 4 + 2
+T0046 C00    PVR: entering check_out with status 0 and term real
+T0046 C00    PVR: entering check_out with status 0 and term 6
+T0046 C00    PVR: entering check_out with status 0 and term write(5 = 6)
+T0046 C00    PVR: entering check_out with status 4 and term 5 = 6
+T0047 C00   prove built-in write(5 = 6)
+5 = 6T0048 C00    PVR: entering check_out with status 4 and term nl
+T0049 C00   prove nl
+T0049 C00    PVR: entering check_out with status 4 and term write("
+")
+T0050 C00   prove built-in write("
+")
+
+T0050 C00   PVR: entering check_out with status 4 and term fail
+T0051 C00  prove built-in fail
+
+*** No
+> 

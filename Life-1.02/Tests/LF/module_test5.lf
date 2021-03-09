@@ -1,0 +1,15 @@
+
+module("a")?
+
+public(aa)?
+
+aa(c=>d).
+
+module("b")?
+
+public(bb,c,e)?
+private_feature(c,e,i,j)?
+
+bb(c=>d,e=>Z,g=>Y) :- Y.i=123, h(Z).
+
+h(@(j=>111)).

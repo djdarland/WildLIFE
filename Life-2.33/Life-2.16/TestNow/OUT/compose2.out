@@ -1,0 +1,22 @@
+
+*** Yes
+> > 
+*** No
+> > 
+*** Yes
+X = comp(func1 => comp(func1 => succ,func2 => succ),func2 => succ).
+--1> 
+*** No
+> 
+*** No
+> > 
+*** Yes
+X = comp(func1 => comp(func1 => comp(func1 => comp(func1 => succ,func2 => succ),
+                                     func2 => succ),
+                       func2 => comp(func1 => comp(func1 => succ,func2 => succ),
+                                     func2 => succ)),
+         func2 => succ).
+
+--1> 
+*** No
+> 

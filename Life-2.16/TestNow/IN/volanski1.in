@@ -1,0 +1,5 @@
+my_apply("bidon", [_,_,_,tree(c,[b,c],[]),tree(y),tree(y),tree(c,[],[t,y])])?
+.
+my_apply("det_nom",[_,_,_,tree(det,[1],[]),tree(adjq,[],[2]),tree(adjq,3=>[3]),tree(nom)])?
+.
+

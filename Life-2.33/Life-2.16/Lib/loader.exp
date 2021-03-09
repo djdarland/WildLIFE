@@ -1,0 +1,45 @@
+%	$Id: loader.exp,v 1.2 1994/12/08 23:58:39 duchier Exp $	
+module("parser")?
+
+public(load_life,load_l,load_gr,load_in)?
+
+load_exp("parser")?
+
+:-(load_life(_A: string),,(=(_B,current_module),,(exists_file(_A),,(open_in(_A,_C),,(load_first(_C),,(close(_C),set_module(_B))))))).
+
+:-(load_first(_A),,(=(_B,first_token),;(,(=(_B,[]),,(!,,(nl,,(nl,,(write("Empty File"),nl))))),;(,(read_new_expr(_B,_C,_D,_E,_F),,(cond(_C,cond(:==(_E,assertion),assert_declaration(_D,_A),prove_query(_D,_A)),,(!,write_syntax_error(_A))),;(,(=(_F,[]),,(!,,(nl,,(write("*** File '",.(_A,input_file_name),"' loaded"),nl)))),fail))),load_next(_A))))).
+
+:-(load_next(_A),;(,(read_new_expr([copy_term(rest_token)|`(next_token)],_B,_C,_D,_E),,(cond(_B,cond(:==(_D,assertion),assert_declaration(_C,_A),prove_query(_C,_A)),,(!,write_syntax_error(_A))),;(,(=(_E,[]),,(!,,(nl,,(write("*** File '",.(_A,input_file_name),"' loaded"),nl)))),fail))),load_next(_A))).
+
+non_strict(prove_query)?
+
+:-(prove_query(_A,_B),;(,(=(_C,copy_term(rest_chars)),,(=(_D,copy_term(rest_token)),,(open_in("stdin",@),,(retract(:-(load_query,@)),,(assert(:-(load_query,_A)),,(=(@,call_once(load_query)),,(set_input(_B),,(check_changes(_C,_D),fail)))))))),succeed)).
+
+dynamic(load_query)?
+
+load_query.
+
+:-(check_changes(_A,_B),,(<<-(rest_chars,_A),<<-(rest_token,_B))).
+
+:-(assert_declaration(_A,_B),;(,(term_xpand(_A,_C),,(!,cond(:=<(_C,list),maprel(assert,_C),assert(_C)))),,(nl_err,,(write_err("*** Error in term expansion in file '",.(_B,input_file_name),"'"),nl_err)))).
+
+:-(write_syntax_error(_A),,(close(_A),,(nl_err,,(write_err("*** Syntax error near line ",.(_A,line_count)," in file '",.(_A,input_file_name),"'"),,(nl_err,fail))))).
+
+:-(load_l(_A),loadpath2(_A,{".lf";""},true)).
+
+:-(load_gr(_A),loadpath2(_A,".gr",true)).
+
+:-(load_in(_A),loadpath2(_A,".in",false)).
+
+non_strict(loadpath2)?
+
+:-(loadpath2(_A,_B,_C),,(cond(:=<(_A,string),=(_D,_A),=(_D,psi2str(_A))),,(=(_E,strcon(_D,eval(_B))),;(,(exists_file(_E),,(!,load_custom2(_E,_C))),,(exists_file(_F: strcon(load_path,_E)),,(!,load_custom2(_F,_C))))))).
+
+:-(loadpath2(_A),,(write_err("*** No file '",_A,"' found"),nl_err)).
+
+:-(load_custom2(_A,true),,(!,;(,(loaded_file(_A),,(!,,(write("*** File '",_A,"' was already loaded"),nl))),,(load_life(_A),assert(loaded_file(_A)))))).
+
+:-(load_custom2(_A,false),,(exists_file(_A),,(!,load_life(_A)))).
+
+,(assert(loaded_file),retract(loaded_file))?
+

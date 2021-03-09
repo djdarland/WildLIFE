@@ -1,0 +1,5 @@
+non_strict(a)?
+a(X).
+
+b(X).
+

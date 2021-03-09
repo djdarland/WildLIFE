@@ -1,0 +1,28 @@
+% FILE. . . . . /_/hassan/_/life/ok/soap.life
+% EDIT BY . . . Hassan Ait-Kaci
+% ON MACHINE. . Prl316
+% STARTED ON. . Thu Mar 12 11:03:02 1992
+
+% Last modified on Mon Feb 22 05:05:16 1993 by Rmeyer
+%      modified on Thu Mar 12 11:03:10 1992 by Hassan
+
+soap_opera := tv_show(characters => [H,W,M],
+                      husband => H:dick,
+                      wife => W:alcoholic & long_lost_sister(H),
+                      mailman => M)
+            | lovers(M,H),blackmail(W,M).
+
+person := {gay;alcoholic;drug_addict}.
+dick   <| gay.
+jane   <| alcoholic.
+harry  <| drug_addict.
+
+long_lost_sister(gay) -> {cleopatra;jane}.
+
+lovers(harry,gay).
+
+blackmail(jane,X:drug_addict) :- lovers(X,dick).
+
+terrible(soap_opera).
+
+soap_cast(C) :- terrible(tv_show(characters => C:list)).

@@ -1,0 +1,7 @@
+:: I:int | write(I," ").
+
+
+:: C:cons | write(C.1), nl.
+
+fact(0) -> 1.
+fact(N:int) -> N*fact(N-1).

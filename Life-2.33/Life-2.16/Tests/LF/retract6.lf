@@ -1,0 +1,14 @@
+
+f(1)  -> 'First result---'.
+f(2)  -> 'Second result--'.
+f(3)  -> 'Third result---'.
+
+test2 :-
+         retract((f(H) -> C)),
+         nl,write(B),nl,
+         listing(f),nl,
+         B={3;2},
+         A=f(B),
+         write(A),nl.
+
+dynamic(f)?

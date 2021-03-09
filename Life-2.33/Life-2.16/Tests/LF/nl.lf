@@ -1,0 +1,419 @@
+% FILE. . . . . /_/udir7/_/hassan/life/nl.life
+% EDIT BY . . . Hassan Ait-Kaci
+% ON MACHINE. . Prlp22
+% STARTED ON. . Thu Mar 28 14:33:16 1991
+
+%  Last modified on Mon Feb 22 04:47:50 1993 by Rmeyer
+%       modified on Wed Feb 26 18:59:18 1992 by Hassan
+
+% The Type Hierarchy:
+
+human_disease <| disease.
+
+food := {vegetable;meat}.
+
+inanimate := {food;information;tree}.
+
+inanimate <| projectile.
+
+animate := {human;inhuman;you}.
+
+code <| computer.
+
+inhuman := {dog;computer}.
+
+% The Functions:
+
+can_catch(human_disease) -> human.
+can_catch(disease) -> animate.
+can_catch(frisbee) -> {human; dog}.
+can_catch(projectile) -> human.
+can_catch(@) -> animate.
+
+eaten_by(vegetarian) -> vegetable.
+eaten_by(carnivore) -> meat.
+eaten_by(omnivore) -> food.
+eaten_by(comp) -> information.
+
+% The Parser:
+
+nl_parse(List, Cat) :-
+	lookup(List, Defs),
+	nl_parsed(Defs, Cat, []).
+
+nl_parsed([Def|Rest], Cat, Rest) :-
+	grammar_rule2(Def, Cat, Def).
+
+nl_parsed([Def|Rest], Cat, S1) :-
+	grammar_rule(Def, Cat, Def, Needing),
+	nl_parsed(Rest, Needing, S1).
+
+nl_parsed([Def|Rest], Cat, S1) :-
+	grammar_rule2(Def, Cat, Cat1),
+	nl_parsed([Def|Rest], Cat1, S1).
+
+nl_parsed([Def|Rest], Cat, S1) :-
+	grammar_rule(Def, Cat, Cat1, Cat2),
+	nl_parsed([Def|Rest], Cat1, S2),
+	nl_parsed(S2, Cat2, S1).
+
+grammar_rule2(@,
+	par(parsetree => tree(label => par, lhs => X), anaphora_out => B),
+	X:paragraph(anaphora_in => [], anaphora_out => B)).
+
+grammar_rule(@,
+	paragraph(anaphora_in => A, anaphora_out => B, 
+		  parsetree => tree(label => paragraph, lhs => X, rhs => Y)),
+	X:s(anaphora_in => A, anaphora_out => B),
+	Y:sstop).
+
+grammar_rule2([], sstop, []).
+
+grammar_rule(@,
+	paragraph(anaphora_in => A, anaphora_out => C, 
+		  parsetree => tree(label => paragraph, lhs => X, rhs => Y)),
+	X:s(anaphora_in => A, anaphora_out => B),
+	moreps(anaphora_in => B, anaphora_out => C, parsetree => Y)).
+
+grammar_rule([],
+	moreps(anaphora_in => A, anaphora_out => B,
+		  parsetree => tree(label => moreps, lhs => X, rhs => Y)),
+	X:[],
+	paragraph(anaphora_in => A, anaphora_out => B, parsetree => Y)).
+	
+grammar_rule2(@,
+	s(form => X, parsetree => Y, anaphora_in => A, anaphora_out => B),
+	ss(form => X, parsetree => Y, anaphora_in => A, anaphora_out => B)).
+
+grammar_rule(@,
+	s(form => conj(form => Z), anaphora_in => A, anaphora_out => C,
+	  parsetree => tree(label => s, lhs => X, rhs => Y)),
+	ss(parsetree => X, form => Z, anaphora_in => A, anaphora_out => B),
+	cs(parsetree => Y, form => Z, anaphora_in => B, anaphora_out => C)).
+	
+grammar_rule(sconj,
+	cs(form => Z, parsetree => tree(label => cs, lhs => X, rhs => Y),
+	   anaphora_in => A, anaphora_out => B),
+	X:sconj,
+	s(parsetree => Y, form => Z, anaphora_in => A, anaphora_out => B)).
+	
+grammar_rule({art;n;adj;pn;pron},
+	ss(form => statement, anaphora_in => A, anaphora_out => C,
+	   parsetree => tree(label => ss, lhs => X, rhs => Y)),
+	np(number => N, class=>T, anaphora_in => A, anaphora_out => B, parsetree => X),
+	vp(number => N, subject=>T, anaphora_in =>B, anaphora_out => C, parsetree => Y)).
+
+grammar_rule2({iv;tv},
+	ss(form => command, anaphora_in => A, anaphora_out => B,
+	   parsetree => tree(label => ss, lhs => [you], rhs => X)),
+	vp(subject => you, tense => present, number => plural, parsetree => X,
+	   anaphora_in => A, anaphora_out => B)).
+
+grammar_rule(adv,
+	ss(form => statement, anaphora_in => A, anaphora_out => B,
+	   parsetree => tree(label => ss, lhs => X, rhs => Y)),
+	X:adv,
+	ss(parsetree => Y, anaphora_in => A, anaphora_out => B)).
+
+grammar_rule(modal,
+	ss(form => modal_question, anaphora_in => A, anaphora_out => C,
+	   parsetree => tree(label => ss, lhs => X, rhs => Y)),
+	mnp(class=>S, parsetree => X, anaphora_in => A, anaphora_out => B),
+	vp(number => plural, tense => present, subject=>S, parsetree => Y,
+		  anaphora_in => B, anaphora_out => C)).
+
+grammar_rule2(interj,
+	ss(form => interj, parsetree => tree(label => ss, lhs => X),
+           anaphora_in => A, anaphora_out => A),
+	X:interj).
+
+grammar_rule(interj,
+	ss(form => interj, parsetree => tree(label => ss, lhs => X, rhs => Y),
+	   anaphora_in => A, anaphora_out => B),
+	X:interj, 
+	s(parsetree => Y, anaphora_in => A, anaphora_out => B)).
+
+grammar_rule(modal,
+	mnp(class => T, parsetree => tree(label => np, rhs => X, lhs => Y),
+		   anaphora_in => A, anaphora_out => B),
+	X:modal,
+	snp(class => T, parsetree => Y, anaphora_in => A, anaphora_out => B)).
+
+grammar_rule2({art;adj;n;pn;pron},
+	np(number => N, class => T, parsetree => tree(label => np, lhs => X),
+	   anaphora_in => A, anaphora_out => B),
+	snp(number => N, class => T, parsetree => X,
+	    anaphora_in => A, anaphora_out => B)).
+	
+grammar_rule({art;adj;n;pn;pron},
+	np(number => @, class => @, anaphora_in => A, anaphora_out => C,
+	   parsetree => tree(label => np, lhs => X, rhs => Y)),
+	snp(parsetree => X, anaphora_in => A, anaphora_out => B),
+	cnp(parsetree => Y, anaphora_in => B, anaphora_out => C)).
+
+grammar_rule(art,
+	snp(number => N, class => T, anaphora_in => A, anaphora_out => B,
+	    parsetree => tree(label => snp, lhs => X, rhs => Y)),
+	X:art(number => N),
+	ssnp(number => N, class => T, parsetree => Y, anaphora_in => A, 
+	     anaphora_out => B)).
+
+grammar_rule2({adj;n},
+	snp(number => N, class => T, anaphora_in => A, anaphora_out => B,
+	    parsetree => tree(label => snp, lhs => X)),
+	ssnp(number => N, class => T, parsetree => X, anaphora_in => A, 
+	    anaphora_out => B)).
+% N should be plural above, but breaks eating function calls then.
+
+grammar_rule2(pn,
+	snp(number => N, class => T, anaphora_in => A, anaphora_out => [X|A],
+	    parsetree => tree(label => snp, lhs => X)),
+	X:pn(number => N, class => T)).
+	
+grammar_rule2(pron,
+	snp(number => N, class => T, anaphora_in => A, anaphora_out => A,
+	    parsetree => tree(label => snp, lhs => Anaphor)),
+	pron(number => N, gender => G, class => T)) :-
+   member(Anaphor:@(number => N, gender => G, class => T), A).
+	
+grammar_rule2(n, 
+	ssnp(number => N, class => T, anaphora_in => A, anaphora_out => [X|A],
+	     parsetree => tree(label => ssnp, lhs => X)),
+	X:n(number => N, class => T)).
+
+grammar_rule(n,
+	ssnp(number=>N, class => T, anaphora_in => A, anaphora_out => B,
+	     parsetree => tree(label => ssnp, lhs => X, rhs => Y)),
+	X:n(number=>N, class => T),
+	pp(parsetree => Y, anaphora_in => [X|A], anaphora_out => B)).
+
+grammar_rule(adj,
+	ssnp(number => N, class => T, anaphora_in => A, anaphora_out => B,
+	     parsetree => tree(label => ssnp, lhs => X, rhs => Y)),
+	X:adj, 
+	ssnp(number=>N, class => T, parsetree => Y, anaphora_in => A,
+             anaphora_out => B)).
+
+grammar_rule(conj,
+	cnp(parsetree => tree(label => cnp, lhs => X, rhs => Y),
+		anaphora_in => A, anaphora_out => B),
+	X:conj,
+	np(parsetree => Y, anaphora_in => A, anaphora_out => B)).
+
+grammar_rule2({iv;tv;modal;adv},
+	vp(number => N, subject => S, tense => T, anaphora_in => A, anaphora_out => B,
+	   parsetree => tree(label => vp, lhs => X)),
+	svp(number => N, subject => S, tense => T, parsetree => X, anaphora_in => A, 
+            anaphora_out => B)).
+
+grammar_rule({iv;tv;modal;adv},
+	vp(number => N, subject => S, tense => T, anaphora_in => A, anaphora_out => C,
+	   parsetree => tree(label => vp, lhs => X, rhs => Y)),
+	svp(parsetree => X, number => N, subject => S, tense => T, 
+		anaphora_in => A, anaphora_out => B),
+	cvp(parsetree => Y, number => N, subject => S, tense => T,
+		anaphora_in => B, anaphora_out => C)).
+
+grammar_rule2(iv,
+	svp(number => N, subject => S, tense => T, anaphora_in => A, anaphora_out => A,
+	    parsetree => tree(label => svp, lhs => X)),
+	X:iv(number => N, subject => S, tense => T)).
+
+grammar_rule(iv,
+	svp(number => N, subject => S, tense => T, anaphora_in => A, anaphora_out => B,
+	    parsetree => tree(label => svp, lhs => X, rhs => Y)),
+	X:iv(number => N, subject => S, tense => T),
+	pp(parsetree => Y, anaphora_in => A, anaphora_out => B)).
+
+grammar_rule(iv,
+	svp(number => N, subject => S, tense => T, anaphora_in => A, anaphora_out => A,
+	    parsetree => tree(label => svp, lhs => X, rhs => Y)),
+	X:iv(number => N, subject => S, tense => T),
+	Y:adv).
+
+grammar_rule(tv,
+	svp(number => N, subject => S, tense => T, anaphora_in => A, anaphora_out => B,
+	    parsetree => tree(label => svp, lhs => X, rhs => Y)),
+	X:tv(number => N, subject => S, object => O, tense => T),
+	np(class=>O, parsetree => Y, anaphora_in => A, anaphora_out => B)).
+
+grammar_rule(modal,
+	svp(number => @, subject => S, tense => modal, anaphora_in => A, 
+            anaphora_out => B,
+	    parsetree => tree(label => svp, lhs => X, rhs => Y)),
+	X:modal,
+	svp(subject => S, number => plural, tense => present, parsetree => Y,
+            anaphora_in => A, anaphora_out => B)).
+
+grammar_rule(adv,
+	svp(number => N, subject => S, anaphora_in => A, 
+            anaphora_out => B,
+	    parsetree => tree(label => svp, lhs => X, rhs => Y)),
+	X:adv,
+	svp(subject => S, number => N, tense => past, parsetree => Y,
+            anaphora_in => A, anaphora_out => B)).
+
+grammar_rule(tv,
+	svp(number => N, subject => S, tense => T, anaphora_in => A, anaphora_out => B,
+	    parsetree => tree(label => svp, lhs => X, rhs => Y)),
+	X:tv(number => N, subject => S, object=>O, tense => T),
+	ppandnp(class=>O, parsetree => Y, anaphora_in => A, anaphora_out => B)).
+
+grammar_rule(prep,
+	ppandnp(class => S, anaphora_in => A, anaphora_out => C,
+	        parsetree => tree(label => ppandnp, lhs => X, rhs => Y)),
+	pp(parsetree => X, anaphora_in => A, anaphora_out => B),
+	np(class => S, parsetree => Y, anaphora_in => B, anaphora_out => C)).
+
+grammar_rule(conj,
+	cvp(number => N, subject => S, tense => T, anaphora_in => A, anaphora_out => B,
+	    parsetree => tree(label => cvp, lhs => X, rhs => Y)),
+	X:conj,
+	vp(parsetree => Y, number => N, subject => S, tense => T,
+		anaphora_in => A, anaphora_out => B)).
+
+grammar_rule(prep, 
+	pp(parsetree => tree(label => pp, lhs => X, rhs => Y,
+           anaphora_in => A, anaphora_out => B)),
+	X:prep,
+	np(parsetree => Y, anaphora_in => A, anaphora_out => B)).
+
+% The Lexicon:
+
+dictionary(flu, n(number => singular, class => disease)).
+dictionary(malaria, n(number => singular, class => human_disease)).
+dictionary(frisbee, n(number => singular, class => frisbee)).
+dictionary(monk, n(number => singular, class => human(eating_habit => vegetarian))).
+dictionary(monks, n(number => plural, class => human(eating_habit => vegetarian))).
+dictionary(lunch, n(number => singular, class => food)).
+dictionary(lunches, n(number => plural, class => food)).
+dictionary(steak, n(number => singular, class => meat)).
+dictionary(steaks, n(number => plural, class => meat)).
+dictionary(salad, n(number => singular, class => vegetable)).
+dictionary(file, n(number => singular, class => information)).
+dictionary(files, n(number => plural, class => information)).
+dictionary(compiler, n(number => singular, 
+		       class => code(eating_habit => comp))).
+dictionary(pascal, n(number => singular, 
+		       class => code(eating_habit => comp))).
+dictionary(computer, n(number => singular, 
+		       class => computer(eating_habit => comp))).
+dictionary(computers, n(number => plural, 
+			class => computer(eating_habit => comp))).
+
+dictionary(mary, pn(number => singular, gender => female, 
+		    class => human(eating_habit => omnivore))).
+dictionary(john, pn(number => singular, gender => male,
+		    class => human(eating_habit => omnivore))).
+dictionary(pascal, pn(number => singular, gender => male,
+		      class => human(eating_habit => omnivore))).
+dictionary(spot, pn(number => singular, 
+		   class => dog(eating_habit => carnivore))).
+dictionary(life, pn(number => singular, gender => neuter,
+		   class => code(eating_habit => comp))).
+
+dictionary(she, pron(number => singular, gender => female, class => human)).
+dictionary(he, pron(number => singular, gender => male, class => human)).
+dictionary(it, pron(number => singular, gender => male, class => {inanimate;inhuman})).
+
+dictionary(walks, iv(subject => animate, number => singular, tense => present)).
+dictionary(walk, iv(subject => animate, number => plural, tense => present)).
+dictionary(walked, iv(subject => animate, tense => past)).
+dictionary(runs, iv(subject => animate, number => singular, tense => present)).
+dictionary(run, iv(subject => animate, number => plural, tense => present)).
+dictionary(ran, iv(subject => animate, tense => past)).
+dictionary(compile, iv(subject => animate, number => plural, tense => present)).
+dictionary(compiles, iv(subject => animate, number => singular, tense => present)).
+dictionary(compiled, iv(subject => animate, tense => past)).
+
+dictionary(compile, tv(subject => animate, number => plural, object => file,
+		       tense => present)).
+dictionary(compiles, tv(subject => animate, number => singular, object => file,
+			tense => present)).
+dictionary(compiled, tv(subject => animate, object => file, tense => past)).
+dictionary(delete, tv(subject => animate, number => plural, object => file,
+		       tense => present)).
+dictionary(deletes, tv(subject => animate, number => singular, object => file,
+		       tense => present)).
+dictionary(deleted, tv(subject => animate, object => file, tense => past)).
+dictionary(eat, tv(subject => animate(eating_habit => EH), 
+		    object => {food;information} & eaten_by(EH),
+		    number => plural, tense => present)).
+dictionary(eats, tv(subject => animate(eating_habit => EH),
+		    object => {food;information} & eaten_by(EH),
+		    number => singular, tense => present)).
+dictionary(ate, tv(subject => animate(eating_habit => EH), 
+		    object => {food;information} & eaten_by(EH),
+		    tense => past)).
+dictionary(catch, tv(subject => animate & can_catch(Y),
+                     object => Y:{projectile; disease},
+		     number => plural, tense => present)).
+dictionary(catches, tv(subject => animate & can_catch(Y),
+                       object => Y:{projectile; disease},
+		       number => singular, tense => present)).
+dictionary(caught, tv(subject => animate & can_catch(Y),
+                       object => Y:{projectile; disease},
+		       tense => past)).
+
+dictionary(my, art(class => human)).
+dictionary(her, art(class => human)).
+dictionary(his, art(class => human)).
+dictionary(its, art).
+dictionary(the, art).
+dictionary(a, art(number => singular)).
+dictionary(some, art(number => plural)).
+dictionary(many, art(number => plural)).
+
+dictionary(small, adj).
+dictionary(big, adj).
+dictionary(fast, adj).
+dictionary(slow, adj).
+dictionary(bad, adj).
+dictionary(good, adj).
+
+dictionary(did, modal).
+dictionary(should, modal).
+dictionary(could, modal).
+dictionary(would, modal).
+dictionary(can, modal).
+dictionary(will, modal).
+
+dictionary(and, conj).
+dictionary(or, conj).
+
+dictionary(and, sconj).
+dictionary(but, sconj).
+dictionary(or, sconj).
+
+dictionary(slowly, adv).
+dictionary(quickly, adv).
+dictionary(correctly, adv).
+
+dictionary(in, prep).
+dictionary(over, prep).
+dictionary(from, prep).
+dictionary(of, prep).
+dictionary(to, prep).
+dictionary(who, prep).
+dictionary(with, prep).
+dictionary(which, prep).
+
+dictionary(what, wh_word).
+dictionary(when, wh_word).
+dictionary(why, wh_word).
+dictionary(who, wh_word).
+dictionary(how, wh_word).
+
+dictionary(hey, interj).
+dictionary(how, interj).
+dictionary(why, interj).
+dictionary(yes, interj).
+dictionary(no, interj).
+
+dictionary([], []).
+
+lookup([], []).
+lookup([Word|Rest], [Def|More]) :-
+	dictionary(Word, Def),
+	lookup(Rest, More).
+

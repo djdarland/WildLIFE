@@ -1,0 +1,13 @@
+test(1000)?
+
+
+test(2000)?
+
+
+A=program?
+write(i,n,init_value)?
+init_value=400?
+execute(program)?
+
+
+

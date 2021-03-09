@@ -1,0 +1,53 @@
+
+*** Yes
+> > 
+*** Yes
+A = -35.
+--1> 
+*** No
+> 
+*** Yes
+W = -35.
+--1> 
+*** No
+> 
+*** Yes
+> 
+*** No
+> 
+*** Yes
+A = real~, B = real~.
+--1> 
+*** Yes
+A = 100, B = -101.
+--1> 
+*** No
+A = real~, B = real~.
+--1> 
+*** Yes
+A = -101, B = 100.
+--1> 
+*** No
+A = real~, B = real~.
+--1> 
+*** No
+A = real~, B = real~.
+--1> 
+*** No
+A = real~, B = real~.
+--1> 
+*** No
+A = real~, B = real~.
+--1> 
+*** No
+A = real~, B = real~.
+--1> 
+*** No
+A = real~, B = real~.
+--1> 
+*** No
+A = real~, B = real~.
+--1> 
+*** No
+A = real~, B = real~.
+--1> 

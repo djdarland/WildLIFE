@@ -1,0 +1,23 @@
+module("a")?
+:: p(aha=>1).
+module("b")?
+:: p(boo=>2).
+module("user")?
+open("a")?
+open("b")?
+A=p?
+
+module("a")?
+public(p)?
+module("b")?
+public(p)?
+module("user")?
+A=p?
+
+listing(p)?
+module("a")?
+A=p?
+
+module("b")?
+A=p?
+

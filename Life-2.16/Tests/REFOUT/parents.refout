@@ -1,0 +1,43 @@
+
+*** Yes
+> > 
+*** Yes
+A = [int].
+--1> 
+*** No
+> 
+*** Yes
+A = [real].
+--1> 
+*** No
+> 
+*** Yes
+A = [string].
+--1> 
+*** No
+> 
+*** Yes
+A = [real].
+--1> 
+*** No
+> 
+*** Yes
+A = [built_in].
+--1> 
+*** No
+> 
+*** Yes
+A = [built_in].
+--1> 
+*** No
+> 
+*** Yes
+A = [list].
+--1> 
+*** No
+> 
+*** Yes
+A = [list].
+--1> 
+*** No
+> 

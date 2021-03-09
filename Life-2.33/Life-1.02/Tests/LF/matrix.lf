@@ -1,0 +1,47 @@
+% Build a matrix for with all left, right, up & down co-references.
+
+valid(@(column => X:int, row => Y:int)) -> X>0 and Y>0.
+
+matrix(C) :-
+	valid(C),
+	!,
+	C = square(up=>U,left=>L,column=>X,row=>Y),
+	U=@(column=>X-1,row=>Y,down=>C), matrix(U),
+	L=@(column=>X,row=>Y-1,right=>C), matrix(L).
+matrix(edge).
+
+main(X,Y,C) :-
+	matrix(C:@(column=>X,row=>Y)),
+	write(C), nl,
+	% Matrix has an enormous amount of sharing
+	% and all links have to be followed, even if
+	% the term is not very big!
+	write(term_size(C)), nl.
+
+
+% Return a list containing the values of all features of X:
+feature_values(X) -> map(project(2=>X),features(X)).
+
+% Sum all the elements in a list:
+sum([V|Vs]) -> V+sum(Vs).
+sum([]) -> 0.
+
+term_size(X) -> N |
+   V<<-@,                  % Create an anonymous persistent
+                           % term for the result.
+   ( V<<-term_explore(X,Seen), % Calculate the size.
+     fail                  % Remove effects of calculation.
+   ;
+     N=copy_term(V)        % Copy the result back to a normal
+   ).                      % logical term.
+
+
+term_explore(X,Seen) -> V |
+   ( X===Seen,             % Skip already-counted nodes.
+     !,
+     V=0
+   ;
+     FV=feature_values(X), % Get the features of X.
+     X<-Seen,              % Mark X as having been counted.
+     V=1+sum(map(term_explore(2=>Seen),FV))
+   ).

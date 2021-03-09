@@ -1,0 +1,5 @@
+open("a","b")?
+listing(aa,bb)?
+X:aa, Y:bb?
+X=Y?
+

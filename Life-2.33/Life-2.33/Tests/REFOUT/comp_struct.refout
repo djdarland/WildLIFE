@@ -1,0 +1,113 @@
+testing: tata +>= toto
+       true
+testing: toto +>= tata
+       false
+testing: (@, @)+>=(_A, _A)
+       true
+testing: (_A, _A)+>=(@, @)
+       false
+testing: [@|@] +>= [_A,_A]
+       true
+testing: [_A|_A] +>= [@|@]
+       false
+testing: foo(a,s,d) +>= foo(a,s,d,@)
+       true
+testing: foo(a,s,d,@) +>= foo(a,s,d)
+       false
+testing: tata +> toto
+       true
+testing: toto +> tata
+       false
+testing: (@, @)+>(_A, _A)
+       true
+testing: (_A, _A)+>(@, @)
+       false
+testing: [@|@] +> [_A|_A]
+       true
+testing: [_A|_A] +> [@|@]
+       false
+testing: foo(a,s,d) +> foo(a,s,d,@)
+       true
+testing: foo(a,s,d,@) +> foo(a,s,d)
+       false
+testing: tata == toto
+       false
+testing: toto == tata
+       false
+testing: (@, @)==(_A, _A)
+       false
+testing: (_A, _A)==(@, @)
+       false
+testing: [@|@] == [_A,_A]
+       false
+testing: [_A|_A] == [@|@]
+       false
+testing: foo(a,s,d) == foo(a,s,d,@)
+       false
+testing: foo(a,s,d,@) == foo(a,s,d)
+       false
+testing: big(tom(brain => slow_witted,father => tax_collector,favorite_exclamation => arghh!!,friend => john(face => spotty,teeth => yellow),hair => knotted,hands => clumsy,mother => witch,nose => long(spots => ugly,warts => red))) == big(tom(brain => slow_witted,father => tax_collector,favorite_exclamation => arghh!!,friend => john(face => spotty,teeth => yellow),hair => knotted,hands => clumsy,mother => witch,nose => long(spots => ugly,warts => red)))
+       true
+testing: true
+       true
+testing: true
+       true
+testing: tata +=< toto
+       false
+testing: toto +=< tata
+       true
+testing: (@, @)+=<(_A, _A)
+       false
+testing: (_A, _A)+=<(@, @)
+       true
+testing: [@|@] +=< [_A,_A]
+       false
+testing: [_A|_A] +=< [@|@]
+       true
+testing: foo(a,s,d) +=< foo(a,s,d,@)
+       false
+testing: foo(a,s,d,@) +=< foo(a,s,d)
+       true
+testing: tata +< toto
+       false
+testing: toto +< tata
+       true
+testing: (@, @)+<(_A, _A)
+       false
+testing: (_A, _A)+<(@, @)
+       true
+testing: [@|@] +< [_A,_A]
+       false
+testing: [_A|_A] +< [@|@]
+       true
+testing: foo(a,s,d) +< foo(a,s,d,@)
+       false
+testing: foo(a,s,d,@) +< foo(a,s,d)
+       true
+testing: tata +>< toto
+       true
+testing: toto +>< tata
+       true
+testing: (@, @)+><(_A, _A)
+       true
+testing: (_A, _A)+><(@, @)
+       true
+testing: [@|@] +>< [_A,_A]
+       true
+testing: [_A|_A] +>< [@|@]
+       true
+testing: foo(a,s,d) +>< foo(a,s,d,@)
+       true
+testing: foo(a,s,d,@) +>< foo(a,s,d)
+       true
+testing: big(tom(brain => slow_witted,father => tax_collector,favorite_exclamation => arghh!!,friend => john(face => spotty,teeth => yellow),hair => knotted,hands => clumsy,mother => witch,nose => long(spots => ugly,warts => red))) \== big(tom(brain => slow_witted,father => tax_collector,favorite_exclamation => arghh!!,friend => john(face => spotty,teeth => yellow),hair => knotted,hands => clumsy,mother => witch,nose => long(spots => ugly,warts => red)))
+       false
+testing: false
+       false
+testing: false
+       false
+testing: f(b,c) +>< f(_A,_A)
+       false
+
+*** Yes
+> > 

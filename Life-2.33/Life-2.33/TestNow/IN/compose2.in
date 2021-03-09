@@ -1,0 +1,8 @@
+X=add3 & @(23)?
+
+X=add3?
+
+X=(add3 o add3 o succ) & @(0)?
+
+X=(add3 o add3 o succ)?
+

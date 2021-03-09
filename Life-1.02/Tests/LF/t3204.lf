@@ -1,0 +1,20 @@
+%
+%	Cut and Backtracking
+%
+%
+%	1st program
+%
+p(a).
+p(X):-q(X),!.
+q(b).
+q(c).
+%
+%	2nd program
+%
+r(X):- q(X),!.
+r(a).
+%
+%	3rd program
+%
+s(X):-p(X).
+s(d).

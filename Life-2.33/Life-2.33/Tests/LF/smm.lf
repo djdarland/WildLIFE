@@ -1,0 +1,59 @@
+                                                                                                                                                                                                                                                                                                                                                                                                           %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+smm :-
+        % Solutions where M=0 are uninteresting.
+
+        M={1;2;3;4;5;6;7;8;9},
+
+        % The arithmetic constraints:
+
+        C3 + S + M = O + 10*M,
+        C2 + E + O = N + 10*C3,
+        C1 + N + R = E + 10*C2,
+             D + E = Y + 10*C1,
+
+        % The all-distinct constraints
+
+        diff_list([S,E,N,D,M,O,R,Y]),
+
+        % Generating binary digits:
+
+        C1=carry,
+        C2=carry,
+        C3=carry,
+
+        % Generating decimal digits:
+
+        S=decimal,
+        E=decimal,
+        N=decimal,
+        D=decimal,
+        O=decimal,
+        R=decimal,
+        Y=decimal,
+
+        % Print the result:
+	nl,
+        write(' SEND     ',S,E,N,D),nl,
+        write('+MORE    +',M,O,R,E),nl,
+        write('-----    -----'),nl,
+        write('MONEY    ',M,O,N,E,Y),nl,
+        nl.
+
+   
+
+decimal -> {0;1;2;3;4;5;6;7;8;9}.
+carry -> {0;1}.
+
+
+diff_list([]).
+diff_list([H|T]) :-
+        generate_diffs(H,T),
+        diff_list(T),
+        (H=<9)=true,
+        (H>=0)=true.
+
+generate_diffs(H,[]).
+generate_diffs(H,[A|T]) :-
+        generate_diffs(H,T),
+        (A =\= H)=true.

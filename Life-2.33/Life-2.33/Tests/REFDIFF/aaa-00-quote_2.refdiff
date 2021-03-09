@@ -1,0 +1,24 @@
+1,23d0
+< 
+< *** Yes
+< > > > 
+< *** Yes
+< > |    
+< *** Yes
+< P = p(_A: one_two_three), Q = q(_A).
+< --1> 
+< *** No
+< > 
+< *** Yes
+< X = one_two_three, Y = one_two_three, Z = @.
+< --1> 
+< *** No
+< > 
+< p(one_two_three) :-
+<         succeed.
+< 
+< q(one_two_three) :-
+<         succeed.
+< 
+< *** Yes
+< > 

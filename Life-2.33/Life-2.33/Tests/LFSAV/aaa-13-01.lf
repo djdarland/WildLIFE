@@ -1,0 +1,4 @@
+mapkey(A,F,[]) -> [].
+mapkey(A,F,[H|T]) ->
+    [FAH:apply(functor=>F) | mapkey(A,F,T)]
+	| H = FAH.A.

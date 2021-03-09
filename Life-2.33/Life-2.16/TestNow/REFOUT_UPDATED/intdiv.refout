@@ -1,0 +1,126 @@
+
+*** Yes
+> > 
+*** Yes
+A = real~, B = real~, C = real~.
+--1> 
+*** No
+> 
+*** Yes
+A = real~, B = real~.
+--1> 
+*** Yes
+A = 1, B = 45.
+--1> 
+*** No
+A = real~, B = real~.
+--1> 
+*** No
+A = real~, B = real~.
+--1> 
+*** No
+A = real~, B = real~.
+--1> 
+*** Yes
+A = 24, B = 0.
+--1> 
+*** No
+A = real~, B = real~.
+--1> 
+*** No
+> 
+*** No
+> 
+*** Yes
+A = 0.
+--1> 
+*** No
+> 
+*** Yes
+A = real~, B = real~.
+--1> 
+*** No
+> 
+*** No
+> 
+*** No
+> 
+*** No
+> 
+*** Yes
+A = real, B = real.
+--1> > 
+*** Yes
+A = real~, B = real~, C = real~.
+--1> 
+*** Yes
+A = real~, B = real~, C = real~.
+--1> 
+*** No
+A = real~, B = real~, C = real~.
+--1> 
+*** Yes
+A = 1, B = 1, C = 1.
+--1> 
+*** No
+A = real~, B = real~, C = real~.
+--1> 
+*** No
+A = real~, B = real~, C = real~.
+--1> 
+*** Yes
+A = 1, B = 56, C = 56.
+--1> > 
+*** Yes
+A = 0, B = real.
+--1> > 
+*** Yes
+A = real~, B = real~, C = real~.
+--1> 
+*** No
+A = real~, B = real~, C = real~.
+--1> 
+*** No
+A = real~, B = real~, C = real~.
+--1> 
+*** No
+A = real~, B = real~, C = real~.
+--1> > 
+*** No
+> > 
+*** Yes
+C = real~.
+--1> 
+*** Yes
+C = 6.
+--1> 
+*** No
+C = real~.
+--1> 
+*** Yes
+C = 7.
+--1> > 
+*** Yes
+A = 5, B = -5, C = -5, D = 5.
+--1> > 
+*** Yes
+E = -5.
+--1> > 
+*** Yes
+A = -23 // 4.
+--1> //(-23,4)
+*** Yes
+A = -23 // 4.
+--1> > //(-23,-4)
+*** Yes
+> 
+*** Yes
+A = 1.
+--1> > 
+*** Yes
+A = 1, X = 34.
+--1> > 
+*** No
+> > 
+*** No
+> > 

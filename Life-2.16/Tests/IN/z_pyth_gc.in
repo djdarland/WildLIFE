@@ -1,0 +1,4 @@
+A>1,gc,B>1,gc,C>1,gc,A=<B,gc,A<C,gc,B<C,gc,A*A+B*B=:=C*C,gc,A=decimal,B=decimal,C=decimal,gc?
+;
+gc,p100,gc?
+gc,p(500,600),gc?

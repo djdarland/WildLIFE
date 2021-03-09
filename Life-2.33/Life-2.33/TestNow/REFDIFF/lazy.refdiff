@@ -1,0 +1,4 @@
+5c5
+< G = m_cons(@,m_cons(@,m_cons(@,m_nil))).
+---
+> G = m_cons(3,m_cons(2,m_cons(1,m_nil(0)))).

@@ -1,0 +1,43 @@
+
+*** Yes
+> > 
+
+Start        -> [x,x,x, ,o,o,o]
+o move left  -> [x,x,x,o, ,o,o]
+x jump right -> [x,x, ,o,x,o,o]
+x move right -> [x, ,x,o,x,o,o]
+o jump left  -> [x,o,x, ,x,o,o]
+o jump left  -> [x,o,x,o,x, ,o]
+o move left  -> [x,o,x,o,x,o, ]
+x jump right -> [x,o,x,o, ,o,x]
+x jump right -> [x,o, ,o,x,o,x]
+x jump right -> [ ,o,x,o,x,o,x]
+o move left  -> [o, ,x,o,x,o,x]
+o jump left  -> [o,o,x, ,x,o,x]
+o jump left  -> [o,o,x,o,x, ,x]
+x move right -> [o,o,x,o, ,x,x]
+x jump right -> [o,o, ,o,x,x,x]
+o move left  -> [o,o,o, ,x,x,x]
+Solved !!
+
+Start        -> [x,x,x, ,o,o,o]
+x move right -> [x,x, ,x,o,o,o]
+o jump left  -> [x,x,o,x, ,o,o]
+o move left  -> [x,x,o,x,o, ,o]
+x jump right -> [x,x,o, ,o,x,o]
+x jump right -> [x, ,o,x,o,x,o]
+x move right -> [ ,x,o,x,o,x,o]
+o jump left  -> [o,x, ,x,o,x,o]
+o jump left  -> [o,x,o,x, ,x,o]
+o jump left  -> [o,x,o,x,o,x, ]
+x move right -> [o,x,o,x,o, ,x]
+x jump right -> [o,x,o, ,o,x,x]
+x jump right -> [o, ,o,x,o,x,x]
+o move left  -> [o,o, ,x,o,x,x]
+o jump left  -> [o,o,o,x, ,x,x]
+x move right -> [o,o,o, ,x,x,x]
+Solved !!
+
+
+*** No
+> 

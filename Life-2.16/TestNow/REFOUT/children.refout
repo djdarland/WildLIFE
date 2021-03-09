@@ -1,0 +1,150 @@
+
+*** Yes
+> > 
+*** Yes
+A = [].
+--1> 
+*** No
+> 
+*** Yes
+A = [list,string,real,bool].
+--1> 
+*** No
+> 
+*** Yes
+A = [int].
+--1> 
+*** No
+> 
+*** Yes
+A = [].
+--1> 
+*** No
+> 
+*** Yes
+A = [].
+--1> 
+*** No
+> 
+*** Yes
+A = [].
+--1> 
+*** No
+> 
+*** Yes
+A = [].
+--1> 
+*** No
+> 
+*** Yes
+A = [cons,[]].
+--1> 
+*** No
+> 
+*** Yes
+A = [true,false].
+--1> 
+*** No
+> 
+*** Yes
+A = [].
+--1> 
+*** No
+> 
+*** Yes
+A = [].
+--1> 
+*** No
+> 
+*** Yes
+A = [].
+--1> 
+*** No
+> 
+*** Yes
+A = [].
+--1> 
+*** No
+> 
+*** Yes
+A = [[,
+     ],
+     (,
+     ),
+     {,
+     },
+     ?,
+     :,
+     end_of_file,
+     ::,
+     '< . >',
+     '< ? >',
+     '*** ERROR ***',
+     built_in,
+     stream,
+     time,
+     input_file,
+     xf,
+     yf,
+     fx,
+     fy,
+     xfx,
+     xfy,
+     yfx,
+     '<NULL PSI TERM>',
+     '1',
+     '2',
+     '3',
+     year,
+     month,
+     day,
+     hour,
+     minute,
+     second,
+     weekday,
+     aborthook,
+     event,
+     keyboard_event,
+     button_event,
+     expose_event,
+     destroy_event,
+     configure_event,
+     motion_event,
+     enter_event,
+     leave_event,
+     misc_event,
+     display,
+     drawable,
+     window,
+     pixmap,
+     graphic_context,
+     display_list,
+     (,
+     ),
+     (,
+     ),
+     #,
+     =>,
+     query,
+     declaration,
+     error,
+     copy_rules,
+     load_module,
+     load_path,
+     load_suffixes,
+     loaded_file,
+     precedence,
+     kind,
+     functions,
+     preds,
+     first_value,
+     for,
+     replacing,
+     file,
+     in_clauses,
+     out_clauses,
+     symbol].
+
+--1> 
+*** No
+> 

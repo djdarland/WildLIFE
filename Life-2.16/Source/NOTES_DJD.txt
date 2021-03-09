@@ -1,0 +1,99 @@
+6/16/2016
+Starting at rev 2.05 (initial 2.06
+Test Suite gives
+325 total tests
+107 match
+218 differ
+213 out differ
+14 err differ
+
+
+
+
+
+
+6/17/2016
+
+Made change in login.c regarding level pf prompt in case of abort_hook
+That fixed that - but only that test.
+I noticed wrong level in other tests.
+
+Suspected level might be corrupted.
+
+Investigating decided to make a, b, c elements of structures
+
+wl_pair_list to aaaa_2, bbbb_2
+
+wl_triple_list to aaaa_4, bbbb_4, cccc_4
+
+wl_stack to aaaa_3, bbbb_3
+
+wl_goal to aaaa_1, bbbb_1, cccc_1.
+
+This was not to affect logic - but rather to make searching the code easier.
+The Test Suite gave same counts afterwards.
+
+As this was a lot of editing will make tar backup at this point.
+Life-2.06-2016_06_17.A.tar.gz
+--------------------------------------------------------------------
+
+6/17/2016
+
+--------------------------------------------------------------------
+Changed how level is calculated in login.c
+Not changed much else in wild life.
+I had tried a lot of other things - but threw them away.
+----------------------------------------------------------------
+
+I did improve my debugging script -- ee.
+Especially option 114.
+It permits you to browse Test Suite and results.
+Also approve current results - if you think they are more correct.
+I've only approved addtab so far over original results.
+-----------------------------------------------------------------------
+
+
+
+6/27/16
+Commented out "|| level > 0" line 2035 login.c -- don't print value if fails
+
+
+in testing my version often gives @ in result where old ref or handbook gives variable.
+
+Seems to be problem with ::
+
+ex 09-02C value does not print bacause answer is no.
+Result of "|| level > 0" cange - still think that is better.
+
+Problem with op * - see bagof3 and bagof6
+
+problem with copyfile
+
+problem with curry - need to study
+
+debug - clause # reversed
+
+another trouble with * in disj1
+
+trouble with :: see aaa-07-06 - not sure I'm using it correctly
+also aaa-07-07
+
+trouble with modules or features aaa-10-01 & aaa-10-04
+
+6/28/2016 - Decided to try to attack problem with improper evaluating arguments.
+will make aaa-00-listing test case (listing is such a predicate - saw in long in test suite.)
+
+6/29/2016 - I think listing is working correctly - I just did not understand what it was supposed to do.
+
+persistent terms are not being printed with other values see 09-04 & 09-06
+
+quoting global variables not working as in handbook - see 09-07
+-- quote itself seems ok - see aaa-00-quote
+copied 09-07 to aaa-00-quote_2 for testing
+ 
+
+current module not set right - see 10-04
+
+problem with * (not same as other ops) -  see bagof3
+
+

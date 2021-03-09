@@ -1,0 +1,2 @@
+diff login.c login.old.c >djd5
+emacs djd5

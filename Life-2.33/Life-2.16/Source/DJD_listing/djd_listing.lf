@@ -1,0 +1,14 @@
+%% trace?
+q(AA,AA,BB,BB).
+listing(q)?
+listing(1,2)?
+listing(1.5,7.9)?
+listing("1.5","abc")?
+listing(listing)?
+listing(+)?
+listing(*)?
+listing(eval(8 + 7))?
+C=cos(0.5), listing(C)?
+.
+E=tan(c),listing(E)?
+

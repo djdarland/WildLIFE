@@ -1,0 +1,1 @@
+q :- A={4;5;6},B=p(A+2,q(A*4)),write(B),nl,fail.

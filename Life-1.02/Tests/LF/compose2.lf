@@ -1,0 +1,12 @@
+% Mechanism found by Kathleen
+
+op(P,K,*),op(P,K,o)? % Same precedence & kind as *.
+
+F o G -> comp(func1=>F,func2=>G).
+
+comp(func1=>F,func2=>G,X) -> F(G(X)).
+
+succ(N) -> N+1.
+
+add3 -> succ o succ o succ.
+

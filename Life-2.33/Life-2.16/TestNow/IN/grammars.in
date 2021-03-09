@@ -1,0 +1,120 @@
+%
+%    Sentence analysis: rules
+%
+
+person(sing)->3.
+person(plur)->6.
+
+
+sentence --> noun_phrase(pers=>P), verb_phrase(pers=>P) ?
+
+noun_phrase(pers=>P) --> 	
+			determiner(nb=>N),
+			noun_phrase2(pers=>P, nb=>N)
+			# P=person(N) ?
+noun_phrase(pers=>P) --> 	
+			noun_phrase2(pers=>P)  ?
+
+noun_phrase2(pers=>X:{3;6}) -->
+			adjective,noun_phrase2(pers=>X) ?
+noun_phrase2(nb=>N, pers=>P) --> 
+			noun(nb=>N, pers=>P) ?
+
+verb_phrase(pers=>W)  --> 
+			verb(pers=>W) ?
+verb_phrase(pers=>W)  --> 
+			verb(pers=>W),noun_phrase ?
+verb_phrase(pers=>W)  --> 
+			verb(pers=>W),compl_phrase ?
+
+compl_phrase(pers=>P) --> 	
+			prep,
+			noun_phrase(pers=>P)?
+			
+%
+%   Sentence analysis: Vocabulary
+%
+
+determiner --> 	[the] ?
+determiner(nb=>sing) --> [a] ?
+
+adjective  --> 	[decorated] ?
+adjective  --> 	[quick] ?
+adjective  --> 	[brown] ?
+adjective  --> 	[lazy] ?
+ 
+noun(pers=>3) --> 	[pieplate] ?
+noun(pers=>6) --> 	[pieplates] ?
+noun(pers=>3) --> 	[surprise] ?
+noun(pers=>6) --> 	[surprises] ?
+noun(pers=>2) -->	[you] ?
+noun(pers=>3) --> 	[fox] ?
+noun(pers=>3) --> 	[dog] ?
+  
+verb(pers=>3) --> 	[contains] ?
+verb(pers=>{1;2;4;5;6}) --> 	
+                        [contain] ?
+  
+verb(pers=>3) --> 	[jumps] ?
+verb(pers=>{1;2;4;5;6}) --> 	
+                        [jump] ?
+
+prep --> [over] ?
+
+%
+%   Sentence analysis: Output
+%
+
+writesentence([],true) :- !,
+                      nl,
+                      write("     is a correct sentence."),nl.
+writesentence([],false) :- !,
+                      nl,
+                      write("     is not a correct sentence."),nl.
+writesentence([A|B],Bool) :- write(" ",A), writesentence(B,Bool).
+
+
+
+analyse1(List) :- ( sentence(words=>List\\[]), !, nl, writesentence(List,true) ;
+                    nl, writesentence(List,false) ).
+
+analyse1([the,decorated,pieplate,contains,a,surprise])?
+analyse1([the,decorated,pieplates,contain,a,surprise])?
+analyse1([the,decorated,pieplates,contains,a,surprise])?
+analyse1([you,contain,a,decorated,pieplate])?
+analyse1([you,contain,a,decorated,pieplates])?
+
+
+%
+%   Knuth's attribute grammar: rules
+%
+z( tree=>z(T1),  v=>V)	--> 	 l( tree=>T1, v=>V) ?
+z( tree=>z(T2,".",T3), v=> V )	
+			--> 	l( tree=>T2, v=>V1), 
+				["."], 
+				l( tree=>T3, v=>V2, l=>L) 
+                                # V=(V1+V2*exp(-L*log(2))) ?
+l( tree=>l(T4,T5), v=>V , l=>L )	
+			--> 	b( tree=>T4, v=>V3, s=>S),
+				l( tree=>T5, v=>V4, l=>L1) 
+                                # S=L1, V=V3+V4 , L=L1+1 ?
+l( tree=>l(T6), v=>V5, l=>1)	
+			-->  	b( tree=>T6, v=>V5, s=>S1:0) ?
+b( tree=>b(1),  s=> Sv, v=>2^Sv)
+			-->  	[1] ? 
+b( tree=>b(0), v=>0)	-->	[0] ?
+
+%
+%   Knuth's attribute grammar: Output
+%
+
+writenumb([],true,Value) :- !, write(" = ",Value),nl.
+writenumb([],false) :- !, write(" is not a floating binary number"),nl.
+writenumb([A|B],Bool,Value) :- write(A), writenumb(B,Bool,Value).
+
+analyse2(List) :- ( z(words=>List\\[],v=>V), !, nl, writenumb(List,true,V);
+                    nl, writenumb(List,false) ).
+
+analyse2([1,1,1])?
+analyse2([1,1,0,1,1,0,1,0,1,1,".",1,1,1,0,1,0,1])?
+analyse2([1,2,0,".",1,1,0,1]),nl?

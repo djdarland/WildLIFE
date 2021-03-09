@@ -1,0 +1,9 @@
+
+*** Yes
+> > '=X,writeq(X),write(X)?'=X,writeq(X),write(X)?
+*** Yes
+X = '=X,writeq(X),write(X)?'.
+--1> > "=X,writeq(X),write(X)?"=X,writeq(X),write(X)?
+*** Yes
+X = "=X,writeq(X),write(X)?".
+--1> 

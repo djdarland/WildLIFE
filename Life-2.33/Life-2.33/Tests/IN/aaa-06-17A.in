@@ -1,0 +1,20 @@
+% varieties of append
+
+% functional version
+
+append1([], L) -> L.
+append1([X|L1],L2) -> [X|append1(L1,L2)].
+
+% standard predicate version
+
+append2([],L,L).
+append2([X|L1],L2,[X|L3]) :- append2(L1,L2,L3).
+
+% matched 1st arg & unifies 3rd
+
+append3([],L,R) -> true | R = L.
+append3([X| L1], L2,R) -> true | R = [X|L3], append3(L1,L2,L3).
+
+A = append1([1,2],[3,4]) , append2([1,2],[3,4],B)?
+
+  

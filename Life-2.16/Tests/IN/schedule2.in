@@ -1,0 +1,10 @@
+A1=activity(duration=>10),
+A2=activity(duration=>20),
+A3=activity(duration=>30),
+A4=activity(duration=>18,requests=>[A1,A2]),
+A5=activity(duration=>8 ,requests=>[A2,A3]),
+A6=activity(duration=>3 ,requests=>[A1,A4]),
+A7=activity(duration=>4 ,requests=>[A5,A6]),
+visAllActs([A1,A2,A3,A4,A5,A6,A7]) ?
+
+

@@ -1,0 +1,8 @@
+*** Error: Non-boolean argument or result in 'b and c'.
+*** Error: Non-boolean argument or result in 'b and c'.
+*** Error: Non-boolean argument or result in '@ and c'.
+*** Error: Non-boolean argument or result in 'b and @'.
+*** Error: Non-boolean argument or result in 'true and c'.
+*** Error: Non-boolean argument or result in 'b and true'.
+*** Error: Non-boolean argument or result in 'false and c'.
+*** Error: Non-boolean argument or result in 'b and false'.

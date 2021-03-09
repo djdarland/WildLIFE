@@ -1,0 +1,53 @@
+% Some tests of writeq:
+writeq('"foo"')?
+writeq('foo')?
+writeq('f oo')?
+writeq('f_oo')?
+writeq('XX')?
+writeq('_X')?
+writeq('sX')?
+writeq('X')?
+writeq('=')?
+writeq('===')?
+writeq('=(=')?
+writeq(fFF)?
+writeq('_')?
+writeq(' ')?
+writeq(" ")?
+writeq('f ')?
+writeq('X ')?
+writeq('* ')?
+writeq('1')?
+writeq(123)?
+writeq('123')?
+writeq('12_2')?
+writeq(' 12323232432')?
+writeq('12323232432')?
+writeq('d12323232432')?
+writeq('d12323232432_')?
+writeq('= -')?
+writeq('&&')?
+writeq('%')?
+writeq('f%')?
+writeq(f_)?
+writeq('f_')?
+writeq('_f')?
+writeq('          @  ')?
+writeq(` ' ' & ' ')?
+writeq(` ' ' + ' ')?
+writeq('')?
+writeq('''')?
+writeq('''''''''')?
+writeq('_feefwe')?
+writeq('dfdf_efef')?
+writeq('dFEfeeff_efwef_wfw435fef_e')?
+writeq('dfd f_efef')?
+writeq('dFE eeff_efwef_wfw435fef_e')?
+writeq('Dfdf_efef')?
+writeq('DFEfeeff_efwef_wfw435fef_e')?
+writeq('*')?
+writeq('**')?
+writeq('*_*')?
+writeq('{}')?
+writeq('(())((')?
+writeq('a(')?

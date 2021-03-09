@@ -1,0 +1,21 @@
+*** Garbage Collect 
+*** Begin [97% free (159508K), 1% heap, 2% stack]
+*** End   [99% free (162599K), 1% heap, 0% stack, 0.067s cpu (100%)]
+*** Stack depths [11 goals, 5 choice points, 1521 trail entries]
+*** Garbage Collect 
+*** Begin [94% free (154740K), 1% heap, 5% stack]
+*** End   [99% free (161384K), 1% heap, 1% stack, 0.067s cpu (8%)]
+*** Stack depths [11 goals, 633 choice points, 16107 trail entries]
+*** Garbage Collect 
+*** Begin [94% free (153751K), 1% heap, 5% stack]
+*** End   [98% free (160268K), 1% heap, 1% stack, 0.083s cpu (6%)]
+*** Stack depths [11 goals, 1177 choice points, 29458 trail entries]
+*** Garbage Collect 
+*** Begin [92% free (150531K), 2% heap, 6% stack]
+*** End   [97% free (159302K), 1% heap, 2% stack, 0.067s cpu (1%)]
+*** Stack depths [11 goals, 1600 choice points, 40291 trail entries]
+*** Error: attempt to read past end of file (near line 49).
+
+*** Abort
+
+*** END Abort

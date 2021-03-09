@@ -1,0 +1,35 @@
+%
+%		WILD-LIFE TESTING
+%
+%		How predicate is input
+%
+%	assert, asserta, retract.
+%
+%
+assert(t(b))?
+%
+test1(X)?
+;
+test2(X)?
+;
+;
+%
+retract(t(a)),!?
+%
+test1(X)?
+;
+test2(X)?
+;
+%
+asserta(t(a))?
+%
+test1(X)?
+;
+test2(X)?
+;
+;
+%
+retract_all(t)?
+%
+test1(X)?
+%

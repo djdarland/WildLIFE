@@ -1,0 +1,686 @@
+
+
+ ptr_definition first_definition; // from extern.h
+
+int arg_c; // from extern.h
+char *arg_v[10]; // Modified DJD // from extern.h
+
+
+ long mem_size; // from extern.h
+ long alloc_words; // from extern.h
+ GENERIC mem_base; // from extern.h
+ GENERIC heap_pointer; // from extern.h
+ GENERIC mem_limit; // from extern.h
+ GENERIC stack_pointer; // from extern.h
+
+ float garbage_time; // from extern.h
+
+struct tms life_start; // from extern.h
+struct tms life_end; // from extern.h
+
+ GENERIC other_base; // from extern.h
+ GENERIC other_limit; // from extern.h
+ GENERIC other_pointer; // from extern.h
+
+ ptr_psi_term error_psi_term; // from extern.h
+ long parser_stack_index; // from extern.h
+
+ ptr_node var_tree; // from extern.h
+ ptr_node printed_vars; // from extern.h
+ ptr_node printed_pointers; // from extern.h
+ ptr_node pointer_names; // from extern.h
+ long gen_sym_counter; // from extern.h
+
+ long noisy;  // from extern.h
+ long types_done;  // from extern.h
+ long interrupted;  // from extern.h
+
+ FILE *input_stream;  // from extern.h
+ long line_count;  // from extern.h
+ string input_file_name;  // from extern.h
+ FILE *output_stream;  // from extern.h
+ char *prompt;  // from extern.h
+ long page_width;  // from extern.h
+
+ long type_count;  // from extern.h
+ long types_modified;  // from extern.h
+ long main_loop_ok;  // from extern.h
+ ptr_goal aim;  // from extern.h
+ ptr_goal goal_stack;  // from extern.h
+ ptr_choice_point choice_stack;  // from extern.h
+ ptr_stack undo_stack;
+#ifdef TS
+ unsigned long global_time_stamp; /* 9.6 */  // from extern.h
+#endif
+
+ long assert_first;  // from extern.h
+ long assert_ok;  // from extern.h
+ long file_date;  // from extern.h
+
+/* The following variables are used to make built-in type comparisons */
+/* as fast as possible.  They are defined in built_ins.c.  */
+ ptr_definition abortsym; /* 26.1 */  // from extern.h
+ ptr_definition aborthooksym; /* 26.1 */
+
+ ptr_definition add_module1;  /*  RM: Mar 12 1993  */  // from extern.h
+ ptr_definition add_module2;  // from extern.h
+ ptr_definition add_module3;  // from extern.h
+
+ ptr_definition and;      // from extern.h
+ ptr_definition apply;      // from extern.h
+ ptr_definition boolean;      // from extern.h
+ ptr_definition boolpredsym;      // from extern.h
+ ptr_definition built_in;      // from extern.h
+ ptr_definition colonsym;      // from extern.h
+ ptr_definition commasym;      // from extern.h
+ ptr_definition comment;      // from extern.h
+/*  extern  ptr_definition conjunction; 19.8 */      // from extern.h
+ ptr_definition constant;      // from extern.h
+ ptr_definition cut;      // from extern.h
+ ptr_definition disjunction;      // from extern.h
+ ptr_definition disj_nil; /*  RM: Feb 16 1993  */      // from extern.h
+ ptr_definition eof;      // from extern.h
+ ptr_definition eqsym;      // from extern.h
+ ptr_definition leftarrowsym; /* PVR 15.9.93 */      // from extern.h
+ ptr_definition false;      // from extern.h
+ ptr_definition funcsym;      // from extern.h
+ ptr_definition functor;      // from extern.h
+ ptr_definition iff;      // from extern.h
+ ptr_definition integer;      // from extern.h
+ ptr_definition alist;      // from extern.h
+ ptr_definition life_or; /*  RM: Apr  6 1993  */      // from extern.h
+ ptr_definition minus_symbol;/*  RM: Jun 21 1993  */      // from extern.h
+ ptr_definition nil;    /*** RM 9 Dec 1992 ***/      // from extern.h
+ ptr_definition nothing;      // from extern.h
+ ptr_definition predsym;      // from extern.h
+ ptr_definition quote;      // from extern.h
+ ptr_definition quoted_string;      // from extern.h
+ ptr_definition real;      // from extern.h
+ ptr_definition stream;      // from extern.h
+ ptr_definition succeed;      // from extern.h
+ ptr_definition such_that;      // from extern.h
+ ptr_definition top;      // from extern.h
+ ptr_definition true;      // from extern.h
+ ptr_definition timesym;      // from extern.h
+ ptr_definition tracesym; /* 26.1 */      // from extern.h
+ ptr_definition typesym;      // from extern.h
+ ptr_definition variable;      // from extern.h
+ ptr_definition opsym;      // from extern.h
+ ptr_definition loadsym;      // from extern.h
+ ptr_definition dynamicsym;      // from extern.h
+ ptr_definition staticsym;      // from extern.h
+ ptr_definition encodesym;      // from extern.h
+ ptr_definition listingsym;      // from extern.h
+ ptr_definition delay_checksym;      // from extern.h
+ ptr_definition eval_argsym;      // from extern.h
+ ptr_definition inputfilesym;      // from extern.h
+ ptr_definition call_handlersym;      // from extern.h
+ ptr_definition xf_sym;      // from extern.h
+ ptr_definition fx_sym;      // from extern.h
+ ptr_definition yf_sym;      // from extern.h
+ ptr_definition fy_sym;      // from extern.h
+ ptr_definition xfx_sym;      // from extern.h
+ ptr_definition xfy_sym;      // from extern.h
+ ptr_definition yfx_sym;      // from extern.h
+ ptr_definition nullsym;      // from extern.h
+ ptr_definition sys_bytedata; /* DENYS: BYTEDATA */      // from extern.h
+ ptr_definition sys_bitvector;      // from extern.h
+ ptr_definition sys_regexp;      // from extern.h
+ ptr_definition sys_stream;      // from extern.h
+ ptr_definition sys_file_stream;      // from extern.h
+ ptr_definition sys_socket_stream;      // from extern.h
+      // from extern.h
+/*  RM: Jul  7 1993  */      // from extern.h
+ ptr_definition final_dot;      // from extern.h
+ ptr_definition final_question;      // from extern.h
+      // from extern.h
+ ptr_psi_term null_psi_term; /* Used to represent an empty parse token */      // from extern.h
+      // from extern.h
+ ptr_psi_term old_state; /*  RM: Feb 17 1993  */   // from extern.h
+      // from extern.h
+
+
+ long interrupted;   // from interrupt.h     
+
+
+#ifdef TS
+ unsigned long global_time_stamp; /* 9.6 */             // from login.h
+
+#endif
+ long stepflag;          // from login.h
+          // from login.h
+
+ long ignore_eff;          // from login.h
+
+ long goal_count;          // from login.h
+
+          // from login.h
+
+
+ ptr_module bi_module;      /* Module for public built-ins */        // from modules.h          
+
+ ptr_module user_module;    /* Default module for user input */        // from modules.h          
+
+ ptr_module no_module;             // from modules.h          
+
+ ptr_module x_module;       /* '#ifdef X11' unnecessary  */        // from modules.h          
+
+ ptr_module syntax_module;  /* Module for minimal Prolog syntax */        // from modules.h          
+
+ ptr_node module_table;     /* The table of modules */        // from modules.h          
+
+ ptr_module current_module; /* The current module for the tokenizer */        // from modules.h          
+
+ ptr_module sys_module;        // from modules.h          
+
+        // from modules.h          
+
+ long display_modules;        // from modules.h          
+
+ long display_persistent;        // from modules.h          
+
+        // from modules.h          
+
+ long trace_input;        // from modules.h          
+
+
+ 
+
+ long parse_ok;     // from parser.h
+
+
+ char *no_name;     // from print.h
+ char *buffer;     // from print.h
+     // from print.h
+/* Global flags that modify how writing is done. */     // from print.h
+ long print_depth;     // from print.h
+ long indent;     // from print.h
+ long const_quote;     // from print.h
+ long write_stderr;     // from print.h
+ long write_corefs;     // from print.h
+ long write_resids;     // from print.h
+ long write_canon;     // from print.h
+
+
+
+ long stdin_terminal;       // from token.h
+ long var_occurred;       // from token.h
+/* Part of global input file state */       // from token.h
+ long line_count;       // from token.h
+ long start_of_line;       // from token.h
+ long saved_char;       // from token.h
+ long old_saved_char;       // from token.h
+ ptr_psi_term saved_psi_term;       // from token.h
+ ptr_psi_term old_saved_psi_term;       // from token.h
+ long eof_flag;       // from token.h
+ FILE *input_stream;       // from token.h
+       // from token.h
+/* File state ADT */       // from token.h
+ ptr_psi_term input_state;       // from token.h
+ ptr_psi_term stdin_state;       // from token.h
+/* For parsing from a string */       // from token.h
+ long stringparse;       // from token.h
+ char *stringinput;       // from token.h
+
+ 
+ long types_modified;     // from types.h
+ long type_count;     // from types.h
+
+       // from xpred.h 
+      // from xpred.h
+ ptr_psi_term xevent_list;      // from xpred.h
+ptr_psi_term xevent_existing;       // from xpred.h
+
+      // from xpred.h
+ ptr_definition      // from xpred.h
+  xevent, xkeyboard_event, xbutton_event, /* RM: 7.12.92 */      // from xpred.h
+  xexpose_event, xdestroy_event, xmotion_event,      // from xpred.h
+  xdisplay, xdrawable, xwindow, xpixmap, xconfigure_event,      // from xpred.h
+  xenter_event,xleave_event, xmisc_event,  /* RM: 3rd May 93 */      // from xpred.h
+  xgc, xdisplaylist;      // from xpred.h
+      // from xpred.h
+ long x_window_creation;      // from xpred.h
+
+          // from lefun.h
+ ptr_goal resid_aim;          // from lefun.h
+
+ ptr_resid_list resid_vars; /* 21.9 */          // from lefun.h
+
+ ptr_goal resid_limit;          // from lefun.h
+
+ long curried;          // from lefun.h
+
+ long can_curry;          // from lefun.h
+
+
+     // from templates.h
+
+/* defined in templates.c */
+
+// char *numbers[];     // from templates.h
+
+//  long set_extra_args[];     // from templates.h
+
+char *numbers[21];     // from templates.h
+
+long set_extra_args[6];     // from templates.h
+
+
+// from lib.c
+jmp_buf env;// from lib.c
+
+char prompt_buffer[PROMPT_BUFFER];// from lib.c
+
+
+      // from lub.c
+ptr_definition built_in;// from lub.c
+// from lub.c
+long type_count;		/* the number of sorts in the hierarchy */// from lub.c
+
+       // from arity.c
+FILE *features;
+       // from arity.c
+
+// from built_ins.c       // from arity.c
+
+FILE *bi_list;       // from arity.c
+
+
+// long (* c_rule[MAX_BUILT_INS])();
+
+ptr_definition abortsym; /* 26.1 */       // from arity.c
+
+ptr_definition aborthooksym; /* 26.1 */       // from arity.c
+
+       // from arity.c
+
+ptr_definition add_module1;  /*  RM: Mar 12 1993  */       // from arity.c
+
+ptr_definition add_module2;       // from arity.c
+
+ptr_definition add_module3;       // from arity.c
+
+       // from arity.c
+
+ptr_definition and;       // from arity.c
+
+ptr_definition apply;       // from arity.c
+
+ptr_definition boolean;       // from arity.c
+
+ptr_definition boolpredsym;       // from arity.c
+
+ptr_definition built_in;       // from arity.c
+
+ptr_definition calloncesym;       // from arity.c
+
+ptr_definition colonsym;       // from arity.c
+
+ptr_definition commasym;       // from arity.c
+
+ptr_definition comment;       // from arity.c
+
+/* ptr_definition conjunction; 19.8 */       // from arity.c
+
+ptr_definition constant;       // from arity.c
+
+ptr_definition cut;       // from arity.c
+
+ptr_definition disjunction;       // from arity.c
+
+ptr_definition disj_nil;/*  RM: Feb  1 1993  */       // from arity.c
+
+ptr_definition eof;       // from arity.c
+
+ptr_definition eqsym;       // from arity.c
+
+ptr_definition leftarrowsym;       // from arity.c
+
+ptr_definition false;       // from arity.c
+
+ptr_definition funcsym;       // from arity.c
+
+ptr_definition functor;       // from arity.c
+
+ptr_definition iff;       // from arity.c
+
+ptr_definition integer;       // from arity.c
+
+ptr_definition alist;       // from arity.c
+
+ptr_definition life_or; /*  RM: Apr  6 1993  */       // from arity.c
+
+ptr_definition minus_symbol; /*  RM: Jun 21 1993  */       // from arity.c
+
+ptr_definition nil; /*** RM 9 Dec 1992 ***/       // from arity.c
+
+ptr_definition nothing;       // from arity.c
+
+ptr_definition predsym;       // from arity.c
+
+ptr_definition quote;       // from arity.c
+
+ptr_definition quoted_string;       // from arity.c
+
+ptr_definition real;       // from arity.c
+
+ptr_definition stream;       // from arity.c
+
+ptr_definition succeed;       // from arity.c
+
+ptr_definition such_that;       // from arity.c
+
+ptr_definition top;       // from arity.c
+
+ptr_definition true;       // from arity.c
+
+ptr_definition timesym;       // from arity.c
+
+ptr_definition tracesym; /* 26.1 */       // from arity.c
+
+ptr_definition typesym;       // from arity.c
+
+ptr_definition variable;       // from arity.c
+
+ptr_definition opsym;       // from arity.c
+
+ptr_definition loadsym;       // from arity.c
+
+ptr_definition dynamicsym;       // from arity.c
+
+ptr_definition staticsym;       // from arity.c
+
+ptr_definition encodesym;       // from arity.c
+
+ptr_definition listingsym;       // from arity.c
+
+/* ptr_definition provesym; */       // from arity.c
+
+ptr_definition delay_checksym;       // from arity.c
+
+ptr_definition eval_argsym;       // from arity.c
+
+ptr_definition inputfilesym;       // from arity.c
+
+ptr_definition call_handlersym;       // from arity.c
+
+ptr_definition xf_sym;       // from arity.c
+
+ptr_definition fx_sym;       // from arity.c
+
+ptr_definition yf_sym;       // from arity.c
+
+ptr_definition fy_sym;       // from arity.c
+
+ptr_definition xfx_sym;       // from arity.c
+
+ptr_definition xfy_sym;       // from arity.c
+
+ptr_definition yfx_sym;       // from arity.c
+
+ptr_definition nullsym;       // from arity.c
+
+       // from arity.c
+
+       // from arity.c
+
+/*  RM: Jul  7 1993  */       // from arity.c
+
+ptr_definition final_dot;       // from arity.c
+
+ptr_definition final_question;       // from arity.c
+
+       // from arity.c
+
+       // from arity.c
+
+ptr_psi_term null_psi_term;       // from arity.c
+
+       // from arity.c
+
+char *one;       // from arity.c
+
+char *two;       // from arity.c
+
+char *three;       // from arity.c
+
+char *year_attr;       // from arity.c
+
+char *month_attr;       // from arity.c
+
+char *day_attr;       // from arity.c
+
+char *hour_attr;       // from arity.c
+
+char *minute_attr;       // from arity.c
+
+char *second_attr;       // from arity.c
+
+char *weekday_attr;       // from arity.c
+
+
+// from copy.c
+jmp_buf env; /* To jump back to main() when copy(..) overflows */
+
+/* TRUE means: heap_flag==TRUE & only copy to heap those objects not */
+/* already on heap, i.e. incremental copy to heap.                   */
+long to_heap;
+
+
+// from error.c
+long psi_term_line_number;
+
+long warningflag;
+long quietflag; /* 21.1 */
+long trace;
+long verbose; /* 21.1 */
+long stepflag;
+long steptrace;
+long stepcount;
+
+// from hash_table.c
+ptr_definition first_definition;
+
+long rand_array[256];
+
+// from interrupt.c
+long interrupted;
+
+// from lefun.c
+ptr_goal resid_aim;
+ptr_resid_list resid_vars; /* 21.9 */
+/* ptr_goal resid_limit; 12.6 */
+
+long curried;
+long can_curry;
+
+/* ptr_psi_term match_date; 13.6 */
+/* ptr_choice_point cut_point; 13.6 */
+
+// from lib.c
+
+long noisy;
+long file_date;
+long types_done;
+
+struct tms life_start,life_end;
+float garbage_time;
+
+long c_query_level;
+
+jmp_buf env;
+
+// from login.c
+/* Statistics on trail cleaning */
+long clean_iter;
+long clean_succ;
+
+ptr_stack undo_stack;
+ptr_choice_point choice_stack;
+/* ptr_choice_point prompt_choice_stack; 12.7 */
+#ifdef TS
+/* Should never wrap (32 bit is enough) 9.6 */
+/* Rate of incrementing: One per choice point */
+unsigned long global_time_stamp; /* 9.6 */
+#endif
+
+ptr_goal goal_stack,aim;
+
+long goal_count;
+struct tms start_time,end_time;
+
+long ignore_eff; /* 'Ignore efficiency' flag */
+
+long assert_first;
+long assert_ok;
+
+long main_loop_ok;
+long xeventdelay;
+long xcount;
+
+long more_u_attr; /* TRUE if U has attributes V doesn't */
+long more_v_attr; /* Vice-versa */
+
+long u_func,v_func;  /* TRUE if U or V is a curried function */
+long new_stat;
+
+char prompt_buffer[PROMPT_BUFFER];
+
+// from memory.c
+GENERIC mem_base;
+GENERIC mem_limit;
+GENERIC stack_pointer;
+GENERIC heap_pointer;
+GENERIC other_base;
+
+GENERIC other_limit;
+GENERIC other_pointer;
+
+long mem_size;
+long alloc_words;
+
+// from modules.c
+ptr_node module_table;        /* The table of modules */
+ptr_module current_module;    /* The current module for the tokenizer */
+
+string module_buffer;              /* Temporary storage place for strings */
+ptr_module no_module;
+ptr_module bi_module;
+ptr_module user_module;
+ptr_module syntax_module;
+ptr_module x_module;
+ptr_module sys_module;
+
+long display_modules;   /* Should really default to FALSE */
+
+extern ptr_goal resid_aim;
+extern long cmp_debug_flag;
+
+// from parser.c
+psi_term psi_term_stack[PARSER_STACK_SIZE];
+long int_stack[PARSER_STACK_SIZE];
+operator op_stack[PARSER_STACK_SIZE];
+
+long parse_ok;
+long parser_stack_index;
+ptr_node var_tree;
+long no_var_tree;
+
+// from print.c
+ptr_node printed_pointers, pointer_names;
+
+long print_depth;
+long indent;
+long const_quote;
+long write_resids;
+long write_canon;
+long write_stderr;
+long write_corefs;
+
+long gen_sym_counter;
+
+
+long display_persistent;
+  
+char *no_name;
+char *name;
+char *buffer;
+char seg_format[PRINT_POWER+4];
+
+item pretty_things[PRETTY_SIZE];
+ptr_item indx;
+
+/* The output stream for a given print command is put in here */
+/* This will be set to stdout, to stderr, or to output_stream */
+FILE *outfile;
+
+// from sys.c
+ptr_definition sys_bytedata; /* DENYS: BYTEDATA */
+ptr_definition sys_bitvector;
+ptr_definition sys_regexp;
+ptr_definition sys_stream;
+ptr_definition sys_file_stream;
+ptr_definition sys_socket_stream;
+
+// from token.c
+long var_occurred;
+ptr_node symbol_table;
+ptr_psi_term error_psi_term;
+long psi_term_line_number;
+long trace_input;
+
+FILE *output_stream;
+char *prompt;
+
+long stdin_terminal;
+
+/* For parsing from a string */
+long stringparse;
+char *stringinput;
+
+/****************************************************************************/
+
+/* Abstract Data Type for the Input File State */
+
+/* FILE *last_eof_read; */
+
+/* Global input file state information */
+/* Note: all characters should be stored in longs.  This ensures
+   that noncharacters (i.e., EOF) can also be stored. */
+long var_occurred;
+ptr_node symbol_table;
+ptr_psi_term error_psi_term;
+long psi_term_line_number;
+long trace_input;
+
+FILE *output_stream;
+char *prompt;
+
+long stdin_terminal;
+
+/* For parsing from a string */
+long stringparse;
+char *stringinput;
+
+FILE *input_stream;
+string input_file_name;
+long line_count;
+long start_of_line;
+long saved_char; /*  RM: Jul  7 1993  changed to 'int' */
+long old_saved_char;
+ptr_psi_term saved_psi_term;
+ptr_psi_term old_saved_psi_term;
+long eof_flag;
+
+/* Psi-term containing global input file state */
+ptr_psi_term input_state;
+
+/* Psi-term containing stdin file state */
+ptr_psi_term stdin_state;
+
+// from types.h
+long types_modified;
+long type_count;
+ptr_definition gamma_table[MAX_GAMMA];
+
+ptr_int_list adults,children;

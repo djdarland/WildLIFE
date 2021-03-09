@@ -1,0 +1,256 @@
+%% This is the input file for the tokenizer.
+
+%
+% Tokenizer for Life
+%
+
+main :- tokenize("token.lf").
+
+tokenize(File) :- 
+        W = readf(File), 
+	setq(rest,[]), setq(listTokens,[]),
+	tokens(words => W, rest => []).
+
+
+dynamic(tokens) ?
+
+tokens([],words=>[]) :- !.
+tokens(T) --> 
+	tokenN(L), 
+	tokens(Ls), 
+	#( T = append(L,Ls)) ?
+
+tokenN( TokenNs, rest => RestN, words => Words) :-
+        token_N( Tokens, 50, rest => Rest, words => Words),
+        setEco(rest,Rest),
+        setEco(listTokens,Tokens),
+        fail ; 
+        TokenNs = listTokens,
+        RestN = rest.
+
+token_N( [], 0) --> ! ?
+token_N( Tokens, Counter) -->
+	void_chars,
+	(
+	    token( Token),
+	    !, 
+	    token_N( NewToks, Counter - 1),
+	    #( Tokens = [ Token| NewToks]) ;
+	    #( Tokens = [])
+	) ?
+
+void_chars --> [{32;9;10}],!, void_chars ?         % blanc, tab, return
+void_chars --> [37],!, comment_chars, void_chars ? % commentaires
+void_chars --> [] ?
+
+comment_chars --> [10], ! ?                     % un commentaire s'arrete avec
+						% return.
+comment_chars --> [X], comment_chars ?
+
+
+
+dynamic(token) ?
+
+token( words => []) :- !, fail.
+token(T) --> 
+	( 
+	    variable(Y), 
+	    #( !, T = variable(Y)) ;
+	    syntact_object(Y), 
+	    #( !, T = syntact_object(Y)) ;
+	    construct( Y, type => Z), 
+	    #( T = construct( Y, type => Z))
+	) ?
+
+
+%
+%
+% variables
+% 
+%
+
+variable(_) -->                               % @
+	[64], ! ?          
+variable(X) -->                               % _...
+	[95], !,
+	simple_atom_cars(Y), 
+	#((Y = "", ! ); X = strcon("_",Y)) ?
+variable(X) -->                               % M...
+	majuscule(Y), 
+	simple_atom_cars(Z), 
+	#( X = strcon(Y,Z)) ?
+
+
+%
+%
+% syntactic objects
+%
+%
+
+syntact_object(X) --> 
+	[Y:{40;41;44;46;59;63;91;93;123;124;125}],
+	#( !, X = charac(Y)) ?
+
+
+
+%
+%
+% constructors
+%
+%
+
+
+construct( Y, type=>T) --> 
+	quote(Y), #( !, T = quote);
+	simple_atom(Y), #( !, T = simple_atom); 
+	quoted_atom(Y), #( !, T = quoted_atom); 
+	number(Y), #( !, T = number);
+	car_chaine(Y), #( !, T = car_chaine); 
+	op_atom(Y), #( !, T = op_atom) ?
+
+%
+% quote
+%
+
+quote("`") --> [96] ?
+
+%
+% simple atoms
+%             
+
+simple_atom(X) --> 
+	minuscule(Y), 
+	simple_atom_cars(Z), 
+	#( X = strcon(Y,Z)) ?
+
+simple_atom_cars(Z) --> 
+	simple_atom_car(X), !,
+	simple_atom_cars(Y), 
+	#( Z = strcon(X,Y)) ?
+simple_atom_cars("") --> [] ?
+
+simple_atom_car(X) --> 
+	[Y], 
+	#( Y >= 48,
+	   cond( Y =< 57,                                  % chiffre
+                 succeed,
+                 ( 
+		     Y >= 65 , 
+		     cond( Y =< 90 ,                       % majuscule
+		           succeed,
+			   cond( Y =:= 95,                 % underscore
+				 succeed,
+				 ( Y >= 97 , Y =< 122)))   % minuscule
+		 )
+          ),
+	  X = charac(Y)) ?
+
+%
+% quoted atoms
+%
+
+quoted_atom(X) --> 
+	[39],
+        quoted_atom_end(X) ?
+
+quoted_atom_end(X) --> 
+	[39], !,
+	( [39], quoted_atom_end(Y), X = strcon("'",Y) ; 
+          # ( X = "" )) ?
+quoted_atom_end(X) --> 
+	quoted_atom_car(Y),
+	quoted_atom_end(Z),
+	#(  X = strcon(Y,Z)) ?
+
+quoted_atom_car(Y) -->
+	[X], #( Y = charac(X) ) ?
+
+
+%
+% Numbers
+%
+
+number(X) --> 
+	digits(V1),
+	( [46], digits(V2,length => L2), !;
+          #( V2 = 0, L2= 0) ),
+	( [101], !,exponent(E) ;
+	  #(E = 0) ),
+	#( X = (V1 + V2 * 10^(-L2)) * 10^(E)) ?
+
+digits(V, length=>L) --> 
+	digit( V1), 
+	( digits(V2, length=>L2),!,
+	  #( L = L2+1, V = V1*10^L2 + V2) ;
+          #( V = V1, L = 1)) ?
+
+sign(-1) --> [45],! ?
+sign(1)  --> [43],! ?
+sign(1)  --> [] ?
+
+exponent(V) --> sign(S), digits(V1), #(V = S*V1) ?
+
+digit(N:int) --> [48+N], #(N =< 9, N >= 0)  ?
+
+
+%
+% Strings
+%
+
+car_chaine(X) --> 
+	[34],
+        car_chaine_end(X) ?
+
+car_chaine_end(X) --> 
+	[34], !,
+	( [34], !,car_chaine_end(Y), #(X = strcon("""",Y)) ; 
+          # ( X = "" )) ?
+car_chaine_end(X) --> 
+	car_chaine_car(Y),
+	car_chaine_end(Z),
+	#(  X = strcon(Y,Z)) ?
+
+car_chaine_car(Y) -->
+	[X], #( Y = charac(X) ) ?
+
+
+%
+% op_atoms
+%
+
+op_atom(X) --> 
+	op_atom_car(Y),!, 
+	op_atom_cars(Z),
+	#(  X = strcon(Y,Z)) ?
+
+op_atom_car(X) -->
+	[Y:{33;35;36;37;38;42;43;45;47;58;60;61;62;92;94;126}],!,
+	#( X = charac(Y)) ?
+
+op_atom_cars(X) --> 
+	op_atom_car(Y),!, 
+	op_atom_cars(Z),
+	#(  X = strcon(Y,Z)) ?
+op_atom_cars("") -->
+	[] ?
+	                  
+
+minuscule(Y) --> [X], #( X >= 97, X =< 122, Y = charac(X) ) ?
+majuscule(Y) --> [X], #( X >= 65, X =< 90,  Y = charac(X) ) ?
+
+charac(Z) -> psi2str(chr(Z)) .
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

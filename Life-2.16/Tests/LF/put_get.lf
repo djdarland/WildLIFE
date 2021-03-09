@@ -1,0 +1,11 @@
+
+% Put and get example (see Andreas & Peter):
+
+enable(C) :- C=@(put=>nil,get=>nil).
+
+putt(X, C:@(get=>G:[Y|Rest])) -> true | X=Y, C<-@(get=>Rest,put=>[]).
+putt(X, C:@(get=>nil,put=>P)) -> true | C<-@(get=>nil,put=>[X|P]).
+
+gett(X, C:@(put=>G:[Y|Rest])) -> true | X=Y, C<-@(put=>Rest,get=>[]).
+gett(X, C:@(put=>nil,get=>P)) -> true | C<-@(put=>nil,get=>[X|P]).
+

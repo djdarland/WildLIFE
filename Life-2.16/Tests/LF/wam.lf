@@ -1,0 +1,98 @@
+%
+%
+%		Unification WAM
+%
+%
+%
+
+% For map, see below:
+my_project(A,B) -> B.A.
+
+joliwam(V,T) :- joli(wam(V,T)).
+
+wam(V,T) -> aplati(lrmap(transequ,expandequ(equ(V,T)))).
+
+%
+%
+% Expansion de l'equation de depart
+%
+%
+expandequ(equ(V,T1)) -> [equ(V,T2)|expand(Listequ)]
+                              | split(T1,T2,Listequ).
+
+expand(Listequ) -> aplati(map(expandequ,Listequ)).
+
+
+split(T1,T2,Listequ) :-
+                       Kmax = length(features(T1)),
+                      (Kmax=0, !, T2=T1, Listequ=[];
+                       aplat(T1,Kmax,[],T2,Listequ) ). 
+
+aplat(T1,0,Listequ,root_sort(T1),Listequ):- !.
+
+aplat(T1,N,Listprov,T2,Listequ) :- 
+                    projete(N,T1,T2,A),
+                    (
+                    var(A),!, aplat(T1,N-1,Listprov,T2,Listequ);
+                    aplat(T1,N-1,[equ(T2.N,A)|Listprov],T2,Listequ)
+                    ).
+
+projete(N,T1,T2,A) :- 
+                    ( features(P:(T1.N))=[], !, T2.N=P ;
+                      A=P, T2.N=@ ).
+ 
+
+
+%
+%
+% Premiere passe: traduction elementaire
+%
+%
+
+consta(X) :- nonvar(X),arity(X)=0.
+
+transequ(equ(V,T)) -> { ([get_const(V,T)] | consta(T),!) ;
+                        ([get_struct(V,root_sort(T),arity(T))| transsup(T)]
+                        | V=reg(U))}.
+
+transsup(T) -> lrmap(transarg,map(my_project(2=>T),features(T))).
+
+transarg(Arg) -> { (unify_const(Arg) | consta(Arg),!) ;
+                   (unify_variable(Arg) | var(Arg),Arg=reg(U),!);
+                   unify_value(Arg)}.
+
+
+
+%
+%
+% Ecriture
+%
+%
+
+joli([]).
+joli([Inst|Listinst]) :- joli_write(Inst), joli(Listinst),!.
+
+joli_write(get_struct(V,Foncteur,Arite)) :- nl, 
+             write("get_struct ",V," ",Foncteur,"/",Arite).
+joli_write(get_const(V,Const)) :-  nl, 
+             write("get_const ",V," ",Const).
+joli_write(unify_const(Const)) :- nl, write("unify_const ",Const),!.
+joli_write(unify_variable(Var)) :- nl, write("unify_variable ",Var),!.
+joli_write(unify_value(Var)) :- nl, write("unify_value ",Var),!.
+%
+%
+% Fonctions  et predicats utiles
+%
+%
+
+arity(T) -> length(features(T)).
+
+aplati([]) -> [].
+aplati([L1|L2]) -> append(L1,aplati(L2)).
+
+%
+%  map function, from left to right.
+%
+
+lrmap(F,[]) -> [].
+lrmap(F,[E|L]) -> [F(E)|L1] | L1=lrmap(F,L).

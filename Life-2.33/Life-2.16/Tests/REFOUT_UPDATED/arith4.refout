@@ -1,0 +1,44 @@
+
+*** Yes
+> > 
+*** Yes
+A = real~, B = real~, C = real~.
+--1> 
+*** No
+> 
+*** Yes
+A = real~, B = real~.
+--1> 
+*** Yes
+A = 1, B = 45.
+----2> 
+*** No
+--1> 
+*** No
+--1> 
+*** Yes
+A = 24.332, B = 0.
+----2> 
+*** No
+--1> 
+*** No
+> 
+*** No
+> 
+*** Yes
+A = 0.
+--1> 
+*** No
+> 
+*** Yes
+A = real~, B = real~.
+--1> 
+*** No
+> 
+*** No
+> 
+*** Yes
+A = real, B = real.
+--1> 
+*** No
+> 

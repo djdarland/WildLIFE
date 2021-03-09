@@ -1,0 +1,108 @@
+5,7c5
+< X = @(@(titi(arg => 1),titi(arg => 1)),pb(action => @(titi(arg => 1)))), 
+< Y = titi(arg => 1).
+< 
+---
+> X = @(@(titi(arg => 1),Y),pb(action => @(Y))), Y = titi(arg => 1).
+12c10
+< X = @(@(@,titi(arg => 1)),pb(action => @(titi(arg => 1)))), Y = titi(arg => 1).
+---
+> X = @(@(@,Y),pb(action => @(Y))), Y = titi(arg => 1).
+17c15
+< X = pair(t(titi_a(1)),s_a(@(titi_a(1)))).
+---
+> X = pair(t(_A: titi_a(1)),s_a(@(_A))).
+22c20
+< B = @(titi_b(1)), X = pair(t(titi_b(1)),s_b(@(titi_b(1)))), Y = titi_b(1).
+---
+> B = @(Y), X = pair(t(Y),s_b(B)), Y = titi_b(1).
+27c25
+< X = pair(t(titi_b(1)),s_b(titi_b(1))), Y = titi_b(1).
+---
+> X = pair(t(Y),s_b(Y)), Y = titi_b(1).
+32c30
+< X = pair(t(titi_b(1)),s_b(@(titi_b(1)))).
+---
+> X = pair(t(_A: titi_b(1)),s_b(@(_A))).
+37c35
+< X = pair(t(titi_b(1)),s_b(titi_b(1))).
+---
+> X = pair(t(_A: titi_b(1)),s_b(_A)).
+42c40
+< A = @, B = @(titi_c(1)), X = @(@(@,titi_c(1)),p_c(@(titi_c(1)))), Y = titi_c(1).
+---
+> A = @, B = @(Y), X = @(@(A,Y),p_c(B)), Y = titi_c(1).
+47c45
+< A = @, X = @(@(@,titi_c(1)),p_c(titi_c(1))), Y = titi_c(1).
+---
+> A = @, X = @(@(A,Y),p_c(Y)), Y = titi_c(1).
+52,57c50
+< A = @, 
+< B = @(titi_c(1)), 
+< X = @(@,titi_c(1)), 
+< Y = titi_c(1), 
+< Z = p_c(@(titi_c(1))).
+< 
+---
+> A = @, B = @(Y), X = @(A,Y), Y = titi_c(1), Z = p_c(B).
+62,67c55
+< A = @, 
+< B = @(titi_c(1)), 
+< X = @(@,titi_c(1)), 
+< Y = titi_c(1), 
+< Z = p_c(@(titi_c(1))).
+< 
+---
+> A = @, B = @(Y), X = @(A,Y), Y = titi_c(1), Z = p_c(B).
+72c60
+< X = @(p_c(@(titi_c(1))),@(@,titi_c(1))), Y = titi_c(1).
+---
+> X = @(p_c(@(Y)),@(@,Y)), Y = titi_c(1).
+77c65
+< X = @(p_c(@(titi_c(1))),@(@,@(titi_c(1)))), Y = titi_c(1).
+---
+> X = @(p_c(@(Y)),@(@,@(Y))), Y = titi_c(1).
+82c70
+< X = @(p_c(titi_c(1)),@(@,titi_c(1))), Y = titi_c(1).
+---
+> X = @(p_c(Y),@(@,Y)), Y = titi_c(1).
+87c75
+< X = @(@(@,titi_d(1)),p_d(@(@(titi_d(1))))), Y = titi_d(1).
+---
+> X = @(@(@,Y),p_d(@(@(Y)))), Y = titi_d(1).
+92c80
+< X = @(@(@,titi_d(1)),p_d(@(titi_d(1)))), Y = titi_d(1).
+---
+> X = @(@(@,Y),p_d(@(Y))), Y = titi_d(1).
+97c85
+< X = @(@(@,titi_d(1)),p_d(titi_d(1))), Y = titi_d(1).
+---
+> X = @(@(@,Y),p_d(Y)), Y = titi_d(1).
+102c90
+< X = @(@(@,titi_d(1)),p_d(@(@(titi_d(1))))).
+---
+> X = @(@(@,_A: titi_d(1)),p_d(@(@(_A)))).
+107c95
+< X = @(@(@,titi_d(1)),p_d(@(titi_d(1)))).
+---
+> X = @(@(@,_A: titi_d(1)),p_d(@(_A))).
+112c100
+< X = @(@(@,titi_d(1)),p_d(titi_d(1))).
+---
+> X = @(@(@,_A: titi_d(1)),p_d(_A)).
+117c105
+< X = @(@(@,titi_e(1)),p_e(@(titi_e(1)),@)), Y = titi_e(1).
+---
+> X = @(@(@,Y),p_e(@(Y),@)), Y = titi_e(1).
+122c110
+< X = @(@(@,titi_e(1)),p_e(titi_e(1),@)), Y = titi_e(1).
+---
+> X = @(@(@,Y),p_e(Y,@)), Y = titi_e(1).
+127c115
+< X = @(@(@,titi_e(1)),p_e(@(titi_e(1)),@)).
+---
+> X = @(@(@,_A: titi_e(1)),p_e(@(_A),@)).
+132c120
+< X = @(@(@,titi_e(1)),p_e(titi_e(1),@)).
+---
+> X = @(@(@,_A: titi_e(1)),p_e(_A,@)).

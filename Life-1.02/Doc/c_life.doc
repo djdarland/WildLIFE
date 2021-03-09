@@ -1,0 +1,314 @@
+Richard Meyer							March 31st 1993
+
+
+
+
+
+
+			Calling Wild-LIFE from C.
+			=========================
+
+
+
+
+1- Description:
+---------------
+
+This command string-based interface provides a small but powerful means of
+calling the Wild-LIFE interpreter from within C programs.
+
+Routines are provided to:
+	- state facts,
+	- issue queries,
+	- recover results,
+	- extract data from psi-terms,
+	- manipulate the current query status of Wild-LIFE:
+		- generate more solutions,
+		- reset the system.
+
+The interface behave in pretty much the same way as the top-level of the
+Wild-LIFE interpreter, so being familiar with the interpreter (and needless to
+say, the LIFE programming language) is necessary, but this also makes the
+interface very easy to use.
+
+No means are provided to build psi-terms directly other than through successive
+queries.
+
+
+
+2- A simple example: "Hello World":
+-----------------------------------
+
+	#include "c_life.h"
+
+	main(int argc, char *argv[])
+	{
+	  WFInit(argc,argv);
+	  WFProve("write(\042Hello World!!\042)?");
+	}
+
+
+compile with:
+	> cc -o hello hello.c c_life.a -lm -lX11
+and execute:
+	> hello
+	Hello World!!
+	>
+
+
+
+3- Summary of functions and prototypes:
+---------------------------------------
+
+- Initialize Wild-LIFE
+	void WFInit(int argc,char *argv[])
+
+- Submit a query:
+	int WFInput(char *query);
+
+- Get a variable's value:
+	PsiTerm WFGetVar(char *name);
+
+- Get the type of a psi-term:
+	char *WFType(PsiTerm psi);
+
+- Get the value of a psi-term if it's a double:
+	double WFGetDouble(PsiTerm psi, int *ok);
+
+- Get the value of a psi-term if it's a string:
+	char *WFGetString(PsiTerm psi, int *ok);
+
+- Count the features of a psi-term:
+	int WFFeatureCount(PsiTerm psi);
+
+- Get the value of a feature:
+	PsiTerm WFGetFeature(PsiTerm psi, char *featureName);
+
+- Get all the feature names as a NULL-terminated array of strings:
+	char **WFFeatures(PsiTerm psi);
+
+- Prove a goal and report an error on failure:
+	WFProve(char *goal);
+
+This is a macro defined as:
+
+	#define WFProve(A) { if(!WFInput(A)) \
+	  fprintf(stderr,"%s failed (%s, line %d)\n",A,__FILE__,__LINE__); }
+
+Warning: In case of failure it could cause its argument to be re-evaluated.
+
+
+
+4- Memory management:
+---------------------
+
+As LIFE is a non-deterministic programming language, it is best to view it as a
+task running in parallel that one is communicating with and whose state may be
+very different from the calling C program.
+
+Wild-LIFE uses its own memory management scheme (with garbage collection). At
+each call to 'WFInput' the interpreter changes state, and may completely re-map
+its memory layout, thus rendering obsolete any C variables pointing into the
+LIFE memory space.
+
+An example of dangerous programming:
+
+	PsiTerm a;
+	double n;
+	WFProve("A=123?");
+	a=WFGetVar("A");
+	WFProve("B=fact(A)?"); /* Might cause a call to the GC */
+	n=WFGetDouble(a,NULL); /* Random results - might even crash */
+
+However, thanks to the garbage collector, it is not necessary for the C program
+to worry about freeing memory in the LIFE space (in fact, doing so would
+corrupt the integrity of the system). Currently the only function requiring the
+C programmer to free memory is 'WFGetFeatures' which allocates an string array
+of strings in LIFE space. The string array has to be freed (NOT the strings
+within it).
+
+
+
+5- An exhaustive example:
+-------------------------
+
+The following example displays the correct (and short-cut) use of all the
+current features of the interface. Read it carefully as some of these are not
+documented elsewhere.
+
+The program generates the following output:
+
+	> cc -g -o demo demo.c /udir/rmeyer/LIFE/MODULE/c_life.a -lm -lX11
+	> demo
+	Welcome to Wild-LIFE!!
+	WFInput succeeded and there may be more answers
+	true=false? failed (demo.c, line 51)
+	C=4
+	1
+	2
+	3
+	4
+	; failed (demo.c, line 69)
+	6
+	7
+	message(three+four,equals => 7)
+	The type of A is user#message
+	A has 2 features
+	sum=7
+	the first feature is: 'three+four'
+	feature 1 => built_in#string
+	feature equals => built_in#int
+	Linking X library...
+	ok
+	% here it runs the 'queens' program...
+
+
+The program: "demo.c"
+
+/* Example C program calling Wild-LIFE */
+#include "/udir/rmeyer/LIFE/MODULE/c_life.h"
+
+
+
+main(argc,argv)
+
+     int argc;
+     char *argv[];
+
+{
+  int ans;
+  
+  PsiTerm a;
+  PsiTerm sum;
+  char **features;
+  int i;
+  double value;
+  int ok;
+  
+
+  
+  /*** Initialize Wild-LIFE ***/
+  WFInit(argc,argv); /* Currently doesn't really use the arguments */
+
+
+  
+  /*** Submit a query ***/
+  /* \042 is a quote sign (") */
+  ans=WFInput("write(\042Welcome to Wild-LIFE!!\042),nl?");
+  
+  /* Deal with Wild-LIFE response */
+  switch(ans) {
+
+  case WFno:
+    printf("WFInput failed\n");
+    break;
+    
+  case WFyes :
+    printf("WFInput succeeded\n");
+    break;
+
+  case WFmore:
+    printf("WFInput succeeded and there may be more answers\n");
+    break;
+  }
+
+
+  
+  /*** This MACRO displays an error message if the query fails ***/
+  WFProve("true=false?");
+
+
+  
+  /*** Solve a simple constraint ***/
+  WFProve("A=B+C?");
+  WFProve("B=1?");
+  WFProve("A=5?");
+  WFProve("write('C=',C),nl?");
+  WFProve(".");
+
+
+  
+  /*** Back-track over 4 solutions ***/
+  WFProve("A={1;2;3;4},write(A),nl?");
+  WFProve(";");
+  WFProve(";");
+  WFProve(";");
+  WFProve(";"); /* No more at this point */
+
+  
+  
+  /*** Back-track over only the first 2 solutions ***/
+  WFProve("A={6;7;8},write(A),nl?");
+  WFProve(";");
+  WFProve("."); /* Return to top level */
+
+
+  
+  /*** Build a psi-term and query it ***/
+  WFProve("A=message(\042three+four\042,equals => 3+4),write(A),nl?");
+
+  /* Read the variable 'A' */
+  a=WFGetVar("A");
+  if(!a) { /* Error checking, here for demonstration only */
+    fprintf(stderr,"Couldn't read variable 'A'\n");
+    exit(1);
+  }
+
+  /* Print the type of 'A' */
+  printf("The type of A is %s\n",WFType(a));
+
+  /* Get the number of features of 'A' */
+  printf("A has %d features\n",WFFeatureCount(a));
+
+  /* Get the feature 'equals' */
+  sum=WFGetFeature(a,"equals");
+  if(!sum) { /* Error checking, here for demonstration only */
+    fprintf(stderr,"Couldn't read feature 'equals'\n");
+    exit(1);
+  }
+
+  /* Get the value of 'sum' */
+  value=WFGetDouble(sum,&ok);
+  if(!ok) { /* Error checking, here for demonstration only */
+    fprintf(stderr,"'sum' is not a real number\n");
+    exit(1);
+  }
+  printf("sum=%lg\n",value);
+
+  /* Get the first feature */
+  /* You can use NULL in WFGetDouble and WFGetString if you are sure the
+     psi-term effectively contains a value of the correct type. */
+  printf("the first feature is: '%s'\n",
+	 WFGetString(WFGetFeature(a,"1"),NULL));
+  
+  /* Get the features as a NULL terminated string array */
+  features=WFFeatures(a);
+  if(features) {
+    for(i=0;features[i];i++) {
+      printf("feature %s => %s\n",
+	     features[i],
+	     WFType(WFGetFeature(a,features[i])));
+    }
+    free(features); /* Recommended */
+  }
+  else { /* Error checking, here for demonstration only */
+    fprintf(stderr,"'A' has no features\n");
+    exit(1);
+  }
+  
+  
+  /* Run the queens program */
+  WFProve("link_x?");
+  WFProve("write(ok),nl?");
+  WFProve("load(\042/udir/dumant/NolistDemos/queens.lf\042)?");
+  WFProve("queens?");
+
+  /* Loop over each solution */
+  do {
+    sleep(1);
+    printf("retrying\n");
+    ans=WFInput(";");
+    printf("ans=%d\n",ans);
+  } while(ans);
+}
+

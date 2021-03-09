@@ -1,0 +1,261 @@
+% Copyright 1992 Digital Equipment Corporation
+% All Rights Reserved
+
+% Execute the query 'machine?' to run this program.
+% This program emulates the snack machine at PRL.
+% The program is in French.
+
+module("machine") ?
+public( machine,gini,perrier,oasis,coca,coca_light,cake,lion,bounty,
+        raider,kit_kat,rien) ?
+
+:: boisson(prix => 5).
+
+gini <| boisson.
+perrier <| boisson.
+oasis <| boisson.
+coca <| boisson.
+coca_light <| boisson.
+
+cake <| snack.
+lion <| snack.
+bounty <| snack.
+raider <| snack.
+kit_kat <| snack.
+
+snack <| a_vendre.
+boisson <| a_vendre.
+rien <| a_vendre.
+
+:: cake(prix => 3).
+:: lion(prix => 3).
+:: bounty(prix => 3.5).
+:: raider(prix => 3.5).
+:: kit_kat(prix => 4).
+
+
+:: piece.
+
+piece <| objet.
+boisson <| objet.
+snack <| objet.
+
+:: objet(quantite => N:int, prix => real).
+
+global(arret_machine) ?
+
+dynamic(machine_contient)?
+
+machine_contient(
+	[
+	cake(quantite => 3),
+	lion(quantite => 7),
+	bounty(quantite => 2),
+	raider(quantite => 3),
+	kit_kat(quantite => 7),
+	gini(quantite => 2),
+	perrier(quantite => 9),
+	oasis(quantite => 2),
+	coca(quantite => 1),
+	coca_light(quantite => 1),
+	piece(prix => 0.5,quantite => 1),
+	piece(prix => 1,quantite => 3),
+	piece(prix => 2,quantite => 2),
+	piece(prix => 5,quantite => 2),
+	piece(prix => 10,quantite => 1)
+	]).
+
+
+machine :-
+	(
+	    arret_machine = get_choice,
+	    machine2
+	;
+	    succeed
+	).
+
+machine2 :- 
+	write('Distributeur de Snacks et Boissons de DEC PRL.'),
+	nl,
+	nl,
+	machine_contient(Contenu:list),
+	write('La machine contient:'),
+	nl,
+	nl,
+	affiche(Contenu),
+	nl,
+	lire(Commande),
+	write('Vous avez commande un ',
+	      root_sort(Commande:a_vendre(prix => P))),
+	ajouter(root_sort(Commande) & @(prix => P,quantite => -1)),
+	nl,
+	nl,
+	write('Vous devez payer ',P,'F.'),
+	nl,
+	nl,
+	payer(P,Commande),
+	nl,
+	write('-----------------------------------------------------'),
+	nl,
+	fail.
+
+machine2 :- machine2.
+
+
+lire(C:a_vendre(quantite => 1)) :-
+	machine_contient(Choses),
+	repeter,
+	(
+	        write('Que voulez vous acheter ? '),
+		read_halt(C),
+		nl,
+		(
+		    C :== rien,
+		    set_choice(arret_machine),
+		    fail
+		;
+		    dans(C,Choses),
+		    !
+		)
+	;
+		write('Il n''y en a pas a vendre...'),
+		nl,
+		fail
+	).
+
+
+payer(N:real,C) :-
+	N<0,
+	!,
+	(
+		trouver_pieces(-N,L),
+		!,
+		write('La machine rend:'),
+		rendre_pieces(L)
+	;
+		write('Il n''y a pas assez de monnaie...'),
+		nl,
+		rendre_le_plus(-N-0.5)
+	),
+	nl,
+	write('Prenez votre ',root_sort(C),' dans le distributeur SVP.'),
+	nl,
+	nl,
+	! .
+
+rendre_le_plus(N) :-
+	N=<0,
+	write('La machine ne vous rend RIEN !!!'),
+	nl,
+	! .
+
+rendre_le_plus(N) :-
+	trouver_pieces(N,L),
+	!,
+	write('La machine ne peut rendre que ',N,
+	      'F au mieux, soit:'),
+	rendre_pieces(L),
+	! .
+
+rendre_le_plus(N) :-
+	rendre_le_plus(N-0.5).	
+
+
+payer(0,C) :- 
+	write('Le compte est bon.'),
+	nl,
+	write('Veuillez prendre votre ',
+	      root_sort(C),' dans le distributeur...'),
+	nl,
+	nl,
+	! .
+
+payer(P,C) :-
+	write('Donnez une piece de F ? '),
+	read_halt(N:real),
+	N={0.5;1;2;5;10},
+	!,
+	ajouter(piece(prix => N,quantite => 1)),
+	payer(P-N,C).
+
+payer(P,C) :-
+	write('Inacceptable.'),
+	nl,
+	write('Recommencez.'),
+	nl,
+	payer(P,C).
+
+
+ajouter(C) :-
+	machine_contient(Choses),
+	retract(machine_contient),
+	mettre(C,Choses,Contenu),
+	assert(machine_contient(Contenu)).
+
+
+mettre( C:@(prix => P,quantite => R),
+	[A:@(prix => P,quantite => Q)|Reste],
+	[B:@(prix => P,quantite => Q+R)|Reste]) :- 
+	A=root_sort(C),
+	B=root_sort(C),
+	!.
+
+mettre(C,[A|B],[A|B2]) :- mettre(C,B,B2).
+
+
+trouver_pieces(N,somme_egale(piece_dans(Choses),N)) :- 
+	machine_contient(Choses).
+
+
+piece_dans([]) -> [].
+piece_dans([piece(prix => P,quantite => Q)|B]) ->
+	apres(piece_dans(B),Q,P).
+piece_dans([A|B]) -> piece_dans(B).
+
+apres(C,0,A) -> C.
+apres(C,N,P) -> apres([P|C],N-1,P).
+
+	
+	
+somme_egale(list,0) -> [].
+somme_egale([],N) -> {}.
+somme_egale([A|B],N) -> {[A|somme_egale(B,N-A)];somme_egale(B,N)}.
+
+
+
+rendre_pieces([]) :- nl.
+rendre_pieces([N|Reste]) :-
+	ajouter(piece(prix => N,quantite => -1)),
+	write(' ',N,'F'),
+	rendre_pieces(Reste).
+	
+
+
+affiche([]) :- ! .
+affiche([A:@(quantite => 0)|B]) :-
+	!,
+	affiche(B).
+
+affiche([A|B]) :-
+	write('       ',A),
+	nl,
+	affiche(B).
+
+dans(A,[ B:@(quantite => N:int) | @]) :-
+	N>0,
+	A=root_sort(B).
+
+dans(A,[B|C]) :- dans(A,C).
+
+repeter.
+repeter :- 
+	write('Recommencez...'),
+	nl,
+	repeter.
+
+read_halt(C) :-
+	read_token(D),
+	end_check(D, C).
+
+end_check(end_of_file, _) :- nl,set_choice(arret_machine),fail.
+end_check(C,C).

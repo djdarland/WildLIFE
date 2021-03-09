@@ -1,0 +1,5 @@
+A=gauss([],matrice_to_sys(matrice))?
+;
+test(A)?
+;
+

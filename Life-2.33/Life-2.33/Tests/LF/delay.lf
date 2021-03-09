@@ -1,0 +1,4 @@
+delay_check(person)?
+:: person(best_friend => P:person) | really_nice(P).
+cleopatra <| person.
+really_nice(cleopatra).

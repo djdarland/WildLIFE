@@ -1,0 +1,17 @@
+%
+%		Wild_life testing
+%
+%		Infinity and NaN
+%
+%
+testInfinity(1e-300)?
+write("***"),nl?
+testInfinity(1e-310)?
+write("***"),nl?
+testInfinity(1e300)?
+write("***"),nl?
+testInfinity(1e310)?
+write("***"),nl?
+
+testNaN?
+

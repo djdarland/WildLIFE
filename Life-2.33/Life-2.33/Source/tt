@@ -1,0 +1,4 @@
+snobol4 checkdjd.sno <memory.c >memory.out
+emacs memory.out
+emacs checkdjd.sno
+emacs memory.c

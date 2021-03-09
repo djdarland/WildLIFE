@@ -1,0 +1,200 @@
+
+*** Yes
+> > > |    |    |    |    |    |    |    |    |    |    |    |    |    
+% non_strict(non_strict)?
+% 'non_strict' is a built-in predicate.
+
+% non_strict(dynamic)?
+% 'dynamic' is a built-in predicate.
+
+% non_strict(delay_check)?
+% 'delay_check' is a built-in predicate.
+
+% 'assert' is a built-in predicate.
+
+% 'asserta' is a built-in predicate.
+
+% 'retract' is a built-in predicate.
+
+% 'clause' is a built-in predicate.
+
+non_strict(load)?
+_A: load :-
+        _B = current_module,
+        _C = features(_A,"built_ins"),
+        (loading,
+        !,
+        load_2(_C,_A) ; loading <<- true,
+        top_load <<- get_choice,
+        load_2(_C,_A),
+        !,
+        loading <<- false ; open_out("stdout",@),
+        open_in("stdin",@),
+        set_module(_B),
+        loading <<- false,
+        fail).
+
+% 'load_2' is undefined.
+
+% 'load_3' is undefined.
+
+% 'load_path' is undefined.
+
+life_ext -> {".lf";"";(load_suffixes | is_function(` load_suffixes));".life"}.
+
+non_strict(listing)?
+_A: listing :-
+        listing_2(features(_A,"built_ins"),_A).
+
+% 'listing_2' is undefined.
+
+% 'listing_3' is undefined.
+
+% 'listing_4' is undefined.
+
+% 'listing_4a' is undefined.
+
+% 'listing_5' is undefined.
+
+% 'listing_6' is undefined.
+
+non_strict(op)?
+op(_A,_B,_C,functor => _C,kind => _B,precedence => _A) :-
+        trace(_D,_E),
+        (op_2(_A,_B,_C),
+        trace(_D,_E) ; trace(_D,_E),
+        fail).
+
+non_strict(op)?
+op(_A,_B,_C,functor => _C,kind => _B,precedence => _A) :-
+        trace(_D,_E),
+        (op_2(_A,_B,_C),
+        trace(_D,_E) ; trace(_D,_E),
+        fail).
+
+% 'op_2' is undefined.
+
+% 'op_3' is undefined.
+
+call_handler(_A) :-
+        is_sort(_A),
+        !,
+        write_err("*** Error: the sort '"),
+        writeq_err(_A),
+        write_err("' occurs where a predicate or function is expected."),
+        nl_err,
+        abort.
+call_handler(_A) :-
+        !,
+        write_err("*** Error: '"),
+        writeq_err(_A),
+        write_err("' is not a predicate or a function."),
+        nl_err,
+        abort.
+
+nl :-
+        write("
+").
+
+\+ _A :-
+        _A,
+        !,
+        fail.
+\+ :-
+        succeed.
+
+non_strict(bagof)?
+bagof(_A,
+      _B) -> _C | _D <<- [],(evalin(_B), _D <<- [evalin(_A)|copy_pointer(_D)], fail ; _C <- copy_term(_D)).
+
+reduce(_A,_B,[_C|_D]) -> apply(_C,reduce(_A,_B,_D),functor => _A).
+reduce(@,_A,[]) -> _A.
+
+map(@,[]) -> [].
+map(_A,[_B|_C]) -> [apply(_B,functor => _A)|map(_A,_C)].
+
+maprel(_A,[_B|_C]) :-
+        !,
+        root_sort(_A) & @(_B),
+        maprel(_A,_C).
+maprel(@,[]) :-
+        succeed.
+
+append([],_A: list) -> _A.
+append([_A|_B],_C: list) -> [_A|append(_B,_C)].
+
+length([]) -> 0.
+length([@|_A]) -> 1 + length(_A).
+
+[] <| list.
+
+cons <| list.
+
+% 'car' is undefined.
+
+% 'cdr' is undefined.
+
+% 'repeat' is a built-in predicate.
+
+% 'where' is undefined.
+
+% 'and' is a built-in function.
+
+% 'or' is a built-in function.
+
+% 'not' is a built-in function.
+
+% 'xor' is a built-in function.
+
+% 'int2str' is a built-in function.
+
+% 'num' is undefined.
+
+str(_A) -> cond(is_value(_A),strval(_A),psi2str(_A)).
+
+strval(_A: string) -> _A.
+strval(_A: int) -> int2str(_A).
+
+"" $== "" -> true.
+_A: string $== _B: string -> asc(_A) =:= asc(_B) and lenstreq(substr(_A,
+                                                                     2,
+                                                                     _C: strlen(_A)),
+                                                              substr(_B,
+                                                                     2,
+                                                                     _D: strlen(_B)),
+                                                              _C,
+                                                              _D).
+
+_A: string $\== _B: string -> not _A $== _B.
+
+_A: string $< _B: string -> _A $=< _B and not _A $== _B.
+
+"" $=< string -> true.
+string $=< "" -> false.
+_A: string $=< _B: string -> _C: asc(_A) < _D: asc(_B) or _C =:= _D and lenstrle(substr(_A,
+                                                                                        2,
+                                                                                        _E: strlen(_A)),
+                                                                                 substr(_B,
+                                                                                        2,
+                                                                                        _F: strlen(_B)),
+                                                                                 _E,
+                                                                                 _F).
+
+_A: string $> _B: string -> not _A $=< _B.
+
+_A: string $>= _B: string -> not _A $=< _B or _A $== _B.
+
+% 'set' is undefined.
+
+% 'setq' is a built-in predicate.
+
+_A ^ _B: int -> cond(_B < 0,1 / pwr(_A,- _B),pwr(_A,_B)).
+
+% 'pwr' is undefined.
+
+max(_A,_B) -> cond(_A > _B,_A,_B).
+
+min(_A,_B) -> cond(_A > _B,_B,_A).
+
+*** Yes
+> 

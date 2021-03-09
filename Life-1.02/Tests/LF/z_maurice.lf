@@ -1,0 +1,16 @@
+main :- q(1000,_), q(100,T), q(1000,_), write(T).
+
+q(N,T) :- T=largeterm(N).
+
+largeterm(0) -> a.
+largeterm(N) -> rec(term=>largeterm(N-1),number=>nextnum).
+
+nextnum -> N|makenum(N).
+
+makenum(M) :-
+    M=N+1,
+    retract(mynum(N)), !,
+    assert(mynum(M)).
+makenum(1) :-
+    assert(mynum(1)).
+

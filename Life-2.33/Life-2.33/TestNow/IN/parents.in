@@ -1,0 +1,16 @@
+A=parents(23)?
+
+A=parents(23.3)?
+
+A=parents("sdfef")?
+
+A=parents(int)?
+
+A=parents(real)?
+
+A=parents(string)?
+
+A=parents(nil)?
+
+A=parents(cons)?
+

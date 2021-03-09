@@ -1,0 +1,202 @@
+8a9,209
+> *** Yes
+> S = [['Start       ',_A: x,_B: x,_C: x,' ',o|_D: [o|_E: [o|_F: []]]],
+>      ['o move left ',_A,_B,_C,o,' '|_D],
+>      ['x jump right',_A,_B,' '|_G: [o|_H: [x|_D]]],
+>      ['x move right',_A,' ',x|_G],
+>      ['o jump left ',_A,_I: o,_J: x,' '|_H],
+>      ['o jump left ',_A,_I,_J,_K: o,_L: x,' '|_E],
+>      ['o move left ',_A,_I,_J,_K,_L,o,' '|_F],
+>      ['x jump right',_A,_I,_J,_K,' '|_M: [o|_N: [x|_F]]],
+>      ['x jump right',_A,_I,' '|_O: [o|_P: [x|_M]]],
+>      ['x jump right',' ',o|_Q: [x|_O]],
+>      ['o move left ',_R: o,' '|_Q],
+>      ['o jump left ',_R,_S: o,_T: x,' '|_P],
+>      ['o jump left ',_R,_S,_T,_U: o,x,' '|_N],
+>      ['x move right',_R,_S,_T,_U,' '|_V: [x|_N]],
+>      ['x jump right',_R,_S,' ',o|_W: [x|_V]],
+>      ['o move left ',_R,_S,o,' '|_W]].
+> 
+> --1> 
+> *** No
+> > Profile : Added profiling code to predicate 'go' at goal level
+> 
+> *** Yes
+> --1> Profile : Added profiling code to predicate 'move' at goal level
+> 
+> *** Yes
+> ----2> 
+> *** Yes
+> S = [['Start       ',_A: x,_B: x,_C: x,' ',o|_D: [o|_E: [o|_F: []]]],
+>      ['o move left ',_A,_B,_C,o,' '|_D],
+>      ['x jump right',_A,_B,' '|_G: [o|_H: [x|_D]]],
+>      ['x move right',_A,' ',x|_G],
+>      ['o jump left ',_A,_I: o,_J: x,' '|_H],
+>      ['o jump left ',_A,_I,_J,_K: o,_L: x,' '|_E],
+>      ['o move left ',_A,_I,_J,_K,_L,o,' '|_F],
+>      ['x jump right',_A,_I,_J,_K,' '|_M: [o|_N: [x|_F]]],
+>      ['x jump right',_A,_I,' '|_O: [o|_P: [x|_M]]],
+>      ['x jump right',' ',o|_Q: [x|_O]],
+>      ['o move left ',_R: o,' '|_Q],
+>      ['o jump left ',_R,_S: o,_T: x,' '|_P],
+>      ['o jump left ',_R,_S,_T,_U: o,x,' '|_N],
+>      ['x move right',_R,_S,_T,_U,' '|_V: [x|_N]],
+>      ['x jump right',_R,_S,' ',o|_W: [x|_V]],
+>      ['o move left ',_R,_S,o,' '|_W]].
+> 
+> ------3> > 
+> Profiling statistics for predicates :
+> -----------------------------------
+> 
+>   *Tries*    Entries    Success   %Tot.fail %Expl.fail   predicates
+>    288         ---       125        83.33      62.50     move
+>     37         ---        16        56.75      56.75     go
+> 
+>   *Tries*    Entries    Success   %Tot.fail %Expl.fail   predicates
+>     37          1          1          0          0       go#1
+>     36         36         15        58.33      58.33     go#2
+>    288        252         89        86.90      68.65     move#1
+>    255          7          7        71.42        0       move#2
+>    253         13         13        69.23        0       move#3
+>    249          8          8        37.50        0       move#4
+>    244          8          8         50          0       move#5
+> 
+>    Tries    *Entries*   Success   %Tot.fail %Expl.fail   predicates
+>     36         36         15        58.33      58.33     go#2
+>     37          1          1          0          0       go#1
+>    288        252         89        86.90      68.65     move#1
+>    253         13         13        69.23        0       move#3
+>    249          8          8        37.50        0       move#4
+>    244          8          8         50          0       move#5
+>    255          7          7        71.42        0       move#2
+> 
+>    Tries     Entries   *Success*  %Tot.fail %Expl.fail   predicates
+>     36         36         15        58.33      58.33     go#2
+>     37          1          1          0          0       go#1
+>    288        252         89        86.90      68.65     move#1
+>    253         13         13        69.23        0       move#3
+>    249          8          8        37.50        0       move#4
+>    244          8          8         50          0       move#5
+>    255          7          7        71.42        0       move#2
+> 
+> 
+> *** Yes
+> > Profile : Added profiling code to predicate 'move' at clause level
+> 
+> *** Yes
+> --1> 
+> *** Yes
+> S = [['Start       ',_A: x,_B: x,_C: x,' ',o|_D: [o|_E: [o|_F: []]]],
+>      ['o move left ',_A,_B,_C,o,' '|_D],
+>      ['x jump right',_A,_B,' '|_G: [o|_H: [x|_D]]],
+>      ['x move right',_A,' ',x|_G],
+>      ['o jump left ',_A,_I: o,_J: x,' '|_H],
+>      ['o jump left ',_A,_I,_J,_K: o,_L: x,' '|_E],
+>      ['o move left ',_A,_I,_J,_K,_L,o,' '|_F],
+>      ['x jump right',_A,_I,_J,_K,' '|_M: [o|_N: [x|_F]]],
+>      ['x jump right',_A,_I,' '|_O: [o|_P: [x|_M]]],
+>      ['x jump right',' ',o|_Q: [x|_O]],
+>      ['o move left ',_R: o,' '|_Q],
+>      ['o jump left ',_R,_S: o,_T: x,' '|_P],
+>      ['o jump left ',_R,_S,_T,_U: o,x,' '|_N],
+>      ['x move right',_R,_S,_T,_U,' '|_V: [x|_N]],
+>      ['x jump right',_R,_S,' ',o|_W: [x|_V]],
+>      ['o move left ',_R,_S,o,' '|_W]].
+> 
+> ----2> 
+> Profiling statistics for predicates :
+> -----------------------------------
+> 
+>   *Tries*    Entries    Success   %Tot.fail %Expl.fail   predicates
+>    288         ---       125        83.33      62.50     move
+>     74         ---        32        56.75      56.75     go
+> 
+>   *Tries*    Entries    Success   %Tot.fail %Expl.fail   predicates
+>     74          2          2          0          0       go#1
+>     72         72         30        58.33      58.33     go#2
+>    288        252         89        86.90      68.65     move#1
+>    255          7          7        71.42        0       move#2
+>    253         13         13        69.23        0       move#3
+>    249          8          8        37.50        0       move#4
+>    244          8          8         50          0       move#5
+> 
+>    Tries    *Entries*   Success   %Tot.fail %Expl.fail   predicates
+>     72         72         30        58.33      58.33     go#2
+>     74          2          2          0          0       go#1
+>    288        252         89        86.90      68.65     move#1
+>    253         13         13        69.23        0       move#3
+>    249          8          8        37.50        0       move#4
+>    244          8          8         50          0       move#5
+>    255          7          7        71.42        0       move#2
+> 
+>    Tries     Entries   *Success*  %Tot.fail %Expl.fail   predicates
+>     72         72         30        58.33      58.33     go#2
+>     74          2          2          0          0       go#1
+>    288        252         89        86.90      68.65     move#1
+>    253         13         13        69.23        0       move#3
+>    249          8          8        37.50        0       move#4
+>    244          8          8         50          0       move#5
+>    255          7          7        71.42        0       move#2
+> 
+> 
+> *** Yes
+> S = [['Start       ',_A: x,_B: x,_C: x,' ',o|_D: [o|_E: [o|_F: []]]],
+>      ['o move left ',_A,_B,_C,o,' '|_D],
+>      ['x jump right',_A,_B,' '|_G: [o|_H: [x|_D]]],
+>      ['x move right',_A,' ',x|_G],
+>      ['o jump left ',_A,_I: o,_J: x,' '|_H],
+>      ['o jump left ',_A,_I,_J,_K: o,_L: x,' '|_E],
+>      ['o move left ',_A,_I,_J,_K,_L,o,' '|_F],
+>      ['x jump right',_A,_I,_J,_K,' '|_M: [o|_N: [x|_F]]],
+>      ['x jump right',_A,_I,' '|_O: [o|_P: [x|_M]]],
+>      ['x jump right',' ',o|_Q: [x|_O]],
+>      ['o move left ',_R: o,' '|_Q],
+>      ['o jump left ',_R,_S: o,_T: x,' '|_P],
+>      ['o jump left ',_R,_S,_T,_U: o,x,' '|_N],
+>      ['x move right',_R,_S,_T,_U,' '|_V: [x|_N]],
+>      ['x jump right',_R,_S,' ',o|_W: [x|_V]],
+>      ['o move left ',_R,_S,o,' '|_W]].
+> 
+> ----2> Profile : restored original clauses for predicate 'move'
+> Profile : restored original clauses for predicate 'go'
+> 
+> *** Yes
+> S = [['Start       ',_A: x,_B: x,_C: x,' ',o|_D: [o|_E: [o|_F: []]]],
+>      ['o move left ',_A,_B,_C,o,' '|_D],
+>      ['x jump right',_A,_B,' '|_G: [o|_H: [x|_D]]],
+>      ['x move right',_A,' ',x|_G],
+>      ['o jump left ',_A,_I: o,_J: x,' '|_H],
+>      ['o jump left ',_A,_I,_J,_K: o,_L: x,' '|_E],
+>      ['o move left ',_A,_I,_J,_K,_L,o,' '|_F],
+>      ['x jump right',_A,_I,_J,_K,' '|_M: [o|_N: [x|_F]]],
+>      ['x jump right',_A,_I,' '|_O: [o|_P: [x|_M]]],
+>      ['x jump right',' ',o|_Q: [x|_O]],
+>      ['o move left ',_R: o,' '|_Q],
+>      ['o jump left ',_R,_S: o,_T: x,' '|_P],
+>      ['o jump left ',_R,_S,_T,_U: o,x,' '|_N],
+>      ['x move right',_R,_S,_T,_U,' '|_V: [x|_N]],
+>      ['x jump right',_R,_S,' ',o|_W: [x|_V]],
+>      ['o move left ',_R,_S,o,' '|_W]].
+> 
+> ------3> > 
+> dynamic(move)?
+> move([_A|_B],[_A|_C],_D) :-
+>         move(_B,_C,_D).
+> move([x,' '|_A],[' ',x|_A],'x move right') :-
+>         succeed.
+> move([' ',o|_A],[o,' '|_A],'o move left ') :-
+>         succeed.
+> move([x,o,' '|_A],[' ',o,x|_A],'x jump right') :-
+>         succeed.
+> move([' ',x,o|_A],[o,x,' '|_A],'o jump left ') :-
+>         succeed.
+> 
+> dynamic(go)?
+> go(_A,_A,[]) :-
+>         succeed.
+> go(_A,_B,[[_C|_D]|_E]) :-
+>         move(_A,_D,_C),
+>         go(_D,_B,_E).
+> 
+> *** Yes
+> > 

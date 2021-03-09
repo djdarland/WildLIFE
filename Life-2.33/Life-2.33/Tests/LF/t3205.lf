@@ -1,0 +1,20 @@
+%
+%		WILD-LIFE TESTING
+%
+%		How predicate is input?
+%
+%	assert and asserta
+%
+dynamic(t)?
+t(a).
+test1(X) :- t(X),!.
+test2(X) :- t(X).
+%
+%	retract_all(X): the whole definition of the predicate X is discarded.
+%
+non_strict(retract_all)?
+
+retract_all(X):- retract(X),fail.
+retract_all(X).
+
+

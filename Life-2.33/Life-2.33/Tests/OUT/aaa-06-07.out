@@ -1,0 +1,15 @@
+
+*** Yes
+> > 
+*** Yes
+> > f(bacon => b,eggs => a)
+*** Yes
+A = f(bacon => b,eggs => a).
+--1> [a,b,c][a,b,d]
+f(bacon => b,eggs => a)
+*** Yes
+A = f(bacon => _A: b,eggs => _B: a), R1 = [_B,_A,c], R2 = [_B,_A,d].
+----2> 
+*** No
+A = f(bacon => b,eggs => a).
+--1> 

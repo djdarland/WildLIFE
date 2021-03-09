@@ -1,0 +1,4 @@
+fact(0) -> 1.
+fact(N) -> N * fact(N - 1).
+R = map(F, [4, 5, 6, 7])?
+F = fact?

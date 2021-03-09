@@ -1,0 +1,187 @@
+% FILE. . . . . /home/hak/life/old/life_demo.lf
+% EDIT BY . . . Hassan Ait-Kaci
+% ON MACHINE. . Latitude407.Ilog.Biz
+% STARTED ON. . Wed Dec 22 17:57:49 2004
+
+% Last modified on Wed Mar 27 16:41:03 2013 by hak
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% trace_input(true)?
+module("life_demo")?
+public(demo)?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% This is a control panel to drive the Wild_LIFE demos using the X toolkit.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% load the toolkit, open the xtools module
+
+import("xtools")?
+import("xtools_utils")?
+%% import("sounds")?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% the demo_panel design
+
+persistent(demo_panel)?
+global(begin_demo)?
+
+demo_button <| push_button.
+:: demo_button(font_id => z_font,
+	       true_text_color_id => d_led_on).
+
+led_button(B:@(light=>L)) -> hc_list [L, h_box(55), B].
+
+d_button(label => S:string,
+	 file => F:string,
+	 demo => D) ->  demo_button(text => S,
+				    light => L:led,
+				    action => (button_open,
+					       import(F),
+					       L.led_state <<- true,
+					       refresh_look(L),
+					       D)).
+control_panel :-
+	
+	B0 = d_button(label => "Color Editor",
+		      file => "color_edit",
+		      demo => demo_color),
+	
+	B1 = d_button(label => "Queens",
+		      file => "queens",
+		      demo => demo_queens),
+	
+	B2 = d_button(label => "Boxes",
+		      file => "boxes",
+		      demo => demo_boxes),
+	
+	B3 = d_button(label => "Flowers",
+		      file => "flowers",
+		      demo => demo_flowers),
+	
+	B41 = d_button(label => "Schedule (small)",
+		       file => "x_schedule",
+		       demo => demo_schedule_s),
+
+	B42 = d_button(label => "Schedule (large)",
+		       file => "x_schedule",
+		       demo => demo_schedule_l),
+	
+	B5 = d_button(label => "Zebra",
+		      file => "x_zebra",
+		      demo => demo_zebra),
+	
+	B6 = d_button(label => "Cryptarithmetic",
+		      file => "crypt",
+		      demo => demo_crypt),
+	
+	B7 = d_button(label => "Math Wiz",
+		      file => "x_mathwiz",
+		      demo => demo_mathwiz),
+	
+	B8 = d_button(label => "Sudoku",
+		      file => "x_sudoku",
+		      demo => demo_sudoku),
+	
+	B9 = d_button(label => "Graphical Toolkit",
+		      file => "ex_tools",
+		      demo => demo_ex_tools),
+	
+	B10 = d_button(label => "Tutorial",
+		       file => "pdf_display",
+		       demo => demo_tutorial),
+	
+	B11 = d_button(label => "User Manual",
+		       file => "pdf_display",
+		       demo => demo_manual),
+		
+	same_size([B0, B1, B2, B3, B41, B42, B5, B6, B7, B8, B9, B10, B11]),
+
+	QT = push_button(text => "Quit",
+			 font_id => button_font,
+			 action => get_out),
+
+%%	TS = on_off_button(text => "Toggle Sounds",
+%%			   font_id => button_font,
+%%			   action => (toggle_sounds,notify)),
+
+	same_height([QT,TS]),
+
+	demo_panel <<- panel(title => "Demo") 
+	  containing
+	  vc_list
+	  [ v_box(35)
+	  , ht_list [ h_box(35)
+		    , vl_list [ led_button(B9)
+			      , led_button(B0)
+			      , led_button(B1)
+			      , led_button(B2)
+			      , led_button(B3)
+			      , led_button(B41)
+			      , led_button(B42)
+			      , led_button(B5)
+			      , led_button(B6)
+			      , led_button(B7)
+			      , led_button(B8)
+			      , led_button(B10)
+			      , led_button(B11)
+			      ]
+		    , h_box(35)
+		    ]
+	  , v_box(40)
+	  , hc_list [ h_box(5), TS, h_box(5), QT, h_box(5) ]
+	  , v_box(35)
+	  ].
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Actions
+
+demo_ex_tools :- str2psi("ex_tools", "ex_tools").
+demo_color :- str2psi("color_edit", "color_edit").
+demo_queens :- str2psi("queens", "queens").
+demo_boxes :- str2psi("boxes", "boxes").
+demo_flowers :- str2psi("flowers", "flowers").
+demo_schedule_s :- str2psi("sch_1", "x_schedule").
+demo_schedule_l :- str2psi("sch_2", "x_schedule").
+demo_zebra :- str2psi("x_zebra", "x_zebra").
+demo_crypt :- str2psi("crypt", "crypt").
+demo_mathwiz :- str2psi("mathwiz", "x_mathwiz").
+demo_sudoku :- str2psi("play_sudoku", "x_sudoku").
+demo_tutorial :- str2psi("display_tutorial", "pdf_display").
+demo_manual :- str2psi("display_manual", "pdf_display").
+
+get_out :-
+	byebye,
+	writeln("Bye, bye!..."),
+	halt.
+%	set_choice(begin_demo),
+%	fail.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% utilities 
+
+C:writeln :- write&strip(C), nl.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% compose the interface at load time
+
+demo :-
+	control_panel, !,
+	(
+	    begin_demo = get_choice,
+	    create_box(copy_term(demo_panel)),	   
+	    welcome,
+%%	    toggle_sounds,
+	    notify
+	;
+	    succeed
+	).
+
+write("\n\tType 'demo?' to open the LIFE demo window\n\n")?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+

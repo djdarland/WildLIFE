@@ -1,0 +1,10 @@
+:: a(b=>B:int) | write('B=',B),nl.
+
+p(X) :- X={1;2;3},
+	Y=jolly(3+X),
+	write(Y),nl,
+	assert(Y :- write(X),nl).
+
+p(X) :- X=a(b=>1);X=a(b=>2);X=a(b=>3).
+
+p(Y),write(Y),nl,fail?

@@ -1,0 +1,17 @@
+
+% Interesting three-way hierarchy:
+% Two-way unifiable & three-way disjoint.
+
+ab <| a.
+ac <| a.
+
+ab <| b.
+bc <| b.
+
+ac <| c.
+bc <| c.
+
+
+f(X,X) -> 1.
+
+g(a,b) -> 1.

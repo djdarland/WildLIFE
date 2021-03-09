@@ -1,0 +1,5 @@
+% This function can residuate and then go back to being curried as the result
+% of a binding.  It's because the interpreter's granularity is a rule, not
+% the whole function.
+f(int) -> 1.
+f(X,Y) -> 2.

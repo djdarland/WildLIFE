@@ -1,0 +1,86 @@
+% FILE. . . . . /_/hassan/_/life/ok/inherit.life
+% EDIT BY . . . Hassan Ait-Kaci
+% ON MACHINE. . Prl316
+% STARTED ON. . Tue Mar 31 14:23:00 1992
+
+% Last modified on Tue Mar 31 14:23:09 1992 by Hassan
+private(man)? % Avoid conflict with built-in 'man' predicate.
+
+delay_check(person)?
+
+:: P:person(sex => S:sex,friends => F) | friendly(F).
+
+:: R:robot(power_supply => S,cooling_fluid => {air;oil;water}) | powerful(S).
+
+  
+powerful({petrol;nuclear_reactor;battery;clockwork_spring}).
+
+       
+friendly({mathew;mark;luke;john}).
+
+friendly({mary;elizabeth}).
+
+mathew <| man.
+mark <| man.
+luke <| man.
+john <| man.
+judas <| man.
+
+mary <| woman.
+elizabeth <| woman.
+
+three_billion_dollar_man <| man.
+three_billion_dollar_man <| robot.
+
+  
+man <| person.
+:: man(sex => male).
+
+woman <| person.
+:: woman(sex => female).
+
+male <| sex.
+female <| sex.
+
+opposite_sex(male) -> female.
+opposite_sex(female) -> male.
+
+t1 :-
+	A=mathew,
+	write(A),
+	nl,
+	A=@(hair => brown),
+	write(A),
+	nl,
+	A=man,
+	write(A),
+	nl,
+	A=man(teeth => yellow),
+	write(A),
+	nl.
+
+t2 :-
+        A=robot,
+        B=person,
+        pretty_write(A,' & ',B),
+        nl,
+        A=B,
+        pretty_write(A),
+        nl,
+        A=@(brain => silly),
+        pretty_write(A),
+        nl,
+        fail.
+  
+t3 :-
+	A=robot(bones => metal),
+	pretty_write(A),
+	nl,
+	A=man,
+	pretty_write(A),
+	nl,
+	A=@(hair => nylon_wig),
+	pretty_write(A),
+	nl.
+
+

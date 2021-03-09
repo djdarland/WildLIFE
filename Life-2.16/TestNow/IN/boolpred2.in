@@ -1,0 +1,14 @@
+X,Y,Z?
+A=s(X,Y,Z)?
+A=s(write(1),write(2),write(3))?
+.
+X,Y,Z?
+A=s(Z,Y,X)?
+A=s(write(1),write(2),write(3))?
+.
+X?
+X=write(23)?
+.
+X?
+write(23)=X?
+.

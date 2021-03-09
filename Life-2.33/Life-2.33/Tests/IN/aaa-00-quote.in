@@ -1,0 +1,17 @@
+%% problem with this
+%% global(it)?
+%% it=one_two_three, P=p(it), Q = q('it'),
+%% assert(P),assert(Q)?
+
+%% p(X),q(Y),Z=it?
+
+%% listing(p,q)?
+
+%% above was problem below my practice
+r(one_two_three).
+s(one_two_three).
+
+r(AAA), P=r(AAA), Q = r('AAA'), assert(P), assert(Q)?
+
+
+listing(r,s)?

@@ -1,0 +1,22 @@
+24c24
+< inf
+---
+> Infinity
+34c34
+< inf
+---
+> Infinity
+36,38c36,38
+< inf
+< inf
+< inf
+---
+> Infinity
+> Infinity
+> Infinity
+46,47c46,47
+< -nan
+< -nan
+---
+> NaN
+> NaN

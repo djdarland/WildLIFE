@@ -1,0 +1,107 @@
+%
+%
+%            Implementation of Chadha and Plaisted's algorithm to compute
+%            attribute directions.
+%
+%
+
+%
+% This operator avoids using project
+%
+
+% op(400,yfx,##)?
+% X##Y -> project(Y,X).
+
+
+%
+% hierarchy of directions (dual of that of the lattice)
+%
+
+inh <| syn.
+
+%
+% going "up" the directions
+%
+
+up1(X) :-  [X] = children(X).
+
+%
+% DATA STRUCTURES
+%
+
+:: attribute(direction => syn, 
+             occurrences => list % of positions 
+             ).
+
+:: position( attrib => A:attribute, 
+             pos    => N:int, % N = 0 si on est en tete de clause,
+			      %   = 1..n en corps.
+
+             share  => list   % of positions
+           ).
+
+:: program ( positions => list, % of positions 
+             attributes => list % of attributes 
+           ).
+
+
+%
+% PROGRAM
+%                         
+
+chapla(Pgm) :- updateCP(Pgm.positions).
+
+updateCP([]).
+updateCP([Pos|ListofPos]) :- modifCP(Pos,ModifList),
+                             updateCP(append(ModifList,ListofPos)&list).
+
+modifCP(Pos1,ModifList) :- (  Pos1.pos > 0, 
+                              depend(Pos1,Pos2),
+                              (%
+			       % Case 1
+                               %
+                                 N2 = Pos2.pos,
+                                 N2 > 0 ,
+                                 N2 =< Pos1.pos 
+                              ;
+                               %
+			       % Case 2
+                               %
+                                 N2 =:= 0 ,
+                                 Pos2.attrib.direction :=< inh 
+                              ),
+                              !,
+                              A1= Pos1.attrib,
+                              up1(A1.direction),
+                              ModifList = A1.occurrences 
+                           );
+                           ModifList = [].
+                               
+                          
+
+depend(P1,P2) :- orient(P1.attrib.direction,P1.pos) = in, 
+                 umember( P2, P1.share).
+
+
+
+orient(Dir:syn, K) -> { (in  | ( K=:=0 , Dir :=< inh , !));
+                        (out | ( K=\=0 , Dir :=< inh , !));
+                        (out | ( K=:= 0 , ! )) ;
+                        in }.
+umember(X,[Y|L]) :- ( X=Y ; umember(X,L)).
+
+
+writeout(A:attribute) -> true | (A.direction :=< inh, !, Dir = "inherited" ;
+                                 Dir = "synthesized"),
+                                 write( " This attribute is ", Dir), nl.
+
+
+
+
+
+
+
+
+
+
+

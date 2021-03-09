@@ -1,0 +1,90 @@
+:: a | write(aa).
+:: b | write(bb).
+:: c | write(cc).
+:: d | write(dd).
+:: e | write(ee).
+:: f | write(ff).
+:: g | write(gg).
+:: h | write(hh).
+:: i | write(ii).
+:: j | write(jj).
+:: k | write(kk).
+:: l | write(ll).
+:: m | write(mm).
+:: n | write(nn).
+:: o | write(oo).
+:: p | write(pp).
+:: q | write(qq).
+:: r | write(rr).
+:: s | write(ss).
+:: t | write(tt).
+:: u | write(uu).
+:: v | write(vv).
+:: w | write(ww).
+:: x | write(xx).
+:: y | write(yy).
+:: z | write(zz).
+
+a <| c.
+b <| c.
+
+d <| f.
+e <| f.
+
+g <| i.
+h <| i.
+
+j <| l.
+k <| l.
+
+m <| o.
+n <| o.
+
+p <| r.
+q <| r.
+
+s <| u.
+t <| u.
+
+v <| x.
+w <| x.
+
+y <| a.
+z <| a.
+
+print_codes?
+
+a=b?
+
+c=a?
+c=b?
+d=e?
+
+f=d?
+f=e?
+g=h?
+
+i=g?
+i=h?
+j=k?
+
+l=j?
+l=k?
+m=n?
+
+o=m?
+o=n?
+p=q?
+
+r=p?
+r=q?
+s=t?
+
+u=s?
+u=t?
+v=w?
+
+x=v?
+x=w?
+y=z?
+

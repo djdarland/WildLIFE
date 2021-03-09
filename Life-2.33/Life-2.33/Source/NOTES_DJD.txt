@@ -1,0 +1,845 @@
+6/16/2016
+Starting at rev 2.05 (initial 2.06
+Test Suite gives
+325 total tests
+107 match
+218 differ
+213 out differ
+14 err differ
+
+
+
+
+
+
+6/17/2016
+
+Made change in login.c regarding level pf prompt in case of abort_hook
+That fixed that - but only that test.
+I noticed wrong level in other tests.
+
+Suspected level might be corrupted.
+
+Investigating decided to make a, b, c elements of structures
+
+wl_pair_list to aaaa_2, bbbb_2
+
+wl_triple_list to aaaa_4, bbbb_4, cccc_4
+
+wl_stack to aaaa_3, bbbb_3
+
+wl_goal to aaaa_1, bbbb_1, cccc_1.
+
+This was not to affect logic - but rather to make searching the code easier.
+The Test Suite gave same counts afterwards.
+
+As this was a lot of editing will make tar backup at this point.
+Life-2.06-2016_06_17.A.tar.gz
+--------------------------------------------------------------------
+
+6/17/2016
+
+--------------------------------------------------------------------
+Changed how level is calculated in login.c
+Not changed much else in wild life.
+I had tried a lot of other things - but threw them away.
+----------------------------------------------------------------
+
+I did improve my debugging script -- ee.
+Especially option 114.
+It permits you to browse Test Suite and results.
+Also approve current results - if you think they are more correct.
+I've only approved addtab so far over original results.
+-----------------------------------------------------------------------
+
+
+
+6/27/16
+Commented out "|| level > 0" line 2035 login.c -- don't print value if fails
+
+
+in testing my version often gives @ in result where old ref or handbook gives variable.
+
+Seems to be problem with ::
+
+ex 09-02C value does not print bacause answer is no.
+Result of "|| level > 0" cange - still think that is better.
+
+Problem with op * - see bagof3 and bagof6
+
+problem with copyfile
+
+problem with curry - need to study
+
+debug - clause # reversed
+
+another trouble with * in disj1
+
+trouble with :: see aaa-07-06 - not sure I'm using it correctly
+also aaa-07-07
+
+trouble with modules or features aaa-10-01 & aaa-10-04
+
+6/28/2016 - Decided to try to attack problem with improper evaluating arguments.
+will make aaa-00-listing test case (listing is such a predicate - saw in long in test suite.)
+
+6/29/2016 - I think listing is working correctly - I just did not understand what it was supposed to do.
+
+persistent terms are not being printed with other values see 09-04 & 09-06
+
+quoting global variables not working as in handbook - see 09-07
+-- quote itself seems ok - see aaa-00-quote
+copied 09-07 to aaa-00-quote_2 for testing
+ 
+
+current module not set right - see 10-04
+
+problem with * (not same as other ops) -  see bagof3
+
+7/1/2016 Major fixes to how comparisons work
+
+7/2/16
+NOTE bagof3 & bagof6 now working
+Problem with import ib extest ?
+
+Looked thru grammars
+
+Added paths for import statements. used relative  - maybe should have ~/...
+
+7/5/2016 Version 2.20 
+- Abend on misplaced ' afer error message. (plilosophy)
+-- No abend on missing " in write statement (after error message).
+
+==========================================================================
+7/6/2016 TestSuite NOTES on what does not match
+
+aaa-00-complex-module (I made up) - module,public,open,display_modules
+
+aaa-00-quote_2 (I made up) - global, '---',assert,listing (like aaa-09-07)
+
+aaa-06-03 - Wrong value
+
+aaa-07-06 - does not trace
+
+aaa-07-07 - does not trace
+
+aaa-08-14 - things swapped - may be OK
+ 
+aaa-08-23 - does not write self [2.22 NOW DOES]
+
+aaa-08-29 - wrong error code when system() fails [TWEAKED - OK]
+
+aaa-09-04 - persistent
+
+aaa-09-06 - *** Error: cannot unify persistent values
+
+aaa-09-07 - cannot quote global (I think can quote non-global)
+
+aaa-10-01 - module, publc, private_feature, open, display_modules
+
+another-bug - did not investigate
+
+babcode - different number of sorts - looks similar otherwise
+
+children - bytedata missing (also some other - because not "raw"?)' [OK'd 2.22 just confif I think]
+
+clause  - different - no not understand
+
+debug - clause #'s reversed
+
+dupfeat - line numbers not in error - I approved anyway (stdin?)
+
+extest - examples not imported? path?
+
+factorize - slightly different output
+
+glob_test2 - *** Error: cannot unify persistent values
+
+intlist - different output
+
+inttrace - trace missing
+
+lazy - different output - delay_check
+
+libtest - reference has \'s missing as:
+<   +>=,+=<,+>,+<,+><,==,+>=,+=<,+>,+<,+><,==
+---
+>   +>=,+=<,+>,+<,+><,==,+\>=,+\=<,+\>,+\<,+\><,\==
+
+Mine match entries in Lib/structures.lf
+
+
+listing1 - could see no difference - approved
+
+long - different - don't see whats going on
+
+manual4 - get error - using dynamic
+*** Error: 'foo' is not a predicate or a function.
+-- same error in reference. - approved.
+mine in addition has
+*** END Abort
+at end
+manual8 - no trace
+
+matrix - very complicated - saw ",," in my result at end not in reference
+
+module_test2 - both give error - same as manual4  - approved
+mine in addition has
+*** END Abort
+at end
+
+nofour - got a 4
+
+pers2 - got
+*** Error: cannot use '<-' on persistent value in  $@ <- hello
+same as ref + *** END Abort
+approved
+
+posint - looks like both are wrong to me - not approved
+
+prime - looks like mine corect - reference lists a lot of non-primes
+
+print2 - refdiff shows stuff in neither file - not approved
+
+soap - different not approved
+
+subsort - different not approved
+
+8101 - both out of memory - mine gives *** END Abort
+
+8104 - Mine gives Infinity & NaN instead of inf & nan --- approved
+
+8105 - Reference gives OUt OF MEMORY - mine nothing -- not approved
+
+test03 - a bunch of things are no longer undefined -- not approved ????
+
+testsl - I get Syntax error in SuperLint
+
+t - now there are more sorts - probably OK but not approved
+
+
+=====================================================================
+7/72016-7/9/2016 Extensive editing
+
+Created prototypes for all (non-static) functions - from 1.02 .c files.
+
+Corrected all errors & warning - except x - I removed X11 define from makefile
+temorarally.
+
+Ran Test Suite - 2 matched.
+Ran on pitch & realized I had trace turned on in .set_up
+Tuened off. 8 matched.
+Knew I had added & in fileptr2stream calls because of type discrepancy.
+Removed them. 351 matched.
+
+Then removed * from typ in fileptr2stream (also prototype).
+Still 351 match - but warnings gone.
+
+----------------------------------------------------------------------
+Will only note differences I remember.
+08-23 now works - approved.
+
+one other approved - stats slightly different otherwise same - now 353
+
+Noticed gc trace on (memory.c)  - now 378 match
+
+babcode - data slightly different appears to work correctly - now 379
+
+extest - I get wrong output 
+
+djd-pitch - no longer get gc error
+ 
+-----------------------------------------------------------------------
+7/9/2016
+tweaked c_system in bi_sys,c
+08-29 now approved.
+
+children approved - just differences in system definition
+------------------------------------------------------------------------------
+7/10/16 After more work
+
+413 total tests.
+396 match - (1 of those is just that some memory stats vary).
+17 differ
+17 differ on stdout
+3 differ on stderr
+-----------------------------------------
+1 aaa-00-complex-module  I was experimenting - I probably am doing something wrong.
+
+2 aaa-00-quote_2  Same as a later test trouble with globals & quote. I think I succeded with quotes elsewhere.
+
+3. aaa-08-14 Slightly different but possibly equivalent output.
+
+4. aaa-09-04 problem with persistent
+
+5. aaa-09-06 *** Error: cannot unify persistent values
+
+6. aaa-09-07 really same as #2 above.
+
+7. aaa-10-01 *** Error: 'prison(door => guarded)' is not a predicate or a function.
+
+8. another_bug - I have not tried to examine.
+
+9. clause - same output in different order
+
+10. debug - looks like same output except clause #'s reversed
+
+11. libtesr - seems man entries missing - problem with import?
+
+12. long  - problem with listing
+
+13. matix - differs - too large to examine.
+
+14. print2 - some 0's replaced by blanks in large negative numbers.
+
+15. test02 - difference in listall?
+
+16. testsl - syntax error in superlint - 
+
+17. t - I don't understand
+
+=====================================================================
+7/11/2016 - still 2.22
+added 13-01   - get an error (apply)
+added 13.02   - works - approved.
+added 13.03   - works - (apply) - I think I know how to use. approved.
+added 13.04   - works - approved.
+
+7/13/2016
+eliminated enums with defines - def_ type was being used as ptr_definition
+modified work.sh so can move LF files to LFSAV (in case they cannot be expected to match exactly).
+
+eliminated aaa---00-complex-module - just my experiment
+
+found 09-06 works - needed couple more blank lines - approved
+
+08-14 - resulting expressions look equivalent but keeping
+
+09-04 still differs - possibly incomplete example?
+
+07-07 problem w global & single quote
+
+10-01 - no match
+
+13-01 get error - adding feature to mod
+
+clause - same results in different order - approved
+
+debug - same except clause # reversed - moved to LFSAV
+
+libtest - think info missing or in different order  - elininated for naw
+
+long - differ ???
+
+matrix - too complex - eliminated
+
+print2 - blanks in middle large numbers instead od 0's
+
+test03 - depends on confis such as X11 - eliminated
+
+testsl - changed \ to \\ places in c_tokenizer - lines 718 & 782 (Examples/SuperLint) - get 1 addl warning about __STDC__ already defined -- approved.
+
+t -- only difference is I have 6 more sorts:
+1 sys#bitvector
+2 sys#regexp
+3 sys#file_stream
+4 sys#socket_stream
+5 sys#stream
+6 sys#bytedata
+
+Approved
+
+08-28 - eliminated - stats vary
+
+eliminsted aaa-00-quote_2 --- identical with 09-07
+
+approved 08-14 -- looks correct to me after study of handbook
+ 1
+approved 09-04 -- looks correct to me after study of handbook
+
+approved 09-07 -- I had mistyped - need leading backquote instead of quotes
+ 
+approved 10-01 - just required very careful editing of input
+
+eliminated 13-01 - think something wrong in example
+
+eliminated long  -- think neither referene nor mine correct
+
+print2 approved -- made correction in format of sprintf (went back to 1.02 print.c) -- now works
+
+------------------------------------------------------------------
+Had everything matching perfectly in 64 bit Ubuntu - moved to 64 bit cygwin.
+Caught some use & definition of lf_strcmp -- eliminated them.
+---------------------------------------------------------------------
+All matched except 5.
+08-29 "system" error message slightly different under cygwin -- IGNORE.
+09-02B - reference had been blank - output is correct - approved
+t8104  - got 2 cases of -nan instead of nan - IGNORE
+testsl - had forgot to install life_local with SuperLint fix - did so
+       fixed problem - there is slight difference in cygwin message
+z_gctoken1 -- different output - slightly changed .lf file - then worked
+	   do not trust test - eliminated.
+-------------------------------------------------------------------------
+copied back to ubuntu - all worked - 406 tests match perfectly.
+-------------------------------------------------------------------------
+copied to 32 bit ubuntu
+got 2 compiler warnings - lines 1103 & 1104 of login.c
+passing int to %ld in format
+must br due to size of pointers - as when changed in 64 bit made opposite complaint.
+also it said it was ignoring 64 bit libaries (Makefile should be different for
+32 bit) but it handles it OK 
+
+when ran test suite in 32 bit ubuntu got 3 differences
+aaa-08-14-arith-64   size of numbers is smaller
+babcode  - apparently difference in builtins
+t  - apparently difference in builtins
+------------------------------------------------------------------------------
+
+Edited INSTALL file/
+
+------------------------------------------------------------------------
+2.25 edited buffer in error.c for longs to be %ld or %lx
+
+-------------------------------------------------------------------------
+7/20/2016
+restored preparser.lf to Test Suite (it had crashed before)
+Still Crashed
+Changed \ to \\ on line 453 - then it worked correctly. 
+(had done same in SuperLint
+-------------------------------------------------------------------------
+
+8/4/2016
+Acquired splint - began using wild_life c source.
+
+1st eliminated dupl declarations in def_glob.h
+I had known there were some there.
+Compiler itself gives errors if they do not match.
+
+renamed sys_dbm.c sys_dbm.c.sav
+It was causing trouble with splint & was not actually being used.
+
+tarred as 2.25
+
+--------------------------------------------------------------------
+8/4/2016
+
+Created 2.26 directory and did the following - also based on splint.
+
+I tried to satisfy splint wherever reasonably easy.
+I disabled many tests as the wild life code seemed designed to do what was complained about - mostly the way memory was allocated and used.
+
+---------------------------------------------------------------------------
+
+changed true to lf_true & false to lf_false
+(emacs coloring & splint warnings)
+
+got rid of memory_new_gamma.c & types_new_gamma.c
+
+getting rid of
+#ifndef lint
+static char vcid[] = "$Id: parser.c,v 1.2 1994/12/08 23:32:03 duchier Exp $";
+#endif /* lint */
+
+in c files
+
+changed
+long open_output_file(string file);
+to
+long open_output_file(char *file);
+in def_proto.h
+
+in
+long c_quiet()
+in
+bi_sys.c
+changes success to long from int
+
+added casts (void) to some function calls where return value ignored.
+
+commented out
+ strtod();
+in make_feature_list
+in built_ins.c
+
+changed
+static long unify_bool(arg)
+to
+static void unify_bool(arg)
+because returned nothing
+
+commented   long declare_operator();
+in c_op in built_ins.c
+
+changed sprintf to snprintf in built_ins.c
+in static long c_project()
+and static long c_exist_feature()
+
+in built_ins.c 
+void exit_life(nl_flag)
+change exit(1) to exit(EXIT_SUCCESS)
+
+in void global_one(t)
+in built_ins.c 
+removed unused val
+
+in static long c_close()
+in built_ins.c 
+removed unused s
+
+in static long c_exist_feature()  /*  PVR: Dec 17 1992  */  /* PVR 11.4.94 */
+in built_ins.c 
+removed unused np1
+
+in static long c_features() and static long c_feature_values()
+in built_ins.c 
+removed unused the_list
+
+in ptr_psi_term collect_symbols(sel) /*  RM: Feb  3 1993  */
+in built_ins.c 
+changed name to name_loc
+
+in static long c_eval_inplace()
+in built_ins.c 
+removed unused copy_arg1
+
+in static long c_chdir()
+in built_ins.c 
+removed unused result & t & val & num
+
+in static long c_assign()
+in built_ins.c 
+removed unused perm & smallest
+
+
+in static long c_global_assign()
+in built_ins.c 
+removed unused perm & smallest
+
+in static long c_char()
+in built_ins.c 
+removed unused smaller & num1 & val1
+
+in static long c_ascii()
+in built_ins.c 
+removed unused num1 & val1
+
+in static long c_string2psi()
+in built_ins.c 
+removed unused arg3 & smaller
+
+in static long c_psi2string()
+in built_ins.c 
+removed unused arg3
+
+in static long c_psi2string()
+changed sprintf to snprintf (100)
+
+in static long c_int2string()
+in built_ins.c 
+removed unused arg3
+
+in built_ins.c 
+void new_built_in(nl_flag)
+change exit(-1) to exit(EXIT_FAILURE)
+
+in long c_initrandom()
+in built_ins.c 
+removed unused c_result
+
+in long c_deref_length()
+in built_ins.c 
+removed unused arg2
+
+in void mark_quote_c(t,heap_flag)
+in copy.c
+removed unused l
+
+in void mark_eval_new(t)
+in copy.c
+removed unused l
+
+in void void mark_quote_new(t)
+in copy.c
+removed unused l
+
+
+in void void mark_quote(t)
+in copy.c
+removed unused l
+
+
+in void void bk_mark_quote(t)
+in copy.c
+removed unused l
+
+in outputline, traceline, infoline, warningline, Errorline & Syntaxerrorline
+in error.c
+removed unused l
+and changed buffer to buffer_loc
+
+in tracing
+in error.c
+changed indent to indent_loc
+
+in void report_error_main(g,s,s2)
+and void report_error2_main(g,s,s2)
+in error.c
+removed unused f
+
+in void handle_interrupt()
+in inerrupt.c
+changed old_state to old_state_loc
+
+in long do_residuation()
+in lefun.c
+removed unused gs
+
+in   long success=TRUE;
+in lefun.c
+removed unused less, tmp
+
+in long deref_args_eval(t,set)
+in lefun.c
+changed top to top_loc
+
+in void exit_if_true(exitflag)
+in lib.c
+replaced exit(1) with exit(EXIT_FAILURE)
+
+NOTED DJD_PORT code in lib.c'
+tried disabling -- affects eoftests in test suite.
+Not sure which better. Should look at orig Test results.
+
+in void init_io()
+in lib.c
+FALSIFIED #ifdef for DJD_PORT
+this affected eoftest and eoftest2 in testsuite
+
+
+in void WFInit(argc, argv)
+in lib.c
+removed unused s, sort, exitflag and c
+
+in char **WFFeatures(psi)
+in lib.c
+changed features to features_loc
+
+in void init_system()
+in lib.c
+changed sprintf to snprintf (PROMPT_BUFFER)
+
+in void get_one_arg_addr(t,a)
+in login.c
+removed unused b
+
+in void assert_clause(t)
+in login.c
+removed unused arg1, arg2, str
+
+in void push_choice_point(t,aaaa_6,bbbb_6,cccc_6)
+in login.c
+changed top to top_loc
+
+in void undo_actions()
+in login.c
+removed unused u
+
+in void backtrack()
+in login.c
+removed unused gts
+
+in void clean_undo_window(disp,wind)
+in login.c
+removed unused prev, u, c
+
+in void merge3(u,v)
+in login.c
+removed unused t2
+
+in long unify_body(eval_flag)
+in login.c
+removed unused lu, lv
+
+in long disjunct_aim()
+in login.c
+removed unused u,v, l
+
+in long num_vars(vt)
+in login.c
+removed unused num
+
+in long what_next_aim()
+in login.c
+changed cut to cut_loc
+
+in int GetIntOption(name,def)
+in memory.c
+changed buffer to buffer_loc
+
+int GetIntOption(name,def)
+in memory.c
+changed sprintf to snprintf
+
+in static void check_special_addresses()
+in memory.c
+removed unused g
+
+in long c_public()
+in modules.c
+removed unused arg1, arg2
+
+in long c_private()
+in modules.c
+removed unused arg1, arg2
+
+changed replace to void in modules.c
+
+in long c_private_feature()    /*  RM: Mar 11 1993  */
+in modules.c
+removed unused arg1, arg2
+
+in psi_term read_psi_term()
+in parser.c
+changed sprintf to snprintf
+
+in psi_term make_life_form(tok,arg1,arg2)
+in parser.c
+removed unused l
+
+in void init_print()
+in print.c
+changed sprintf to snprintf
+
+in char * heap_nice_name()
+in print.c
+changed sprintf to snprintf
+
+in char * heap_nice_name()
+in print.c
+removed unused leading_a
+
+in GENERIC unique_name()
+changed name to name_loc
+
+in void go_through(t)
+in print.c
+removed unused l
+
+in void pretty_list(t,depth)
+in print.c
+removed unused l, n2, colon
+
+in long pretty_psi_with_ops(t,sprec,depth)
+in print.c
+removed unused new
+
+in void pretty_psi_term(t,sprec,depth)
+in print.c
+removed   double fmod();
+
+in void pretty_psi_term(t,sprec,depth)
+in print.c
+changed sprintf to snprintf
+
+in long c_get_raw ()
+in raw.c
+removed unused key_code
+
+in void raw_setup_builtins ()
+in raw.c
+changed function to function_it
+
+in static long regexp_execute_internal(args,result,funct)
+in sys.c
+changed buffer to buffer_loc
+
+in static long regexp_execute_internal(args,result,funct)
+in sys.c
+removed unused success
+
+in void text_buffer_push(buf,c)
+in sys.c
+changed exit(-1) to exit(EXIT_FAILURE)
+
+in static long socket_internal(args,result,funct)
+in sys.c
+removed unused t
+
+in static long bind_or_connect_internal(args,result,funct,info)
+in sys.c
+changed name to name_loc
+
+in sys.c 
+changed name to name_str and value to value_str 
+in psi_feature
+
+in static long unify_pterm_result(t,sym,lst,n)
+in sys.c
+changed exit(-1) to exit(EXIT_FAILURE)
+
+
+in char * get_numeric_feature(n)
+in sys.c
+changed sprintf snprintf.
+
+in static long gethostname_internal(args,result,funct)
+in sys.c
+changed name to name_loc
+
+also buffer to buffer_loc in sys.c
+in
+static long lazy_project_internal(args,result,funct)
+static long wait_on_feature_internal(args,result,funct)
+static long my_wait_on_feature_internal(args,result,funct)
+static long apply1_internal(args,result,funct) THEN removed - NOT USED
+
+in void restore_state(t)
+in token.c
+removed unused i
+
+in char *expand_file_name(s)
+in token.c removed getenv()
+
+in int base2int(n)
+changed exit(-1) to exit(EXIT_FAILURE)
+
+in void read_number(tok,c)
+in token.c
+removed unused sgn
+
+in long yes_or_no()
+in types.c
+changed old_state to old_state_loc
+
+in long redefine(t)
+in types.c
+removed unused d2, l, l2
+
+in void assert_complicated_type(t)
+in types.c
+removed unused lst
+
+in void encode_types()
+in types.c
+removed unused err
+
+in static long bind_or_connect_internal(args,result,funct,info)
+in sys.c
+removed unused port
+
+in static long accept_internal(args,result,funct)
+in sys.c
+removed unused t
+
+------------------------------------------------------------------------
+
+8/11/2016
+Creating 2.26 tar file.
+I hestiate to do this, but think it best.
+There is no difference from the 2.24 as far as the Test Suite goes.
+But the next things to tackle regarding splint are not so straightforward.
+Also my philosophy here is very incomplete - that is the main reason that I hestiate.
+But I am always afraid something will happen to me before I get my work out.
+Better to use the open source dictum, "Release early and often."
+------------------------------------------------------------------------
+

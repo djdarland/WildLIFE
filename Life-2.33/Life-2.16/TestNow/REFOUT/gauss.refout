@@ -1,0 +1,447 @@
+
+*** Yes
+> > 
+*** Yes
+X = vr(1,val => none,wlist => []), 
+Y = vr(3,val => none,wlist => []), 
+Z = vr(2,val => none,wlist => []).
+
+--1> --1> --1> ===} begin         0
+===} no_minus      0
+===} dist          0
+===} add_ac        0
+===} red_mult      0
+==} expand         0
+==} reduce         0
+====} do_subst     0
+====} wake_up      0
+===} inst_var      0
+==} solve          0
+===} begin         0
+===} no_minus      0
+===} dist          0
+===} add_ac        0
+===} red_mult      0
+==} expand         0
+==} reduce         0
+====} do_subst     0
+====} wake_up      0
+===} inst_var      0
+==} solve          0
+===} begin         0
+===} no_minus      0
+===} dist          0
+===} add_ac        0
+===} red_mult      0
+==} expand         0
+==} reduce         0
+====} do_subst     0
+====} wake_up      0
+===} inst_var      0
+==} solve          0
+===} begin         0
+===} no_minus      0
+===} dist          0
+===} add_ac        0
+===} red_mult      0
+==} expand         0
+==} reduce         0
+===} slist_merge   0
+==} solve          0
+
+*** Yes
+Q = q(@~), 
+X = vr(1,val => [-3.5],wlist => []), 
+Y = vr(3,val => [-2],wlist => []), 
+Z = vr(2,val => [-1.5],wlist => []).
+
+----2> 
+*** Yes
+Q = q(@~), 
+W = vr(4,val => none,wlist => []), 
+X = vr(1,val => [-3.5],wlist => []), 
+Y = vr(3,val => [-2],wlist => []), 
+Z = vr(2,val => [-1.5],wlist => []).
+
+------3> ===} begin         0
+===} no_minus      0
+===} dist          0
+===} add_ac        0
+===} red_mult      0
+==} expand         0
+==} reduce         0
+===} slist_merge   0
+===} slist_merge   0
+===} slist_merge   0
+====} do_subst     0
+====} wake_up      0
+===} inst_var      0
+==} solve          0
+
+*** Yes
+Q = q(@~), 
+W = vr(4,val => [-8.5],wlist => []), 
+X = vr(1,val => [-3.5],wlist => []), 
+Y = vr(3,val => [-2],wlist => []), 
+Z = vr(2,val => [-1.5],wlist => []).
+
+--------4> 
+*** No
+Q = q(@~), 
+W = vr(4,val => none,wlist => []), 
+X = vr(1,val => [-3.5],wlist => []), 
+Y = vr(3,val => [-2],wlist => []), 
+Z = vr(2,val => [-1.5],wlist => []).
+
+------3> 
+*** No
+Q = q(@~), 
+X = vr(1,val => [-3.5],wlist => []), 
+Y = vr(3,val => [-2],wlist => []), 
+Z = vr(2,val => [-1.5],wlist => []).
+
+----2> 
+*** No
+X = vr(1,val => none,wlist => []), 
+Y = vr(3,val => none,wlist => []), 
+Z = vr(2,val => none,wlist => []).
+
+--1> 
+*** No
+> 
+*** Yes
+U = vr(5,val => none,wlist => []), 
+W = vr(6,val => none,wlist => []), 
+X = vr(7,val => none,wlist => []), 
+Y = vr(8,val => none,wlist => []), 
+Z = vr(9,val => none,wlist => []).
+
+--1> ===} begin         0
+===} no_minus      0
+===} dist          0
+===} add_ac        0
+===} red_mult      0
+==} expand         0
+==} reduce         0
+====} do_subst     0
+====} wake_up      0
+===} inst_var      0
+==} solve          0
+===} begin         0
+===} no_minus      0
+===} dist          0
+===} add_ac        0
+===} red_mult      0
+==} expand         0
+==} reduce         0
+====} do_subst     0
+====} wake_up      0
+===} inst_var      0
+==} solve          0
+===} begin         0
+===} no_minus      0
+===} dist          0
+===} add_ac        0
+===} red_mult      0
+==} expand         0
+==} reduce         0
+====} do_subst     0
+====} wake_up      0
+===} inst_var      0
+==} solve          0
+
+*** Yes
+Q = q(@~), 
+U = vr(5,val => _A: [1 * W|_B: [1 * Z,-8]],wlist => []), 
+W = vr(6,val => none,wlist => [gauss_wup(lhs_var => U,term_ptr => _A)]), 
+X = vr(7,val => _C: [1.25 * Z,0],wlist => []), 
+Y = vr(8,val => _D: [-0.25 * Z,0],wlist => []), 
+Z = vr(9,
+       val => none,
+       wlist => [gauss_wup(lhs_var => U,term_ptr => _B),
+                 gauss_wup(lhs_var => Y,term_ptr => _D),
+                 gauss_wup(lhs_var => X,term_ptr => _C)]).
+
+----2> ===} begin         0
+===} no_minus      0
+===} dist          0
+===} add_ac        0
+===} red_mult      0
+==} expand         0
+==} reduce         0
+====} do_subst     0
+====} wake_up      0
+===} inst_var      0
+==} solve          0
+
+*** Yes
+Q = q(@~), 
+U = vr(5,val => _A: [2 * Z,-8],wlist => []), 
+W = vr(6,val => _B: [1 * Z,0],wlist => []), 
+X = vr(7,val => _C: [1.25 * Z,0],wlist => []), 
+Y = vr(8,val => _D: [-0.25 * Z,0],wlist => []), 
+Z = vr(9,
+       val => none,
+       wlist => [gauss_wup(lhs_var => W,term_ptr => _B),
+                 gauss_wup(lhs_var => U,term_ptr => _A),
+                 gauss_wup(lhs_var => Y,term_ptr => _D),
+                 gauss_wup(lhs_var => X,term_ptr => _C)]).
+
+------3> ===} begin         0
+===} no_minus      0
+===} dist          0
+===} add_ac        0
+===} red_mult      0
+==} expand         0
+==} reduce         0
+===} slist_merge   0
+====} do_subst     0
+====} wake_up      0
+===} inst_var      0
+==} solve          0
+
+*** Yes
+Q = q(@~), 
+U = vr(5,val => [-11.2],wlist => []), 
+W = vr(6,val => [-1.6],wlist => []), 
+X = vr(7,val => [-2],wlist => []), 
+Y = vr(8,val => [0.4],wlist => []), 
+Z = vr(9,val => [-1.6],wlist => []).
+
+--------4> 
+*** No
+Q = q(@~), 
+U = vr(5,val => _A: [2 * Z,-8],wlist => []), 
+W = vr(6,val => _B: [1 * Z,0],wlist => []), 
+X = vr(7,val => _C: [1.25 * Z,0],wlist => []), 
+Y = vr(8,val => _D: [-0.25 * Z,0],wlist => []), 
+Z = vr(9,
+       val => none,
+       wlist => [gauss_wup(lhs_var => W,term_ptr => _B),
+                 gauss_wup(lhs_var => U,term_ptr => _A),
+                 gauss_wup(lhs_var => Y,term_ptr => _D),
+                 gauss_wup(lhs_var => X,term_ptr => _C)]).
+
+------3> 
+*** No
+Q = q(@~), 
+U = vr(5,val => _A: [1 * W|_B: [1 * Z,-8]],wlist => []), 
+W = vr(6,val => none,wlist => [gauss_wup(lhs_var => U,term_ptr => _A)]), 
+X = vr(7,val => _C: [1.25 * Z,0],wlist => []), 
+Y = vr(8,val => _D: [-0.25 * Z,0],wlist => []), 
+Z = vr(9,
+       val => none,
+       wlist => [gauss_wup(lhs_var => U,term_ptr => _B),
+                 gauss_wup(lhs_var => Y,term_ptr => _D),
+                 gauss_wup(lhs_var => X,term_ptr => _C)]).
+
+----2> 
+*** No
+U = vr(5,val => none,wlist => []), 
+W = vr(6,val => none,wlist => []), 
+X = vr(7,val => none,wlist => []), 
+Y = vr(8,val => none,wlist => []), 
+Z = vr(9,val => none,wlist => []).
+
+--1> 
+*** No
+> 
+*** Yes
+U = vr(10,val => none,wlist => []), 
+W = vr(11,val => none,wlist => []), 
+X = vr(12,val => none,wlist => []), 
+Y = vr(13,val => none,wlist => []), 
+Z = vr(14,val => none,wlist => []).
+
+--1> ===} begin         0
+===} no_minus      0
+===} dist          0
+===} add_ac        0
+===} red_mult      0
+==} expand         0
+==} reduce         0
+====} do_subst     0
+====} wake_up      0
+===} inst_var      0
+==} solve          0
+===} begin         0
+===} no_minus      0
+===} dist          0
+===} add_ac        0
+===} red_mult      0
+==} expand         0
+==} reduce         0
+====} do_subst     0
+====} wake_up      0
+===} inst_var      0
+==} solve          0
+===} begin         0
+===} no_minus      0
+===} dist          0
+===} add_ac        0
+===} red_mult      0
+==} expand         0
+==} reduce         0
+====} do_subst     0
+====} wake_up      0
+===} inst_var      0
+==} solve          0
+
+*** Yes
+Q = q(@~), 
+U = vr(10,val => _A: [1 * W|_B: [1 * Z,-8]],wlist => []), 
+W = vr(11,val => none,wlist => [gauss_wup(lhs_var => U,term_ptr => _A)]), 
+X = vr(12,val => _C: [1.25 * Z,0],wlist => []), 
+Y = vr(13,val => _D: [-0.25 * Z,0],wlist => []), 
+Z = vr(14,
+       val => none,
+       wlist => [gauss_wup(lhs_var => U,term_ptr => _B),
+                 gauss_wup(lhs_var => Y,term_ptr => _D),
+                 gauss_wup(lhs_var => X,term_ptr => _C)]).
+
+----2> ===} begin         0
+===} no_minus      0
+===} dist          0
+===} add_ac        0
+===} red_mult      0
+==} expand         0
+==} reduce         0
+====} do_subst     0
+====} wake_up      0
+===} inst_var      0
+==} solve          0
+
+*** Yes
+Q = q(@~), 
+U = vr(10,val => [-8],wlist => []), 
+W = vr(11,val => _A: [-1 * Z,0],wlist => []), 
+X = vr(12,val => _B: [1.25 * Z,0],wlist => []), 
+Y = vr(13,val => _C: [-0.25 * Z,0],wlist => []), 
+Z = vr(14,
+       val => none,
+       wlist => [gauss_wup(lhs_var => W,term_ptr => _A),
+                 gauss_wup(lhs_var => Y,term_ptr => _C),
+                 gauss_wup(lhs_var => X,term_ptr => _B)]).
+
+------3> 
+*** No
+Q = q(@~), 
+U = vr(10,val => _A: [1 * W|_B: [1 * Z,-8]],wlist => []), 
+W = vr(11,val => none,wlist => [gauss_wup(lhs_var => U,term_ptr => _A)]), 
+X = vr(12,val => _C: [1.25 * Z,0],wlist => []), 
+Y = vr(13,val => _D: [-0.25 * Z,0],wlist => []), 
+Z = vr(14,
+       val => none,
+       wlist => [gauss_wup(lhs_var => U,term_ptr => _B),
+                 gauss_wup(lhs_var => Y,term_ptr => _D),
+                 gauss_wup(lhs_var => X,term_ptr => _C)]).
+
+----2> 
+*** No
+U = vr(10,val => none,wlist => []), 
+W = vr(11,val => none,wlist => []), 
+X = vr(12,val => none,wlist => []), 
+Y = vr(13,val => none,wlist => []), 
+Z = vr(14,val => none,wlist => []).
+
+--1> 
+*** No
+> 
+*** Yes
+U = vr(15,val => none,wlist => []), 
+W = vr(16,val => none,wlist => []), 
+X = vr(17,val => none,wlist => []), 
+Y = vr(18,val => none,wlist => []), 
+Z = vr(19,val => none,wlist => []).
+
+--1> ===} begin         0
+===} no_minus      0
+===} dist          0
+===} add_ac        0
+===} red_mult      0
+==} expand         0
+==} reduce         0
+====} do_subst     0
+====} wake_up      0
+===} inst_var      0
+==} solve          0
+===} begin         0
+===} no_minus      0
+===} dist          0
+===} add_ac        0
+===} red_mult      0
+==} expand         0
+==} reduce         0
+====} do_subst     0
+====} wake_up      0
+===} inst_var      0
+==} solve          0
+===} begin         0
+===} no_minus      0
+===} dist          0
+===} add_ac        0
+===} red_mult      0
+==} expand         0
+==} reduce         0
+====} do_subst     0
+====} wake_up      0
+===} inst_var      0
+==} solve          0
+
+*** Yes
+Q = q(@~), 
+U = vr(15,val => _A: [1 * W|_B: [1 * Z,-8]],wlist => []), 
+W = vr(16,val => none,wlist => [gauss_wup(lhs_var => U,term_ptr => _A)]), 
+X = vr(17,val => _C: [1.25 * Z,0],wlist => []), 
+Y = vr(18,val => _D: [-0.25 * Z,0],wlist => []), 
+Z = vr(19,
+       val => none,
+       wlist => [gauss_wup(lhs_var => U,term_ptr => _B),
+                 gauss_wup(lhs_var => Y,term_ptr => _D),
+                 gauss_wup(lhs_var => X,term_ptr => _C)]).
+
+----2> ===} begin         0
+===} no_minus      0
+===} dist          0
+===} add_ac        0
+===} red_mult      0
+==} expand         0
+==} reduce         0
+===} slist_merge   0
+====} do_subst     0
+====} wake_up      0
+===} inst_var      0
+==} solve          0
+
+*** Yes
+Q = q(@~), 
+U = vr(15,val => _A: [1 * W,-9.6],wlist => []), 
+W = vr(16,val => none,wlist => [gauss_wup(lhs_var => U,term_ptr => _A)]), 
+X = vr(17,val => [-2],wlist => []), 
+Y = vr(18,val => [0.4],wlist => []), 
+Z = vr(19,val => [-1.6],wlist => []).
+
+------3> 
+*** No
+Q = q(@~), 
+U = vr(15,val => _A: [1 * W|_B: [1 * Z,-8]],wlist => []), 
+W = vr(16,val => none,wlist => [gauss_wup(lhs_var => U,term_ptr => _A)]), 
+X = vr(17,val => _C: [1.25 * Z,0],wlist => []), 
+Y = vr(18,val => _D: [-0.25 * Z,0],wlist => []), 
+Z = vr(19,
+       val => none,
+       wlist => [gauss_wup(lhs_var => U,term_ptr => _B),
+                 gauss_wup(lhs_var => Y,term_ptr => _D),
+                 gauss_wup(lhs_var => X,term_ptr => _C)]).
+
+----2> 
+*** No
+U = vr(15,val => none,wlist => []), 
+W = vr(16,val => none,wlist => []), 
+X = vr(17,val => none,wlist => []), 
+Y = vr(18,val => none,wlist => []), 
+Z = vr(19,val => none,wlist => []).
+
+--1> 
+*** No
+> 

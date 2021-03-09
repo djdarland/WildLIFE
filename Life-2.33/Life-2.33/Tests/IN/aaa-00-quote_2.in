@@ -1,0 +1,8 @@
+%% problem with this (global) - quote OK see aaa-00-quote
+global(it)?
+it=one_two_three, P=p(it), Q = q('it'),
+assert(P),assert(Q)?
+
+p(X),q(Y),Z=it?
+
+listing(p,q)?

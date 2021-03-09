@@ -1,0 +1,21 @@
+%	$Id: x.lf,v 1.2 1994/12/09 00:26:49 duchier Exp $	
+module("x")? % RM: Mar 24 1993 
+
+% Copyright 1992 Digital Equipment Corporation.
+% Distributed only by permission.
+%
+% Last modified by vanroy
+%      modified on Wed Jun 23 16:13:19 MET DST 1993 by dumant
+%      modified on Wed Jun 23 07:06:28 1993 by Rmeyer
+%      modified on Thu Nov 26 19:57:04 1992 by herve
+%
+% X predicates for Life
+%
+% See the Wild_LIFE User Manual for a description of the X interface.
+
+
+load("x_public.lf")?
+load("x_constants.lf")?
+load("x_tables.lf")?
+load("x_getset.lf")?
+load("x_pred.lf")?

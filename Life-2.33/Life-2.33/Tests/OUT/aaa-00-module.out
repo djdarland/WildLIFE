@@ -1,0 +1,17 @@
+
+*** Yes
+> > 
+*** Yes
+X = "user".
+--1> > 
+*** Yes
+charley> charley> 
+*** Yes
+X = "charley".
+charley--1> 
+*** Yes
+X = "charley".
+--1> 
+*** No
+X = "charley".
+--1> 

@@ -1,0 +1,9 @@
+A=psi2str(abc)?
+
+A=psi2str("abc")?
+
+A=psi2str(5)?
+
+A=psi2str(2.33)?
+
+A=psi2str(!)?

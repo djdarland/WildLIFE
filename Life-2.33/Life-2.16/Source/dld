@@ -1,0 +1,67 @@
+built_ins.c:  Succeed indefinitely on backtracking.
+built_ins.c:  This will prove a goal on backtracking.
+info2.c:    pnf("backtracking action",sizeof(struct ptr_stack));
+info3.c:    pnf("backtracking action",sizeof(struct ptr_stack));
+info.c:    pnf("backtracking action",sizeof(struct ptr_stack));
+lefun.c:  /* can be undone later if backtracking happens.  See the call to   */
+login_122.c:  so that backtracking can easily take place between the two. PROVE can call
+login_122.c:  the real work, involving calls to UNIFY_AIM, PROVE_AIM and backtracking.
+login_122.c:  hidden on backtracking.
+login_122.c:  on backtracking: undo(goal).
+login_122.c:      /* Window operation on backtracking */
+login_122.c:      /* Restoring variable value on backtracking */
+login_122.c:  with goals to be proved on backtracking.
+login_122.c:  undone on backtracking.
+login_122.c:  If U is the disjunction {H|T} then first bind U to H, then on backtracking
+login_122.c:  routines.  It deals with backtracking.  It fails if there is not enough
+login_122.c:          Traceline("backtracking\n");
+login_134_B.c:  so that backtracking can easily take place between the two. PROVE can call
+login_134_B.c:  the real work, involving calls to UNIFY_AIM, PROVE_AIM and backtracking.
+login_134_B.c:  hidden on backtracking.
+login_134_B.c:  on backtracking: undo(goal).
+login_134_B.c:      /* Window operation on backtracking */
+login_134_B.c:      /* Restoring variable value on backtracking */
+login_134_B.c:  with goals to be proved on backtracking.
+login_134_B.c:  undone on backtracking.
+login_134_B.c:  If U is the disjunction {H|T} then first bind U to H, then on backtracking
+login_134_B.c:  routines.  It deals with backtracking.  It fails if there is not enough
+login_134_B.c:          Traceline("backtracking\n");
+login_134.c:  so that backtracking can easily take place between the two. PROVE can call
+login_134.c:  the real work, involving calls to UNIFY_AIM, PROVE_AIM and backtracking.
+login_134.c:  hidden on backtracking.
+login_134.c:  on backtracking: undo(goal).
+login_134.c:      /* Window operation on backtracking */
+login_134.c:      /* Restoring variable value on backtracking */
+login_134.c:  with goals to be proved on backtracking.
+login_134.c:  undone on backtracking.
+login_134.c:  If U is the disjunction {H|T} then first bind U to H, then on backtracking
+login_134.c:  routines.  It deals with backtracking.  It fails if there is not enough
+login_134.c:          Traceline("backtracking\n");
+login_134_C.c:  so that backtracking can easily take place between the two. PROVE can call
+login_134_C.c:  the real work, involving calls to UNIFY_AIM, PROVE_AIM and backtracking.
+login_134_C.c:  hidden on backtracking.
+login_134_C.c:  on backtracking: undo(goal).
+login_134_C.c:      /* Window operation on backtracking */
+login_134_C.c:      /* Restoring variable value on backtracking */
+login_134_C.c:  with goals to be proved on backtracking.
+login_134_C.c:  undone on backtracking.
+login_134_C.c:  If U is the disjunction {H|T} then first bind U to H, then on backtracking
+login_134_C.c:  routines.  It deals with backtracking.  It fails if there is not enough
+login_134_C.c:          Traceline("backtracking\n");
+login.c:  so that backtracking can easily take place between the two. PROVE can call
+login.c:  the real work, involving calls to UNIFY_AIM, PROVE_AIM and backtracking.
+login.c:  hidden on backtracking.
+login.c:  on backtracking: undo(goal).
+login.c:      /* Window operation on backtracking */
+login.c:      /* Restoring variable value on backtracking */
+login.c:  with goals to be proved on backtracking.
+login.c:  undone on backtracking.
+login.c:  If U is the disjunction {H|T} then first bind U to H, then on backtracking
+login.c:  routines.  It deals with backtracking.  It fails if there is not enough
+login.c:          Traceline("backtracking\n");
+memory.c:  The type of the pointer to be restored on backtracking is known, which
+xpred.c:/* used when backtracking a created window in order to destroy the window */
+xpred.c:/* used when backtracking a xcUnmapWindow in order to show the window */
+xpred.c:/* used when backtracking a xcMapWindow in order to hide the window */
+xpred.c:/* used when backtracking a xcUnmapWindow in order to show the window */
+xpred.c:/* used when backtracking a xcMapWindow in order to hide the window */

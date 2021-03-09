@@ -1,0 +1,4 @@
+A=system("ls REFERR")?
+B = 0?
+C=system("core")?
+

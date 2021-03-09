@@ -1,0 +1,433 @@
+% Simple PERT scheduler written in Life.
+% With graphical interface
+
+module("x_schedule") ?
+public(sch_1, sch_2)?
+
+persistent(problem) ?
+
+global(infinity <- 1e10)?
+global(end <- 0) ?
+global(square_size <- 40) ?
+global(unit_length <- 10) ?
+global(bar_height <- 20) ?
+global(problem_size) ?
+
+import("xtools")?
+import("xtools_utils")?
+
+:: A:task(duration => real,
+	  earlyStart => earlyCalc(R),
+	  lateStart  => 1e10, 
+	  prerequisites => R:{[];list},
+	  succ => false)
+    |
+	!,
+	cond(end < A.earlyStart + A.duration,
+	     end <- A.earlyStart + A.duration).
+
+earlyCalc([]) -> 0.
+earlyCalc([T | Ts]) ->
+	max(earlyCalc(Ts), T.earlyStart + T.duration).
+
+schedule_tasks(Ts) :-
+	comp_succ(Ts),
+	update(Ts).
+
+comp_succ([T | Ts]) :- !,
+	mark_succ(T.prerequisites),
+	comp_succ(Ts).
+comp_succ([]).
+
+mark_succ([T|Ts]) :- !,
+	T.succ <- true,
+	mark_succ(Ts).
+mark_succ([]).
+
+update([T|Ts]) :- !,
+	(
+	    T.succ :== false, !,
+	    T.lateStart <- end - T.duration,
+	    update_late(T.prerequisites, T)
+	;
+	    succeed
+	),
+	update(Ts).
+update([]).
+
+update_late([T | Ts], Succ) :- !,
+	update_late(Ts, Succ),
+	(
+	    Succ.lateStart - T.duration < T.lateStart,
+	    !,
+	    T.lateStart <- Succ.lateStart - T.duration,
+	    update_late(T.prerequisites, T)
+	;
+	    succeed
+	).
+update_late([]).
+
+%%%% Create an X-window for the output %%%%
+
+tx_box := text_box(font_id => title_font).
+
+tx_field_button := text_field_button(font_id => title_font).
+
+ps_button := push_button(font_id => title_font).
+
+xvisAllTasks(L) :-
+	Done = get_choice,
+	mark(L),
+	Problem_panel = panel(50, 50, border => 20,
+			      title => "PERT Scheduling"),
+
+	Grid = grid_c(width => S:(problem_size * square_size),
+		      height => S,
+		      action => show_me(Grid),
+		      border => 0,
+		      color_id => d_field),
+	
+	create_fields(L, Legend, Tasks, Durations, Grid.window),
+
+	same_height(Legend),
+	
+	TasksT     = tx_box(text => "Task"),
+	PredsT     = tx_box(text => "Prerequisites",
+			    width => S,
+			    h_space => 0),
+	DurationsT = tx_box(text => "Duration"),
+
+	same_width([TasksT | Tasks]),
+	same_width([DurationsT | Durations]),
+
+	Push    = ps_button(text => "Quit",
+			    action => (set_choice(Done), fail)),
+	Solve   = ps_button(text => "Solve",
+			    action => solve),
+	
+	TitleBar = ht_list [TasksT,
+			    PredsT,
+			    DurationsT],
+
+	Block = hb_list [vl_list Tasks,
+			 vl_list [hc_list Legend, v_box(5), Grid],
+			 vl_list Durations],
+	Buttons = hc_list [Solve, h_box(50), Push],
+	
+	A = vc_list [TitleBar, v_box(10), 
+		     Block,    v_box(30),
+		     Buttons],
+	
+	Problem_panel contains A,
+	create_box(Problem_panel),
+	draw_grid(Grid)
+    ;
+	succeed.
+
+show_me(Grid) :-
+	OX = Grid.old_x_pos,
+	OY = Grid.old_y_pos,
+	X = Grid.x_pos,
+	Y = Grid.y_pos,
+	find_field(OX, OY, OT, OP),
+	find_field(X, Y, T, P),
+	(
+	    OT =:= T,
+	    OP =:= P,
+	    !,
+	    swap_color(Grid.window, T, P)
+	;
+	    succeed
+	).
+
+
+draw_grid(Grid) :-
+	GW = Grid.window,
+	Cid = Grid.color_id,
+	draw_s_lines(GW, shade_colors.Cid, 0),
+	draw_h_lines(GW, highlight_colors.Cid, 0),
+	fill_diagonal(GW, main_colors.blocked, 0).
+
+draw_s_lines(3 => problem_size) :- !.
+draw_s_lines(GW, C, N) :-
+	xDrawLine(GW, 0, Y:(N*square_size),
+		  Max:(problem_size*square_size - 1), Y,
+		  color => C, line_width => 1),
+	xDrawLine(GW, Y, 0,
+		  Y, Max,
+		  color => C, line_width => 1),
+	draw_s_lines(GW, C, N+1).
+
+draw_h_lines(3 => problem_size) :- !.
+draw_h_lines(GW, C, N) :-
+	xDrawLine(GW, 0, Y:((N+1)*square_size-1),
+		  Max:(problem_size*square_size - 1), Y,
+		  color => C, line_width => 1),
+	xDrawLine(GW, Y, 0,
+		  Y, Max,
+		  color => C, line_width => 1),
+	draw_h_lines(GW, C, N+1).
+
+
+fill_diagonal(3 => problem_size) :- !.
+fill_diagonal(GW, C, N) :-
+	fill_square(GW, N+1, N+1, C),
+	fill_diagonal(GW, C, N+1).
+
+fill_square(GW, X, Y, C) :-
+	xFillRectangle(GW,
+		       (X-1) * square_size + 1,
+		       (Y-1) * square_size + 1,
+		       square_size - 2,
+		       square_size - 2,
+		       color => C).
+
+
+find_field(X, Y, T, P) :-
+	T = floor(Y / square_size) + 1,
+	P = floor(X / square_size) + 1.
+
+mark([T | Ts], N:{1;real}) :- !,
+	T.id <- N,
+	problem.N.duration <<- copy_term(T.duration),
+	problem.N.pl <<- [],
+	mark(Ts, N+1).
+mark([], N) :- problem_size <<- N-1.
+
+show_solution(L) :-
+	(
+	    Done = get_choice,
+	    Solution_panel = panel(500, 50, border => 25,
+				   title => "Solution"),
+	    
+	    create_solution(L, Bars, Tasks),
+	    ST     = tx_box(text => "Schedule"),
+	    TasksT = tx_box(text => "Task"),
+
+	    same_size(Bars),
+	    same_width([ST, Bars.1]),
+	    same_width([TasksT | Tasks]),
+	    
+	    Push = ps_button(text => "Done",
+			     action => (set_choice(Done), fail)),
+
+	    Title_bar = ht_list [TasksT, ST],
+	    
+	    A = vc_list [Title_bar, v_box(10), 
+			 ht_list [vl_list Tasks,
+				  vl_list Bars],
+			 v_box(30),
+			 Push
+			],
+	    Solution_panel contains A,
+	    create_box(Solution_panel)
+	;
+	    succeed
+	).
+
+create_fields([Task | Tasks], [L | Ls], [T | Ts], [D | Ds], GW) :- !,
+	N = psi2str(Task.id),
+	L = tx_box(text => N,
+		   width => square_size,
+		   h_space => 0,
+		   v_space => 0
+		  ),
+	T = tx_box(text => strcat("Task ", N, ": "),
+		   height => square_size,
+		   offset => 1),
+	make_fields(Task.prerequisites, Task.id, GW),
+	D = tx_field_button(height => square_size,
+			    offset => 0,
+			    text => psi2str(Task.duration),
+			    action => give_val(Task.id, D.text)),
+	create_fields(Tasks, Ls, Ts, Ds, GW).
+
+create_fields([], [], [], []).
+
+create_solution([Task | Tasks], [B | Bs], [T | Ts], N:{1;int}) :- !,
+	T = tx_box(text => strcat("Task ", psi2str(N), ": "),
+		   height => square_size,
+		   offset => 1),
+	B = make_bar(Task),
+	create_solution(Tasks, Bs, Ts, N+1).
+create_solution([], [], []).
+
+make_task(Task) -> tx_box(text => strcat("Task ",
+					 psi2str(Task.id),
+					 ": "),
+			  height => square_size,
+			  offset => 1).
+
+make_fields([T|Ts], Task, GW) :- !,
+	fill_square(GW, T.id, Task, 'navy blue'),
+	problem.Task.pl <<- [T.id | copy_pointer(problem.Task.pl)],
+	make_fields(Ts, Task, GW).
+make_fields([]).
+
+give_val(N, Text) :-
+	problem.N.duration <<- parse(Text).
+
+swap_color(GW, T, N) :-
+	(
+	    T :\== N,
+	    PL = copy_term(problem.T.pl),
+	    
+	    decomp(N, PL, Is_pre, NPL),
+	    cond(not(Is_pre), no_loop(T, N)),
+	    !,
+	    problem.T.pl <<- NPL,
+	    
+	    C = cond(Is_pre, d_field, on_col),
+	    fill_square(GW, N, T, main_colors.C)
+	;
+	    write("")
+%%%	    play("fastbusy", 60)
+	).
+
+no_loop(T, N) :-
+	not_depends_on(problem.N.pl, T, @).
+
+not_depends_on([X | R], T, Term) :- !,
+	X =\= T,
+	B = has_feature(X, Term),
+	Term.X = @,
+	cond(not(B),
+	     not_depends_on( problem.X.pl,
+			     T,
+			     Term)),
+	not_depends_on(R, T, Term).
+
+not_depends_on([]).
+
+decomp(A, [A|B], true, B) :- !.
+decomp(A, [], false, [A]) :- !.
+decomp(A, [H|T], B, [H|R]) :- decomp(A, T, B, R).
+
+solve :-
+	end <- 0,
+	FV = feature_values(copy_term(problem)),
+	L = map(root_sort, FV),
+	L = map(translate(2 => L), FV),
+	schedule_tasks(L),
+	show_solution(L).
+	
+translate(Task, L) ->
+	task(duration => Task.duration,
+	     prerequisites => map(nth(2 => L), Task.pl)
+	    ).
+
+make_bar(A) -> F |
+	D = A.duration,
+	E = A.earlyStart,
+	L = A.lateStart,
+	T = bar(E, D, 1)
+	  l_above
+	  bar(L, D, 2),
+	F = frame(frame_state => true,
+		  height => square_size,
+		  border => (square_size - 2 * bar_height) / 2),
+	F contains T.
+
+bar(Offset, Length, Color) ->
+	h_box(Offset * unit_length)
+	  c_left_of field(@, @, Length * unit_length, bar_height,
+			  color_id => Color).
+
+%%% Settings
+
+def_color(hilight_colors, 1, blue) ?
+def_color(main_colors, 1, blue) ?
+def_color(shade_colors, 1, blue) ?
+def_color(hilight_colors, 2, red) ?
+def_color(main_colors, 2, red) ?
+def_color(shade_colors, 2, red) ?
+def_color(shade_colors,on_col, 'dim grey') ?
+def_color(highlight_colors,on_col, white) ?
+def_color(main_colors,on_col, 'navy blue') ?
+def_color(main_colors, blocked, 'dim grey')?
+def_color(shade_colors,blocked,'dim grey') ?
+def_color(highlight_colors,blocked,white) ?
+
+% Sample inputs for the PERT scheduler:
+
+sch_1 :-
+	square_size <- 40, 
+	unit_length <- 10, 
+	bar_height <- 20,
+	problem <<- @,
+	def_font(title_font,
+		 new_font(cond(life_demo#using_demo_fonts,
+			       "terminal_bold_narrow18",
+			       "-adobe-helvetica-bold-r-narrow--17-120-100-100-p-72-*"))),
+	A1=task(duration=>10),
+	A2=task(duration=>20),
+	A3=task(duration=>30),
+	A4=task(duration=>18,prerequisites=>[A1,A2]),
+	A5=task(duration=>8 ,prerequisites=>[A2,A3]),
+	A6=task(duration=>3 ,prerequisites=>[A1,A4]),
+	A7=task(duration=>4 ,prerequisites=>[A5,A6]),
+	xvisAllTasks([A1,A2,A3,A4,A5,A6,A7]).
+
+sch_2 :-
+	square_size <- 16,
+	unit_length <- 10, 
+	bar_height <- 8,
+	problem <<- @,
+	def_font(title_font,
+		 new_font(cond(life_demo#using_demo_fonts,
+			       "terminal_bold_narrow14",
+			       "-adobe-helvetica-bold-r-narrow--14-100-100-100-p-70-*"))),
+	A1=task(duration=>2, prerequisites=>[B1,C1]),
+	B1=task(duration=>2, prerequisites=>[A2]),
+	C1=task(duration=>2, prerequisites=>[A2]),
+	
+	A2=task(duration=>2, prerequisites=>[B2,C2]),
+	B2=task(duration=>2, prerequisites=>[A3]),
+	C2=task(duration=>2, prerequisites=>[A3]),
+	
+	A3=task(duration=>2, prerequisites=>[B3,C3]),
+	B3=task(duration=>2, prerequisites=>[A4]),
+	C3=task(duration=>2, prerequisites=>[A4]),
+	
+	A4=task(duration=>2, prerequisites=>[B4,C4]),
+	B4=task(duration=>2, prerequisites=>[A5]),
+	C4=task(duration=>2, prerequisites=>[A5]),
+	
+	A5=task(duration=>2, prerequisites=>[B5,C5]),
+	B5=task(duration=>2, prerequisites=>[A6]),
+	C5=task(duration=>2, prerequisites=>[A6]),
+	
+	A6=task(duration=>2, prerequisites=>[B6,C6]),
+	B6=task(duration=>2, prerequisites=>[A7]),
+	C6=task(duration=>2, prerequisites=>[A7]),
+	
+	A7=task(duration=>2, prerequisites=>[B7,C7]),
+	B7=task(duration=>2, prerequisites=>[A8]),
+	C7=task(duration=>2, prerequisites=>[A8]),
+	
+	A8=task(duration=>2, prerequisites=>[B8,C8]),
+	B8=task(duration=>2, prerequisites=>[A9]),
+	C8=task(duration=>2, prerequisites=>[A9]),
+	
+	A9=task(duration=>2, prerequisites=>[B9,C9]),
+	B9=task(duration=>2, prerequisites=>[A10]),
+	C9=task(duration=>2, prerequisites=>[A10]),
+	
+	A10=task(duration=>2, prerequisites=>[B10,C10]),
+	B10=task(duration=>2, prerequisites=>[A11]),
+	C10=task(duration=>2, prerequisites=>[A11]),
+	
+	A11=task(duration=>2, prerequisites=>[B11,C11]),
+	B11=task(duration=>2, prerequisites=>[A12]),
+	C11=task(duration=>2, prerequisites=>[A12]),
+	
+	A12=task(duration=>2),
+	
+	L = [A1,B1,C1,A2,B2,C2,A3,B3,C3,A4,B4,C4,A5,B5,C5,
+	     A6,B6,C6,A7,B7,C7,A8,B8,C8,A9,B9,C9,A10,B10,C10,
+	     A11,B11,C11,A12],
+	xvisAllTasks(L).
+
+nth(1, [H|@]) -> H.
+nth(N, [@|T]) -> nth(N-1, T).
+

@@ -1,0 +1,7 @@
+A=real?
+b(A & int,S).
+listing(b)?
+b(C,D)?
+;
+;
+

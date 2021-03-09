@@ -1,0 +1,8 @@
+
+module("a")?
+
+b(c=>d).
+
+module("b")?
+
+b(c=>d,e=>f).

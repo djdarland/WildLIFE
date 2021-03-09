@@ -1,0 +1,8 @@
+*** Warning: local definition of '.' overrides 'syntax#.'
+*** Warning: benign module name clash: c_public_terms#step and built_ins#step
+Loading...*** Warning: overriding previous declaration of accumulator dcg
+*** Warning: overriding previous declaration of accumulator dcg
+*** Warning: benign module name clash: c_public_terms#static and built_ins#static
+*** Warning: benign module name clash: c_public_terms#int and built_ins#int
+*** Syntax error: ',' expected in argument list (near line 724 in file "/home/dennis/local/lib/life/Examples/SuperLint/c_tokenizer.lf")
+*** Syntax error near line 724 in file "/home/dennis/local/lib/life/Examples/SuperLint/c_tokenizer.lf": bad symbol in list 'of'.

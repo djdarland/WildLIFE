@@ -1,0 +1,4 @@
+father(richard,dennis).
+father(dennis,randy).
+father(dennis,terry_joe).
+grandfather(X,Y) :- father(X,Z) , father(Z,Y).

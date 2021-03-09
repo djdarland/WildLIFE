@@ -1,0 +1,28 @@
+
+A=parse("W+E."),write(aa)?
+W=34?
+E=45?
+B=eval(A),write(bb)?
+.
+X=34?
+Y=parse("X+X."),write(cc)?
+Z=eval(Y),write(dd)?
+.
+W=1?
+Q=parse("(1+",Flag),Flag:\==error,write("WRONG 1!")?
+R=parse("1+2",Flag),Flag:\==error,write("WRONG 2!")?
+.
+A=parse?
+X=A(Q)?
+Q="1+2."?
+B=eval(X)?
+.
+A=parse("""1+2."".")?
+B=parse(A)?
+C=eval(B)?
+.
+A=parse(S)?
+S="1+2."?
+C=eval(A)?
+.
+

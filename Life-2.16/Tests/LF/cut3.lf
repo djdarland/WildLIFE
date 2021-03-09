@@ -1,0 +1,5 @@
+tata(X) :- X = !.
+tata.
+
+test :- tata(X), tata(Y), tata(X&Y).
+

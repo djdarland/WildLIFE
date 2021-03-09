@@ -1,0 +1,14 @@
+main(C)?
+putt(inc,C)?
+putt(inc,C)?
+putt(inc,C)?
+putt(inc,C)?
+putt(inc,C)?
+putt(see(X),C)?
+putt(inc,C)?
+putt(show,C)?
+putt(set(100),C)?
+putt(blah,C)?
+putt(see(Y),C)?
+putt(stop,C)?
+

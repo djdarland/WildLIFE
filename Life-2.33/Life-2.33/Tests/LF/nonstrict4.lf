@@ -1,0 +1,26 @@
+
+non_strict(foo)?
+foo(X) :- write(X), nl.
+
+faa(X) :- write(X), nl.
+
+toto1 :- write(N:(2*4)), setq(a,N).
+toto2 :- setq(a,N), write(N:(2*4)).
+
+toto3 :- foo(N:(2*4)), setq(a,N).
+toto4 :- setq(a,N), foo(N:(2*4)).
+
+toto5 :- faa(N:(2*4)), setq(a,N).
+toto6 :- setq(a,N), faa(N:(2*4)).
+
+toto7 :- foo(N), faa(N:(2*4)), setq(a,N).
+toto8 :- foo(N), setq(a,N), faa(N:(2*4)).
+
+toto9 :- faa(N:(2*4)), foo(N), setq(a,N).
+totoa :- setq(a,N), foo(N), faa(N:(2*4)).
+
+totob :- faa(N:(2*4)), setq(a,N), foo(N).
+totoc :- setq(a,N), faa(N:(2*4)), foo(N).
+
+tata :- N = 2*4, write(N), setq(a,N).
+

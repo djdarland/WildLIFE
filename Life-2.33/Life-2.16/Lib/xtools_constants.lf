@@ -1,0 +1,111 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%	$Id: xtools_constants.lf,v 1.4 1996/02/01 20:26:34 vorbeck Exp $
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% XTOOLS: CONSTANTS USED
+%
+% Author: Bruno Dumant
+% (c) Copyright 1993 - Digital Equipment Corporation 
+% All Rights Reserved
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% Changed the names of led_width, led_height, led_position, led_offset
+%%% to d_led_*
+%%% 29/09/94  Vorbeck
+
+public(        
+	d_v_slider_height,d_v_slider_width,
+        d_h_slider_height,d_h_slider_width,
+        d_led_width,d_led_height,d_led_position,
+        
+	d_border,d_slide_bar_border,
+	
+	d_v_space,d_h_space,d_item_v_space,
+
+	d_offset,d_led_offset,d_text_field_offset,d_item_offset,
+	
+	bold,medium,
+
+	d_button,d_panel,d_item,d_slider,
+	d_text,d_selected_text,
+	d_field,d_selected_field,
+	d_led_on,d_led_off
+       ) ?
+
+
+
+
+%%% Default Colors
+
+def_color(main_colors,d_item,grey) ?
+def_color(highlight_colors,d_item,white) ?
+def_color(shade_colors,d_item,'dim grey') ?
+
+def_color(main_colors,d_panel,grey) ?
+def_color(highlight_colors,d_panel,white) ?
+def_color(shade_colors,d_panel,'dim grey') ?
+
+def_color(main_colors,d_led_off,new_color(180,190,190)) ?
+def_color(shade_colors,d_led_off,'dim grey') ?
+def_color(highlight_colors,d_led_off,'light grey') ?
+
+def_color(shade_colors,d_button,'dim grey') ?
+def_color(highlight_colors,d_button,white) ?
+def_color(main_colors,d_button,grey) ?
+
+def_color(shade_colors,d_field,'dim grey') ?
+def_color(highlight_colors,d_field,white) ?
+def_color(main_colors,d_field,'light grey') ?
+
+
+def_color(shade_colors,d_led_on,firebrick) ?
+def_color(highlight_colors,d_led_on,'orange red') ?
+def_color(main_colors,d_led_on,red) ?
+
+def_color(main_colors,d_text,black) ?
+def_color(main_colors,d_selected_text,black) ?
+
+def_color(main_colors,d_selected_field,new_color(255,240,225)) ?
+
+def_color(shade_colors,d_slider,'dim grey') ?
+def_color(highlight_colors,d_slider,white) ?
+def_color(main_colors,d_slider, grey) ?
+
+%%% Default Fonts
+
+def_font(bold,new_font("-*-helvetica-bold-r-*-*-14-*-*-*-*-*-*-*")) ?
+
+def_font(medium,new_font("-*-helvetica-medium-r-*-*-14-*-*-*-*-*-*-*")) ?
+
+
+%%% Dimensions
+
+global(d_v_slider_height <- 20) ?
+global(d_v_slider_width <- 15) ?
+
+global(d_h_slider_height <- 15) ?
+global(d_h_slider_width <- 20) ?
+
+global(d_border <- 5) ?
+global(d_slide_bar_border <- 0) ?
+
+global(d_v_space <- 12) ?
+global(d_h_space <- 20) ?
+
+global(d_item_v_space <- 6) ?
+
+global(d_led_width <- 16) ?
+global(d_led_height <- 9) ?
+global(d_led_position <- 9) ?
+
+global(d_offset <- 0) ?
+global(d_text_field_offset <- 5) ?
+global(d_item_offset <- 5) ?
+global(d_led_offset <- 35) ?
+
+
+
+
+

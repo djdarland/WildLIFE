@@ -1,0 +1,10 @@
+
+*** Yes
+> > 
+unify(0,0)   done
+unify(1,0)
+unify(1,0)
+unify(1,0)
+unify(0,1)
+unify(1,1)   done
+unify(1,1)   done

@@ -1,0 +1,180 @@
+22,24c22,24
+< load :-
+<         @ = current_module,
+<         @ = features(load,"built_ins"),
+---
+> _A: load :-
+>         _B = current_module,
+>         _C = features(_A,"built_ins"),
+27c27
+<         load_2(@,load) ; loading <<- true,
+---
+>         load_2(_C,_A) ; loading <<- true,
+29c29
+<         load_2(@,load),
+---
+>         load_2(_C,_A),
+33c33
+<         set_module(@),
+---
+>         set_module(_B),
+46,47c46,47
+< listing :-
+<         listing_2(features(listing,"built_ins"),listing).
+---
+> _A: listing :-
+>         listing_2(features(_A,"built_ins"),_A).
+62,65c62,65
+< op(@,@,@,functor => @,kind => @,precedence => @) :-
+<         trace(@,@),
+<         (op_2(@,@,@),
+<         trace(@,@) ; trace(@,@),
+---
+> op(_A,_B,_C,functor => _C,kind => _B,precedence => _A) :-
+>         trace(_D,_E),
+>         (op_2(_A,_B,_C),
+>         trace(_D,_E) ; trace(_D,_E),
+69,72c69,72
+< op(@,@,@,functor => @,kind => @,precedence => @) :-
+<         trace(@,@),
+<         (op_2(@,@,@),
+<         trace(@,@) ; trace(@,@),
+---
+> op(_A,_B,_C,functor => _C,kind => _B,precedence => _A) :-
+>         trace(_D,_E),
+>         (op_2(_A,_B,_C),
+>         trace(_D,_E) ; trace(_D,_E),
+79,80c79,80
+< call_handler(@) :-
+<         is_sort(@),
+---
+> call_handler(_A) :-
+>         is_sort(_A),
+83c83
+<         writeq_err(@),
+---
+>         writeq_err(_A),
+87c87
+< call_handler(@) :-
+---
+> call_handler(_A) :-
+90c90
+<         writeq_err(@),
+---
+>         writeq_err(_A),
+99,100c99,100
+< \+ @ :-
+<         @,
+---
+> \+ _A :-
+>         _A,
+107,108c107,108
+< bagof(@,
+<       @) -> @ | @ <<- [],(evalin(@), @ <<- [evalin(@)|copy_pointer(@)], fail ; @ <- copy_term(@)).
+---
+> bagof(_A,
+>       _B) -> _C | _D <<- [],(evalin(_B), _D <<- [evalin(_A)|copy_pointer(_D)], fail ; _C <- copy_term(_D)).
+110,111c110,111
+< reduce(@,@,[@|@]) -> apply(@,reduce(@,@,@),functor => @).
+< reduce(@,@,[]) -> @.
+---
+> reduce(_A,_B,[_C|_D]) -> apply(_C,reduce(_A,_B,_D),functor => _A).
+> reduce(@,_A,[]) -> _A.
+113d112
+< map(@,[@|@]) -> [apply(@,functor => @)|map(@,@)].
+114a114
+> map(_A,[_B|_C]) -> [apply(_B,functor => _A)|map(_A,_C)].
+116c116
+< maprel(@,[@|@]) :-
+---
+> maprel(_A,[_B|_C]) :-
+118,119c118,119
+<         root_sort(@) & @(@),
+<         maprel(@,@).
+---
+>         root_sort(_A) & @(_B),
+>         maprel(_A,_C).
+123,124c123,124
+< append([@|@],list) -> [@|append(@,list)].
+< append([],list) -> list.
+---
+> append([],_A: list) -> _A.
+> append([_A|_B],_C: list) -> [_A|append(_B,_C)].
+126d125
+< length([@|@]) -> 1 + length(@).
+127a127
+> length([@|_A]) -> 1 + length(_A).
+153c153
+< str(@) -> cond(is_value(@),strval(@),psi2str(@)).
+---
+> str(_A) -> cond(is_value(_A),strval(_A),psi2str(_A)).
+155,156c155,156
+< strval(string) -> string.
+< strval(int) -> int2str(int).
+---
+> strval(_A: string) -> _A.
+> strval(_A: int) -> int2str(_A).
+159c159
+< string $== string -> asc(string) =:= asc(string) and lenstreq(substr(string,
+---
+> _A: string $== _B: string -> asc(_A) =:= asc(_B) and lenstreq(substr(_A,
+161,162c161,162
+<                                                                      strlen(string)),
+<                                                               substr(string,
+---
+>                                                                      _C: strlen(_A)),
+>                                                               substr(_B,
+164,166c164,166
+<                                                                      strlen(string)),
+<                                                               strlen(string),
+<                                                               strlen(string)).
+---
+>                                                                      _D: strlen(_B)),
+>                                                               _C,
+>                                                               _D).
+168c168
+< string $\== string -> not string $== string.
+---
+> _A: string $\== _B: string -> not _A $== _B.
+170c170
+< string $< string -> string $=< string and not string $== string.
+---
+> _A: string $< _B: string -> _A $=< _B and not _A $== _B.
+174,181c174,181
+< string $=< string -> asc(string) < asc(string) or asc(string) =:= asc(string) and lenstrle(substr(string,
+<                                                                                                   2,
+<                                                                                                   strlen(string)),
+<                                                                                            substr(string,
+<                                                                                                   2,
+<                                                                                                   strlen(string)),
+<                                                                                            strlen(string),
+<                                                                                            strlen(string)).
+---
+> _A: string $=< _B: string -> _C: asc(_A) < _D: asc(_B) or _C =:= _D and lenstrle(substr(_A,
+>                                                                                         2,
+>                                                                                         _E: strlen(_A)),
+>                                                                                  substr(_B,
+>                                                                                         2,
+>                                                                                         _F: strlen(_B)),
+>                                                                                  _E,
+>                                                                                  _F).
+183c183
+< string $> string -> not string $=< string.
+---
+> _A: string $> _B: string -> not _A $=< _B.
+185c185
+< string $>= string -> not string $=< string or string $== string.
+---
+> _A: string $>= _B: string -> not _A $=< _B or _A $== _B.
+191c191
+< @ ^ int -> cond(int < 0,1 / pwr(@,- int),pwr(@,int)).
+---
+> _A ^ _B: int -> cond(_B < 0,1 / pwr(_A,- _B),pwr(_A,_B)).
+195c195
+< max(@,@) -> cond(@ > @,@,@).
+---
+> max(_A,_B) -> cond(_A > _B,_A,_B).
+197c197
+< min(@,@) -> cond(@ > @,@,@).
+---
+> min(_A,_B) -> cond(_A > _B,_B,_A).

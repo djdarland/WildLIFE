@@ -1,0 +1,5 @@
+% This problem is from comp.lang.prolog,
+% wender@top.cis.syr.edu (Elaine Wenderholm)
+
+between(I,I,_).
+between(L,I,H) :- L<H, between(L+1,I,H).

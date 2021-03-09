@@ -1,0 +1,5 @@
+
+F:f -> features(F).
+
+G:g(X) -> s(X,features(G)).
+

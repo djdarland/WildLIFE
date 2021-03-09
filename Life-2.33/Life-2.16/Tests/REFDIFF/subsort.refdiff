@@ -1,0 +1,24 @@
+33a34,56
+> terminal :<= terminal~
+> ***********
+> terminal :<= readFile~
+> stage two
+> terminal :<= terminal~
+> stage three
+> terminal :<= writeFile~
+> stage two
+> terminal :<= seqWriteFile~
+> stage three
+> terminal :<= terminal~
+> ***********
+> 
+> *** No
+> > seqFile :<= file~
+> stage one
+> seqFile :<= seqFile~
+> stage two
+> 
+> *** No
+> > 
+> *** No
+> > > 

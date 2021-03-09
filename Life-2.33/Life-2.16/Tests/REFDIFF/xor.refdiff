@@ -1,0 +1,84 @@
+28a29
+> A = bool~, B = bool~, C = bool~.
+31c32
+< A = false, B = bool, C = bool.
+---
+> A = false, B = bool, C = B.
+33a35
+> A = bool~, B = bool~, C = bool~.
+38a41
+> A = bool~, B = bool~, C = bool~.
+41c44
+< A = bool, B = false, C = bool.
+---
+> A = bool, B = false, C = A.
+43a47
+> A = bool~, B = bool~, C = bool~.
+48a53
+> A = bool~, B = bool~, C = bool~.
+51c56
+< A = bool, B = bool, C = false.
+---
+> A = bool, B = A, C = false.
+53a59
+> A = bool~, B = bool~, C = bool~.
+59c65
+< A = false, B = bool, C = bool.
+---
+> A = false, B = bool, C = B.
+61a68
+> A = bool~, B = bool~, C = bool~.
+64c71
+< A = bool, B = false, C = bool.
+---
+> A = bool, B = false, C = A.
+66a74
+> A = bool~, B = bool~, C = bool~.
+69c77
+< A = bool, B = bool, C = false.
+---
+> A = bool, B = A, C = false.
+71a80
+> A = bool~, B = bool~, C = bool~.
+74c83
+< A = false, B = bool, C = bool.
+---
+> A = false, B = bool, C = B.
+76a86
+> A = bool~, B = bool~, C = bool~.
+79c89
+< A = bool, B = false, C = bool.
+---
+> A = bool, B = false, C = A.
+81a92
+> A = bool~, B = bool~, C = bool~.
+84c95
+< A = bool, B = bool, C = false.
+---
+> A = bool, B = A, C = false.
+86a98
+> A = bool~, B = bool~, C = bool~.
+91a104
+> A = bool~, B = bool~, C = bool~.
+102a116
+> A = bool~, B = bool~, C = true, D = bool~, E = bool~.
+104a119
+> A = bool~, B = bool~, C = bool~, D = bool~, E = bool~.
+109a125
+> A = bool~, B = bool~, C = bool~, D = bool~, E = bool~.
+118c134
+< A = false, B = false, C = false, D = bool, E = bool.
+---
+> A = false, B = false, C = false, D = bool, E = D.
+121c137
+< A = false, B = false, C = false, D = true, E = true.
+---
+> A = false, B = false, C = false, D = true, E = D.
+123a140
+> A = false, B = false, C = false, D = bool, E = D.
+126c143
+< A = false, B = false, C = false, D = false, E = false.
+---
+> A = false, B = false, C = false, D = false, E = D.
+128a146
+> A = false, B = false, C = false, D = bool, E = D.

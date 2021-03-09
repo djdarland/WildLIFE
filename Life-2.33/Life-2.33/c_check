@@ -1,0 +1,54 @@
+#!/bin/csh -f
+#
+# Test program for Wild-LIFE
+#
+#	test *.lf
+#   or
+#	test program
+#
+# This program run Wild-LIFE over one or several test programs and records the
+# differences in the standard and error outputs.
+#
+#
+# Read-only files:
+#	program.lf	Life source code
+#	program.in	Life user input
+#	program.ref	Reference standard output
+#	program.referr	Reference error output
+#
+# Output files:
+#	program.out	Most recent standard output
+#	program.err	Most recent error output
+#	program.refdiff Difference between .out and .ref files
+#	program.errdiff Difference between .err and .referr files
+#
+
+
+# Make all files rw by everyone
+umask 000
+
+
+# Version of Wild-LIFE to use:
+
+echo "Running splint on wild_life c source"
+echo "Date: `date`"
+echo ""
+
+# Run the test suite
+foreach I ($*)
+
+   echo $I
+
+if(-e Source/$I:r.c) then
+
+
+# Run splint
+   `splint Source $I:r.c >Source/splintout/$I.out 2>Source/splinterr/$I.err`
+
+endif
+
+end
+
+echo ""
+echo "Test finished: `date`"
+echo ""

@@ -1,0 +1,63 @@
+% Copyright by Denys Duchier, Jan 1995
+% Simon Fraser University
+% --------------------------------------------------------------------
+%	$Id: client-server.lf,v 1.3 1995/01/28 00:11:34 duchier Exp $	
+% --------------------------------------------------------------------
+
+module("client-server")?
+import("regexp")?
+public(connect_to_server,http_query,start_server)?
+
+connect_to_server(Host:string,Port:int) -> S:sys#socket |
+	sys#connect(S,host=>Host,port=>Port).
+
+http_query(URL:string) -> @(headers=>H,body=>B) |
+	(re_split("^http://([^/:]+):([0-9]+)(/.*)$",URL,
+		  @(1=>Host,2=>PortString,3=>Document)),
+	 Port=parse(PortString)
+	;
+	 re_split("^http://([^/:]+)(/.*)$",URL,
+		  @(1=>Host,2=>Document)),
+	 Port=80),!,
+	S=connect_to_server(Host,Port),
+	(succeed;sys#fclose(S),fail),
+	sys#fwrite(S,"GET "),
+	sys#fwrite(S,Document),
+	sys#fwrite(S," HTTP/1.0
+
+"),
+	sys#fflush(S),
+	Status=sys#get_record(S,"
+"),
+	re_match("HTTP/[^ ]+ 200",Status),
+	get_headers(S,H),
+	B=sys#get_record(S,""),
+	sys#fclose(S),!.
+
+get_headers(S,H) :-
+	Line=sys#get_record(S,"
+"),
+	(Line="
+",
+	 !
+	;
+	 re_split("^([^:]+): (.*)
+$",Line,@(Field,Value)),
+	 H.Field<-Value,
+	 get_headers(S,H)
+	).
+
+E:start_server(port=>P:int,handler=>H) :-
+	(is_value(P);
+	 write("port feature must be an actual integer in: ",E),
+	 abort),!,
+	S=sys#socket,
+	sys#bind(S,port=>P),
+	sys#listen(S,1),
+	repeat,
+	call_once(handle_connection(NS:sys#accept(S),H);succeed),
+	call_once(sys#fflush(NS);succeed),
+	call_once(sys#fclose(NS);succeed),
+	fail.
+
+handle_connection(S:sys#socket_stream,H) -> H(S).

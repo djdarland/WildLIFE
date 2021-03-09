@@ -1,0 +1,499 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                             %
+% Translating grammars into LIFE                                              %
+%                                                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+op( 1000, xfy, comma) ?
+op( 1200, xfy, -->) ?
+non_strict(-->) ?
+
+% non_strict(setq)?
+% 
+% setq(X,V) :- Value = eval(V), retract((X->@)), !, assert((X->Value)).
+% setq(X,V) :- dynamic(X), Value = eval(V), assert((X->Value)).
+% 
+
+(Lhs --> Rhs) :- R = compileRule( Lhs, Rhs), assert(R).
+
+%
+% compileRule: translates the grammar rules into clauses
+%
+
+non_strict(compileRule) ?
+compileRule( Lhs, Rhs) -> 
+	(compileSymbols( Lhs, false, false, Xs, Ys, _) :- 
+	     compileSeq( Rhs, true,  false, Xs, Ys, _)).
+
+%
+% compileSeq is used to translate a sequence of symbols of the grammar into a
+% sequence of literals.
+%
+
+compileSeq( Symbols, FoldOk, InDisj, Xs, Ys, NewFoldOk) -> 
+	cond( Symbols :== @,
+	      `varSymbol( Symbols, words => Xs, rest => Ys) 
+	  | NewFoldOk = FoldOk,
+	      compileSymbols( Symbols, FoldOk, InDisj, Xs, Ys, NewFoldOk)).
+
+%
+% compileSymbols is used to translate non-variable symbols.
+%
+
+% conjunction
+  compileSymbols( ( Symb, Autres), FoldOk, InDisj, Xs, Ys, NewFoldOk) ->
+	compileSeq( Symb,   FoldOk,      InDisj, Xs, Ys1, InterFoldOk) comma 
+        compileSeq( Autres, InterFoldOk, InDisj, Ys1, Ys, NewFoldOk).
+
+% disjunction
+  compileSymbols( ( List1 ; List2), FoldOk, _, Xs, Ys, NewFoldOk) -> 
+	X | Z = compileSeq( List1, FoldOk, true, Xs, Ys, InterFoldOk1),
+            T = compileSeq( List2, FoldOk, true, Xs, Ys, InterFoldOk2),
+            NewFoldOk = InterFoldOk1 and InterFoldOk2,
+	    X = `( Z ; T ), 
+	    ! .
+                                   
+% terminals
+  compileSymbols( Terms: list, true, false, Xs, Ys, NewFoldOk) -> 
+	succeed | Xs = termSequence(Terms, Ys), NewFoldOk = true.
+  compileSymbols( Terms: list, FoldOk, _, Xs, Ys, NewFoldOk) -> 
+	Xs = termSequence(Terms, Ys) | NewFoldOk = FoldOk.
+
+% cut
+  compileSymbols( !, FoldOk, false, Xs, Ys, NewFoldOk) -> 
+	! | NewFoldOk = false, Xs = Ys.  
+  compileSymbols( !, FoldOk, true, Xs, Ys, NewFoldOk) -> 
+	Xs = Ys, ! | NewFoldOk = false.
+
+% insertion of code
+
+  compileSymbols( Term: #, FoldOk, false, Xs, Ys, NewFoldOk)  -> 
+	transLifeCode( Term) | Xs = Ys, NewFoldOk = false.
+  compileSymbols( Term: #, FoldOk, true, Xs, Ys, NewFoldOk)  -> 
+	Xs = Ys, transLifeCode( Term) | NewFoldOk = false.
+
+
+% non-terminals
+  compileSymbols(NonTerm, FoldOk, _, Xs, Ys, NewFoldOk)    -> 
+	NonTerm  | NonTerm = @( words => Xs, rest => Ys), NewFoldOk = FoldOk.
+
+
+%
+% Inserting Life code
+%
+
+transLifeCode( L) -> transList( feats(L)).
+
+% For map:
+my_project(A,B) -> B.A.
+
+feats(L) -> map( my_project( 2 => L), features(L)).
+
+transList( []) ->  succeed.
+transList( [A|B]) -> A comma transList( B).
+
+%
+% handling terminals
+%
+
+termSequence( [], Ys)     -> Ys.
+termSequence( [T|Ts], Ys) -> [T|termSequence( Ts, Ys)].
+
+%
+% This definition is used at run-time to evaluate variable symbols
+%
+
+varSymbol( X:list, words => Xs, rest => Ys) -> 
+	Xs = termSequence( X, Ys). 
+varSymbol( X, words => Xs, rest => Ys) -> 
+	X | X = @( words => Xs, rest => Ys).
+
+
+%
+% getting rid of unnecessary succeed statements
+%
+
+succeed comma A -> A .
+A comma succeed -> A .
+A comma B -> A , B.
+readf( File ) -> 
+	L 
+    |   open_in(File,S),
+	read_all(L),
+	close(S).
+
+read_all(L) :-
+        get(X),
+        cond( X :=< end_of_file , 
+              L=[] ,
+              ( read_all(Y), L=[X|Y])).
+
+%
+% load selectif
+%
+
+loadl(X)  :- 
+	( 
+	loadpath(X,".lf") ;
+	loadpath(X,".life")  
+	), !.
+loadl(F) :-
+	write("*** File ",F,".l.. not found."), nl.
+loadin(X) :- loadpath(X,".in"), !.
+loadin(F) :-
+	write("*** File ",F,".in not found."), nl.
+loadgr(X) :- loadpath(X,".gr"), !.
+loadgr(F) :-
+	write("*** File ",F,".gr not found."), nl.
+
+
+loadpath(X:string,Suffix) :- 
+	!,
+	Y = load_path,
+	Z=strcon(strcon(Y,X), Suffix),
+	exists(Z),
+        !,
+	load_if_needed(Z).
+
+loadpath(X,Suffix) :- loadpath(psi2str(X),Suffix).
+
+
+
+%
+%  map function, from left to right.
+%
+lrmap(F,[]) -> [].
+lrmap(F,[E|L]) -> [F(E)|L1] | L1=lrmap(F,L).
+
+%
+% For compatibility with old versions
+%
+
+op(670,xfx,isa)?
+X isa Y -> (X :=< Y).
+
+%
+% setq for predicates
+%
+setPred(A,B) :-
+        C = eval(B),
+        retract(A),
+        !,
+        U=root_sort(A),
+        U=@(C),
+        assert(U).
+setPred(A,B) :-
+        dynamic(A),
+        C = eval(B),
+        U=A,
+        U=@(C),
+        assert(U).
+
+non_strict(setPred)?
+
+%
+% pi !
+% 
+pi -> 3.14159265359 .
+
+%
+% Opens  default_display and default_window.
+%
+
+initWindow(DX:{700;real},DY:{700;real},
+           x=> X, y=>Y,
+           color => C,
+           windowtitle => T ,
+           permanent => B:{false ; bool }) :-  !,
+	x_window( DX, DY, x=>X, y=>Y, 
+                     title => T ,color=>C, permanent => B).
+
+     
+
+%
+% Produit d'une matrice 2x2 avec une matrice 2X1
+%
+
+xmat2((X1,Y1),(X2,Y2),A,B) -> (A*X1+B*X2,A*Y1+B*Y2).
+
+
+%
+% setq Economique
+%
+
+setEco(A,B) :- retract(A->@),
+               assert(A->B).
+
+non_strict(setEco)?
+
+
+%
+%  make a new root from an old one and a suffix
+%
+suffixRoot(P,S:string) -> str2psi(strcon(psi2str(P),S)).
+
+
+
+
+
+
+
+
+%
+% Tokenizer for Life
+%
+
+%% main :- tokenize("LF/z_gctoken1.lf").
+%% commented line above & substituted one below - then got match in cygwin
+%% eliminating test for now
+
+main :- tokenize("LF/aaa-09-07.lf").
+
+tokenize(File) :- 
+        W = readf(File), 
+	setq(rest,[]), setq(listTokens,[]),
+	tokens(words => W, rest => []).
+
+
+dynamic(tokens) ?
+
+tokens([],words=>[]) :- !.
+tokens(T) --> 
+	tokenN(L), 
+	tokens(Ls), 
+	#( T = append(L,Ls)) ?
+
+tokenN( TokenNs, rest => RestN, words => Words) :-
+        token_N( Tokens, 50, rest => Rest, words => Words),
+        setEco(rest,Rest),
+        setEco(listTokens,Tokens),
+        fail ; 
+        TokenNs = listTokens,
+        RestN = rest.
+
+token_N( [], 0) --> ! ?
+token_N( Tokens, Counter) -->
+	void_chars,
+	(
+	    token( Token),
+	    !, 
+	    token_N( NewToks, Counter - 1),
+	    #( Tokens = [ Token| NewToks]) ;
+	    #( Tokens = [])
+	) ?
+
+void_chars --> [{32;9;10}],!, void_chars ?         % blanc, tab, return
+void_chars --> [37],!, comment_chars, void_chars ? % commentaires
+void_chars --> [] ?
+
+comment_chars --> [10], ! ?                     % un commentaire s'arrete avec
+						% return.
+comment_chars --> [X], comment_chars ?
+
+
+
+dynamic(token) ?
+
+token( words => []) :- !, fail.
+token(T) --> 
+	( 
+	    variable(Y), 
+	    #( !, T = variable(Y)) ;
+	    syntact_object(Y), 
+	    #( !, T = syntact_object(Y)) ;
+	    construct( Y, type => Z), 
+	    #( T = construct( Y, type => Z))
+	) ?
+
+
+%
+%
+% variables
+% 
+%
+
+variable(_) -->                               % @
+	[64], ! ?          
+variable(X) -->                               % _...
+	[95], !,
+	simple_atom_cars(Y), 
+	#((Y = "", ! ); X = strcon("_",Y)) ?
+variable(X) -->                               % M...
+	majuscule(Y), 
+	simple_atom_cars(Z), 
+	#( X = strcon(Y,Z)) ?
+
+
+%
+%
+% syntactic objects
+%
+%
+
+syntact_object(X) --> 
+	[Y:{40;41;44;46;59;63;91;93;123;124;125}],
+	#( !, X = charac(Y)) ?
+
+
+
+%
+%
+% constructors
+%
+%
+
+
+construct( Y, type=>T) --> 
+	quote(Y), #( !, T = quote);
+	simple_atom(Y), #( !, T = simple_atom); 
+	quoted_atom(Y), #( !, T = quoted_atom); 
+	number(Y), #( !, T = number);
+	car_chaine(Y), #( !, T = car_chaine); 
+	op_atom(Y), #( !, T = op_atom) ?
+
+%
+% quote
+%
+
+quote("`") --> [96] ?
+
+%
+% simple atoms
+%             
+
+simple_atom(X) --> 
+	minuscule(Y), 
+	simple_atom_cars(Z), 
+	#( X = strcon(Y,Z)) ?
+
+simple_atom_cars(Z) --> 
+	simple_atom_car(X), !,
+	simple_atom_cars(Y), 
+	#( Z = strcon(X,Y)) ?
+simple_atom_cars("") --> [] ?
+
+simple_atom_car(X) --> 
+	[Y], 
+	#( Y >= 48,
+	   cond( Y =< 57,                                  % chiffre
+                 succeed,
+                 ( 
+		     Y >= 65 , 
+		     cond( Y =< 90 ,                       % majuscule
+		           succeed,
+			   cond( Y =:= 95,                 % underscore
+				 succeed,
+				 ( Y >= 97 , Y =< 122)))   % minuscule
+		 )
+          ),
+	  X = charac(Y)) ?
+
+%
+% quoted atoms
+%
+
+quoted_atom(X) --> 
+	[39],
+        quoted_atom_end(X) ?
+
+quoted_atom_end(X) --> 
+	[39], !,
+	( [39], quoted_atom_end(Y), X = strcon("'",Y) ; 
+          # ( X = "" )) ?
+quoted_atom_end(X) --> 
+	quoted_atom_car(Y),
+	quoted_atom_end(Z),
+	#(  X = strcon(Y,Z)) ?
+
+quoted_atom_car(Y) -->
+	[X], #( Y = charac(X) ) ?
+
+
+%
+% Numbers
+%
+
+number(X) --> 
+	digits(V1),
+	( [46], digits(V2,length => L2), !;
+          #( V2 = 0, L2= 0) ),
+	( [101], !,exponent(E) ;
+	  #(E = 0) ),
+	#( X = (V1 + V2 * 10^(-L2)) * 10^(E)) ?
+
+digits(V, length=>L) --> 
+	digit( V1), 
+	( digits(V2, length=>L2),!,
+	  #( L = L2+1, V = V1*10^L2 + V2) ;
+          #( V = V1, L = 1)) ?
+
+sign(-1) --> [45],! ?
+sign(1)  --> [43],! ?
+sign(1)  --> [] ?
+
+exponent(V) --> sign(S), digits(V1), #(V = S*V1) ?
+
+digit(N:int) --> [48+N], #(N =< 9, N >= 0)  ?
+
+
+%
+% Strings
+%
+
+car_chaine(X) --> 
+	[34],
+        car_chaine_end(X) ?
+
+car_chaine_end(X) --> 
+	[34], !,
+	( [34], !,car_chaine_end(Y), #(X = strcon("""",Y)) ; 
+          # ( X = "" )) ?
+car_chaine_end(X) --> 
+	car_chaine_car(Y),
+	car_chaine_end(Z),
+	#(  X = strcon(Y,Z)) ?
+
+car_chaine_car(Y) -->
+	[X], #( Y = charac(X) ) ?
+
+
+%
+% op_atoms
+%
+
+op_atom(X) --> 
+	op_atom_car(Y),!, 
+	op_atom_cars(Z),
+	#(  X = strcon(Y,Z)) ?
+
+op_atom_car(X) -->
+	[Y:{33;35;36;37;38;42;43;45;47;58;60;61;62;92;94;126}],!,
+	#( X = charac(Y)) ?
+
+op_atom_cars(X) --> 
+	op_atom_car(Y),!, 
+	op_atom_cars(Z),
+	#(  X = strcon(Y,Z)) ?
+op_atom_cars("") -->
+	[] ?
+	                  
+
+minuscule(Y) --> [X], #( X >= 97, X =< 122, Y = charac(X) ) ?
+majuscule(Y) --> [X], #( X >= 65, X =< 90,  Y = charac(X) ) ?
+
+charac(Z) -> chr(Z).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

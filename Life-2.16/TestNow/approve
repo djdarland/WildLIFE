@@ -1,0 +1,8 @@
+#! /bin/csh -f
+# Script to approve the output of a new run of a test file.
+
+foreach I ($*)
+	echo "approving results for: $I"
+	cp OUT/$I:r.out REFOUT/$I:r.refout
+	cp ERR/$I:r.err REFERR/$I:r.referr	
+end

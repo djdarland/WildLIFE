@@ -1,0 +1,15 @@
+%
+%		WILD-LIFE TESTING
+%
+%		How predicate is input
+%
+%	mix of assert and retract
+%
+hero(X)?
+;
+%
+decorated(toto).
+hero(toto)?
+%
+roadhog(toto).
+hero(toto)?

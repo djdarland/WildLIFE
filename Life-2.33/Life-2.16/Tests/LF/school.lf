@@ -1,0 +1,24 @@
+person := {student ; employee}.
+employee := {staff ; faculty}.
+workstudy <| student.
+workstudy <| staff.
+
+bob    <| student.
+piotr  <| student.
+pablo  <| student.
+elena  <| workstudy.
+simon  <| workstudy.
+art    <| staff.
+judy   <| staff.
+don    <| faculty.
+john   <| faculty.
+sheila <| faculty.
+
+stu -> X:student(advisor  => faculty(secretary => Y:staff,
+                                     assistant => X),
+                 roommate => employee(representative => Y)).
+
+emp -> employee(advisor  => don(secretary => elena,
+                                             assistant => U : student),
+                roommate => V:student(representative => V),
+                helper   => simon(spouse => U)).

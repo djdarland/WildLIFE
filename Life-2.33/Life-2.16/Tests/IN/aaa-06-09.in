@@ -1,0 +1,3 @@
+h(A, B, C) -> [A, B, C].
+X1 = h(a, b), X2 = h(3 => f)?
+Y1 = X1(3 => c), Y2 = X2(d, e), write(Y1), write(Y2)?

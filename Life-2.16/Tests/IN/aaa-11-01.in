@@ -1,0 +1,4 @@
+assert(q :- write(rule1)), assert(q :- write(rule2))?
+q?
+;
+

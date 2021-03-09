@@ -1,0 +1,37 @@
+%	$Id: shell_interface.exp,v 1.2 1994/12/09 00:23:56 duchier Exp $	
+module("shell")?
+
+open("parser")?
+
+open("tokenizer")?
+
+module("tokenizer")?
+
+public(next_shell_token)?
+
+->(next_shell_token,|(_A,;(,(=(call_once(read_new_shell_token(_B,copy_term(rest_chars))),_C),;(,(:==(_C,false),,(!,fail)),;(,(:==(_B,none),,(!,,(<<-(rest_token,"the end of the line"),=(_A,[])))),,(<<-(rest_token,`(_B)),fail)))),=(_A,[copy_term(rest_token)|`(next_shell_token)])))).
+
+:-(read_new_shell_token(_A,_B),,(void_chars(0 => _B,rest => _C),,(!,;(,(=(_C,[]),,(!,=(_A,none))),,(token(0 => _C,_A,rest => _D),<<-(rest_chars,_D)))))).
+
+module("parser")?
+
+public(first_shell_parse,next_shell_parse,sh_query)?
+
+:-(first_shell_parse(_A,_B,_C,_D,_E,_F),,(init_shell_parse,,(<<-(rest_chars,_A),,(read_new_shell_expr(next_shell_token,_G,_C,_H,_I,vars => _B),,(cond(_G,cond(:==(_H,assertion),=(_D,declaration),=(_D,sh_query)),=(_D,error)),,(=(_E,cond(:==(features(_B,"parser"),[]),false)),=(_F,:==(_I,[])))))))).
+
+:-(next_shell_parse(_A,_B,_C,_D),,(=(_E,next_shell_token),,(read_new_expr(_E,_F,_B,_G,_H,vars => _A),,(cond(_F,cond(:==(_G,assertion),=(_C,declaration),=(_C,sh_query)),=(_C,error)),=(_D,:==(_H,[])))))).
+
+:-(read_new_shell_expr(_A,_B,_C,_D,_E,vars => _F),;(,(expr(0 => _A,_C,mask => 0,max => 1200,rest => _G,vars => _F),,(;(,(:<(_C,string),,(=(_D,sh_query),,(=(_H,root_sort(_C)),<-(_C,`(=(@,system(_H))))))),;(,(parser_C(["."],false,_G,_E),=(_D,assertion)),,(parser_C(["?"],false,_G,_E),=(_D,sh_query)))),,(=(_B,true),!))),=(_B,false))).
+
+:-(init_shell_parse,<<-(rest_token,"the beginning of the line")).
+
+module("shell")?
+
+:-(print_vars(@(vars => _A)),cond(:\==(_B: features(_A,"shell"),[]),,(=(build_write_term(_B,_A),_C),,(pretty_write(_C),nl)))).
+
+->(build_write_term([_A],_B),|(`(=(_A,_C)),=(_C,project(_A,_B)))).
+
+->(build_write_term([_A|_B],_C),|(,(`(=(_A,_D)),build_write_term(_B,_C)),=(_D,project(_A,_C)))).
+
+:-(write_parse_error,,(nl_err,,(write_err("**** Syntax error at line ",current_line_number," near: "),,(cond(:=<(_A: copy_term(rest_token),string),write(_A),cond(:=<(_A,variable),write_err(project(1,_A)),writeq_err(project(1,_A)))),nl_err)))).
+

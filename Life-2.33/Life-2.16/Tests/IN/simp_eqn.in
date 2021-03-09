@@ -1,0 +1,2 @@
+2*I:int + 7 = 3*J:int + 1,between(1,I,100),J>=1,J=<100,
+nl,write(I," ",J),fail?

@@ -1,0 +1,33 @@
+
+*** Yes
+> > 2 :<= @~
+2 :<= real~
+2 :<= int~
+
+*** No
+> int :<= @~
+int :<= real~
+int :<= int~
+
+*** No
+> 3.2 :<= @~
+3.2 :<= real~
+
+*** No
+> string :<= @~
+
+*** No
+> 1 :<= @~
+1 :<= real~
+
+*** No
+> 4 :<= @~
+4 :<= real~
+
+*** No
+> terminal :<= file~
+stage one
+terminal :<= seqFile~
+stage two
+terminal :<= seqWriteFile~
+stage three

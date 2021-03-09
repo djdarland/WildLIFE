@@ -1,0 +1,116 @@
+toto <| tata.
+
+test(tata +>= toto) ?                 %% simple matching
+test(toto +>= tata) ?               
+test((A,B) +>= (C,C)) ?               %% coreference
+test((C,C) +>= (A,B)) ?
+test([A|B] +>= [C,C]) ?               %% lists
+test([C|C] +>= [A|B]) ?              
+test(foo(a,s,d) +>= foo(a,s,d,@)) ?   %% features
+test(foo(a,s,d,@) +>= foo(a,s,d)) ?
+
+nl ?
+
+test(tata +> toto) ?                 %% simple matching
+test(toto +> tata) ?               
+test((A,B) +> (C,C)) ?               %% coreference
+test((C,C) +> (A,B)) ?
+test([A|B] +> [C|C]) ?               %% lists
+test([C|C] +> [A|B]) ?              
+test(foo(a,s,d) +> foo(a,s,d,@)) ?   %% features
+test(foo(a,s,d,@) +> foo(a,s,d)) ?
+
+nl ?
+
+test(tata == toto) ?                 %% simple matching
+test(toto == tata) ?               
+test((A,B) == (C,C)) ?               %% coreference
+test((C,C) == (A,B)) ?
+test([A|B] == [C,C]) ?               %% lists
+test([C|C] == [A|B]) ?              
+test(foo(a,s,d) == foo(a,s,d,@)) ?   %% features
+test(foo(a,s,d,@) == foo(a,s,d)) ?
+
+
+X = big(tom(hair => knotted,
+        hands => clumsy,
+        brain => slow_witted,
+	favorite_exclamation => 'arghh!!',
+        friend => {john(face => spotty,
+                        teeth => yellow);
+                   jeremy(skin => black_and_blue,
+                          known_letters => [a,b,c,y,t,w,i,o],
+                          brain => hurts);
+                   martha(brain => plank(number => 2,
+                                         length => short),
+                          beauty => gorgon_like)},
+        nose => long(warts => red,
+                     spots => ugly),
+        mother => witch,
+        father => tax_collector)),
+Y = copy_term(X),
+nl, test(X == Y) ?
+
+test(tata +=< toto) ?                 %% simple matching
+test(toto +=< tata) ?               
+test((A,B) +=< (C,C)) ?               %% coreference
+test((C,C) +=< (A,B)) ?
+test([A|B] +=< [C,C]) ?               %% lists
+test([C|C] +=< [A|B]) ?              
+test(foo(a,s,d) +=< foo(a,s,d,@)) ?   %% features
+test(foo(a,s,d,@) +=< foo(a,s,d)) ?
+
+nl ?
+
+test(tata +< toto) ?                 %% simple matching
+test(toto +< tata) ?               
+test((A,B) +< (C,C)) ?               %% coreference
+test((C,C) +< (A,B)) ?
+test([A|B] +< [C,C]) ?               %% lists
+test([C|C] +< [A|B]) ?              
+test(foo(a,s,d) +< foo(a,s,d,@)) ?   %% features
+test(foo(a,s,d,@) +< foo(a,s,d)) ?
+
+nl ?
+
+test(tata +>< toto) ?                 %% simple matching
+test(toto +>< tata) ?               
+test((A,B) +>< (C,C)) ?               %% coreference
+test((C,C) +>< (A,B)) ?
+test([A|B] +>< [C,C]) ?               %% lists
+test([C|C] +>< [A|B]) ?              
+test(foo(a,s,d) +>< foo(a,s,d,@)) ?   %% features
+test(foo(a,s,d,@) +>< foo(a,s,d)) ?
+
+X = big(tom(hair => knotted,
+        hands => clumsy,
+        brain => slow_witted,
+	favorite_exclamation => 'arghh!!',
+        friend => {john(face => spotty,
+                        teeth => yellow);
+                   jeremy(skin => black_and_blue,
+                          known_letters => [a,b,c,y,t,w,i,o],
+                          brain => hurts);
+                   martha(brain => plank(number => 2,
+                                         length => short),
+                          beauty => gorgon_like)},
+        nose => long(warts => red,
+                     spots => ugly),
+        mother => witch,
+        father => tax_collector)),
+Y = copy_term(X),
+nl, test(X \== Y) ?
+
+test(write(charley))?
+
+X={a;b},Y={c;a;b;d},test(X:==Y)?
+
+
+ab <| a.
+ab <| b.
+ac <| a.
+ac <| c.
+bc <| a.
+bc <| c.
+
+test( f(b,c) +>< f(X,X) ) ?

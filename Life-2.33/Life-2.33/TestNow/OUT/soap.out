@@ -1,0 +1,26 @@
+
+*** Yes
+> > 
+*** Yes
+C = list.
+--1> 
+*** No
+> 
+*** Yes
+S = soap_opera.
+--1> 
+*** No
+> 
+*** Yes
+A = jane, B = harry.
+--1> 
+*** No
+> 
+*** Yes
+A = cleopatra.
+--1> 
+*** Yes
+A = jane.
+--1> 
+*** No
+> > 

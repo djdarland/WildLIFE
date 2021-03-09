@@ -1,0 +1,6 @@
+init_bx(A,[D1,D2]),nl,write(A),nl?
+nl,write(A),nl,merge(E:exemple,A),write(E),nl,nl,write(A),nl?
+nl,write(A),nl,nl,del(D2),write(A),nl?
+
+nl,write(A),nl,nl,del(D1),write(A),nl?
+.

@@ -1,0 +1,59 @@
+
+*** Yes
+> > 
+*** Yes
+> 
+*** Yes
+> 
+*** Yes
+A = a, X = A.
+--1> 
+*** Yes
+A = b, X = A.
+--1> 
+*** No
+> > 
+*** Yes
+A = p(X), X = @.
+--1> > 
+*** Yes
+A = true, X = a.
+--1> 
+*** Yes
+A = true, X = b.
+--1> 
+*** Yes
+A = false, X = @.
+--1> 
+*** No
+> > 
+*** Yes
+A = false.
+--1> 
+*** No
+> > 
+*** Yes
+A = true.
+--1> 
+*** Yes
+A = false.
+--1> 
+*** No
+> > 
+*** Yes
+A = true, B = 1.
+--1> 
+*** Yes
+A = true, B = 2.
+--1> 
+*** Yes
+A = true, B = 3.
+--1> 
+*** Yes
+A = true, B = 4.
+--1> 
+*** Yes
+A = false, B = @.
+--1> 
+*** No
+> > 

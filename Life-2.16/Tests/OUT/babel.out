@@ -1,0 +1,536 @@
+
+*** Yes
+> > 
+art <| subjects.
+music <| art.
+painting <| art.
+sculpture <| art.
+architecture <| art.
+
+*** Yes
+> 
+subjects <| @.
+philosophy <| subjects.
+religion <| subjects.
+social_science <| subjects.
+language <| subjects.
+pure_science <| subjects.
+applied_science <| subjects.
+art <| subjects.
+literature <| subjects.
+history <| subjects.
+
+*** Yes
+> 
+*** Yes
+> 
+*** No
+> 
+*** No
+> 
+history <| subjects.
+ancient_history <| history.
+europe_history <| history.
+asia_history <| history.
+america_history <| history.
+
+*** Yes
+> 
+mathematics <| pure_science.
+algebra <| mathematics.
+analysis <| mathematics.
+topology <| mathematics.
+theory_of_computation <| mathematics.
+
+*** Yes
+> 
+pure_science <| subjects.
+mathematics <| pure_science.
+computer_science <| pure_science.
+physics <| pure_science.
+chemistry <| pure_science.
+biology <| pure_science.
+
+*** Yes
+> 
+*** Yes
+> 
+*** No
+> 
+*** Yes
+A = library_material(attribute => "
+     'library_material' has following attributes:",
+                     call_number => lc_number(attribute => "
+     'lc_number' consists of four attributes:
+        'c_letter': a category letter which is one or two alphabet characters.
+        'f_digit':  the first four digits of lc_number.
+        's_digit':  the second 7 digits.
+        'cuttering':  a cutterring of the item",
+                                              c_letter => string,
+                                              cuttering => string,
+                                              definition => "'lc_number' is a library congress number.",
+                                              f_digit => [1 -- 9999],
+                                              s_digit => [1 -- 9999999]),
+                     date_of_pub => date(attribute => "'date' has three attributes, day, month, and year",
+                                         day => [1 -- 31],
+                                         definition => "It is a date",
+                                         month => [1 -- 12],
+                                         year => [0 -- 3000]),
+                     definition => "library_material spans all objects in the library",
+                     l_responsibility => list_responsibility,
+                     language => languages,
+                     lend_info => lend_tab(attribute => "
+     'lend_tab' has five attributes:
+       'library_use_only': boolean if a material can be checked out.
+       'lend_period'  :  allowed check out period of a material.
+       'checked_out'  :  a boolean if a material is currently checked out.
+       'checking_time':  the time a material is checked out.
+       'return_time'  :  the time a material is returned.",
+                                           checked_out => record__key,
+                                           checking_time => record__key,
+                                           definition => "
+     'lend_tab' contains informations about lend status of a material",
+                                           lend_period => record__key,
+                                           library_use_only => record__key,
+                                           return_time => record__key,
+                                           ss_number => record__key),
+                     publisher => publish(address => place(attribute => "
+     'place' has five attributes: 'street' which is a street address, 
+     'city', 'state', 'zip_code', and 'nation'",
+                                                           city => string,
+                                                           definition => "'place' is an address",
+                                                           nation => string,
+                                                           state => string,
+                                                           street => string,
+                                                           zip_code => string),
+                                          attribute => "'publish' has two attributes, publisher_name and address.",
+                                          definition => "'publish' has the information of publisher",
+                                          publisher_name => @),
+                     recall_info => record__key,
+                     recalled => record__key,
+                     reserve_info => record__key,
+                     s_responsibility => set_responsibility,
+                     subject => subjects,
+                     title => string).
+
+--1> 
+*** No
+> > 
+*** Yes
+A = full_name(attribute => "
+     'full_name' has three attributes. 'fname' for first name,
+     'mname' for middle name, 'lname' for last name",
+              definition => "'full_name' is a full name of a person",
+              fname => string,
+              lname => string,
+              mname => string).
+
+--1> 
+*** No
+> 
+*** Yes
+> 
+language <| subjects.
+linguistics <| language.
+english <| language.
+german <| language.
+french <| language.
+
+languages <| @.
+english <| languages.
+french <| languages.
+german <| languages.
+japanese <| languages.
+chinese <| languages.
+korean <| languages.
+spanish <| languages.
+portuguese <| languages.
+italian <| languages.
+latin <| languages.
+greek <| languages.
+hebrew <| languages.
+
+*** Yes
+> 
+*** Yes
+A = automata.
+--1> 
+*** Yes
+A = natural_language_processing.
+--1> 
+*** No
+> 
+*** Yes
+> 
+*** Yes
+> 
+*** Yes
+A = computer_science.
+--1> 
+*** Yes
+A = computer_science, B = mathematics.
+----2> 
+*** Yes
+A = theory_of_computation, B = theory_of_computation.
+------3> 
+*** No
+----2> 
+*** No
+--1> 
+*** No
+> 
+*** No
+> 
+*** No
+> 
+*** No
+> 
+*** Yes
+> 
+*** Yes
+> 
+*** No
+> 
+analogy <| logic.
+
+*** Yes
+> 
+*** No
+> 
+:: place(attribute => "
+     'place' has five attributes: 'street' which is a street address, 
+     'city', 'state', 'zip_code', and 'nation'",
+         city => string,
+         definition => "'place' is an address",
+         nation => string,
+         state => string,
+         street => string,
+         zip_code => string).
+place <| @.
+
+*** Yes
+> 
+:: ss_num(attribute => "
+     'ss_num' has three attributes:
+        'first': the first three digits of a social security number.
+        'middle': the two digits in the middle.
+        'last': is the last four digits.",
+          definition => "'ss_num' is a social security number",
+          first => ['000' -- '999'],
+          last => ['0000' -- '9999'],
+          middle => ['00' -- '99']).
+ss_num <| @.
+
+*** Yes
+> 
+:: library_material(attribute => "
+     'library_material' has following attributes:",
+                    call_number => lc_number,
+                    date_of_pub => date,
+                    definition => "library_material spans all objects in the library",
+                    l_responsibility => list_responsibility,
+                    language => languages,
+                    lend_info => lend_tab,
+                    publisher => publish,
+                    recall_info => record__key,
+                    recalled => record__key,
+                    reserve_info => record__key,
+                    s_responsibility => set_responsibility,
+                    subject => subjects,
+                    title => string).
+library_material <| @.
+printed_monograph <| library_material.
+cartographic_material <| library_material.
+music_score <| library_material.
+sound_recording <| library_material.
+motion_picture <| library_material.
+microforms <| library_material.
+serials <| library_material.
+general_reference <| library_material.
+philosophy_material <| library_material.
+religion_material <| library_material.
+social_science_material <| library_material.
+language_material <| library_material.
+pure_science_material <| library_material.
+applied_science_material <| library_material.
+art_material <| library_material.
+literature_material <| library_material.
+history_material <| library_material.
+
+*** Yes
+> 
+*** Yes
+A = vlsi.
+--1> 
+*** Yes
+A = computer_architecture.
+--1> 
+*** No
+> 
+*** Yes
+A = ai_machine.
+--1> 
+*** No
+> 
+*** Yes
+A = mathematical_logic.
+--1> 
+*** No
+> 
+*** Yes
+A = automata.
+--1> 
+*** No
+> 
+*** Yes
+A = parallel_processing_for_ai.
+--1> 
+*** No
+> 
+*** Yes
+A = ai_programming_language.
+--1> 
+*** No
+> 
+*** Yes
+A = medical_expert_system.
+--1> 
+*** No
+> 
+expert_system <| artificial_intelligence.
+medical_expert_system <| expert_system.
+
+*** Yes
+> 
+parallel_processing <| computer_science.
+parallel_processing_for_ai <| parallel_processing.
+
+*** Yes
+> 
+*** Yes
+A = student_user(address => place(attribute => "
+     'place' has five attributes: 'street' which is a street address, 
+     'city', 'state', 'zip_code', and 'nation'",
+                                  city => string,
+                                  definition => "'place' is an address",
+                                  nation => string,
+                                  state => string,
+                                  street => string,
+                                  zip_code => string),
+                 attribute => "
+     'library_user' has three attributes, 'ss_number', 'name', and
+      'address'. ",
+                 definition => "
+     'library_user' is an authorized person to use a library",
+                 fine => object_state_key,
+                 name => full_name(attribute => "
+     'full_name' has three attributes. 'fname' for first name,
+     'mname' for middle name, 'lname' for last name",
+                                   definition => "'full_name' is a full name of a person",
+                                   fname => string,
+                                   lname => string,
+                                   mname => string),
+                 ss_number => ss_num(attribute => "
+     'ss_num' has three attributes:
+        'first': the first three digits of a social security number.
+        'middle': the two digits in the middle.
+        'last': is the last four digits.",
+                                     definition => "'ss_num' is a social security number",
+                                     first => ['000' -- '999'],
+                                     last => ['0000' -- '9999'],
+                                     middle => ['00' -- '99']),
+                 status => student).
+
+--1> 
+*** No
+> 
+time_unit <| @.
+hours <| time_unit.
+days <| time_unit.
+weeks <| time_unit.
+months <| time_unit.
+years <| time_unit.
+
+*** Yes
+> 
+set_responsibility <| @.
+author_set <| set_responsibility.
+editor_set <| set_responsibility.
+association_set <| set_responsibility.
+
+*** Yes
+> 
+*** Yes
+A = full_name(attribute => "
+     'full_name' has three attributes. 'fname' for first name,
+     'mname' for middle name, 'lname' for last name",
+              definition => "'full_name' is a full name of a person",
+              fname => string,
+              lname => string,
+              mname => string).
+
+--1> 
+*** Yes
+A = full_name(attribute => "
+     'full_name' has three attributes. 'fname' for first name,
+     'mname' for middle name, 'lname' for last name",
+              definition => "'full_name' is a full name of a person",
+              fname => string,
+              lname => string,
+              mname => string).
+
+--1> 
+*** Yes
+A = full_name(attribute => "
+     'full_name' has three attributes. 'fname' for first name,
+     'mname' for middle name, 'lname' for last name",
+              definition => "'full_name' is a full name of a person",
+              fname => string,
+              lname => string,
+              mname => string).
+
+--1> 
+*** Yes
+A = full_name(attribute => "
+     'full_name' has three attributes. 'fname' for first name,
+     'mname' for middle name, 'lname' for last name",
+              definition => "'full_name' is a full name of a person",
+              fname => string,
+              lname => string,
+              mname => string).
+
+--1> 
+*** Yes
+A = full_name(attribute => "
+     'full_name' has three attributes. 'fname' for first name,
+     'mname' for middle name, 'lname' for last name",
+              definition => "'full_name' is a full name of a person",
+              fname => string,
+              lname => string,
+              mname => string).
+
+--1> 
+*** Yes
+A = full_name(attribute => "
+     'full_name' has three attributes. 'fname' for first name,
+     'mname' for middle name, 'lname' for last name",
+              definition => "'full_name' is a full name of a person",
+              fname => string,
+              lname => string,
+              mname => string).
+
+--1> 
+*** Yes
+A = full_name(attribute => "
+     'full_name' has three attributes. 'fname' for first name,
+     'mname' for middle name, 'lname' for last name",
+              definition => "'full_name' is a full name of a person",
+              fname => string,
+              lname => string,
+              mname => string).
+
+--1> 
+*** Yes
+A = full_name(attribute => "
+     'full_name' has three attributes. 'fname' for first name,
+     'mname' for middle name, 'lname' for last name",
+              definition => "'full_name' is a full name of a person",
+              fname => string,
+              lname => string,
+              mname => string).
+
+--1> 
+*** No
+> 
+*** Yes
+A = string.
+--1> 
+*** Yes
+A = string.
+--1> 
+*** Yes
+A = string.
+--1> 
+*** Yes
+A = string.
+--1> 
+*** Yes
+A = string.
+--1> 
+*** Yes
+A = string.
+--1> 
+*** No
+> 
+boolean <| @.
+yes <| boolean.
+no <| boolean.
+
+*** Yes
+> 
+semesters <| @.
+spring <| semesters.
+summer <| semesters.
+fall <| semesters.
+
+*** Yes
+> 
+degree_list <| @.
+'Ph.D' <| degree_list.
+'M.A.' <| degree_list.
+'M.S.' <| degree_list.
+'M.D.' <| degree_list.
+'M.B.A.' <| degree_list.
+
+*** Yes
+> 
+:: maps_atlas(attribute => "
+     'maps_atlas' has an attribute, 'edition', which has edition number.
+      It has several subclasses including 'maps' and 'atlas'.",
+              definition => "'maps_atlas' is a class of all kind of maps and atlas.",
+              edition => integer).
+maps_atlas <| cartographic_material.
+maps_atlas <| geographical_reference.
+maps <| maps_atlas.
+atlas <| maps_atlas.
+
+*** Yes
+> 
+disc_speed <| @.
+lp <| disc_speed.
+sp <| disc_speed.
+lsp <| disc_speed.
+
+*** Yes
+> 
+:: sound_film(definition => "'sound_film' is a class of all film with sound track.").
+sound_film <| sound_recording.
+sound_film <| motion_film.
+
+*** Yes
+> 
+*** No
+> 
+*** No
+> 
+*** Yes
+A = parallel_processing_for_ai.
+--1> 
+*** No
+> > 
+:: academic_journal(definition => "
+     'academic_journal' is a class of all journals whose content is 
+      a news of academic society and research papers.").
+academic_journal <| serials.
+weekly_academic_journal <| academic_journal.
+monthly_academic_journal <| academic_journal.
+quarterly_academic_journal <| academic_journal.
+yearly_academic_journal <| academic_journal.
+
+*** Yes
+> 
+*** Yes
+A = europe_history.
+--1> 
+*** No
+> > 

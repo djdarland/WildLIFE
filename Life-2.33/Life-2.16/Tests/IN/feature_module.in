@@ -1,0 +1,80 @@
+%%% ABC
+
+module("abc")?
+
+public(p,abc_test,label_list)?
+
+private_feature(a)?
+
+p(abc(a => 1,
+      b => 2,
+      c => 3)).
+
+label_list -> [a,b,c,d,e,f,g].
+
+abc_test(X,[]).
+abc_test(X,[Label|Rest]) :-
+	write(Label," => ",X.Label),
+	nl,
+	abc_test(X,Rest).
+
+
+%%% DEF
+
+module("def")?
+
+public(q)?
+
+public(d)?
+private_feature(d)?
+private_feature(e)?
+
+q(def(d => 4,
+      e => 5,
+      f => 6)).
+
+
+
+%%% USER
+
+module("user")?
+open("abc")?
+open("def")?
+
+display_modules?
+
+test1 :-
+	p(X:@(g=>7,h=>8,i=>9)),
+	q(Y),
+	nl,
+	nl,
+	write("X=",X),nl,
+	write("Y=",Y),nl,
+	nl,
+	MOD={"abc";"def";"user"},
+	nl,
+	nl,
+	write("MOD=",MOD),
+	nl,
+	F=features(X,MOD),
+	G=features(Y,MOD),
+	write("F=",F,",   G=",G),
+	nl,
+	fail.
+
+
+test2 :-
+	nl,
+	nl,
+	nl,
+	p(X),
+	q(Y:strip(X)),
+	write("Y=",Y),
+	nl,
+	abc_test(Y,label_list),
+	pretty_write("Y"=Y),
+	nl.
+
+
+test1?
+test2?

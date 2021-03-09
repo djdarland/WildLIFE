@@ -1,0 +1,165 @@
+
+*** Yes
+> > 
+*** Yes
+> > persistent(a)?
+
+*** Yes
+> ersistent(b)?
+
+*** Yes
+> ersistent(c)?
+
+*** Yes
+> ersistent(d)?
+
+*** Yes
+> ersistent(e)?
+
+*** Yes
+> ersistent(f)?
+
+*** Yes
+> > 
+> 
+> check :-
+|    	write("
+|    a=",a,"
+|    b=",b,"
+|    c=",c,"
+|    d=",d,"
+|    e=",e,"
+|    f=",f,"
+|    ").
+
+*** Yes
+> 
+> 
+> 
+> a <<- billy_the_hilly(hair => knots,
+|    			arms => long,
+|    			teeth => yellow,
+|    			eyes => red,
+|    			voice => cracked,
+|    			nails => {black;broken},
+|    			nose => pimples,
+|    			breath => bad,
+|    			vehicle => truck(paint => gone,
+|    					 gun_rack => full,
+|    					 fuel_consumption => enormous,
+|    					 size => much_too_big,
+|    					 speed => really_slow,
+|    					 location => in_front_of_you),
+|    			feet => smelly,
+|    			armpits => worse,
+|    			belly => hangs_out,
+|    			fingers => gnarled,
+|    			mouth => full_of_beer,
+|    			hand => down_his_pants) ?
+
+*** Yes
+--1> 
+*** No
+> 
+> a = @(feet => S), write(S),nl ?
+smelly
+
+*** Yes
+S = smelly.
+--1> 
+*** No
+> a = @(hair => H, arms => A, teeth => T), write(H,A,T),nl ?
+knotslongyellow
+
+*** Yes
+A = long, H = knots, T = yellow.
+--1> 
+*** No
+> a = @(hair => H, arms => A, joke => bad, teeth => T) ?
+
+*** No
+> 
+> a = @(hair => H, arms => A, aardvark => bad, teeth => T) ?
+
+*** No
+> 
+> a = @(hair => H, arms => A, zebra => bad, teeth => T) ?
+
+*** No
+> 
+> a <<- p(b,c), check?
+
+a=p(@,@)
+b=@
+c=@
+d=@
+e=@
+f=@
+
+*** Yes
+--1> 
+*** No
+> 
+> b <<- 5, check ?
+
+a=p(5,@)
+b=5
+c=@
+d=@
+e=@
+f=@
+
+*** Yes
+--1> 
+*** No
+> c <<- letters(a,b,c), check ?
+
+a=_A: p(_B: 5,_C: letters(_A,_B,_C))
+b=5
+c=_A: letters(p(_B: 5,_A),_B,_A)
+d=@
+e=@
+f=@
+
+*** Yes
+--1> 
+*** No
+> a <<- q(a,b,c), check?
+
+a=_A: q(_A,_B: 5,_C: letters(_A,_B,_C))
+b=5
+c=_A: letters(_B: q(_B,_C: 5,_A),_C,_A)
+d=@
+e=@
+f=@
+
+*** Yes
+--1> 
+*** No
+> d <<- exam(b,a,c), check ?
+
+a=_A: q(_A,_B: 5,_C: letters(_A,_B,_C))
+b=5
+c=_A: letters(_B: q(_B,_C: 5,_A),_C,_A)
+d=exam(_A: 5,_B: q(_B,_A,_C: letters(_B,_A,_C)),_C)
+e=@
+f=@
+
+*** Yes
+--1> 
+*** No
+> e = a, check ?
+> 
+> d = exam(A,B,C), write(A,B,C), check ?
+5B: q(B,A: 5,C: letters(B,A,C))C: letters(B: q(B,A: 5,C),A,C)
+a=B: q(B,A: 5,C: letters(B,A,C))
+b=5
+c=C: letters(B: q(B,A: 5,C),A,C)
+d=exam(A: 5,B: q(B,A,C: letters(B,A,C)),C)
+e=@
+f=@
+
+*** Yes
+A = 5, B = q(B,A,C), C = letters(B,A,C).
+--1> alt?
+

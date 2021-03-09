@@ -1,0 +1,6 @@
+
+*** Yes
+> > > 
+*** Yes
+G = m_cons(3,m_cons(2,m_cons(1,m_nil(0)))).
+--1> 

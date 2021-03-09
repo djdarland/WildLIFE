@@ -1,0 +1,262 @@
+%
+% module(DissolvePattern).
+%
+% load(name_top_vars)?
+%
+%
+%		Dissolving a psi-term (not only patterns for a Life function call)
+%
+%
+%
+
+%
+% The sort structure of dissolved forms
+%
+
+diss_form <| @.
+
+sort_eqn    := diss_form(var=>X,srt=>Y).            % s must match the root_sort_n of X (i.e. X:s)
+feature_eqn := diss_form(var1=>X,feat=>Y,var2=>Z).  % X.L is equal to Y
+coref_eqn   := diss_form(var1=>X,var2=>Y).          % X = Y
+
+%
+% dissolve a psi-term (without executing it: this is why there is
+%                      the non_strict declaration).
+%
+% jolidissolve takes a string instead of a psi-term.
+non_strict(dissolve_psi)?
+
+jolidissolve(X)   -> @ | W = parse(X), dissolve_psi(W).
+dissolve_psi(Psi) -> @ | (DissForm,Bindings) = dissolve((Dummy,Psi),[]), prettyprint(DissForm).
+
+non_strict(dissolve)?
+
+dissolve((V,Psi),Dejavu) ->
+        cond(assq(Psi,Dejavu)&bool(Name),
+             ([coref_eqn(var1=>V,var2=>Name)],Dejavu),
+             ([sort_eqn(var=>V,srt =>my_root_sort(Psi))| SubstEqn], NewDejavu) % generate the root sort constraint
+                |                                       % generate the feature constraints by examining recursively the subtrees:
+                  (  FL = features_n(Psi),              % get the feature list
+		     P=project_n(2=>Psi),
+                     FV = map(P,FL),% get the feature values list
+                     % FV = map(project_n & @(2=>Psi),FL),% get the feature values list
+                     (SubstEqn,NewDejavu) =
+flatten_accumulate(dissolve_features_of(psi=>Psi,var=>V),
+		   FL,[(Psi,V)|Dejavu]))).
+% flatten_accumulate(dissolve_features_of & @(psi=>Psi,var=>V),FL,[(Psi,V)|Dejavu]))).
+
+%
+% Find a "quoted" root_sort in case it is top
+%
+
+my_root_sort(X) -> cond(var(X),"@",root_sort_n(X)).
+
+%
+% 
+%
+non_strict(dissolve_features_of)?
+
+dissolve_features_of(psi=>_,var=>_,[],Dejavu) -> ([],Dejavu).
+
+dissolve_features_of(psi=>Psi,var=>V,Feature,Dejavu) ->
+        ([feature_eqn(var1=>V,feat=>Feature,var2 => NewVar)|EqnRest],NewDejavu)
+             |   FeatureValue = project_n(Feature,Psi),
+                 (EqnRest,NewDejavu) = dissolve((NewVar,FeatureValue),Dejavu).
+          
+%
+% Human readable output for debugging ...
+%
+                       
+%
+% Name the top variables, then print normally the psi-term.
+%
+
+prettyprint(L) :- setq(my_gen_sym,1), pretty(name_vars(L)).
+
+pretty([]):- !.
+pretty([X:diss_form|Rest]):- pretty_inst(X),pretty(Rest),!.
+
+pretty_inst(sort_eqn(var=>X,srt=>Y)) :- write(X),write(":"),write(Y),pretty_sep,!.
+pretty_inst(feature_eqn(var1=>X,feat=>Y,var2=>Z)) :- write(X),write("."),write(Y),
+                                                     write("="),write(Z),pretty_sep,!.
+pretty_inst(coref_eqn(var1=>X,var2=>Y)) :- write(X),write("="),write(Y),pretty_sep,!.
+
+pretty_sep:- write(", "),!.
+
+%
+% Functional utilities to handle lists and associationb lists... better in a library
+%
+
+%
+% assqq(X,L) is true iff  X occurs in the association  list L, in  which case
+% has the associated value as feature 1
+%
+
+assq(X,[])            -> false.
+assq(X,[(Y,Value)|T]) -> cond(X===Y,true(Value),assq(X,T)).
+
+%
+% Accumulate function: takes a function f:A->B->C, a list L of A, a B, and returns
+% the result of applying f to the each element of L, and to the progressively modified B
+%
+
+flatten_accumulate(F,[],B) -> ([],B).
+flatten_accumulate(F,[Hd|T],B) -> (Flat,NewB) | (Nv,NB) = F(Hd,B), (Nl,NewB) = flatten_accumulate(F,T,NB), Flat = append(Nv,Nl).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% to be done ...
+%
+
+%
+% export(dissolve_psi).
+%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% FILE. . . . . /udir/dicosmo/life/code/name_top_vars
+% EDIT BY . . . Roberto Di Cosmo
+% ON MACHINE. . Prl341
+% STARTED ON. . Thu Sep 24 16:10:30 1992
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Take a psi-term and return a copy of it  where all variables satisfying the
+% predicate "var"   (i.e.,  by  this time, being    of   sort @)    are named
+% consistently, by moving  them down  the sort hierarchy  to the  appropriate
+% string sort.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% load(repair_list)?
+
+%
+% The function genvar yields a new variable name each time it is called
+%
+
+setq(my_gen_sym,0)?
+
+genvar -> strcon("U",int2str(N)) | N = my_gen_sym, setq(my_gen_sym,N+1).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% The  function `name_vars' takes a psi-term  and returns a  copy of it where
+% all variables satisfying the predicate "var" (i.e., by  this time, being of
+% sort  @) are named  consistently, by moving   them down to  the appropriate
+% string sort.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+name_vars(X) -> Y | Y = copy_term(X), name_top_vars(Y,[]).
+
+name_vars_from_to(X,N,M) -> Y | setq(my_gen_sym,N),
+                                Y = name_vars(X),
+                                M = my_gen_sym.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%
+% Since  the  root_sort of  a  list is  not "cons",  with  features "head" and
+% "tail", this function needs to use the  repaired life  version  of features
+% called features_n to navigate in every psi-term uniformly
+%
+% We  need here also a   table of already  seen elements  to avoid looping on
+% cyclic structures; the updated table is given back as the last argument
+%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+name_top_vars(X,Table,[X|Table])
+       :- var(X),!, X = genvar.
+name_top_vars(X,Table,NewTable)
+       :- name_top_vars_body(features_n(X),X,[X|Table],NewTable).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% The   function `name_top_vars_body'  takes a  list   of pairs  of  the form
+% (attribute,psi-term) and a table  and returns a pair  made up of  a similar
+% list and a new table.
+
+name_top_vars_body([],X,Table,Table)
+       :- !.
+name_top_vars_body([A|T],X,Table,NewTable)
+       :- Z=project_n(A,X),
+            cond(memq(Z,Table),
+                 name_top_vars_body(T,X,Table,NewTable),
+                 (name_top_vars(Z,Table,NT), name_top_vars_body(T,X,NT,NewTable))).
+
+%
+% true iff X occurs in the list passed as second argument
+%
+
+memq(X,[])    -> false.
+memq(X,[Y|T]) -> cond(X===Y,true,memq(X,T)).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% FILE. . . . . /udir/dicosmo/life/code/repair_list
+% EDIT BY . . . Roberto Di Cosmo
+% ON MACHINE. . Prl341
+% STARTED ON. . Thu Sep 18 16:10:30 1992
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%
+% Repair buggy list sort definitions
+%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% The built ins of the current version of  Wild_Life treat lists in a special
+% way, that renders it impossible to write programs  that navigate prsi terms
+% in a general uniform way.
+%
+% This file  provides the necessary   (not necessarily  efficient) workaround
+% while waiting for the definitive solution (in the compiler?).
+%
+% The functions features, root_sort, project, listify_body and bodify_list are
+% provided here  in a _n form that  works uniformly  on  psi-terms, even when
+% they are lists.
+%
+
+%
+% Examples of applications are  to be found in dissolve.life, wam_bruno.life,
+% name_top_vars.life
+%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%
+% To  avoid residuation  on variables, I fire  the function anyway, and  then
+% check what I have in hand, in the internal functions
+%
+
+features_n(X) -> N | X:==@, N=features(X),!; N=features_internal(X).
+features_internal([])    -> [].
+features_internal([X|T]) -> [hd,tl].
+features_internal(X)     -> features(X).
+
+root_sort_n(X) -> N | X:==@, N=@,!; N=root_sort_internal(X).
+root_sort_internal([])    -> nil.
+root_sort_internal([X|T]) -> cons.
+root_sort_internal(X)     -> root_sort(X).
+
+project_n(A,X) -> N | X:==@, N=X.A,!; N=project_internal(A,X).
+project_internal(hd,[X|T]) -> X.
+project_internal(tl,[X|T]) -> T.
+project_internal(tl,[])    -> [].
+project_internal(A,X)      -> X.A.
+
+%
+% Rebuild listify_body and  bodify_list using  the  repaired sort  navigation
+% functions
+%
+
+listify_body_n(A) -> map(feature_subterm_n(2 => A),features_n(A)).
+
+feature_subterm_n(A,B) -> A, project_n(A,B).
+
+%
+% Specially handle new list sort manipulation
+%
+bodify_list_n([])                -> @.
+bodify_list_n([(hd, X),(tl, Y)]) -> [X|Y].
+bodify_list_n([(A, B)|C:@])      -> D:bodify_list_n(C) | B = project_n(A,D).

@@ -1,0 +1,209 @@
+dnl Process this file with autoconf to produce a configure script.
+AC_INIT(c_life.h)
+AC_CANONICAL_HOST
+AC_PROG_MAKE_SET
+AC_PROG_CC
+AC_PROG_RANLIB
+AC_PROG_INSTALL
+AC_CHECK_PROGS(MKDIRHIER,mkdirhier mkdir true)
+dnl
+AC_CHECK_PROGS(MKDEP,makedepend mkdep,NONE)
+if test "x$MKDEP" = xNONE; then
+  AC_MSG_ERROR(makedepend or mkdep not found)
+fi
+dnl
+LIBS="$LIBS -lm"
+case $host_os in
+	linux*)
+		CFLAGS="$CFLAGS -mieee-fp"
+		CPPFLAGS="$CPPFLAGS -include /usr/include/bsd/bsd.h -I/usr/include/bsd"
+		LIBS="$LIBS -lbsd"
+	;;
+	solaris*)
+		AC_DEFINE(SOLARIS)
+		AC_DEFINE(NORAW)
+dnl
+dnl It used to be the case that we needed /usr/ucblib/libucb.a
+dnl for bzero and friends.  It seems that they are now in libc
+dnl so we don't need this hack anymore. besides we are explicitly
+dnl checking for bzero anyway. (grumble... bit rot...)
+dnl # Need to specify -lc at the front so that -lucb doesn't override
+dnl # expected library functions (we just need bzero and friends).
+dnl 		LIBS="-lc $LIBS -L/usr/ucblib -lucb"
+	;;
+	irix*)
+		AC_DEFINE(NEEDXLIBINT)
+		AC_DEFINE(NORAW)
+	;;
+esac
+if test "$CC" = c89; then
+	CFLAGS = $CFLAGS -common
+fi
+AC_SUBST(XSOURCE)
+AC_SUBST(XOBJECT)
+AC_SUBST(XINCLUDE)
+AC_SUBST(XLIBRARIES)
+AC_MSG_CHECKING(for --with-x)
+AC_ARG_WITH(x,
+  [--with-x        include X11 interface (default=yes)])
+if test "x$with_x" != xno; then
+	AC_MSG_RESULT(yes)
+	AC_DEFINE(X11)
+	AC_SUBST(x_includes)
+	AC_PATH_XTRA
+	XSOURCE='${XSRC}'
+	XOBJECT='${XOBJ}'
+	XINCLUDE='${XINC}'
+	XLIBRARIES='${XLIBS}'
+dnl
+dnl If we are running X11R6, we need X11/Xlibint.h instead
+dnl of X11/Xlib.h in xpred.c
+dnl
+AC_MSG_CHECKING(for -DNEEDXLIBINT)
+denys_save_CPPFLAGS="$CPPFLAGS"
+CPPFLAGS="-I/$x_includes $CPPFLAGS"
+AC_EGREP_CPP(
+[changequote(<<,>>)<<DENYS [6]>>changequote([, ])],dnl
+[#include <X11/Xlib.h>
+DENYS XlibSpecificationRelease
+],
+	AC_MSG_RESULT(yes)
+	AC_DEFINE(NEEDXLIBINT),
+	AC_MSG_RESULT(no))
+CPPFLAGS="$denys_save_CPPFLAGS"
+else
+	AC_MSG_RESULT(no)
+	XSOURCE=''
+	XOBJECT=''
+	XINCLUDE=''
+	XLIBRARIES=''
+fi
+AC_MSG_CHECKING(for --with-gc)
+AC_ARG_WITH(gc,
+  [--with-gc       include garbage collection (default=yes)])
+if test "x$with_gc" != xno; then
+	AC_MSG_RESULT(yes)
+	AC_DEFINE(GARBCOL)
+else
+	AC_MSG_RESULT(no)
+fi
+AC_MSG_CHECKING(for --with-memory)
+AC_ARG_WITH(memory,
+  [--with-memory=n number of words to allocate (default=2097152)],,
+  with_memory=no)
+if test "x$with_memory" != xno; then
+	AC_MSG_RESULT(yes = ${with_memory})
+	AC_DEFINE(ALLOC_WORDS,${with_memory})
+else
+	AC_MSG_RESULT(default = 2097152)
+	AC_DEFINE(ALLOC_WORDS,2097152)
+fi
+dnl
+AC_MSG_CHECKING(for trunc)
+AC_CACHE_VAL(life_cv_trunc,
+  AC_TRY_LINK([],[trunc()],
+    life_cv_trunc=yes,
+    life_cv_trunc=no))
+if test "$life_cv_trunc" = no; then
+	AC_DEFINE(NEED_TRUNC)
+fi
+AC_MSG_RESULT($life_cv_trunc)
+dnl
+AC_MSG_CHECKING(for socket)
+AC_CACHE_VAL(life_cv_socketlib,
+  AC_TRY_LINK([],[socket()],
+    life_cv_socketlib=yes,
+    AC_MSG_RESULT(no)
+    AC_MSG_CHECKING(for socket (-lsocket))
+    life_LIBS="$LIBS"
+    LIBS="$LIBS -lsocket"
+    AC_TRY_LINK([],[socket()],
+      life_cv_socketlib="-lsocket",
+      life_cv_socketlib=no)
+    LIBS="$life_LIBS"))
+case "$life_cv_socketlib" in
+  yes)	;;
+  no)	AC_MSG_ERROR(socket not found);;
+  *) 	LIBS="$LIBS $life_cv_socketlib";;
+esac
+AC_MSG_RESULT($life_cv_socketlib)
+dnl
+AC_MSG_CHECKING(for gethostbyname)
+AC_CACHE_VAL(life_cv_gethostbyname,
+  AC_TRY_LINK([],[gethostbyname()],
+    life_cv_gethostbyname=yes,
+    AC_MSG_RESULT(no)
+    AC_MSG_CHECKING(for gethostname (-lnsl))
+    life_LIBS="$LIBS"
+    LIBS="$LIBS -lnsl"
+    AC_TRY_LINK([],[gethostname()],
+      life_cv_gethostbyname="-lnsl",
+      life_cv_gethostbyname=no)
+    LIBS="$life_LIBS"))
+case "$life_cv_gethostbyname" in
+  yes)	;;
+  no)	AC_MSG_ERROR(gethostbyname not found);;
+  *)	LIBS="$LIBS $life_cv_gethostbyname";;
+esac
+AC_MSG_RESULT($life_cv_gethostbyname)
+dnl
+AC_MSG_CHECKING(for bzero)
+AC_CACHE_VAL(life_cv_bzero,
+  AC_TRY_LINK([],[bzero()],
+    life_cv_bzero=yes,
+    AC_MSG_RESULT(no)
+    AC_MSG_CHECKING(for bzero (-lnsl))
+    life_LIBS="$LIBS"
+    LIBS="$LIBS -lnsl"
+    AC_TRY_LINK([],[bzero()],
+      life_cv_bzero="-lucb",
+      life_cv_bzero=no)
+    LIBS="$life_LIBS"))
+case "$life_cv_bzero" in
+  yes)	;;
+  no)	AC_MSG_ERROR(bzero not found);;
+  *)	LIBS="$LIBS $life_cv_bzero";;
+esac
+AC_MSG_RESULT($life_cv_bzero)
+dnl
+AC_SUBST(DBMSOURCE)
+AC_SUBST(DBMOBJECT)
+AC_SUBST(DBM_LF)
+DBMSOURCE=
+DBMOBJECT=
+DBM_LF=
+DBM_LF_VAL=",dbm_init,dbm_fetch,dbm_store,dbm_delete,dbm_firstkey,dbm_nextkey"
+AC_MSG_CHECKING(for --with-dbm)
+AC_ARG_WITH(dbm,
+  [--with-dbm       include dbm interface (default=yes)])
+if test "x$with_dbm" != xno; then
+	AC_MSG_RESULT(yes)
+	AC_MSG_CHECKING(for dbminit)
+	AC_CACHE_VAL(life_cv_dbminit,
+	  AC_TRY_LINK([],[dbminit()],
+	    life_cv_dbminit=yes,
+	    AC_MSG_RESULT(no)
+	    AC_MSG_CHECKING(for dbminit (-ldbm))
+	    life_LIBS="$LIBS"
+	    LIBS="$LIBS -ldbm"
+	    AC_TRY_LINK([],[dbminit()],
+	      life_cv_dbminit="-ldbm",
+	      life_cv_dbminit=no)
+	    LIBS="$life_LIBS"))
+	case "$life_cv_dbminit" in
+	  yes)	AC_DEFINE(LIFE_DBM)
+		DBMSOURCE='sys_dbm.c'
+		DBMOBJECT='sys_dbm.o'
+		DBM_LF="$DBM_LF_VAL";;
+	  no)	;;
+	  *)	AC_DEFINE(LIFE_DBM)
+		DBMSOURCE='sys_dbm.c'
+		DBMOBJECT='sys_dbm.o'
+		DBM_LF="$DBM_LF_VAL"
+		LIBS="$LIBS $life_cv_dbminit";;
+	esac
+	AC_MSG_RESULT($life_cv_dbminit)
+else
+	AC_MSG_RESULT(no)
+fi
+AC_OUTPUT(Makefile built_ins.lf)

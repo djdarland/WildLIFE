@@ -1,0 +1,13 @@
+*** Warning: local definition of '.' overrides 'syntax#.'
+*** Warning: benign module name clash: c_public_terms#step and built_ins#step
+Loading...*** Warning: overriding previous declaration of accumulator dcg
+*** Warning: overriding previous declaration of accumulator dcg
+*** Warning: benign module name clash: c_public_terms#static and built_ins#static
+*** Warning: benign module name clash: c_public_terms#int and built_ins#int
+*** Warning: benign module name clash: c_public_terms#step and built_ins#step
+done
+*** Warning: benign module name clash: c_parser#error and built_ins#error
+*** Warning: local definition of '.' overrides 'syntax#.'
+<command-line>:0:0: warning: "__STDC__" redefined [enabled by default]
+<built-in>:0:0: note: this is the location of the previous definition
+..................

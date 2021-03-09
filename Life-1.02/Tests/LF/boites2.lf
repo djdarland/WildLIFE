@@ -1,0 +1,100 @@
+% FILE. . . . . /_/udir4/_/bonnet/life/boites.lf
+% EDIT BY . . . Christophe Bonnet
+% ON MACHINE. . Prl303
+% STARTED ON. . Tue Jul 21 19:00:36 1992
+
+
+::box(int,int).
+
+%box represente une boite, le premier argument etant le numero de la boite, et 
+%le deuxieme le nombre de billes contenues dans la boite.
+%
+%L'ordre sur les boites correspond a l'ordre de leur numero.
+
+box_less(box(A,@),box(B,@)) :- A  < B.
+box_less(box,box) :- ! ,fail.
+box_less(bxa,bxa) :- ! ,fail.
+box_less(bxa,@).
+%On a une configuration de depart :
+
+init_bx([bxa,box(3,2),box(6,1)|L1:[box(7,9),box(11,4)|L2:[box(18,6),box(34,65)]]],
+	[L1,L2]).
+
+%Le deuxieme argument est une liste de "pointeurs" vers la place de certaines
+%boites, que je veux pouvoir supprimer de la configuration en un temps
+%constant, quelques soient les operations effectuees entre temps. Pour cela, on
+%utilisera le predicat "del" :
+
+del(L:[@|Tl]) :- L <- Tl.
+
+%Les operations que l'on s'autorise a effectuer sur la configuration de depart
+%sont des ajouts ou retraits de billes dans les boites, operations que l'on
+%represente par des listes (triees) de boites.
+
+exemple -> [bxa,box(3,-1),box(4,5),box(11,-2),box(18,3)].
+
+%le "merge" de deux listes de boites correspond a la combinaison de deux
+%operations, ou (ce qui revient au meme, ou presque) a l'application d'une
+%operation a la combinaison initiale. Il va de soit que l'on souhaite preserver
+%la validite' des coreferences crees par init_bx...
+
+
+%solution actuelle :
+
+
+merge([],@).
+merge(L1,[@|L2:[]]) :- L2 <- L1.
+merge([A|L1],LP:[U|L2:[B|@]]) :- box_less(A,B),
+				LP <- [U|L3:[A|L2]],
+				merge(L1,L3).
+merge(L1:[A|@],[@|L2:[B|@]]) :- box_less(B,A),
+				merge(L1,L2).
+merge([box(Id,A)|L1],[@|L2:[box(Id,B)|@]]) :- B <- A+B,
+						merge(L1,L2).
+merge([bxa|L1],L2) :- merge(L1,L2).
+
+
+
+
+%voir fichier boites.sample
+
+
+%exemples utilises dans boites.in/boites.out :
+
+init2([bxa|D1:[box(1,4)|D2:[box(3,5)|D3:[box(5,1)]]]],[D1,D2,D3]).
+
+action_list -> [[bxa,box(1,-3),box(2,5),box(3,-2)],
+		[bxa,box(0,4),box(1,1)],
+		[bxa,box(3,2),box(6,2)]].
+
+erase(L,[D|Tl]) :- !,del(D),nl,write(L),erase(L,Tl).
+
+loop(L,DL,[]) :- nl.
+loop(L,DL,[A|@]) :- nl,write(L),
+		nl,write(A),
+		nl,merge(A,[@|L]),write(L),
+		nl,erase(L,DL).
+loop(L,DL,[@|AL]) :- nl,loop(L,DL,AL).
+
+main1 :- init2(L,DL),loop(L,DL,action_list).
+
+
+% solution permettant, le cas echeant, de ne pas avoir les bxa en
+%tete de liste :
+merge2([A|L1],L2:[B|@],L3:[A|L2]) :- box_less(A,B), !,
+				merge(L1,L3).
+merge2(L1,L2,L2) :- merge(L1,[bxa|L2]).
+
+init22(D1:[box(1,4)|D2:[box(3,5)|D3:[box(5,1)]]],[D1,D2,D3]).
+loop2(L,DL,[]) :- nl.
+loop2(L1,DL,[A|@]) :- nl,write(L1),
+		nl,write(A),
+		nl,merge2(A,L1,L2),write(L2),
+		nl,erase(L2,DL).
+loop2(L,DL,[@|AL]) :- nl,loop2(L,DL,AL).
+
+main2 :- init22(L,DL),loop2(L,DL,action_list2).
+
+action_list2 -> [[box(1,-3),box(2,5),box(3,-2)],
+		[box(0,4),box(1,1)],
+		[box(3,2),box(6,2)]].

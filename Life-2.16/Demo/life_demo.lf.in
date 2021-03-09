@@ -1,0 +1,169 @@
+%%% This is the file demo.lf.in which generates demo.lf through the
+%%% configure command.
+
+module("life_demo")?
+public(demo, using_demo_fonts) ?
+
+%%% Make sure the Demo fonts are known by the Xserver
+
+persistent(using_demo_fonts) ?
+
+check_font_path :-
+	X = system("+SETUPDIR+/Demo/check_fp"),
+	X =:= 0, !,
+	write("\nDemo fonts not found. Using standard fonts.\nSee the file +SETUPDIR+/Demo/INSTALL on a possible fix to this problem.\n"),
+	write("\nShould I try to use the demo fonts anyway? (yes/no) "),
+	read_token(Answer),
+	using_demo_fonts <<- (Answer :== y or Answer :== yes)
+    ;
+	using_demo_fonts <<- true.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% This is a control panel to drive the Wild_LIFE demos using the X toolkit.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% load the toolkit, open the xtools module
+
+import("xtools") ?
+import("xtools_utils") ?
+
+%%% Checking font availability
+
+check_font_path?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% the demo_panel design
+
+persistent(demo_panel)?
+global(begin_demo) ?
+
+demo_button <| push_button.
+:: demo_button(font_id => button_font,
+	       true_text_color_id => d_led_on).
+
+def_font(button_font,
+	 new_font(cond(using_demo_fonts,
+		       "terminal_bold_narrow18",
+		       "-adobe-helvetica-bold-r-narrow--17-120-100-100-p-72-*")))?
+
+led_button(B:@(light=>L)) -> hc_list [L, h_box(55), B].
+
+d_button(label => S:string,
+	 file => F:string,
+	 demo => D) ->  demo_button(text => S,
+				    light => L:led,
+				    action => (import(F),
+					       L.led_state <<- true,
+					       refresh_look(L),
+					       D)).
+
+control_panel :-
+	
+	B0 = d_button(label => "Color Editor",
+		      file => "color_edit",
+		      demo => demo_color),
+	
+	B1 = d_button(label => "Queens",
+		      file => "queens",
+		      demo => demo_queens),
+	
+	B2 = d_button(label => "Boxes",
+		      file => "boxes",
+		      demo => demo_boxes),
+	
+	B3 = d_button(label => "Flowers",
+		      file => "flowers",
+		      demo => demo_flowers),
+	
+	B41 = d_button(label => "Schedule (small)",
+		       file => "x_schedule",
+		       demo => demo_schedule_s),
+
+	B42 = d_button(label => "Schedule (large)",
+		       file => "x_schedule",
+		       demo => demo_schedule_l),
+	
+	B5 = d_button(label => "Zebra",
+		      file => "x_zebra",
+		      demo => demo_zebra),
+	
+	B6 = d_button(label => "Cryptarithmetic",
+		      file => "crypt",
+		      demo => demo_crypt),
+	
+	B7 = d_button(label => "Math Wiz",
+		      file => "x_mathwiz",
+		      demo => demo_mathwiz),
+	
+	B8 = d_button(label => "Tutorial",
+		      file => "tutorial",
+		      demo => demo_tutorial),
+	
+	same_size([B0, B1, B2, B3, B41, B42, B5, B6, B7, B8]),
+
+	QT = push_button(text => "Quit",
+			 font_id => button_font,
+			 action => get_out),
+
+	demo_panel <<- panel(title => "LIFE DEMO") 
+	  containing
+	  vc_list
+	  [ v_box(35),
+	    ht_list [h_box(35),
+		     vl_list
+		       [ led_button(B0)
+		       , led_button(B1)
+		       , led_button(B2)
+		       , led_button(B3)
+		       , led_button(B41)
+		       , led_button(B42)
+		       , led_button(B5)
+		       , led_button(B6)
+		       , led_button(B7)
+		       , led_button(B8)
+		       ],
+		     h_box(35)],
+	    v_box(40),
+	    QT,
+	    v_box(35)].
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Actions
+
+demo_color :- str2psi("color_edit", "color_edit").
+demo_queens :- str2psi("queens", "queens").
+demo_boxes :- str2psi("boxes", "boxes").
+demo_flowers :- str2psi("flowers", "flowers").
+demo_schedule_s :- str2psi("sch_1", "x_schedule").
+demo_schedule_l :- str2psi("sch_2", "x_schedule").
+demo_zebra :- str2psi("x_zebra", "x_zebra").
+demo_crypt :- str2psi("crypt", "crypt").
+demo_mathwiz :- str2psi("mathwiz", "x_mathwiz").
+demo_tutorial :- str2psi("start", "tutorial").
+get_out :-
+	writeln("Bye, bye!..."),
+	set_choice(begin_demo),
+	fail.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% utilities 
+
+C:writeln :- write&strip(C), nl.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% compose the interface at load time
+
+demo :-
+	control_panel, !,
+	   (
+	       begin_demo = get_choice,
+	       create_box(copy_term(demo_panel))
+           ;
+	       succeed
+	   ).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

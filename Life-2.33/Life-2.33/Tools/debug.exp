@@ -1,0 +1,89 @@
+%	$Id: debug.exp,v 1.2 1994/12/08 23:50:06 duchier Exp $	
+module("debug")?
+
+public(debug,undebug,goal)?
+
+:-(debug(_A,_B,_C),,(=(_B,{clause;fail;goal}),,(!,,(=(_C,{true;false}),,(!,,(;(,(is_function(_A),,(!,,(=(_D,->),,(=(_E,function),=(_F,rewrite_func))))),;(,(is_predicate(_A),,(!,,(=(_D,:-),,(=(_E,predicate),=(_F,rewrite_pred))))),,(write_err("Debug: ",_A," is not a predicate or a function"),,(nl,fail)))),,(dynamic(_A),,(;(,(get_old_clauses(_A,_G),!),,(read_and_retract(_A,_G,_D),assert(old_clauses(_A,_G,_D,_E)))),;(,(:==(_G,[]),,(!,,(write_err("*** No clauses for '",_A,"'"),nl_err))),,(write("Added debugging code to ",_E," '",_A,"': level=",_B,", verbose=",_C,", clauses=",length(_G)),,(nl,,(=(_F,@(_G,_A,_B,_C)),_F)))))))))))).
+
+:-(undebug(_A),,(get_old_clauses(_A,_B),,(!,,(assert_list(_B),retract(:-(old_clauses(_A),succeed)))))).
+
+:-(undebug(_A),,(write("Debug: no stored clauses for ",_A),nl)).
+
+:-(assert_list([_A|_B]),,(!,,(assert(_A),assert_list(_B)))).
+
+assert_list([]).
+
+dynamic(old_clauses)?
+
+:-(get_old_clauses(_A,_B),,(clause(:-(old_clauses(_A,_B,_C,_D),succeed)),,(!,,(write("Debug: restored original clauses for ",_D," '",_A,"'"),,(nl,read_and_retract(_A,@,_C)))))).
+
+:-(prefix(_A),write("<",_A,"> ")).
+
+:-(debug_indent(0),!).
+
+:-(debug_indent(_A),,(write("  "),debug_indent(-(_A,1)))).
+
+->(write_term(_A,_B),cond(_B,_A,root_sort(_A))).
+
+:-(read_and_retract(_A,[_B|_C],_D),,(=(_E,root_sort(_A)),,(=(_B,root_sort(_D)),,(=(.(_B,1),_E),,(=(.(_B,2),@),,(clause(_B),,(!,,(retract(_B),read_and_retract(_A,_C,_D))))))))).
+
+read_and_retract(@,[],@).
+
+:-(rewrite_pred(_A,_B,_C,_D),,(cond(:\==(_C,fail),call_pred(_B,_D)),,(rewrite_clauses(_A,_B,_C,_D,1),,(fail_pred(_B,_D),!)))).
+
+:-(rewrite_pred(@,_A,@,@),,(write_err("*** Debug failed for '",_A,"': program corrupted."),nl_err)).
+
+:-(call_pred(_A,_B),,(=(_C,root_sort(_A)),,(=(_D,write_term(_C,_B)),assert(:-(_C,,(prefix("CALL"),,(write(_D,": entry call"),,(nl,fail)))))))).
+
+:-(fail_pred(_A,_B),,(=(_C,root_sort(_A)),,(=(_D,write_term(_C,_B)),assert(:-(_C,,(prefix("FAIL"),,(write(_D,": fails"),,(nl,fail)))))))).
+
+:-(rewrite_clauses([_A|_B],_C,_D,_E,_F),,(!,,(=(_A,:-(_G,_H)),,(cond(:\==(_D,fail),try_clause(_C,_F)),,(rewrite_body(_H,_I,_C,_D,_E,_F,1),,(cond(:==(_D,fail),=(_J,_I),=(_J,,(_I,,(prefix("SUCC"),,(write(_C,"#",_F,": succeeds"),nl))))),,(assert(:-(_G,_J)),rewrite_clauses(_B,_C,_D,_E,+(_F,1))))))))).
+
+rewrite_clauses([],@,@,@,@).
+
+:-(try_clause(_A,_B),,(=(_C,root_sort(_A)),cond(>(_B,1),assert(:-(_A,,(prefix("REDO"),,(write(_C,": try clause #",_B),,(nl,fail)))))))).
+
+non_strict(rewrite_body)?
+
+:-(rewrite_body(_A,_A,@,@,@,@,@),,(:==(_A,@),!)).
+
+:-(rewrite_body(,(_A,_B),,(_C,_D),_E,_F,_G,_H,_I),,(!,,(rewrite_body(_A,_C,_E,_F,_G,_H,_I),,(=(_J,+(_I,1)),rewrite_body(_B,_D,_E,_F,_G,_H,_J))))).
+
+:-(rewrite_body(;(_A,_B),;(_C,_D),_E,_F,_G,_H,_I),,(!,,(rewrite_body(_A,_C,_E,_F,_G,_H,_I),,(rewrite_body(_B,_J,_E,_F,_G,_H,_I),cond(:==(_F,goal),=(_D,,(prefix("REDO"),,(write(_E,"#",_H,": retry disjunction"),,(nl,_J)))),=(_D,_J)))))).
+
+:-(rewrite_body(!,_A,_B,_C,@,_D,_E),,(!,=(_A,,(!,;(cond(:==(_C,fail),succeed,,(prefix("CUT!"),,(cond(:==(_C,goal),write(_B,"#",_D,".",_E,": cut!"),write(_B,"#",_D,": cut!")),nl))),,(prefix("FAIL"),,(write(_B,"#",_D,": fails and alternatives cut"),,(nl,fail)))))))).
+
+:-(rewrite_body(_A: cond(_B),_C: cond(_B),_D,_E,_F,_G,_H),,(!,,(cond(has_feature(2,_A,_I),,(rewrite_body(_I,@,_D,_E,_F,_G,_H),=(.(_C,2),_I))),cond(has_feature(3,_A,_J),,(rewrite_body(_J,@,_D,_E,_F,_G,_H),=(.(_C,3),_J)))))).
+
+:-(rewrite_body(_A,_B,_C,_D,_E,_F,_G),cond(:==(_D,goal),=(_B,,(prefix("GOAL"),,(write(_C,"#",_F,".",_G,": ",write_term(_A,_E)),,(nl,_A)))),=(_B,_A))).
+
+:-(rewrite_func(_A,_B,_C,_D),,(rewrite_rules(_A,_B,_C,_D,1),,(fail_func(_B,_D),!))).
+
+:-(rewrite_func(@,_A,@,@),,(write_err("*** Debug failed for '",_A,"': program corrupted."),nl_err)).
+
+:-(fail_func(_A,_B),,(=(_C,root_sort(_A)),,(=(_D,write_term(_C,_B)),assert(->(_C,|(@,,(prefix("FAIL"),,(write(_D,": fails"),,(nl,fail))))))))).
+
+:-(rewrite_rules([_A|_B],_C,_D,_E,_F),,(!,,(rewrite_rule(_A,_C,_D,_E,_F),rewrite_rules(_B,_C,_D,_E,+(_F,1))))).
+
+rewrite_rules([],@,@,@,@).
+
+:-(func_fail(_A,_B),,(prefix("FAIL"),,(write(_A,": fails at clause #",_B),,(nl,fail)))).
+
+:-(eval_fail(_A,_B),,(prefix("FAIL"),,(write(_A,": evaluation at clause #",_B),,(nl,fail)))).
+
+:-(body_fail(_A,_B),,(prefix("FAIL"),,(write(_A,": such-that goals at clause #",_B),,(nl,fail)))).
+
+non_strict(rewrite_rule)?
+
+:-(rewrite_rule(->(_A,_B),_C,goal,_D,_E),,(:==(_B,`(|)),,(!,,(=(_B,`(|(_F,_G))),,(=(_H,write_term(_A,_D)),,(rewrite_body(_G,_I,_C,goal,_D,_E,1),,(=(_J,,(<<-(_K,@),;(,(prefix("PATT"),,(write(_H,": pattern matches clause #",_E),,(nl,,(<<-(_K,patt),,(=(_L,_F),,(prefix("EVAL"),,(write(_H,": clause #",_E,", result=",`(write_term(_L,_D))),,(nl,,(<<-(_K,evall),,(_I,,(prefix("SUCC"),,(write(_H,": clause #",_E),,(nl,<<-(_K,succ)))))))))))))),;(,(`(:==(_K,succ)),,(!,fail)),;(,(`(:==(_K,evall)),,(!,body_fail(_H,_E))),;(,(`(:==(_K,patt)),,(!,eval_fail(_H,_E))),func_fail(_H,_E))))))),assert(->(_A,|(_L,_J)))))))))).
+
+:-(rewrite_rule(->(_A,_B),@,goal,_C,_D),,(!,,(=(_E,write_term(_A,_C)),,(=(_F,,(<<-(_G,@),;(,(prefix("PATT"),,(write(_E,": pattern matches clause #",_D),,(nl,,(<<-(_G,patt),,(=(_H,_B),,(prefix("EVAL"),,(write(_E,": clause #",_D,", result=",`(write_term(_H,_C))),,(nl,<<-(_G,evall))))))))),;(,(`(:==(_G,evall)),,(!,fail)),;(,(`(:==(_G,patt)),,(!,eval_fail(_E,_D))),func_fail(_E,_D)))))),assert(->(_A,|(_H,_F))))))).
+
+:-(rewrite_rule(->(_A,_B),@,clause,_C,_D),,(:==(_B,`(|)),,(!,,(=(_B,`(|(_E,_F))),,(=(_G,write_term(_A,_C)),,(=(_H,_E),,(=(_I,,(<<-(_J,@),;(,(_F,,(prefix("SUCC"),,(write(_G,": clause #",_D,", result=",`(write_term(_H,_C))),,(nl,<<-(_J,succ))))),;(,(`(:==(_J,succ)),,(!,fail)),func_fail(_G,_D))))),assert(->(_A,|(_H,_I)))))))))).
+
+:-(rewrite_rule(->(_A,_B),@,clause,_C,_D),,(!,,(=(_E,write_term(_A,_C)),,(=(_F,_B),,(=(_G,,(<<-(_H,@),;(,(prefix("EVAL"),,(write(_E,": clause #",_D,", result=",`(write_term(_F,_C))),,(nl,<<-(_H,evall)))),;(,(`(:==(_H,evall)),,(!,fail)),func_fail(_E,_D))))),assert(->(_A,|(_F,_G)))))))).
+
+:-(rewrite_rule(->(_A,_B),@,fail,_C,_D),,(:==(_B,`(|)),,(!,,(=(_B,`(|(_E,_F))),,(=(_G,write_term(_A,_C)),,(=(_H,,(<<-(_I,@),;(,(_F,<<-(_I,succ)),,(`(:==(_I,@)),func_fail(_G,_D))))),assert(->(_A,|(_E,_H))))))))).
+
+:-(rewrite_rule(->(_A,_B),@,fail,_C,_D),,(!,,(=(_E,write_term(_A,_C)),,(=(_F,,(<<-(_G,@),;(<<-(_G,succ),,(`(:==(_G,@)),func_fail(_E,_D))))),assert(->(_A,|(_B,_F))))))).
+

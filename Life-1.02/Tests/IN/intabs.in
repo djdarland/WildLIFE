@@ -1,0 +1,139 @@
+
+nl,nl,write("*** TESTING COMPABS ***") ?
+
+concat(X,Y,Z) ::-- 
+	( 
+	    X = nil, Y = Z ; 
+	    X = cons(A,L1), Z = cons(A,L2), concat(L1,Y,L2)
+	) ?
+
+
+toto(X,Y) ::--
+	(
+	    X = a, tata(Y) ;
+	    X = b, tata(Y) ;
+	    (
+		tutu(X,Y), ! ;
+		fail
+	    )
+	)?
+
+succeed '..' ?
+
+listing(concat_proc)?
+listing(toto_proc) ?
+
+
+nl,nl,write("*** TESTING NORMALIZATION ***") ?
+
+normalize(X:t(U,g(X,a)),parents=>[]), nl,write(X) ?
+normalize(X & t(X,g(b,a)),parents=>[]), nl,write(X) ?
+
+
+%
+% EXTEND, FIND_NODE
+%
+
+nl,nl,write("*** TESTING EXTEND AND FIND_NODE ***") ?
+
+init_solve(SAT) ?
+
+extend( ground, p, sat) = @(SAT,NewNode,New), 
+set_sat(SAT) ? 
+
+extend( free, q, sat) = @(SAT,NewNode,New), 
+set_sat(SAT)?
+
+extend( non_var, q, sat) = @(SAT,Node1,New1), 
+extend( ground, q, SAT) = @(SAT,Node2,New2), 
+extend( ground, q, SAT) = @(SAT,Node3,New3),
+nl,nl ,write(Node2 === Node3,"  ",New2,"  ",not(New3)),
+find_node( ground, q, SAT) = Node6,
+nl,nl ,write(Node6 === Node3),
+extend( bot, q, SAT) = @(SAT,Node4,New4),
+extend( any, q, SAT) = @(SAT,Node5,New5),
+set_sat(SAT) ?
+
+
+%
+% ADJUST
+%
+
+nl,nl,write("*** TESTING ADJUST ***") ?
+
+adjust( ground, q, ground, sat) = @(SAT,Modified,AT),
+nl,nl,write(Modified),
+set_sat(SAT) ?
+
+adjust( free, q, free, sat) = @(SAT,Modified,AT),
+nl,nl,write(Modified),
+set_sat(SAT) ?
+
+%
+% SUSPENSION
+%
+
+nl,nl,write("*** TESTING SUSPENSION ***") ?
+
+find_node( ground, q, SAT:sat) = Node,
+cond( not_suspended(Node),
+      suspend(Node),
+      nl, nl, write( "Bug in not_suspended" )),
+cond( not_suspended(Node),
+      (
+	  nl, nl, write( "Bug in suspend" )
+      ),
+      un_suspend(Node)),
+cond( not_suspended(Node),
+      (
+	  nl, nl, write("OK")
+      ),
+      (
+	  nl, nl, write("Bug in un_suspend")
+      )),
+suspend(Node),
+set_sat(SAT) ? 
+
+%
+% DEPENDENCIES
+%
+
+nl,nl,write("*** TESTING DEPENDENCIES ***") ?
+
+find_node( non_var, q, SAT:sat) = Node,
+ext_dp(Node),
+add_dp(ground, p, Node, SAT),
+add_dp(free, q, Node, SAT),
+find_node( ground, q, SAT) = Node2,
+add_dp(free, q, Node2, SAT),
+remove_dp([find_node( ground, p, SAT)],SAT),
+nl,nl,write(SAT) ?
+
+
+nl,nl,write("*** TESTING ANALYSE WITH A SIMPLE DOMAIN ***") ?
+
+tooo(X,Y) ::-- X = a, X = Y ?       
+
+solve([free,free],tooo),
+nl,nl,pretty_write(sat) ?                      % simple
+
+tata(X,Y) ::-- 
+	( 
+	    X = a, X = Y ;
+	    succeed
+	)?
+
+succeed '..' ?
+
+solve([free,free],tata),
+nl,nl,pretty_write(sat) ?                      % disjunction
+
+solve([ground,ground,free],concat),
+nl,nl,pretty_write(sat) ?                      %  recursion
+
+tutu(X) ::-- X = cons(Y,Z), titi(Y,Z) ?
+
+titi(X,Y) ::-- X = a, Y = b ?
+
+solve([free],tutu),
+nl,nl,pretty_write(sat) ?                      % Back propagation

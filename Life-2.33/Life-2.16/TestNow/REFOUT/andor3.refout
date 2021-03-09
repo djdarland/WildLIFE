@@ -1,0 +1,49 @@
+
+*** Yes
+> > 
+*** Yes
+A = true, B = true.
+--1> > 
+*** Yes
+A = bool~, B = bool~.
+--1> > 
+*** No
+> > 
+*** No
+> > 
+*** Yes
+A = true, B = true.
+--1> > 
+*** Yes
+A = false, B = bool.
+--1> > 
+*** Yes
+A = false, B = bool.
+--1> > 
+*** Yes
+A = bool, B = A.
+--1> > > 
+*** Yes
+A = bool~, B = bool~.
+--1> > 
+*** Yes
+A = false, B = false.
+--1> > 
+*** Yes
+A = true.
+--1> > 
+*** Yes
+A = true.
+--1> > 
+*** Yes
+A = bool~, B = bool~.
+--1> > 
+*** Yes
+A = bool, B = A.
+--1> > 
+*** Yes
+A = bool, B = A.
+--1> > 
+*** Yes
+A = bool, B = A.
+--1> > 

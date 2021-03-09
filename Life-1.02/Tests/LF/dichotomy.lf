@@ -1,0 +1,12 @@
+solve(F,A:real,B:real) -> cond(F(A)*F(B)>0,
+                     	       {},
+                               dichotomy(F,A,B)).
+
+dichotomy(F,A,B) -> cond(abs((C:((A+B)/2))-A)<0.00001,
+                         C,
+			 
+                         cond(F(A)*F(C)>0,
+                              dichotomy(F,C,B),
+                              dichotomy(F,A,C))).
+
+poly(X) -> (X-5)*(X+3)*(X-2).

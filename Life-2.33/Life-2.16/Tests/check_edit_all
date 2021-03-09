@@ -1,0 +1,18 @@
+#!/bin/csh -f
+# Test program for Wild-LIFE
+# Runs the entire test-suite and generates a log file
+set umask=666
+rm -f editdiffs.sh
+touch editdiffs.sh
+rm LF/*~
+if ($1 == 1) then
+echo "Running complete Test"
+./check_edit `ls LF` | tee editdiffs.sh
+else 
+echo "Testing $1 - $2 only! "
+rm LFTMP/*.lf
+touch LFTMP/$2.lf
+./check_edit `ls LFTMP`
+echo "$2 Tested"
+endif
+chmod u+x editdiffs.sh

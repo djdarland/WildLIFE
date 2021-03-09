@@ -1,0 +1,568 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                             %
+% Translating grammars into LIFE                                              %
+%                                                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+op( 1000, xfy, comma) ?
+op( 1200, xfy, -->) ?
+non_strict(-->) ?
+
+my_project(A,B) -> B.A.
+
+
+(Lhs --> Rhs) :- R = compileRule( Lhs, Rhs), assert(R), fail ; succeed.
+
+%
+% compileRule: translates the grammar rules into clauses
+%
+
+non_strict(compileRule) ?
+compileRule( Lhs, Rhs) -> 
+	(compileSymbols( Lhs, false, false, Xs, Ys, _) :- 
+	     compileSeq( Rhs, true,  false, Xs, Ys, _)).
+
+%
+% compileSeq is used to translate a sequence of symbols of the grammar into a
+% sequence of literals.
+%
+
+compileSeq( Symbols, FoldOk, InDisj, Xs, Ys, NewFoldOk) -> 
+	cond( Symbols :== @,
+	      `varSymbol( Symbols, 0 => Xs, rest => Ys) 
+	  | NewFoldOk = FoldOk,
+	      compileSymbols( Symbols, FoldOk, InDisj, Xs, Ys, NewFoldOk)).
+
+%
+% compileSymbols is used to translate non-variable symbols.
+%
+
+% conjunction
+  compileSymbols( ( Symb, Autres), FoldOk, InDisj, Xs, Ys, NewFoldOk) ->
+	compileSeq( Symb,   FoldOk,      InDisj, Xs, Ys1, InterFoldOk) comma 
+        compileSeq( Autres, InterFoldOk, InDisj, Ys1, Ys, NewFoldOk).
+
+% disjunction
+  compileSymbols( ( List1 ; List2), FoldOk, _, Xs, Ys, NewFoldOk) -> 
+	X | Z = compileSeq( List1, FoldOk, true, Xs, Ys, InterFoldOk1),
+            T = compileSeq( List2, FoldOk, true, Xs, Ys, InterFoldOk2),
+            NewFoldOk = InterFoldOk1 and InterFoldOk2,
+	    X = `( Z ; T ), 
+	    ! .
+                                   
+% terminals
+  compileSymbols( Terms: list, true, false, Xs, Ys, NewFoldOk) -> 
+	succeed | Xs = termSequence(Terms, Ys), NewFoldOk = true.
+  compileSymbols( Terms: list, FoldOk, _, Xs, Ys, NewFoldOk) -> 
+	Xs = termSequence(Terms, Ys) | NewFoldOk = FoldOk.
+
+% cut
+  compileSymbols( !, FoldOk, false, Xs, Ys, NewFoldOk) -> 
+	! | NewFoldOk = false, Xs = Ys.  
+  compileSymbols( !, FoldOk, true, Xs, Ys, NewFoldOk) -> 
+	Xs = Ys, ! | NewFoldOk = false.
+
+% insertion of code
+
+  compileSymbols( Term: #, FoldOk, false, Xs, Ys, NewFoldOk)  -> 
+	transLifeCode( Term) | Xs = Ys, NewFoldOk = false.
+  compileSymbols( Term: #, FoldOk, true, Xs, Ys, NewFoldOk)  -> 
+	Xs = Ys, transLifeCode( Term) | NewFoldOk = false.
+
+
+% non-terminals
+  compileSymbols(NonTerm, FoldOk, _, Xs, Ys, NewFoldOk)    -> 
+	NonTerm  | NonTerm = @( 0 => Xs, rest => Ys), NewFoldOk = FoldOk.
+
+
+%
+% Inserting Life code
+%
+
+transLifeCode( L) -> transList( feats(L)).
+
+feats(L) -> map( my_project( 2 => L), features(L)).
+
+transList( []) ->  succeed.
+transList( [A|B]) -> A comma transList( B).
+
+%
+% handling terminals
+%
+
+termSequence( [], Ys)     -> Ys.
+termSequence( [T|Ts], Ys) -> [T|termSequence( Ts, Ys)].
+
+%
+% This definition is used at run-time to evaluate variable symbols
+%
+
+varSymbol( X:list, 0 => Xs, rest => Ys) -> 
+	Xs = termSequence( X, Ys). 
+varSymbol( X, 0 => Xs, rest => Ys) -> 
+	X | X = @( 0 => Xs, rest => Ys).
+
+
+%
+% getting rid of unnecessary succeed statements
+%
+
+succeed comma A -> A .
+A comma succeed -> A .
+A comma B -> A , B.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+setq(list_of_words,[]) ?
+
+readf( File ) -> 
+	L 
+    |   ( open_in(File,S),
+	  read_all(L1),
+	  setq(list_of_words,L1),
+	  close(S),
+	  fail ;
+	  L = list_of_words ).
+	  
+
+read_all( L) :-
+        get(X),
+        cond( X :=< end_of_file , 
+              L=[] ,
+              (read_all(Y), L = [X|Y])).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% TOKENIZER FOR LIFE
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% tokenize(File,L) reads in the file F, and returns the list of tokens
+% encountered. No  error message is given in the present implementation.
+%
+% the tokens are of the following types:
+%    - variable(X) where X is the name of the variable;
+%    - construct(X) represents a constructor X. 
+%      The type of a constructor is a subsort of construct: numb, chaine, or
+%      atom. An atom may be a simple_atom or a quoted_atom. 
+%      X is usually a string, except in numb(X), where X is the actual value.
+%    - any syntactic object like "[" or "?"
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Types: those definitions are not useful here, but in the parser.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+simple_atom <| atom.
+quoted_atom <| atom.
+
+atom <| construct.
+numb <| construct.
+chaine <| construct.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Program
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+tokenize(File,L) :- 
+        W = readf(File),
+	tokens(L,0 => W, rest => []).
+
+
+tokens(T) --> 
+	void_chars,
+	(
+	    token(L),!,
+	    tokens(Ls), 
+	    #( T = [L|Ls]);
+	    #( T = [])
+	)?
+
+
+
+void_chars -->                                     % space, tab, return
+	[X],
+	#( X =:= 9 or X =:= 32 or X =:= 10, !), 
+	void_chars ?   
+void_chars -->                                     % commentaires
+	[37],!, 
+	comment_chars, 
+	void_chars ?
+void_chars --> [] ?
+
+comment_chars --> [10], ! ?                     % un commentaire s'arrete avec
+						% return.
+comment_chars --> [X], comment_chars ?
+
+
+token( 0 => []) :- !, fail.
+token(_A,rest => Rest,0 => _C) :-
+        realToken(_A,rest => Rest,0 => _C).
+	
+
+realToken(T,rest => R,0 => W:[A|B]) ->
+	cond( A >= 48 and A =< 57,
+              ( 
+		  number(N,0 => W,rest => R),
+		  T = numb(N)
+	      ),
+	      cond( A >= 65 and A=< 90,
+	            (
+			variable(V, 0 => W,rest => R),
+			T = variable(V)
+		    ),
+		    cond( A >= 97 and A =< 122,
+		          ( 
+			      non_quoted_atom(SA,0 => W,rest => R),
+			      T = simple_atom(SA)
+			  ),
+			  str2psi(strcon("token",int2str(A)))
+				 & @(T,0 => W,rest  => R)))).
+
+%
+%
+% variables
+% 
+%
+
+token95( variable(X)) -->                        % _...
+	[_],
+	simple_atom_cars(Y), 
+	#((Y = "", ! ); X = strcon("_",Y)) ?                  
+
+variable(X) -->                                  % M...
+	[Y], 
+	simple_atom_cars(Z), 
+	#( X = strcon(charac(Y),Z)) ?
+
+
+%
+%
+% syntactic objects
+%
+%
+
+token40( "(") --> [_] ?
+token41( ")") --> [_] ?
+token44( ",") --> [_] ?
+token46( ".") --> [_] ?
+token59( ";") --> [_] ?
+token63( "?") --> [_] ?
+token91( "[") --> [_] ?
+token93( "]") --> [_] ?
+token123( "{") --> [_] ?
+token124( "|") --> [_] ?
+token125( "}") --> [_] ?
+
+%
+%
+% constructors
+%
+%
+
+%
+% @
+%
+
+token64( simple_atom("@")) --> [_] ?
+
+%
+% quote
+%
+
+token96( simple_atom("`"),0 => [_|Rest],rest => Rest).
+
+%
+% simple atoms
+%             
+
+non_quoted_atom(X) --> 
+	[Y], 
+	simple_atom_cars(Z), 
+	#( X = strcon(charac(Y),Z)) ?
+
+simple_atom_cars(Z) --> 
+	simple_atom_car(X), !,
+	simple_atom_cars(Y), 
+	#( Z = strcon(X,Y)) ?
+simple_atom_cars("") --> [] ?
+
+simple_atom_car(X) --> 
+	[Y],  
+	#(    Y >= 48 and Y =< 57    % chiffre
+           or Y >= 65 and Y =< 90    % majuscule
+           or Y =:= 95               % underscore
+           or Y >= 97 and Y =< 122,  % minuscule
+	   X = charac(Y))?
+
+%
+% quoted atoms
+%
+
+token39( quoted_atom(X)) --> 
+	[_],
+        quoted_atom_end(X) ?
+
+quoted_atom_end(X) --> 
+	[39], !,
+	( [39], !,quoted_atom_end(Y), X = strcon("'",Y) ; 
+          # ( X = "" )) ?
+quoted_atom_end(X) --> 
+	quoted_atom_car(Y),
+	quoted_atom_end(Z),
+	#(  X = strcon(Y,Z)) ?
+
+quoted_atom_car(Y) -->
+	[X], #( Y = charac(X) ) ?
+
+
+%
+% Numbers
+%
+
+number(X) --> 
+	digits(V1),
+	( [46], digits(V2,length => L2), !;
+          #( V2 = 0, L2= 0) ),
+	( [101], !,exponent(E) ;
+	  #(E = 0) ),
+	#( X = (V1 + V2 * 10^(-L2)) * 10^(E)) ?
+
+digits(V, length=>L) --> 
+	digit( V1), 
+	( digits(V2, length=>L2),!,
+	  #( L = L2+1, V = V1*10^L2 + V2) ;
+          #( V = V1, L = 1)) ?
+
+sign(-1) --> [45],! ?
+sign(1)  --> [43],! ?
+sign(1)  --> [] ?
+
+exponent(V) --> sign(S), digits(V1), #(V = S*V1) ?
+
+digit(N)    --> [48+N], #(N =< 9 and N >= 0)  ?
+
+
+%
+% Strings
+%
+
+token34(chaine(X)) --> 
+	[_],
+        car_chaine_end(X) ?
+
+car_chaine_end(X) --> 
+	[34], !,
+	( [34], !,car_chaine_end(Y), #(X = strcon("""",Y)) ; 
+          # ( X = "" )) ?
+car_chaine_end(X) --> 
+	car_chaine_car(Y),
+	car_chaine_end(Z),
+	#(  X = strcon(Y,Z)) ?
+
+car_chaine_car(Y) -->
+	[X], #( Y = charac(X) ) ?
+
+
+%
+% op_atoms
+%
+op_atom_car(X) -->
+	[Y],
+	#( cond( Y >= 33,
+	         cond(    Y =< 38 and Y =\= 34 or Y =:= 42 
+	               or Y =:= 43 or Y =:= 45 or Y =:= 47,
+		       3 => cond( Y >= 58,
+		                  cond( Y =< 62,
+			                Y =\= 59,
+					Y =:= 92 or Y =:= 94 or Y=:= 126),
+				  fail)),
+	         fail),
+           X = charac(Y)) ?
+
+op_atom_cars(X) --> 
+	op_atom_car(Y),!, 
+	op_atom_cars(Z),
+	#(  X = strcon(Y,Z)) ?
+op_atom_cars("") -->
+	[] ?
+
+
+token33( simple_atom(X)) --> 
+	[_],
+	op_atom_cars(Z),
+	#(  X = strcon("!",Z)) ?
+token35( simple_atom(X)) --> 
+	[_],
+	op_atom_cars(Z),
+	#(  X = strcon("#",Z)) ?
+token36( simple_atom(X)) --> 
+	[_],
+	op_atom_cars(Z),
+	#(  X = strcon("$",Z)) ?
+token37( simple_atom(X)) --> 
+	[_],
+	op_atom_cars(Z),
+	#(  X = strcon("%",Z)) ?
+token38( simple_atom(X)) --> 
+	[_],
+	op_atom_cars(Z),
+	#(  X = strcon("&",Z)) ?
+token42( simple_atom(X)) --> 
+	[_],
+	op_atom_cars(Z),
+	#(  X = strcon("*",Z)) ?
+token43( simple_atom(X)) --> 
+	[_],
+	op_atom_cars(Z),
+	#(  X = strcon("+",Z)) ?
+token45( simple_atom(X)) --> 
+	[_],
+	op_atom_cars(Z),
+	#(  X = strcon("-",Z)) ?
+token47( simple_atom(X)) --> 
+	[_],
+	op_atom_cars(Z),
+	#(  X = strcon("/",Z)) ?
+token58( simple_atom(X)) --> 
+	[_],
+	op_atom_cars(Z),
+	#(  X = strcon(":",Z)) ?
+token60( simple_atom(X)) --> 
+	[_],
+	op_atom_cars(Z),
+	#(  X = strcon("<",Z)) ?
+token61( simple_atom(X)) --> 
+	[_],
+	op_atom_cars(Z),
+	#(  X = strcon("=",Z)) ?
+token62( simple_atom(X)) --> 
+	[_],
+	op_atom_cars(Z),
+	#(  X = strcon(">",Z)) ?
+token92( simple_atom(X)) --> 
+	[_],
+	op_atom_cars(Z),
+	#(  X = strcon("\\",Z)) ?
+token94( simple_atom(X)) --> 
+	[_],
+	op_atom_cars(Z),
+	#(  X = strcon("^",Z)) ?
+token126( simple_atom(X)) --> 
+	[_],
+	op_atom_cars(Z),
+	#(  X = strcon("~",Z)) ?
+
+
+charac(Z) -> psi2str(chr(Z)) .
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% GRAMMAR FOR ARITHMETIC EXPRESSIONS WITH DYNAMIC OPERATORS
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%
+% list_express recognizes lists of expressions separated by dots
+%
+
+list_express( list=>[A|B]) --> 
+	expr( tree => A, rest => L),
+	["."], !,
+	list_express( list => B ) ?
+
+list_express( list => []) --> ! ?
+list_express( list => [error]).
+	
+%
+% a term is a number or a variable (use the Life tokenizer)
+%
+
+
+term( tree => X) --> [numb(X)],!  ?
+term( tree => X) --> [variable(X)] ?
+
+%
+% expressions
+%
+
+expr( tree => Tree) --> ["("], !, expr( tree => Tree) , [")"] ?
+expr( max => Max, tree => Tree)    -->
+	start_expr( M, max => Max, tree => T),
+	end_expr( M, max => Max, left => T, tree => Tree) ?
+
+
+start_expr( 0, tree => T) --> term( tree => T), ! ?
+start_expr( M, max => Max, tree => Tree) -->
+	oper( prefix, M, Name, right_strict => S),
+	#(M =< Max),!,
+	expr( max => preced(S,M), tree => T),
+	#( Tree = Name&@(T) ) ?
+
+end_expr( MLeft, max => Max, left => L, tree => T)  --> 
+	sub_expr( M, Mleft, max => Max, left => L, tree => T1),!,
+	end_expr( M, max => Max, left => T1, tree => T) ?
+end_expr( left => T, tree => T) --> [] ?
+
+sub_expr(M, Mleft, max => Max, left => L, tree => Tree) --> 
+	oper( Type, M, Name, left_strict => LS, right_strict => RS),
+	#( M =< Max,
+	   Mleft =< preced(LS,M)),
+	(
+	    #( Type = postfix,!,
+	       Tree = Name&@(L) )
+	;
+	    #( Type = infix),
+	    expr( max => preced(RS,M), tree => R),
+	    #( Tree = Name&@(L,R)) 
+	)?
+
+
+%
+% operators: any Life operator may be used
+%
+
+oper( Type, P, Name, 
+      left_strict => LS, 
+      right_strict => RS) -->
+	[atom(Name)],
+	# (
+	     op_member(ops,Precedence,T,Name),
+	     P = Precedence,
+	     cond( T :== xfx,
+	           ( LS = true, RS = true, Type = infix),
+	     cond( T :== xfy,
+	           ( LS = true, RS = false,  Type = infix),	     
+	     cond( T :== yfx,
+	           ( LS = false,  RS = true, Type = infix),
+             cond( T :== fx,
+	           ( RS = true,  Type = prefix),
+	     cond( T :== fy,,
+	           ( RS = false, Type = prefix), 
+	     cond( T :== xf,
+	           ( LS = true,  Type = postfix),
+	     cond( T :== yf,,
+	           ( LS = false, Type = postfix))))))))
+          ) ?
+
+preced(true,M) -> M-1.
+preced(false,M) -> M.
+
+op_member([op(P1,T1,Oper)|OOps],Precedence,Type,Name) :-
+	(
+	    Name = psi2str(`Oper), Precedence = P1, Type = T1;
+	    op_member(OOps, Precedence,Type,Name)
+	).
+
+	
+
+
+
+

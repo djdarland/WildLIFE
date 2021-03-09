@@ -1,0 +1,17 @@
+gen0*10+gen0=100//A,write(A),fail?
+100=(gen0*10+gen0)//A,write(A),fail?
+10=(gen0*10+gen0)//A,write(A),fail?
+10=X:(gen0*10+gen0)//A,write([X|A]),fail?
+-10=X:(gen0*10+gen0)//A,write([X|A]),fail?
+B=10000// -172, C=10000// -173, D=10000// -174, E=10000// -175?
+.
+-172=10000//A, write("Yes for -172 and ",A)?
+.
+-173=10000//A, write("Yes for -173 and ",A)?
+.
+-174=10000//A, write("Yes for -174 and ",A)?
+.
+-175=10000//A, write("Yes for -175 and ",A)?
+.
+-176=10000//A, write("Yes for -176 and ",A)?
+.

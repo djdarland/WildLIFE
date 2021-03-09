@@ -1,0 +1,4 @@
+A=hamming(6)?
+.
+A=hamming(60)?
+.

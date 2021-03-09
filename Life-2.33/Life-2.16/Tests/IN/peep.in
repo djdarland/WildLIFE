@@ -1,0 +1,8 @@
+peep([a,b,c,a,a,t],Out)?
+
+peep([a,a,a,a,a,a,a,a,a,a],Out)?
+
+peep([a,a,a,b,b,b,c,c,c,c,a,a,a,a,a,t,t,t,t,t,t],Out)?
+
+peep([a,b,a,b,a,b,a,b],Out)?
+

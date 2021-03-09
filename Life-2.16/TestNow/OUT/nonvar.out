@@ -1,0 +1,57 @@
+
+*** Yes
+> > 
+% 'var' is a built-in function.
+
+% 'nonvar' is a built-in function.
+
+% 'is_function' is a built-in function.
+
+% 'is_predicate' is a built-in function.
+
+% 'is_sort' is a built-in function.
+
+*** Yes
+> 
+*** Yes
+A = true.
+--1> > 
+*** Yes
+A = false.
+--1> > 
+*** Yes
+A = false.
+--1> > 
+*** Yes
+A = true.
+--1> > 
+*** Yes
+A = true.
+--1> > 
+*** Yes
+A = false.
+--1> > 
+*** Yes
+A = false.
+--1> > 
+*** Yes
+A = true.
+--1> > 
+*** Yes
+A = false.
+--1> > 
+*** Yes
+A = false.
+--1> > 
+*** Yes
+A = true.
+--1> > 
+*** Yes
+A = true.
+--1> > 
+*** Yes
+A = false.
+--1> > 
+*** Yes
+A = false.
+--1> > 

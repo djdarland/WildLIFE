@@ -1,0 +1,933 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%	$Id: parser.lf,v 1.2 1994/12/08 23:51:54 duchier Exp $	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                                                             
+%%                             A PARSER FOR LIFE            
+%%
+%%  This file contains a complete parser for Life that includes extensions to
+%%  the standard syntax of Life (the standard syntax being that defined by the
+%%  wild_LIFE parser), and the possibility to use local functions.
+%%
+%%  It is written like an attribute grammar, and translated in a Life program 
+%%  by the grammar translator (file accumulators.lf) The inputs of this
+%%  grammars are the tokens produced by the tokenizer in Life (file
+%%  tokenizer.lf). This grammar needs to know one token in advance to work. 
+%%
+%%  The extensions of the standard syntax are the following:
+%%  - Expressions may be used at label places:
+%%     foo( expr => bar ) 
+%%           where expr is any life expression is syntactic sugar for:
+%%     ( X:foo | project(expr,X) = bar )
+%%
+%%  Local Functions:
+%%  - lambda(attributes)(expr) defines a local function where all the
+%%    variables appearing in attributes are local to the expression. This works
+%%    also with recursive functions. For instance, factorial could be defined
+%%    by :
+%%    Fact = lambda_exp(X)(cond(X =:= 0, 1, X*Fact(X-1))) ?
+%%  - The possible syntaxes for application are the following:
+%%    - X(args) 
+%%        where X is a variable that has to be instantiated to a function
+%%        (local or not) at runtime, and args the list of arguments of the
+%%        function. 
+%%    - (expr)(args) 
+%%  - let X = expr in expr2 
+%%      is syntactic sugar for 
+%%      (lambda(X)(expr2))(expr)
+%%
+%%
+%%  Use of this file:
+%%      syntax(Filename) ? 
+%%  parses the file Filename and writes the obtained psi-terms in the file
+%%  Filename_expr. 
+%%    
+%%  All the necessary files are automatically loaded if they are in the same
+%%  directory.  
+%%
+%%
+%%  Author: Bruno Dumant
+%%
+%% Copyright 1992 Digital Equipment Corporation
+%% All Rights Reserved
+%%   
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+module("parser") ?
+
+load("tokenizer") ?
+
+open("accumulators") ?
+open("tokenizer") ?
+
+public( syntax,prefix,infix,postfix,
+      prefix_table,post_infix_table) ?
+
+persistent(prefix_table,post_infix_table) ?
+
+%%% set the right function for handling terminals in the grammar.
+
+set_C(parser_C) ?
+
+parser_C([],true,Xs,Ys) -> succeed | Xs = Ys.
+parser_C([],false,Xs,Ys) -> Xs = Ys.
+parser_C([A],true,Xs,Ys) -> ( `evalin(D) = Ys ) | Xs = [A|D].
+parser_C([A],false,Xs,Ys) -> ( Xs = [A|D], `evalin(D) = Ys ).
+
+
+%%% operator declaration 
+
+op(1000,xfy,virgule) ?    
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%  A GRAMMAR FOR LIFE
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%% Terms
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% The first feature of a non-terminal is the term that corresponds to it;
+%%% vars designate the environment of the expression
+%%% cons is a boolean that tells whether the expression is a simple constructor
+%%% or not.
+
+dynamic(term) ?
+
+term( T, vars => Vars, cons => Cons) --> 
+
+	%% The token encountered is a constructor
+
+	[construct(Term)],!,  
+	(
+	    %% term with attributes
+
+	    attributes(Term, Conds, AuxTerm,
+	               vars => Vars ),
+	    { 
+		(
+		    Conds :== succeed, !,
+		    T = Term
+		;
+		    T = `( Term |(Conds, AuxTerm = Term) )
+		),
+		Cons = false
+	    }
+	; 
+	    %% no attributes
+	    { T = Term, Cons = true }
+	), 
+	! .
+
+term( T, vars => Vars, cons => false) --> 
+
+	%% The token encountered is a variable
+
+	[variable(V)],!,
+	{ get_variable(V,Var,Vars) },  %% keeping track of the environment 
+	%% of an expression
+	( 
+	    %% there are attributes (application)
+
+	    attributes(Term, Conds, AuxTerm, vars => Vars ),
+	    {
+	        !,
+	        (
+	            Conds :== succeed, !,
+		    T = `meta_apply(Var, Term)
+		;
+	            T = `( R | (Conds, Term = AuxTerm,
+				R = meta_apply(Var,Term )))
+		)
+	    }
+	; 
+	    %% no attributes
+
+	    { T = Var }
+	) .
+
+
+term( T, vars => Vars, cons => false) --> 
+	
+	%% The term is a list
+
+	liste(X, vars => Vars ),!,
+	( 
+	    attributes(X, Conds, X, vars => Vars ),
+	    {
+	        Conds :== succeed, !,
+		T = X
+	    ;
+	        T = `( X | Conds)
+	    }
+	; 
+	    { T = X }
+	), 
+	! .
+term( T, vars => Vars, cons => false) --> 
+
+	%% The term is a disjunction
+
+	disjunction(X, vars => Vars),  
+	( 
+	    attributes(X, Conds, X, vars => Vars),
+	    {
+	        Conds :== succeed, !,
+		T = X
+	    ;
+	        T = `(X |Conds)
+	    }
+	; 
+	    { T = X }
+	), 
+	! .
+
+syntact_object(lambda) ?
+term( T, vars => Vars, cons => false) --> 
+	["lambda"],!,  
+	attributes( InScopeTerm, Conds, _, vars => LVars),
+	expr( T1, vars => LVars&@(ContextVars), max => 0, mask => 0),
+	{  
+            Args = features(InScopeTerm),
+	    Env = feats(ContextVars),
+	    T = lambda_exp(expr => T1, env => Env,
+	                   args => Args)&InScopeTerm, 
+	    Cons = false,
+	    put_in_context(ContextVars, Vars)
+	} .
+
+
+syntact_object(let) ?
+syntact_object(in) ?
+term( T, vars => Vars, cons => false) --> 
+	["let"],!,
+	[variable(X)],
+	{ get_variable(X,Var,LVars)},
+	[atom(=)],
+	expr( T1, vars => Vars, max => 1200, mask => 0),
+	["in"],
+	expr( T2, vars => LVars&@(ContextVars), max => 0,  mask => 0),
+	{
+	    Env = feats(ContextVars),
+	    T3 = lambda_exp(Var, expr => T2, env => Env,
+	                    args => [1]), 
+	    T = `meta_apply(T3,@(T1)),
+	    Cons = false,
+	    put_in_context(ContextVars, Vars)
+	} .
+
+syntact_object(if) ?
+syntact_object(then) ?
+syntact_object(else)  ?
+term( T, vars => Vars, cons => false) --> 
+	["if"],!,
+	expr( T1, vars => Vars, max => 999, mask => 0),
+	(
+	    ["then"],!,
+	    expr( Term2, vars => Vars, max => 999, mask => 0),
+	    { T2 = `(true | Term2) }
+	;
+	    { T2 = true}
+	),
+	(
+	    ["else"],!,
+	    expr( Term3, vars => Vars, max => 999, mask => 0),
+	    { T3 = `(true | Term3) }
+	;
+	    { T3 = true}
+	),
+	{ T = `cond(T1,T2,T3)} . 
+%%	{ T = `cond((true|T1),T2,T3)} . 
+
+%%%
+%%% Attributes
+%%%
+%%% 
+
+%%% Term is a reference to the root that bears the attributes;
+%%% CondOut is a conjunction of terms like " project(expr1,AuxTerm) = expr2 "
+%%% AuxTerm is unified with Term once the projections are performed.
+
+attributes( Term, CondOut, AuxTerm, vars => Vars ) --> 
+	["("], 
+	list_attributes( Term, AuxTerm, vars => Vars,
+	                 succeed, CondOut, oldnb => 1) .
+
+
+%%% oldnb and newnb are used for numerical attributes
+
+list_attributes( Term, AuxTerm, vars => Vars,
+	         CondIn, CondOut, oldnb => ON, newnb => NN ) -->  
+attribute( Term, AuxTerm, vars => Vars,
+	   CondIn, CondInt, oldnb => ON , newnb => NN1),
+	(
+	    [")"] , { !, CondOut = CondInt }
+	;
+	    [atom(,)], 
+	    list_attributes( Term, AuxTerm, vars => Vars, 
+			     CondInt, CondOut, oldnb => NN1, newnb => NN)
+	) .
+
+attribute( Term, AuxTerm, vars => Vars,
+	   CondIn, CondOut, oldnb => ON , newnb => NN) --> 
+	expr( X, vars => Vars , cons => Cons,
+	      mask => 9),
+	(
+	    [atom(=>)],!,
+	    expr( Y, vars => Vars, mask => 1),
+	    {
+		(
+		    Cons,!,
+		    project(X,Term) = Y,
+		    CondIn = CondOut
+		;
+		    CondOut = ((project(X,AuxTerm) = Y) virgule CondIn)
+		), 
+		NN = ON
+	    }
+	;
+	    { project(ON,Term) = X, NN=ON+1, CondIn = CondOut}
+	).
+
+%%%
+%%% Lists 
+%%% 
+
+liste(L, vars => Vars )    --> 
+	["["],!,
+	( 
+	    ["]"], { !, L = [] } 
+	; 
+	    end_list(L, vars => Vars )
+	) .
+
+liste(L, vars => Vars )    --> 
+	["[|"],!,
+	expr( B, vars => Vars, mask => 0 ),
+	["]"],
+	{ L = cons(2 => B)} .
+
+liste(cons, vars => Vars )    --> 
+	["[|]"] .
+
+end_list(L, vars => Vars ) --> 
+	expr( A, vars => Vars, mask => 5),
+	(
+	    ["]"], { !, L = [A]}
+	;
+	    [atom(,)],!, 
+	    end_list(B,  vars => Vars ),
+            { L = [A|B] }
+	;
+	    [atom(|)],!,
+	    expr( B, vars => Vars, mask => 0 ),
+	    ["]"],
+	    { L = [A|B] }
+	;
+	    ["|]"],
+	    { L = cons(A) }
+	) .
+
+%%%
+%%% disjunctions
+%%%
+
+disjunction(L, vars => Vars ) --> 
+	["{"],
+	( 
+	    ["}"], { !, L =`{}} 
+	; 
+	    end_disjunction(L, vars => Vars )
+	) .
+
+end_disjunction(L, vars => Vars ) --> 
+	expr( A, vars => Vars, mask => 2),
+	(
+	    ["}"], { !, L = `{A} }
+	;
+	    [atom(;)],!, 
+	    end_disjunction(B, vars => Vars ),
+            { L = `{A|B} }
+	;
+	    [atom(|)],
+	    expr( B, vars => Vars, mask => 0 ),
+	    ["}"],
+	    { L = `{A|B} }
+	) .
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%% expressions
+%%
+%% expressions accept dynamically defined operators. The parse tree is obtained
+%% by reading the list of tokens once, from left to right.
+%%
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% the max feature is the maximum possible precedence of the expression;
+%%% the tree feature is the syntactic tree of the expression: a psi term;
+%%% Mask indicate whether commas, semicolons, and | may be
+%%% considered as operators or just as syntactic objects, in the context of
+%%% the expression.
+
+expr( Tree, cons => Bool, vars => Vars, 
+      mask => Mask, max => Max )    -->
+	start_expr( T, cons => Bool1, vars => Vars,
+		    max => Max, mask => Mask),
+	end_expr( Tree, cons => Bool2, vars => Vars,
+		  left_expr => T, max => Max, mask => Mask ),
+	{ Bool = Bool1 and Bool2 }.
+
+
+start_expr( Tree, cons => Cons, vars => Vars,
+            mask => Mask) -->
+prefix_op( M, Operator, right_strict => S, max => 1200),
+	{ Tree  = Operator},
+	(
+            ["("|_] is dcg, !,
+	    attributes(Tree, vars => Vars ),
+	    { Cons = false }
+	;
+	    
+	    %% the operator is followed by an expression
+	    
+	    expr( T, vars => Vars, max => preced(S,M),
+	          mask => Mask ),
+	    { 
+	        !,
+		project(1,Tree) = T,
+		Cons = false
+	    }
+	;
+	    {cons = true}
+	).
+
+start_expr( Tree, cons => false, vars => Vars) --> 
+	["("], !, 
+	expr( Tree1, vars => Vars, max => 1200) , 
+	[")"],
+	( 
+	    attributes(Term, Conds, AuxTerm, vars => Vars ),
+	    !,
+	    {
+	        Conds :== succeed, !,
+		Tree = `meta_apply(Tree1, Term)
+	    ;
+	        Tree = `( R | (Conds, Term = AuxTerm,
+	                       R = meta_apply(Tree1,Term )))
+	    }
+	; 
+	    { Tree = Tree1 }
+	) .
+
+start_expr( T, vars => Vars, cons => Cons) --> 
+	term( T, vars => Vars, cons => Cons) .
+
+
+end_expr( T, cons => false, vars => Vars,
+          left_expr => L, left_prec => MLeft, max => Max,
+          mask => Mask)  --> 
+sub_expr( T1, vars => Vars, 
+	  left_expr => L, left_prec => MLeft, prec => M, max => Max,
+	  mask => Mask),!,
+end_expr( T, vars => Vars,
+	  left_expr => T1, prec => M, max => Max, 
+	  mask => Mask) .
+
+end_expr( T, cons => true, left_expr => T) --> 
+	[] .
+
+sub_expr( Tree, vars => Vars ,
+          left_expr => L, left_prec => MLeft, prec => N,  max => Max, 
+          mask => Mask) --> 
+	{ MLeft =< preced(LS,M) },
+	post_or_infix_op( Type, M, Operator,
+			  left_strict => LS, right_strict => RS, max => Max,
+			  mask => Mask),
+	(
+	    {   
+		Type :== postfix,!,
+		Tree = Operator & @(L),
+		N = 0
+	    }
+	;
+	    { Type :== infix},
+	    expr( R, vars => Vars, max => preced(RS,M),
+		  mask => Mask),
+	    { 
+		(
+		    Operator :== `:,!,
+		    ( 
+			var(L) or var(R),
+			Tree = ( L&R), !
+		    ;
+			Tree = `(L & R)
+		    )
+		;
+		    Tree = Operator & @(L,R)
+		),
+		N = M
+	    }
+	) .
+
+
+%%
+%% operators: any Life operator may be used. 
+%%
+
+
+prefix_op( P, Operator, right_strict => RS,
+           0 => [C:atom(Operator)|_], max => Max) -->
+	{
+	    has_feature(combined_name(Operator),prefix_table,
+			@(precedence => P, right_strict => RS)),
+	    Max >= P
+	},
+	[TOK] .
+
+%% comma_mask -> 1.
+%% semicolon_mask -> 2.
+%% bar_mask -> 4.
+%% =>_mask -> 8.
+
+post_or_infix_op( Type, P, Operator, left_strict => LS, right_strict => RS,
+	          mask => Mask,
+                  0 => [C:atom(Operator)|_], max => Max) -->
+	{
+	    cond( (Mask /\ 1 =:= 1 and Operator :== ,) or
+		  (Mask /\ 2 =:= 2 and Operator :== ;) or
+		  (Mask /\ 4 =:= 4 and Operator :== `(|)) or
+		  (Mask /\ 8 =:= 8 and Operator :== `(=>)),
+		  fail ),
+	    has_feature(combined_name(Operator),post_infix_table,
+			@( precedence => P,type => Type,
+			   left_strict => LS, right_strict => RS)),
+	    Max >= P
+	},
+	[TOK] .
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%  Some Utilities
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+preced(true,M) -> M-1.
+preced(false,M) -> M.
+
+%%
+%% to recognise whether a variable has already been met in the term
+%%
+%% get_variable("_",Var,Vars) :- !.
+
+get_variable(S,Var,Vars) :- 
+	cond( has_feature(S,Vars),
+	      project(S,Vars) = Var,
+	      cond( has_feature(1,Vars),
+	            get_variable(S,Var,project(1,Vars)),
+		    project(S,Vars) = Var)).
+
+put_in_context(ContextVars,Vars) :-
+	place_variables(features(ContextVars),ContextVars,Vars).
+
+place_variables([],_,_) :- !.
+place_variables([A|B],ContextVars,Vars) :-
+	get_variable(A,project(A,ContextVars),Vars),
+	place_variables(B,ContextVars,Vars).
+
+%%% to get rid of unnecessary succeed statements
+
+non_strict(virgule) ?
+X virgule succeed -> X.
+X virgule Y -> (X,Y).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%  Operators definition
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+module("built_ins") ?
+
+
+%%% changing the definition of op...
+
+dynamic(op) ?
+asserta(( op(A,B,C,functor => C,kind => B,precedence => A) :-
+	  !,
+	  trace(D,E),
+	  (op_parse(A,B,C),!,
+	   trace(D,E) ; trace(D,E),
+	   fail))) ?
+static(op) ?
+
+%%% op_parse is exactly op_2, except that it adds the operator to the
+%%% hash table used by the parser.
+
+
+op_parse(A,B,C) :-
+        nonvar(A),
+        nonvar(B),
+        nonvar(C),
+        C = list,
+        !,
+        op_3(C,A,B).
+op_parse(@,@,A) :-
+        nonvar(A),
+        A = list,
+        !,
+        write_err("*** Error: invalid operator declaration."),
+        nl_err.
+op_parse(A,B,C) :-
+        nonvar(A),
+        nonvar(B),
+        nonvar(C),
+        !,
+        hash_op(A,B,C).
+
+op_parse(A,B,C) :-
+        member(op(A,B,C),ops).
+
+
+%%% hash_op
+%%% puts operators in two different hash tables (one for prefix operators and
+%%% one for the other operators), and gives a warning if there is overloading
+%%% of operators.
+
+hash_op( Precedence, Kind, Functor) :-
+
+	%% extracting information from Kind
+
+        Def = project(Kind,
+	              @(  fx  => @( type => 'parser#prefix',
+		                    right_strict => true),
+		          fy  => @( type => 'parser#prefix',
+		                    right_strict => false),
+			  xf  => @( type => 'parser#postfix', 
+		                    left_strict => true,
+				    right_strict => @),
+		          xfx => @( type => 'parser#infix', 
+		                    left_strict => true, 
+				    right_strict => true),
+		          xfy => @( type => 'parser#infix', 
+		                    left_strict => true, 
+				    right_strict => false),
+		          yf  => @( type => 'parser#postfix', 
+		                    left_strict => false,
+				    right_strict => @),
+		          yfx => @( type => 'parser#infix', 
+		                    left_strict => false, 
+				    right_strict => true)))
+	& @(type => Type, precedence => Precedence),
+	
+	%% checking overloading and adding the definition
+	Name = combined_name(Functor),
+
+        cond( has_feature(Name,
+			  'parser#prefix_table',PrevDef1) or
+	      has_feature(Name,'parser#post_infix_table',PrevDef2 ),
+		
+	      cond(   
+		      equ_op(Def,PrevDef1) or equ_op(Def,PrevDef2),
+		      succeed,    % the definition already exists
+		      (
+			  c_op(Precedence,Kind, Functor),
+			  cond(   % add a new definition
+				  Type :== 'parser#prefix',
+				  'parser#prefix_table'.Name <<- Def,
+				  'parser#post_infix_table'.Name <<- Def
+			      ),
+			  write_err("*** Warning: overloading definition",
+				    " of operator ",
+				    Functor," ***"),nl_err
+		      )
+		  ),
+	      (
+		  c_op(Precedence,Kind, Functor),
+		  cond(   % create a new definition
+			  Type :== 'parser#prefix',
+			  'parser#prefix_table'.Name <<- Def,
+			  'parser#post_infix_table'.Name <<- Def
+		      )
+	      )
+	    ).
+
+equ_op( @( precedence => Precedence1, type => Type1,
+	   left_strict => LS1, right_strict => RS1),
+        Def2) -> Bool |
+	Def2 = @( precedence => Precedence2,
+	          type => Type2, left_strict => LS2, right_strict => RS2),
+	Bool = ( Precedence1 =:= Precedence2 and Type1 :== Type2 
+                 and LS1 :== LS2 and RS1 :== RS2 ) .
+
+
+
+module("parser") ?
+
+%%% Initialization of the two hash_tables:
+
+init_hash_op(op(Precedence, Kind, Functor)) :-
+
+	%% extracting information from Kind
+
+        Def = project(Kind,
+	              @(  fx  => @( type => prefix,
+		                    right_strict => true),
+		          fy  => @( type => prefix,
+		                    right_strict => false),
+			  xf  => @( type => postfix, 
+		                    left_strict => true),
+		          xfx => @( type => infix, 
+		                    left_strict => true, 
+				    right_strict => true),
+		          xfy => @( type => infix, 
+		                    left_strict => true, 
+				    right_strict => false),
+		          yf  => @( type => postfix, 
+		                    left_strict => false),
+		          yfx => @( type => infix, 
+		                    left_strict => false, 
+				    right_strict => true)))
+	& @(type => Type, precedence => Precedence),
+	cond(   % create a new definition
+	        Type :== prefix,
+		prefix_table.combined_name(Functor) <<- Def,
+		post_infix_table.combined_name(Functor) <<- Def
+	    ).
+
+maprel(init_hash_op,ops) ?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%% defining open_close operators
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+open_close_op(A,B,C) :- 
+	syntact_object(A),
+	syntact_object(B),
+	AS = psi2str(A),
+	BS = psi2str(B),
+	(
+	    term( T, vars => Vars, cons => false) --> 
+	    [AS],!,
+	    expr( Tree1, vars => Vars, max => 1200, mask => 0) , 
+	    [BS],
+	    { T = (C) & @(Tree1)}
+	).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%% Dealing with lambda expressions
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+non_strict(meta_apply) ?
+non_strict(lambda_exp) ?
+
+meta_apply(F:lambda_exp,T) -> X |              % application of a lambda
+
+        G = copy_lambda(F),
+	diff_list(features(T),G.args,NewArgs), % for currying
+
+	evalin(T) = G,                         % evaluate the arguments
+	( 
+	    NewArgs :== [], !,
+	    Expr = G.expr,
+	    X = evalin(Expr)
+	;
+	    T.args <- NewArgs,
+	    X = T 
+        ).
+meta_apply(F:meta_apply,T) ->  X |
+	%% application of an application 
+ 	G = evalin(F), X = meta_apply(G,T).
+
+meta_apply(F,T) -> X |                          
+	%% application of a standard
+	%% function 
+	X = apply(functor => F)&T,
+	X = evalin(X).
+
+copy_lambda(F:lambda_exp) -> T |                    
+	%% make a copy of the lambda expression before
+	%% evaluation, and preserve the environment
+	T = copy_pointer(copy_term(F)),
+	restore_global(T.env,F.env).
+
+restore_global([],[]) :- !.
+restore_global([A|As],[B|Bs])  :-
+        A <- B,          
+	restore_global(As,Bs) .
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%% Interface
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+syntax(InFile, OutFile) :-
+        open_in(InFile,S1),
+        open_out(cond(OutFile:<string,
+		      OutFile,
+		      strcon(InFile,"_expr")),
+		 S2),
+        first_statement(S1),
+        close(S1),
+        close(S2).
+
+first_statement(S1) :-
+	FT = first_token,
+	(
+	    FT = [],
+	    !,
+	    open_out("stdout",_),
+	    nl,nl,
+	    write("Empty File"),
+	    nl
+	;
+            read_new_expr( FT, Bool, Expr, T, LeftToken),
+	    cond( Bool,
+		  cond( T :== assertion,
+			(
+			    nl, writeq(Expr),write(".")
+			),
+			(
+			    nl, writeq(Expr),write("?")
+			)),
+		  (
+		      close(S1), 
+		      nl_err,
+		      write_err("Syntax error near line ",S1.line_count,
+			        " in file '",S1.input_file_name,"'"),
+		      nl_err, !, fail
+		  )),
+	    (
+		LeftToken = [],!,
+		open_out("stdout",_),
+		nl,
+		write("*** File '",S1.input_file_name,"'  parsed"),
+		nl 
+	    ;
+		fail
+	    )
+	;
+	    next_statement(S1)
+	).
+
+next_statement(S1) :-
+	(
+            read_new_expr( [copy_term(rest_token)|`next_token], Bool, Expr, 
+			   T, LeftToken),
+	    cond( Bool,
+		  cond(  T :== assertion,
+		         (
+			     nl, nl, writeq(Expr),write(".")
+			 ),
+		         (
+			     nl, nl, writeq(Expr),write(" ?")
+			 )),
+		  (
+		      close(S1),
+		      nl_err,
+		      write_err(
+				   "*** Syntax error near line ",S1.line_count,
+				   " in file '",S1.input_file_name,"'"),
+		      nl_err,
+		      !, fail
+		  )),
+	    (
+		LeftToken = [],!,
+		open_out("stdout",Str),
+		nl,
+		write("*** File '",S1.input_file_name,"' parsed"),
+		nl 
+	    ;
+		fail
+	    )
+	;
+	    next_statement(S1)
+	).
+
+
+read_new_expr( R1, Bool, Expr, T, LeftToken) :- 
+	(
+	    expr( Expr, vars => @,  mask => 0,
+	          0 => R1, rest => R2, max => 1200),
+	    (
+		R2 = ["."|LT], LeftToken = evalin(LT), T = assertion
+	    ;
+	        R2 = ["?"|LT], LeftToken = evalin(LT), T = query
+	    ),
+	    Bool = true,
+	    !
+	;
+	    Bool = false
+	).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+%%% reset default 'C'
+%%%
+reset_C ?
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Utilities
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%% list of the features of a term (parser.lf)
+
+public(feats) ?
+feats(L) -> map( project( 2 => L), features(L)).
+
+
+
+%
+% diff_list(L1,L2,L3): L3 is L2 \ (L1 inter L2) (parser.lf)
+%
+
+public(diff_list) ?
+diff_list([],L2,L2) :- !.
+diff_list(L1:[A|NewL1],L2,RestL2) :-
+	cond( memberAndRest(A,L2,InterRestL2),
+	      diff_list(NewL1,InterRestL2,RestL2),
+	      diff_list(NewL1,L2,RestL2)).
+
+%
+% memberAndRest(A,List,Rest) returns true if A is a member of List, with Rest
+% containing the other members of List. 
+%
+
+public(memberAndRest) ?
+memberAndRest(A,[],Rest) -> false.
+memberAndRest(A,[B|C],Rest) ->
+	cond( A = B, 
+	      (true | Rest = C),
+	      memberAndRest(A,C,OtherRest) | Rest = [B|OtherRest] ).
+
+
+

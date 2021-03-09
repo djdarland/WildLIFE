@@ -1,0 +1,95 @@
+%% Version 1
+%% fore^ts type'es
+%% !! this won't work with disjunctions in rules
+
+match(Var,Inst):-
+  Var:==list,!, %libera
+  Var=Inst.
+match([],[]).
+match([foret(Key,Val)|T],L):- Val:==list,!,	%remarquez  Key
+  matchone(T,L,Key,Foret_rez),
+  Val=Foret_rez.
+match([foret(_,X)|T],L):- 
+  diff(L,X,Lrest),        
+  match(T,Lrest).
+match([Tr:tree|T],[Tr1|T1]):-
+  matchtree(Tr,Tr1),
+  match(T,T1).
+match([H|T1],[H|T2]):-
+  match(T1,T2).
+
+%% 1 parame`tre de plus
+%% matchone(mode`le, instance, type de la fore^t, valeur de la fore^t(O))
+matchone(L1,L2,_,[]):- match(L1,L2).
+matchone(L1,[Tr:tree(H)|T],Key,[Tr|F_rez]):-
+  H:=<Key,
+  matchone(L1,T,Key,F_rez).
+
+diff(X,[],X).
+diff([H|T1],[H|T2],Rez):- !,
+  diff(T1,T2,Rez).
+
+
+::tree(@,list,list). 
+::foret(@,list).     
+
+
+matchtree(tree(Root,Left,Right),tree(Root,L1,R1)):-
+  match(Left,L1),
+  match(Right,R1).
+
+
+const(T:tree(Root),L1,R1)->
+  tree(Root,
+       cond(Left:project(2,T):==list,
+            insforet(L1),
+            append(insforet(L1),Left)),
+       cond(Right:project(3,T):==list,
+            insforet(R1),
+            append(insforet(R1),Right))).
+
+insforet([])->[].
+insforet([foret(2=>X)|T])->
+  append(X,insforet(T)).
+insforet([H|T])->
+  [H|insforet(T)].
+
+
+my_apply(Rulename:string,Stk:list):-
+  rule(Rulename,Patt,Res),
+  match(Patt,Stk),
+  write(Rulename,"-->",Res).
+
+
+
+%-----Re`gles-----
+rule("bidon",
+  [F1:foret,X1:tree(a),FA:foret(y),X2:tree(b,[])],
+  [F1,const(X2,[X1,FA],[])] ).
+%-Ex: my_apply("bidon", [_,_,_,tree(c,[b,c],[]),tree(y),tree(y),tree(c,[],[t,y])] )?
+
+rule("det_nom",
+  [F1:foret,X1:tree(det),FA:foret(adjq),X2:tree(nom,[])],
+  [F1,const(X2,[X1,FA],[])] ).
+%-Ex: my_apply("det_nom",[_,_,_,tree(det,[1],[]),tree(adjq,[],[2]),tree(adjq,3=>[3]),tree(nom)])?
+
+rule("sujet",
+  [F0:foret,X1:tree({nom;pper}),
+   X2:tree(verb,[FN:foret(ne),FF:foret({pper;etre;avoir})])
+  ],
+  [F0,const(X2,[X1],[])] ).
+%-Ex: 
+
+
+%% signature plus grande:
+
+c <| {a;b}.
+
+cls:={nom;det;adj;pron;verbe}.
+det:={art;nonq}.
+adj:={qual}.
+qual:={adjq}.
+pron:={pper;pdem;pposs;pint}.
+verbe:={verb;etre;avoir;aller;ppass;ppres;infi}.
+
+

@@ -1,0 +1,8 @@
+#!/bin/csh -f
+# Test program for Wild-LIFE
+# Runs the entire test-suite and generates a log file
+cp ../Source/wild_life ~/bin
+set umask=666
+rm -f editdiffs.sh
+./check_edit `ls LF` | tee editdiffs.sh
+chmod u+x editdiffs.sh

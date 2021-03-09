@@ -1,0 +1,46 @@
+
+*** Yes
+> > 
+*** Yes
+X = seal.
+--1> 
+*** Yes
+X = penguin.
+--1> 
+*** No
+> 
+*** Yes
+A = lion, B = ruminant.
+--1> 
+*** Yes
+A = tiger, B = antelope.
+--1> 
+*** No
+> 
+*** Yes
+X = cetaceous, Y = sea.
+--1> 
+*** Yes
+X = seal, Y = ice.
+--1> 
+*** Yes
+X = penguin, Y = ice.
+--1> 
+*** No
+> 
+*** Yes
+X = seal.
+--1> 
+*** Yes
+X = penguin.
+--1> 
+*** No
+> 
+*** Yes
+> 
+*** No
+> 
+*** No
+> 
+*** Yes
+> 

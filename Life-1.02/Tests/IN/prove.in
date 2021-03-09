@@ -1,0 +1,14 @@
+call_once(X)?
+X= !?
+
+X= (write(1),!,write(2))?
+
+X=((A=1;A=2;A=3),write(A),fail)?
+X=(A={1;2;3},write(A),fail)?
+Y=(A={1;2;3},write(A),fail)?
+X=Y?
+.
+call_once(succeed)?
+call_once(true)?
+call_once((true,true))?
+

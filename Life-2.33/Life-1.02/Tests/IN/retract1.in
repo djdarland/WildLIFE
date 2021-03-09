@@ -1,0 +1,4 @@
+retract(p(X)),b,write(X)?
+;
+;
+

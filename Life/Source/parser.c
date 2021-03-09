@@ -405,7 +405,7 @@ psi_term parse_list(typ,e,s)
 psi_term read_psi_term()
 {
   psi_term t,t2,t3;
-  char s[10];
+  char s[22];  // Modified 3/8/2021  DJD to prevent overflow - compiler warning
   long count=0,f=TRUE,f2,v;
   ptr_psi_term module;
 

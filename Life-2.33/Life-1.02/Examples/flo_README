@@ -1,0 +1,9 @@
+
+
+The demo program flowers.lf use fonts that may not
+exist on all X systems.  Here's one way to fix the situation.
+
+In the beginning of flo_custom.lf, change the fonts provided: some suggestions
+are given in the file. 
+
+The Courier fonts should exist on most systems.

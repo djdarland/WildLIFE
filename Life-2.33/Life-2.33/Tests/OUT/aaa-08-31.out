@@ -1,0 +1,16 @@
+
+*** Yes
+> > 
+*** Yes
+> 
+*** Yes
+
+*** Yes
+--1> 
+third(_A,_B) :-
+        write(third),
+        nl,
+        _A = [@,@,_B|@].
+
+*** Yes
+--1> 

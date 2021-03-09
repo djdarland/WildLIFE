@@ -1,0 +1,27 @@
+ write('loading done')?
+
+%%%%%%%%%% psi-terms without coreference
+
+X=ww(a=>1,b=>2),  Y=copy_term(X)?
+.
+%%%%%%%%%%% psi-termes with non cyclic coreference 
+
+B=person(id=>S:string,wife(name=>S))?
+A=copy_term(B)?
+.
+
+
+N=person(id    =>name(  first=>string,
+                        last=>X:string),
+         father=>person(id=>name(last=>X&string)))?
+M=copy_term(N)?
+
+%%%%%%%%%%% psi-termes with cyclic coreference
+%
+%A=X:person(     name  =>id(     first=>string,
+%                                last=>S:string),
+%                spouse=>person( name=>id(last=>S),
+%                                spouse=>X))?
+%B=copy_term(A)?
+
+

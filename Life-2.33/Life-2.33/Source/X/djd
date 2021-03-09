@@ -1,0 +1,24 @@
+Wild_Life Interpreter Version 2.30.07 Sat Dec 24 03:05:02 CST 2016
+Copyright (C) 1991-93 DEC Paris Research Laboratory
+Extensions, Copyright (C) 1994-1995 Intelligent Software Group, SFU
+*** Loading File "life_demo.lf"
+*** Loading File "~/life_local/Lib/xtools.lf"
+*** Loading File "~/life_local/Lib/xtools_init.lf"
+*** Loading File "~/life_local/Lib/x.lf"
+*** Loading File "~/life_local/Lib/x_public.lf"
+*** Loading File "~/life_local/Lib/x_constants.lf"
+*** Loading File "~/life_local/Lib/x_tables.lf"
+*** Loading File "~/life_local/Lib/x_getset.lf"
+*** Loading File "~/life_local/Lib/x_pred.lf"
+*** Loading File "~/life_local/Lib/xtools_b.lf"
+*** Loading File "~/life_local/Lib/xtools_c.lf"
+*** Loading File "~/life_local/Lib/xtools_l.lf"
+*** Loading File "~/life_local/Lib/xtools_constants.lf"
+*** Loading File "~/life_local/Demo/xtools_utils.lf"
+*** File "~/life_local/Lib/xtools.lf" is already loaded.
+
+	Type 'demo?' to open the LIFE demo window
+
+Loaded customizing file from current directory.
+> 
+*** Exiting Wild_Life  [0.067s cpu, 0.000s gc (0.0%)]

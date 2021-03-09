@@ -1,0 +1,8 @@
+1,3c1,3
+< *** Syntax error: duplicate feature 1
+< *** Syntax error: duplicate feature foo
+< *** Syntax error: duplicate feature 2
+---
+> *** Syntax error: duplicate feature 1 (near line 3)
+> *** Syntax error: duplicate feature foo (near line 4)
+> *** Syntax error: duplicate feature 2 (near line 5)

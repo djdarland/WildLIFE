@@ -1,0 +1,3 @@
+*** Error: square root of negative number in sqrt(-1).
+*** Error: division by zero in 1 / 0.
+*** Error: logarithm of zero in log(0).

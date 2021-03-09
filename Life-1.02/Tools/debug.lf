@@ -1,0 +1,563 @@
+% Debugger for predicates by source code transformation.
+%
+% Author: Richard Meyer
+%
+% Date: June 16th 1993
+%
+% USE: 'debug(Name,Level,Verbose)'
+% AFTER all the clauses for 'Name' have been defined.
+% WARNING: Will corrupt dynamic predicates and functions.
+%
+%	$Id: debug.lf,v 1.2 1994/12/08 23:50:39 duchier Exp $	
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%		Code common to both predicates and functions.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+module("debug")?
+public(debug,undebug,goal)?
+
+
+%%%write("
+%%%DEBUG: source transformation to provide spy-points.
+
+%%%Use:
+%%%	> import(""debug"")?
+
+%%%	> debug(Name,Level,Verbose)?
+
+%%%		Name	 = name of function or predicate to debug
+%%%		Level 		:= {fail;clause;goal}
+%%%		Verbose 	:= {true;false}
+
+%%%	> undebug(Name)?
+
+
+%%%Read: 'Tools/Debug.doc' for more information.
+
+%%%")?
+
+
+
+%
+% Debug - top-level entry point
+%
+
+debug(What,Level,Verbose) :-
+	Level={clause;fail;goal},!,
+	Verbose={true;false},!,
+
+	(
+		is_function(What),
+		!,
+		Type=(->),
+		S=function,
+		RW=rewrite_func
+	;
+		is_predicate(What),
+		!,
+		Type=(:-),
+		S=predicate,
+		RW=rewrite_pred
+	;
+		write_err("Debug: ",What," is not a predicate or a function"),
+		nl,
+		fail
+	),
+
+	dynamic(What),
+
+	(
+		get_old_clauses(What,Clauses),
+		!
+	;
+		read_and_retract(What,Clauses,Type),
+		assert(old_clauses(What,Clauses,Type,S))
+	),
+
+	(
+		Clauses:==[],
+		!,
+		write_err("*** No clauses for '",What,"'"),
+		nl_err
+	;
+		write("Added debugging code to ",S," '",What,
+		      "': level=",Level,
+		      ", verbose=",Verbose,
+		      ", clauses=",length(Clauses)),
+		nl,
+		RW=@(Clauses,What,Level,Verbose),
+		RW
+	).
+
+
+
+%
+% Undebug
+%
+
+undebug(What) :-
+	get_old_clauses(What,Clauses),
+	!,
+	assert_list(Clauses),
+	retract(old_clauses(What) :- succeed).
+
+undebug(What) :- write("Debug: no stored clauses for ",What),nl.
+
+assert_list([H|T]) :- !,assert(H),assert_list(T).
+assert_list([]).
+
+
+
+%
+% Restore the old clauses for a predicate or function
+%
+
+dynamic(old_clauses)?
+
+get_old_clauses(What,Clauses) :-
+	clause(old_clauses(What,Clauses,Type,Sort):-succeed),
+	!,
+	write("Debug: restored original clauses for ",Sort," '",What,"'"),
+	nl,
+	read_and_retract(What,ModifiedClauses,Type).
+
+
+
+%
+% Output a trace message
+% Note: this could be improved with indenting.
+%
+
+prefix(X) :- write("<",X,"> ").
+
+debug_indent(0) :- !.
+debug_indent(N) :- write("  "),debug_indent(N-1).
+
+
+
+%
+% Take verbose flag into account
+%
+
+write_term(T,V) -> cond(V,T,root_sort(T)).
+
+
+
+%
+% Read and retract the original clauses
+%
+
+read_and_retract(P,[H|T],Type) :-
+	R=root_sort(P),
+	H=root_sort(Type),
+	H.1=R,
+	H.2=@,
+%	write("H=",H),nl,
+	clause(H),
+	!,
+	retract(H),
+	read_and_retract(P,T,Type).
+
+read_and_retract(P,[],T).
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%		P R E D I C A T E S
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%
+% Rewrite a predicate
+%
+
+
+rewrite_pred(Clauses,Pred,Level,Verbose) :-
+	cond(Level :\== fail,call_pred(Pred,Verbose)),
+	rewrite_clauses(Clauses,Pred,Level,Verbose,1),
+	fail_pred(Pred,Verbose),
+	! .
+
+rewrite_pred(C,Pred,L,V) :-
+	write_err("*** Debug failed for '",Pred,"': program corrupted."),
+	nl_err.
+
+
+
+%
+% Call predicate
+%
+
+call_pred(P,V) :-
+	R=root_sort(P),
+	M=write_term(R,V),
+	assert(R :- (prefix("CALL"),write(M,": entry call"),nl,fail)).
+
+
+
+%
+% Fail predicate
+%
+
+fail_pred(P,V) :-
+	R=root_sort(P),
+	M=write_term(R,V),
+	assert(R :- (prefix("FAIL"),write(M,": fails"),nl,fail)).
+
+%
+% Rewrite clauses
+%
+
+rewrite_clauses([H|T],Pred,Level,Verbose,N) :-
+	!,
+	H=(Head:-Body),
+	cond(Level :\== fail,try_clause(Pred,N)),
+
+	rewrite_body(Body,Body2,Pred,Level,Verbose,N,1),
+
+	cond(Level :== fail,
+	     NewBody=Body2,
+	     NewBody=(Body2,prefix("SUCC"),write(Pred,"#",N,": succeeds"),nl)
+	),
+
+	assert(Head :- NewBody),
+	rewrite_clauses(T,Pred,Level,Verbose,N+1).
+
+rewrite_clauses([],Pred,Level,Verbose,N).
+
+
+
+%
+% Try clause
+%
+
+try_clause(Pred,N) :-
+	R=root_sort(Pred),
+	cond(N>1,
+	     assert(Pred :- (	prefix("REDO"),
+				write(R,": try clause #",N),
+				nl,
+				fail))).
+
+
+
+%
+% Rewrite the body of a clause
+%
+
+non_strict(rewrite_body)?
+
+rewrite_body(Top,Top,Pred,Level,Verb,N,M) :-
+	Top :== @,
+	!.
+
+rewrite_body((A,B),(A2,B2),Pred,Level,Verb,N,M) :-
+	!,
+	rewrite_body(A,A2,Pred,Level,Verb,N,M),
+	NM=M+1,
+	rewrite_body(B,B2,Pred,Level,Verb,N,NM).
+
+rewrite_body((A;B),(A2;B3),Pred,Level,Verb,N,M) :-
+	!,
+	rewrite_body(A,A2,Pred,Level,Verb,N,M),
+	rewrite_body(B,B2,Pred,Level,Verb,N,M),
+	cond(Level :== goal,
+	     B3=(prefix("REDO"),
+		 write(Pred,"#",N,": retry disjunction"),
+		 nl,
+		 B2),
+	     B3=B2).
+
+rewrite_body(!,C,Pred,Level,Verb,N,M) :-
+	!,
+	C=(!,(
+		cond(Level:==fail,
+		     succeed,
+		     (	prefix("CUT!"),
+			cond(Level:==goal,
+			     write(Pred,"#",N,".",M,": cut!"),
+			     write(Pred,"#",N,": cut!")),
+			nl)
+		)
+	     ;
+		prefix("FAIL"),
+		write(Pred,"#",N,": fails and alternatives cut"),
+		nl,
+		fail
+	     )
+	).
+
+
+rewrite_body(C:cond(A),D:cond(A),Pred,Level,Verb,N,M) :-
+	!,
+	cond(has_feature(2,C,T),
+	     (	rewrite_body(T,T2,Pred,Level,Verb,N,M),
+		D.2=T)),
+
+	cond(has_feature(3,C,F),
+	     (	rewrite_body(F,F2,Pred,Level,Verb,N,M),
+		D.3=F)).
+	
+
+% Default:
+rewrite_body(A,A2,Pred,Level,Verb,N,M) :-
+	cond(Level:==goal,
+	     A2=(	prefix("GOAL"),
+			write(Pred,"#",N,".",M,": ",write_term(A,Verb)),
+			nl,
+			A),
+	     A2=A).
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%		F U N C T I O N S
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%
+% Rewrite a function
+%
+
+rewrite_func(Rules,Func,Level,Verbose) :-
+%	cond(Level :\== fail,call_func(Func,Verbose)),
+	rewrite_rules(Rules,Func,Level,Verbose,1),
+	fail_func(Func,Verbose),
+	! .
+
+rewrite_func(C,Func,L,V) :-
+	write_err("*** Debug failed for '",Func,"': program corrupted."),
+	nl_err.
+
+
+%
+% Call function
+% Can't implement this without renaming - so won't
+
+%call_func(P,V) :-
+%	R=root_sort(P),
+%	M=write_term(R,V),
+%	assert(R :- (prefix("CALL"),write(M,": entry call"),nl,fail)).
+
+%
+% Fail function:
+%
+
+fail_func(P,V) :-
+	R=root_sort(P),
+	M=write_term(R,V),
+	assert((R -> @ | prefix("FAIL"),write(M,": fails"),nl,fail)).
+
+
+
+%
+% Rewrite rules
+%
+
+rewrite_rules([H|T],Func,Level,Verbose,N) :-
+	!,
+	rewrite_rule(H,Func,Level,Verbose,N),
+	rewrite_rules(T,Func,Level,Verbose,N+1).
+
+rewrite_rules([],Func,Level,Verbose,N).
+
+
+%
+% Debug messages for functions:
+%
+
+func_fail(M,N) :-
+	prefix("FAIL"),
+	write(M,": fails at clause #",N),
+	nl,
+	fail.
+
+eval_fail(M,N) :-
+	prefix("FAIL"),
+	write(M,": evaluation at clause #",N),
+	nl,
+	fail.
+
+body_fail(M,N) :-
+	prefix("FAIL"),
+	write(M,": such-that goals at clause #",N),
+	nl,
+	fail.
+
+
+
+%
+% Rewrite a function rule
+%
+
+non_strict(rewrite_rule)?
+
+
+
+% Goal level
+
+rewrite_rule((Pattern -> W),Func,goal,Verbose,N) :-
+	W :== `(|) ,
+	!,
+	W= `(Value | Body),
+	M=write_term(Pattern,Verbose),
+	rewrite_body(Body,Body2,Func,goal,Verbose,N,1),
+	Check=( Succ<<-@,
+	(
+		prefix("PATT"),
+		write(M,": pattern matches clause #",N),
+		nl,
+		Succ<<-patt,
+
+		Result=Value,
+		prefix("EVAL"),
+		write(M,": clause #",N,", result=",
+			`write_term(Result,Verbose)),
+		nl,
+		Succ<<-evall,
+
+		Body2,
+		prefix("SUCC"),
+		write(M,": clause #",N),
+		nl,
+		Succ<<-succ
+	;
+		`(Succ:==succ),
+		!,
+		fail
+	;
+		`(Succ:==evall),
+		!,
+		body_fail(M,N)
+	;
+		`(Succ:==patt),
+		!,
+		eval_fail(M,N)
+	;
+		func_fail(M,N)
+	)),
+	assert((Pattern-> Result | Check)).
+
+
+
+rewrite_rule(Pattern -> Value,Func,goal,Verbose,N) :-
+	!,
+	M=write_term(Pattern,Verbose),
+	Check=(	Succ<<-@,
+	(
+		prefix("PATT"),
+		write(M,": pattern matches clause #",N),
+		nl,
+		Succ<<-patt,
+
+		Result=Value,
+		prefix("EVAL"),
+		write(M,": clause #",N,", result=",
+			`write_term(Result,Verbose)),
+		nl,
+		Succ<<-evall
+	;
+		`(Succ:==evall),
+		!,
+		fail
+	;
+		`(Succ:==patt),
+		!,
+		eval_fail(M,N)
+	;
+		func_fail(M,N)
+	)),
+	assert((Pattern-> Result | Check)).
+
+
+
+
+
+
+% Clause level
+
+rewrite_rule((Pattern -> W),Func,clause,Verbose,N) :-
+	W :== ` | ,
+	!,
+	W= `(Value | Body),
+	M=write_term(Pattern,Verbose),
+	Result=Value,
+	Check=( Succ<<-@,
+	(	Body,
+		prefix("SUCC"),
+		write(M,": clause #",N,", result=",
+			`write_term(Result,Verbose)),
+		nl,
+		Succ<<-succ
+	;
+		`(Succ:==succ),
+		!,
+		fail
+	;
+		func_fail(M,N)
+	)),
+	assert((Pattern-> Result | Check)).
+
+
+
+rewrite_rule(Pattern -> Value,Func,clause,Verbose,N) :-
+	!,
+	M=write_term(Pattern,Verbose),
+	Result=Value,
+	Check=(	Succ<<-@,
+	(	prefix("EVAL"),
+		write(M,": clause #",N,", result=",
+			`write_term(Result,Verbose)),
+		nl,
+		Succ<<-evall
+	;
+		`(Succ:==evall),
+		!,
+		fail
+	;
+		func_fail(M,N)
+	)),
+	assert((Pattern-> Result | Check)).
+
+
+
+% Fail level
+
+rewrite_rule((Pattern -> W),Func,fail,Verbose,N) :-
+	W :== ` | ,
+	!,
+	W= `(Value | Body),
+	M=write_term(Pattern,Verbose),
+	Check=(	Succ<<-@,
+	(	Body,
+		Succ<<-succ
+	;
+		`(Succ:==@),
+		func_fail(M,N)
+	)),
+	assert((Pattern-> Value | Check)).
+
+
+
+rewrite_rule((Pattern -> Value),Func,fail,Verbose,N) :-
+	!,
+	M=write_term(Pattern,Verbose),
+	Check=(	Succ<<-@,
+	(	Succ<<-succ
+	;
+		`(Succ:==@),
+		func_fail(M,N)
+	)),
+	assert((Pattern-> Value | Check)).

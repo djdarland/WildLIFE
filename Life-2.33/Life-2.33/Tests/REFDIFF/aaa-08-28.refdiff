@@ -1,0 +1,4 @@
+11c11
+< *** Yes  [0.000s cpu, 80 goals, 15640 stack, 473528 heap]
+---
+> *** Yes  [0.000s cpu, 80 goals, 15640 stack, 473360 heap]

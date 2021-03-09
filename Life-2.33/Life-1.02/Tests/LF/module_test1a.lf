@@ -1,0 +1,24 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+module("lists")?
+public(app,rev)?
+
+app(L,[]) -> L.
+app(L,[H|T]) -> [H|app(L,T)].
+
+rev([]) -> [].
+rev([H|T]) -> app([H],rev(T)).
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+module("jolly")?
+open("import")?
+public(app)?
+dynamic(app)?
+
+app([],L) -> L.
+
+import_clauses(for => lists#app,
+               replacing => [(lists#app,app)])?
+
+app(X,Y) -> (X,Y).

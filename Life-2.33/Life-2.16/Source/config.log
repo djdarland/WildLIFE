@@ -1,0 +1,28 @@
+This file contains any messages produced by compilers while
+running configure, to aid debugging if configure makes a mistake.
+
+/usr/lib64/gcc/x86_64-suse-linux/4.8/../../../../x86_64-suse-linux/bin/ld: cannot find -ldnet
+collect2: error: ld returned 1 exit status
+/usr/lib64/gcc/x86_64-suse-linux/4.8/../../../../x86_64-suse-linux/bin/ld: cannot find -ldnet_stub
+collect2: error: ld returned 1 exit status
+/tmp/cceXB0k0.o: In function `t':
+/home/dennis/mastersource/lang/Life/Life-1.02.work1/Source/configure:1192: undefined reference to `t_accept'
+collect2: error: ld returned 1 exit status
+/usr/lib64/gcc/x86_64-suse-linux/4.8/../../../../x86_64-suse-linux/bin/ld: cannot find -lsocket
+collect2: error: ld returned 1 exit status
+configure: In function 't':
+configure:1339:1: warning: incompatible implicit declaration of built-in function 'trunc' [enabled by default]
+ trunc()
+ ^
+configure:1339:1: error: too few arguments to function 'trunc'
+gcc: error: conftest.c: No such file or directory
+configure: In function 't':
+configure:1492:1: warning: incompatible implicit declaration of built-in function 'bzero' [enabled by default]
+ bzero()
+ ^
+configure:1492:1: error: too few arguments to function 'bzero'
+/tmp/ccFe7OHv.o: In function `t':
+/home/dennis/mastersource/lang/Life/Life-1.02.work1/Source/configure:1542: undefined reference to `dbminit'
+collect2: error: ld returned 1 exit status
+/usr/lib64/gcc/x86_64-suse-linux/4.8/../../../../x86_64-suse-linux/bin/ld: cannot find -ldbm
+collect2: error: ld returned 1 exit status

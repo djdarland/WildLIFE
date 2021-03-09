@@ -1,0 +1,6 @@
+A = F(B), F = /(2 => A)?
+A = 5?
+
+%% my output differs from book but mine appears correct
+%% on first case for mine I have real~ where book has A
+%% in second I have 5 instead of A

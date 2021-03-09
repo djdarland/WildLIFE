@@ -1,0 +1,10 @@
+dynamic(p)?
+
+p(1).
+p(2).
+p(3).
+p(4).
+p(5).
+
+b :- retract(p(X)), !, write(X), nl.
+

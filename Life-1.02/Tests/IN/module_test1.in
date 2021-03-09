@@ -1,0 +1,6 @@
+open("jolly")?
+
+write(app([],hello)),nl ?
+write(app([a,b,c],[d,e,f])),nl ?
+write(app(good,bye)),nl ?
+

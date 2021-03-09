@@ -1,0 +1,470 @@
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%
+%                       UTILITIES FOR C TOKENIZER
+%                       -------------------------
+%
+%
+%  AUTHOR : Arnaud Venet                        CREATION : July 28th 1993
+%  ------                                       --------
+%
+%
+%                            ---------------                        
+%                    
+%                   Last modification : October 21st 1993 
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  (C) Digital Equipment Corporation 1993 - 1994
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+str2list(String) -> make_list_from_string(String, strlen(String)).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+make_list_from_string("", 0) -> [].
+
+
+make_list_from_string(String, Length) ->
+  [asc(substr(String, 1, 1)) | 
+   make_list_from_string(substr(String, 2, Length - 1), Length - 1)].
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+chr_of(end_of_file) -> end_of_file.
+
+chr_of(Char) -> chr(Char).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+alpha(end_of_file) :-
+  !,
+  fail.
+
+alpha(Code) :-
+  cond((Code :== asc("_")) 
+       or (Code >= 97 and Code =< 122) 
+       or (Code >= 65 and Code =< 90),
+    succeed,
+    fail
+  ).
+
+
+digit(Base, end_of_file) :-
+  !,
+  fail.
+
+digit(decimal, Code) :-
+  !,
+  Code >= 48,
+  Code =< 57.
+
+digit(octal, Code) :-
+  !,
+  Code >= 48,
+  Code =< 55.
+
+digit(hexadecimal, Code) :-
+  (
+    digit(decimal, Code),
+    !
+  ;
+    cond((Code >= asc("a") and Code =< asc("f"))
+         or (Code >= asc("A") and Code =< asc("F")),
+      succeed,
+      fail
+    )
+  ).
+  
+
+alphanum(Char) :-
+    alpha(Char),
+    !
+  ;
+    digit(decimal, Char).
+
+
+newline(Code) ->
+  Code :== 10.
+
+
+void_char(Code) ->
+  has_feature(Code, void_chars_table).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+operator_symbols -> ["=", ",", "-", "*", "+", "!", "/", "<", ">", "&", "|", "?",
+                    "%", "^", "~"].
+
+duplicatable_operators -> ["<", ">", "+", "-", "=", "|", "&"].
+
+combinable_operators -> ["+", "-", "*", "/", "%", "&", "^", "|", "<", ">", "!"].
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+key_words -> ["auto", "break", "case", "char", "const", "continue", "default",
+              "do", "double", "else", "enum", "extern", "float", "for", "goto",
+              "if", "int", "long", "register", "return", "short", "signed",
+              "sizeof", "static", "struct", "switch", "typedef", "union",
+              "unsigned", "void", "volatile", "while"].
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+is_assignment(Operator) :-
+  member(Operator, assignment).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+assignment -> ['=', '*=', '/=', '+=', '-=', '<<=', '>>=', '&=', '^=', '|='].
+
+logical_or -> ['||'].
+
+logical_and -> ['&&'].
+
+inclusive_or -> ['|'].
+
+exclusive_or -> ['^'].
+
+c_and -> ['&'].
+
+equality -> ['==', '!='].
+
+relation -> ['<', '>', '>=', '<='].
+
+shift -> ['<<', '>>'].
+
+addition -> [str2psi("+"), str2psi("-")].
+
+multiplication -> ['*', '/', '%'].
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+is_incrementation_operation('++') -> true.
+
+is_incrementation_operation('--') -> true.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+persistent(unary_operations) ?
+
+unary_operations.'&' <<- '&' ?
+unary_operations.'*' <<- '*' ?
+unary_operations.str2psi("+") <<- str2psi("+") ?
+unary_operations.str2psi("-") <<- str2psi("-") ?
+unary_operations.'~' <<- '~' ?
+unary_operations.'!' <<- '!' ?
+
+
+
+is_unary_operation(Operation) :-
+  has_feature(Operation, unary_operations).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+get_precedence(Operator, Precedence) :-
+  has_feature(Operator, operations_table, Precedence).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+left_parenthesis_symbol -> str2psi("(").
+
+right_parenthesis_symbol -> str2psi(")").
+
+left_bracket_symbol -> str2psi("[").
+
+right_bracket_symbol -> str2psi("]").
+
+left_brace_symbol -> str2psi("{").
+
+right_brace_symbol -> str2psi("}").
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+store_class_specifier -> {auto; register; static; extern}.
+
+
+type_qualifier -> {const; volatile}.
+
+
+single_type_specifier -> {void; char; short; int; long; float; double; 
+                          signed; unsigned}.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+displayable_form_of(Char) -> DisplayableForm
+  | DisplayableForm = cond(Char < 32,
+      strcon("ascii(", strcon(int2str(adjust(Char)), ")")),
+      chr_of(Char)
+    ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+adjust(Code) -> AdjustedCode
+  | AdjustedCode = cond(Code < 0,
+      256 + Code,
+      Code
+    ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+string_of([]) -> "".
+
+string_of([Char | LChars]) -> strcon(chr(Char), string_of(LChars)).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+int_of_digits_list(DigitsList) -> calc_int_from_list(DigitsList, 0).
+
+calc_int_from_list([], Acc) -> Acc.
+
+calc_int_from_list([Digit | DigitsList], Acc) ->
+  calc_int_from_list(DigitsList, 10 * Acc + Digit - asc("0")).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+hash_code(CharList) -> get_hash_code(CharList, 0).
+ 
+%HashCode
+%  | BigCode = get_hash_code(CharList, 0),
+%    (
+%      BigCode >= 2 ^ 31,
+%      !,
+%      HashCode = BigCode - floor(BigCode / hash_radix) * hash_radix
+%    ;   
+%      HashCode = BigCode mod hash_radix
+%    ).
+
+
+get_hash_code([], Acc) -> Acc.
+
+get_hash_code([Char | LChars], Acc) -> 
+  get_hash_code(LChars, (Acc * 65599 + Char) mod hash_radix).
+
+%%%  multiplication by 65599
+
+
+hash_radix -> 2039.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+hex2dec(List) -> iter_hex2dec(List, 0).
+
+
+iter_hex2dec([], Acc) -> Acc.
+
+iter_hex2dec([Digit | Digits], Acc) -> 
+  iter_hex2dec(Digits, 16 * Acc + TheDigit)
+  | (
+      digit(decimal, Digit),
+      !,
+      TheDigit = Digit - asc("0")
+    ;
+      Digit >= asc("A"),
+      Digit =< asc("F"),
+      !,
+      TheDigit = Digit - asc("A") + 10
+    ;
+      TheDigit = Digit - asc("a") + 10
+    ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+oct2dec(List) -> iter_oct2dec(List, 0).
+
+
+iter_oct2dec([], Acc) -> Acc.
+
+iter_oct2dec([Digit | Digits], Acc) -> 
+  iter_oct2dec(Digits, 8 * Acc + Digit - asc("0")).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+search(String, Void, NewString) :-
+  Void :== @,
+  !,
+  Void <<- [String | @],
+  NewString = Void.1.
+
+search(String, [StoredString | LStrings], StoredString) :-
+  String :== StoredString,
+  !.
+
+search(String, [AString | LStrings], StoredString) :-
+  search(String, LStrings, StoredString).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+normal_search(IncompleteList, What, Data) :-
+  IncompleteList :== @,
+  !,
+  fail.
+
+
+normal_search([@(What, Data) | Tail], What, Data) :- !.  
+
+
+normal_search([@ | Tail], What, Data) :-
+  normal_search(Tail, What, Data).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+incremental_search(List, What, Data) :-
+  residuate(List, 
+    (
+      launch_search(List, ListTail, What, CurrentData),
+      (
+        CurrentData :== @,
+        !,
+        incremental_search(ListTail, What, FutureData),
+        residuate(FutureData, (Data = FutureData))
+      ;
+        Data = CurrentData
+      )
+    )
+  ).
+  
+
+launch_search([@(What, Data) | Tail], Tail, What, Data) :- !.
+
+launch_search([@ | Tail], Tail, What, Data).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+display_token(identifier(Identifier)) -> Identifier.
+
+
+display_token(number(integer(Number))) -> Number.
+
+
+display_token(number(float(integer_part => IntegerPart, 
+                           decimal_part => DecimalPart))) -> 
+  strcon(IntegerPart, strcon(".", DecimalPart)).
+
+
+display_token(characters(Characters)) -> Characters.
+
+
+display_token(characters_string(String)) -> String.
+
+
+display_token(nothing(file => File)) -> strcon("end of file ", File).
+
+
+display_token(Token) -> root_sort(Token).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+cpp_name -> "cc -E -D__STDC__".
+
+tmp_dir -> "/tmp/".
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+
+
+

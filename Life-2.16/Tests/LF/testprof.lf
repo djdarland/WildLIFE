@@ -1,0 +1,62 @@
+
+%%%
+%%%  Predicates and functions used to test the module 'profiler'
+%%%
+
+
+import("profiler")?
+
+app([], X, X).
+app([X | LX], L, [X | R]) :- app(LX, L, R).
+
+
+verif(X) :- 
+  cond(X :== true, 
+    (
+      write("that's true"),
+      nl
+    ),
+    (
+       write("that's false"),
+       nl
+    )
+  ).
+
+
+q :- 
+    write("q : first try"), nl, fail
+  ;
+    write("q : second try"), nl.
+q :- write("q : that's all"), nl, !, fail.
+q. 
+
+
+testapp :-  write("testapp"), nl, app(A,B,[1,2,3]), write(A), nl, write(B), nl, fail.
+testapp :- write("failure !"), nl, !, fail.
+testapp.
+
+
+f(S:string) -> R | R=strcon("+", strcon(S, "+")).
+f(N:int) -> Y + 1 | Y = N*N, fail.
+
+
+%%% This example shows that the profiler is able to register a function failure
+%%% even if the evaluation fails.
+
+g(S:string) -> S + 1 | S $== "anything".  
+g(X:int) -> R | (X =:= 0, !, R="zero" ; R="<> 0"). 
+
+
+h(X:int) -> X+1.
+h(S:string) -> R | R=strcon(S,"+++").
+
+
+
+
+
+
+
+
+
+
+

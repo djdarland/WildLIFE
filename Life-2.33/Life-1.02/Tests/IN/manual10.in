@@ -1,0 +1,5 @@
+ a(X:0)    :- write(X, " implies 0"), nl.
+a(X:int)  :- write(X, " implies int"), nl.
+a(X:real) :- write(X, " implies real"), nl.
+implies(a(int)), fail?
+implies(a(3.45)), fail?

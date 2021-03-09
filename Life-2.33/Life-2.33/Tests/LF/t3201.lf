@@ -1,0 +1,35 @@
+%
+%		Wild Life Tests Programs 
+%		3200 : user defined predicates
+%
+%		3201 : number and order of solutions on backtracking.
+%
+choix1("     a poux").
+choix1(" pas a poux").
+choix2("     papas").
+choix2(" pas papas").
+
+papous8 :- choix2(X), 
+           choix1(Y), 
+           choix2(Z), 
+           nl,
+	   write("Chez les Papous, il y a des Papous",X,Y,Z,".").
+
+papous2 :- choix2(X), 
+           choix1(Y),!,
+           choix2(Z),
+	   nl, 
+           write("Chez les Papous, il y a des Papous",X,Y,Z,".").
+
+papous4 :- choix2(X),!, 
+           choix1(Y),
+           choix2(Z), 
+	   nl,
+           write("Chez les Papous, il y a des Papous",X,Y,Z,".").
+
+papous1 :- choix2(X), 
+           choix1(Y),
+           choix2(Z),!, 
+	   nl,
+           write("Chez les Papous, il y a des Papous",X,Y,Z,".").
+

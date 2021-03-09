@@ -1,0 +1,14 @@
+private(+)?
+
+op(500,yfx,+)?
+
+A:list   + B:list     -> append(A,B).
+A:string + B:string   -> strcon(A,B).
+A:real   + B:real     -> A 'syntax#+' B.
+
+write([a,b,c]+[d,e,f]),nl?
+
+write("abc"+"def"),nl?
+
+write(3+4),nl?
+

@@ -1,0 +1,2 @@
+% Test pattern matching of cut
+f(!) -> 1.

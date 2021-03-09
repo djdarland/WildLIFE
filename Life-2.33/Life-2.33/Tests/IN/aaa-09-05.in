@@ -1,0 +1,13 @@
+non-strict(local_bagof)?
+local_bagof(X,G) -> M |
+		      L <<- [],
+		    (evalin(G),
+		     L<<-[evalin(X) | copy_pointer(L)],
+		     fail
+;
+M<- copy_term(L)
+).
+p(a).
+p(b).
+A=local_bagof(s(X),p(X))?
+

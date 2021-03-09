@@ -1,0 +1,32 @@
+
+*** Yes
+> > One peephole pass done with 3 changes.
+One peephole pass done with 0 changes.
+
+*** Yes
+Out = [c,a,t].
+--1> 
+*** No
+> One peephole pass done with 9 changes.
+One peephole pass done with 0 changes.
+
+*** Yes
+Out = [a].
+--1> 
+*** No
+> One peephole pass done with 16 changes.
+One peephole pass done with 0 changes.
+
+*** Yes
+Out = [c,b,c,a,t].
+--1> 
+*** No
+> One peephole pass done with 4 changes.
+One peephole pass done with 3 changes.
+One peephole pass done with 0 changes.
+
+*** Yes
+Out = [c].
+--1> 
+*** No
+> 

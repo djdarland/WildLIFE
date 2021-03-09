@@ -1,0 +1,116 @@
+Basic Installation
+==================
+3/4/2017 (2.33) Dennis J. Darland
+Fixed abend (memory corruption) that occurred if there was extra ','
+in an argument list. (An error message had been given that a ',' was
+missing.) I made the program exit, as there seemed no way to recover.
+In Ubuntu All except 3 in Test Suite match.
+cannonical   - because there is a comma missing - error message changed & exits
+condpred     - because of 2.31 addition of touch - refernce file had been missing - test not performed before - I have not verified result
+modulule_test3 - affected by this fix - don't know why.
+
+1/30/2017 (2.31) Dennis J. Darland
+I've mainly trimmed out exta unneeded files that had accumulated.
+Also I made the check_edit script touch reference files.
+Otherwise, if either file did not exist, it would say there was a match.
+I discovered three new cases of mismatches. 
+Two I discovered were correct for sure & I updated reference files - they were from tests I had added from the handbook.
+The other still does not match - It is probably correct - but I am too busy to examine carefully.
+
+To install
+tar -xzvf Life-2.31.tar.gx
+in a directory you wish to place it.
+Do next if you have not since 2.23
+cp life_local-2.23.tar.gz ~
+cd
+tar -xzvf life_local-2.23.tar.gz
+
+Go to Source subdirectory within in Life-2.31/Life-2.31
+cd Source
+./ee
+select 111 to compile (assumes there is a ~/bin directory).
+Other options are available on menu, e.g. 116 to run test suite.
+
+==================
+12/22/2016 (2.30.06) Dennis J. Darland
+I've mainly been modifying documentation for using dxoygen.
+To install
+tar -xzvf Life-2.30.06.tar.gx
+in a directory you wish to place it.
+Do next if you have not since 2.23
+cp life_local-2.23.tar.gz ~
+cd
+tar -xzvf life_local-2.23.tar.gz
+
+Go to Source subdirectory
+cd Source
+./ee
+select 111 to compile (assumes there is a ~/bin directory).
+Other options are available on menu, e.g. 116 to run test suite.
+
+------------------------------------------------------------------------
+
+6/29/2016 (2.13) Dennis J. Darland. (Revised 7/14/2016  for 2.23) 
+I have reverted to the original .set_up and related files.
+I have restored x files to .setup.
+I made 2 fixes in SuperLint example (\\ for \).
+X is not currently compiled in - I wanted to tacle the rest first.
+I went back to the life_local files in  Life-1.02.tar.gz file as I originally received it.
+However my make file is only set up to gernerate the executable wild_life
+and it copies it to ~/bin.
+I have set up the .set_up and other files to be in ~/life_local
+I only edited them to change the paths to them within each other. (besides what I mentioned above)
+I also edited the Makefile for wild_life to correspond.
+I believe I have them all correct now.
+This was done in 1.02 using the Makefile, sed, etc.
+It would be good to make the Makefile do that, but that is more complicated.
+The life_local files are found in life_local-2.23.tar.gz which should be copied to ~ and unpacked.
+After unpacking the main archive (which you have done if you are reading this, run make in the Source/regep and then Source directories.
+The Test Suite now runs perfectly in 64 bit Ubuntu.
+The Test Suite has 3 cosmetic differences in 64 bit cygwin.
+The wild_life has 2 compiler warnings in 32 bit ubuntu.
+The Test Suite has 3 discrepancies in 32 bit ubuntu.
+Within the script ./ee in the Source directory, you can do many things including running the Test Suite, and viewing the results etc.
+
+=======================================================================
+
+6/20/2016 Dennis J. Darland
+Same procedure except is now Life-2.07.tar.gz
+Also a new wild_life-mode.el is provided - it is useful mostly for indentation 
+and syntax highlighting.
+
+The local tar file is unchanged.
+
+-----------------------------------------------------------------
+6/16/2016 Dennis J. Darland
+
+I do not know how to set up configure scripts - or have way of testing them.
+
+As far as I know the following os all needed to set up WildLife 2.05
+on either SUSE Linux, Ubuntu Linux or cygwin.
+
+select a directory to install and copy Life-2.05.tar.gz there
+then tar -xzvf Life-2.05.tar.gz
+then copy local_life-2.05.tar.gz to ~
+this will create a "local" directory there - if you already have a "local" directory there you may need to make some adjustment
+then tar -xzvf local_life-2.02.tar.gz
+
+Then go to directory you untarred Life-2.05 to
+Then go to Source subdirectory
+Then go to regexp subdirectory
+use the command 'make'
+cd ..
+use the command 'make' again
+
+-----------------------------------------------------------------
+6/20/2016
+I found the tests are run with the quiet -q option so wl is no longer
+provided wild_life has the current VERSION in the Makefile and the DATE
+it is compiled is used. 
+
+Then wild_life can be executed in the Source Directory; The Makefile
+also copies it to ~/bin.
+-----------------------------------------------------------------
+
+
+

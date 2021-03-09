@@ -1,0 +1,83 @@
+echo "WildLife Difference Utility"
+echo "dff .c file & compared with 1.02 version?"
+echo "enter 0 to proceed 999 to quit"
+read select
+while [ $select -ne 999 ]
+do 
+echo "-----------"
+echo ".c files for wild life"
+echo "-----------"
+echo "1 arity.c"
+echo "2 bi_math.c"
+echo "3 bi_sys.c"
+echo "4 bi_type.c"
+echo "5 built_ins.c"
+echo "6 copy.c"
+echo "7 error.c"
+echo "8 hash_table.c"
+echo "9 info.c"
+echo "10 interrupt.c"
+echo "11 lefun.c"
+echo "12 lib.c"
+echo "13 life.c"
+echo "14 list.c"
+echo "15 login.c"
+echo "16 lub.c"
+echo "17 memory.c"
+echo "18 modules.c"
+echo "19 parser.c"
+echo "20 print.c"
+echo "21 raw.c"
+echo "22 sys.c"
+echo "23 sys_dbm.c"
+echo "24 templates.c"
+echo "25 token.c"
+echo "26 trees.c"
+echo "27 types.c"
+echo "28 xdisplaylist.c"
+echo "29 xpred.c"
+echo "111 View Differences"
+
+echo "777 NOTES_DJD.txt"
+echo "888 NOTES_HAK.txt"
+echo "999 quit"
+echo "select"
+read select
+case $select in
+1) diff $LIFE_ORIG/Source/arity.c arity.c >diffs.out ;;
+2) diff $LIFE_ORIG/Source/bi_math.c bi_math.c >diffs.out ;;
+3) diff $LIFE_ORIG/Source/bi_sys.c bi_sys.c >diffs.out ;;
+4) diff $LIFE_ORIG/Source/bi_type.c bi_type.c >diffs.out ;;
+5) diff $LIFE_ORIG/Source/built_ins.c built_ins.c >diffs.out ;;
+6) diff $LIFE_ORIG/Source/copy.c copy.c >diffs.out ;;
+7) diff $LIFE_ORIG/Source/error.c error.c >diffs.out ;;
+8) diff $LIFE_ORIG/Source/hash_table.c hash_table.c >diffs.out ;;
+9) diff $LIFE_ORIG/Source/info.c info.c >diffs.out ;;
+10) diff $LIFE_ORIG/Source/interrupt.c interrupt.c >diffs.out ;;
+11) diff $LIFE_ORIG/Source/lefun.c lefun.c >diffs.out ;;
+12) diff $LIFE_ORIG/Source/lib.c lib.c >diffs.out ;;
+13) diff $LIFE_ORIG/Source/life.c life.c >diffs.out ;;
+14) diff $LIFE_ORIG/Source/list.c list.c >diffs.out ;;
+15) diff $LIFE_ORIG/Source/login.c login.c >diffs.out ;;
+16) diff $LIFE_ORIG/Source/lub.c lub.c >diffs.out ;;
+17) diff $LIFE_ORIG/Source/memory.c memory.c >diffs.out ;;
+18) diff $LIFE_ORIG/Source/modules.c modules.c >diffs.out ;;
+19) diff $LIFE_ORIG/Source/parser.c  parser.c >diffs.out ;;
+20) diff $LIFE_ORIG/Source/print.c  print.c >diffs.out ;;
+21) diff $LIFE_ORIG/Source/raw.c raw.c >diffs.out ;;
+22) diff $LIFE_ORIG/Source/sys.c sys.c >diffs.out ;;
+23) diff $LIFE_ORIG/Source/sys_dbm.c sys_dbm.c >diffs.out ;;
+24) diff $LIFE_ORIG/Source/templates.c templates.c >diffs.out ;;
+25) diff $LIFE_ORIG/Source/token.c token.c >diffs.out ;;
+26) diff $LIFE_ORIG/Source/trees.c trees.c >diffs.out ;;
+27) diff $LIFE_ORIG/Source/types.c types.c >diffs.out ;;
+28) diff $LIFE_ORIG/Source/xdisplaylist.c xdisplaylist.c >diffs.out ;;
+29) diff $LIFE_ORIG/Source/xpred.c xpred.c >diffs.out ;;
+111) $EDITOR diffs.out ;;
+
+777) $EDITOR NOTES_DJD.txt;;
+888) $EDITOR NOTES_HAK.txt;;
+
+esac
+done
+

@@ -1,0 +1,717 @@
+%	$Id: shell.exp,v 1.2 1994/12/08 23:52:33 duchier Exp $	
+module("shell")?
+
+expand_load(true)?
+
+load_exp("loader","shell_interface")?
+
+public(shell,shell2,global_set_key,interrupt,quit)?
+
+:-(shell,;(,(nl,,(write("  Welcome to the LIFE Shell (Version 0 Thu Jan 28 1993)"),,(nl,,(nl,,(initialize_variables,,(read_keymap_file,,(read_history_file,fail))))))),shell2)).
+
+:-(shell2,,(trace(false,false),main_loop(@(cp_stack => [],level => 0,vars => @)))).
+
+:-(main_loop(_A: @(level => _B)),,(=(_C,@(left => [],prompt => _D: prompt(_B),right => [])),,(=(_E,current_line_number),,(write(_D),,(cond(not(in_raw),begin_raw),,(read_line(_C,_E),,(end_raw,,(eval_line(_A),main_loop(_A))))))))).
+
+:-(read_line(_A,_B),,(get_key_or_xevent(_C,_D),,(;(,(_D,,(setq(xeventflag,true),nl)),;(,(return_key(_C),,(setq(current_line,line2revchars(_A)),nl)),;(,(get_function_bound_to_key(_C,global_map,_E),,(&(_E,@(_A,_B,self => _C)),,(setq(line,_A),,(setq(history_ptr,_B),fail)))),read_line(line,history_ptr)))),!))).
+
+:-(get_key_or_xevent(_A,_B),,(get_raw(_C,_D),,(;(,(_D,=(_B,true)),;(,(prefix_char(_C),get_rest_of_key_or_xevent(_A,_B,prefix => [_C])),;(,(>=(_C,128),,(=(_A,[27,-(_C,128)]),=(_B,false))),,(=(_A,_C),=(_B,false))))),!))).
+
+:-(get_rest_of_key_or_xevent(_A,_B,prefix => _C),,(get_raw(_D,_E),,(;(,(_E,=(_B,true)),;(,(prefix_key(_F: [_D|_C]),get_rest_of_key_or_xevent(_A,_B,prefix => _F)),,(=(_A,reverse(_F)),=(_B,false)))),!))).
+
+:-(eval_line(_A),,(:==(xeventflag,false),,(!,,(=(_B,current_line),;(,(is_empty(_B),,(!,goto_previous_level(_A))),;(,(is_dot(_B),,(!,goto_top_level(_A))),;(,(is_semicolon(_B),,(!,backtrack(_A))),,(add_to_history(_B),,(setq(current_line_number,+(current_line_number,1)),parse_line(_A,reverse(_B))))))))))).
+
+:-(eval_line(_A: @(level => _B)),,(setq(xeventflag,false),,(cond(window_flag,,(reset_window_flag,<-(_B,+(_B,1)))),,(nl,,(write("**** Yes"),,(nl,print_vars(_A))))))).
+
+:-(parse_line(_A,_B),,(=(_C,get_choice),,(first_shell_parse(_B,_D,_E,_F,_G),&(_F,@(_E,_C,_D,_G,_A))))).
+
+:-(parse_line(_A),print_vars(_A)).
+
+:-(sh_query(_A,_B,_C,_D,_E: @(cp_stack => _F,level => _G,vars => _H)),,(retract(:-(shell_query,@)),,(assert(:-(shell_query(_C,_I,_J),,(trace(trace_status,step_status),,(_A,,(trace(_I,_J),trace(false,false)))))),;(,(=(_K,get_choice),,(shell_query(_H,_L,_M),,(setq(trace_status,_L),,(setq(step_status,_M),,(=(_N,exists_choice(_K,_O: get_choice)),,(cond(_P: window_flag,reset_window_flag),,(=(_Q,copy_pointer(_F)),,(cond(or(or(_D,_N),_P),,(<-(_G,+(_G,1)),<-(_F,[,(_B,_O)|_Q])),,(set_choice(_B),,(nl,,(write("**** Yes"),,(nl,fail))))),,(nl,,(write("**** Yes"),,(nl,print_vars(_E)))))))))))),,(trace(_L,_M),,(trace(false,false),,(setq(trace_status,_L),,(setq(step_status,_M),fail)))))))).
+
+:-(sh_query(@,_A),,(nl,,(write("**** No"),,(nl,,(set_choice(_A),fail))))).
+
+:-(declaration(_A,_B),,(;(,(term_xpand(_A,_C),,(!,;(,(cond(:=<(_C,list),maprel(assert,_C),assert(_C)),,(!,,(nl,,(write("**** Yes"),nl)))),succeed))),,(nl,,(write("**** Error in term expansion "),,(nl,,(write("**** No"),nl))))),,(set_choice(_B),fail))).
+
+:-(error(@,_A),,(write_parse_error,,(set_choice(_A),fail))).
+
+:-(goto_previous_level(@(level => 0)),!).
+
+:-(goto_previous_level(@(cp_stack => [,(_A,@)|@])),,(nl,,(write("**** No"),,(nl,,(set_choice(_A),fail))))).
+
+:-(goto_top_level(@(level => 0)),!).
+
+:-(goto_top_level(@(cp_stack => _A)),,(=(,(_B,@),last(_A)),,(set_choice(_B),fail))).
+
+:-(backtrack(@(level => 0)),!).
+
+:-(backtrack(@(cp_stack => [,(@,_A)|@])),,(set_choice(_A),,(trace(trace_status,step_status),fail))).
+
+:-(self_insert_command(@(left => _A,right => _B),self => _C),,(put_chars([_D: last(_C)|_B]),,(backspace_over(_B),<-(_A,[_D|copy_pointer(_A)])))).
+
+:-(beginning_of_line(@(left => [])),!).
+
+:-(beginning_of_line(@(left => _A,prompt => _B,right => _C)),,(carriage_return,,(write(_B),,(<-(_C,join(_A,copy_pointer(_C))),<-(_A,[]))))).
+
+:-(end_of_line(@(right => [])),!).
+
+:-(end_of_line(@(left => _A,right => _B)),,(put_chars(_B),,(<-(_A,join(_B,copy_pointer(_A))),<-(_B,[])))).
+
+:-(forward_char(@(right => [])),!).
+
+:-(forward_char(@(left => _A,right => _B: [_C|_D])),,(put_chars(_C),,(<-(_A,[_C|copy_pointer(_A)]),<-(_B,_D)))).
+
+:-(backward_char(@(left => [])),!).
+
+:-(backward_char(@(left => _A: [_B|_C],right => _D)),,(backspace,,(<-(_A,_C),<-(_D,[_B|copy_pointer(_D)])))).
+
+:-(forward_word(@(right => [])),!).
+
+:-(forward_word(_A: @(left => _B,right => _C)),find_word_right(copy_pointer(_C),copy_pointer(_B),_A)).
+
+:-(find_word_right([],_A,_B),,(!,find_end_of_word([],_A,_B))).
+
+:-(find_word_right([_A|_B],_C,_D),,(alphanumeric(_A),,(!,,(put_chars(_A),find_end_of_word(_B,[_A|_C],_D))))).
+
+:-(find_word_right([_A|_B],_C,_D),,(put_chars(_A),find_word_right(_B,[_A|_C],_D))).
+
+:-(find_end_of_word([_A|_B],_C,_D),,(alphanumeric(_A),,(!,,(put_chars(_A),find_end_of_word(_B,[_A|_C],_D))))).
+
+:-(find_end_of_word(_A,_B,@(left => _C,right => _D)),,(<-(_C,_B),<-(_D,_A))).
+
+:-(backward_word(@(left => [])),!).
+
+:-(backward_word(_A: @(left => _B,right => _C)),find_word_left(copy_pointer(_B),copy_pointer(_C),_A)).
+
+:-(find_word_left([],_A,_B),,(!,find_start_of_word([],_A,_B))).
+
+:-(find_word_left([_A|_B],_C,_D),,(alphanumeric(_A),,(!,,(backspace,find_start_of_word(_B,[_A|_C],_D))))).
+
+:-(find_word_left([_A|_B],_C,_D),,(backspace,find_word_left(_B,[_A|_C],_D))).
+
+:-(find_start_of_word([_A|_B],_C,_D),,(alphanumeric(_A),,(!,,(backspace,find_start_of_word(_B,[_A|_C],_D))))).
+
+:-(find_start_of_word(_A,_B,@(left => _C,right => _D)),,(<-(_C,_A),<-(_D,_B))).
+
+:-(next_line(@,_A),,(=(_A,current_line_number),,(!,bell))).
+
+:-(next_line(_A: @(left => _B,right => _C),_D),,(=(+(_D,1),_E: current_line_number),,(!,,(clear_line(_A),,(<-(_B,[]),,(<-(_C,[]),<-(_D,_E))))))).
+
+:-(next_line(_A: @(left => _B,right => _C),_D),,(=(_E,str2psi(strcon("line",int2str(_F: +(_D,1))),"shell")),,(=(_G,eval(_E)),,(clear_line(_A),,(put_chars(reverse(_G)),,(<-(_B,_G),,(<-(_C,[]),<-(_D,_F)))))))).
+
+:-(previous_line(@,_A),,(<(-(_A,1),max(1,-(current_line_number,history_limit))),,(!,bell))).
+
+:-(previous_line(_A: @(left => _B,right => _C),_D),,(=(_E,str2psi(strcon("line",int2str(_F: -(_D,1))),"shell")),,(=(_G,eval(_E)),,(clear_line(_A),,(put_chars(reverse(_G)),,(<-(_B,_G),,(<-(_C,[]),<-(_D,_F)))))))).
+
+:-(beginning_of_history,,(=(current_line_number,1),,(!,bell))).
+
+:-(beginning_of_history(_A: @(left => _B,right => _C),_D),,(=(_E,max(1,-(current_line_number,history_limit))),,(=(_F,str2psi(strcon("line",int2str(_E)),"shell")),,(=(_G,eval(_F)),,(clear_line(_A),,(put_chars(reverse(_G)),,(<-(_B,_G),,(<-(_C,[]),<-(_D,_E))))))))).
+
+:-(end_of_history,,(=(current_line_number,1),,(!,bell))).
+
+:-(end_of_history(_A: @(_B,left => _C,right => _D)),,(=(_E,str2psi(strcon("line",int2str(-(_F: current_line_number,1))),"shell")),,(=(_G,eval(_E)),,(clear_line(_A),,(put_chars(reverse(_G)),,(<-(_C,_G),,(<-(_D,[]),<-(_B,_F)))))))).
+
+:-(transpose_chars(@(left => [])),!).
+
+:-(transpose_chars(@(right => [])),!).
+
+:-(transpose_chars(@(left => _A: [_B|_C],right => _D: [_E|_F])),,(backspace,,(put_chars(_E),,(put_chars(_B),,(<-(_A,[_B,_E|_C]),<-(_D,_F)))))).
+
+:-(delete_backward_char(@(left => [])),!).
+
+:-(delete_backward_char(@(left => _A: [@|_B],right => _C)),,(backspace,,(put_chars(_C),,(space,,(backspace,,(backspace_over(_C),<-(_A,_B))))))).
+
+:-(delete_char(@(right => [])),!).
+
+:-(delete_char(@(right => _A: [@|_B])),,(put_chars(_B),,(space,,(backspace,,(backspace_over(_B),<-(_A,_B)))))).
+
+:-(kill_line(@(right => [])),!).
+
+:-(kill_line(@(right => _A)),,(blank_out(_A),,(backspace_over(_A),<-(_A,[])))).
+
+:-(kill_entire_line(@(left => [],right => [])),!).
+
+:-(kill_entire_line(_A: @(left => _B,right => _C)),,(clear_line(_A),,(<-(_B,[]),<-(_C,[])))).
+
+:-(kill_word(@(right => [])),!).
+
+:-(kill_word(_A: @(right => _B)),kill_word_right(copy_pointer(_B),_A)).
+
+:-(kill_word_right([],_A),,(!,kill_to_end_of_word([],_A))).
+
+:-(kill_word_right([_A|_B],_C),,(alphanumeric(_A),,(!,kill_to_end_of_word(_B,_C)))).
+
+:-(kill_word_right([@|_A],_B),kill_word_right(_A,_B)).
+
+:-(kill_to_end_of_word([_A|_B],_C),,(alphanumeric(_A),,(!,kill_to_end_of_word(_B,_C)))).
+
+:-(kill_to_end_of_word(_A,@(right => _B)),,(overwrite(_B,_A),,(backspace_over(_A),<-(_B,_A)))).
+
+:-(backward_kill_word(@(left => [])),!).
+
+:-(backward_kill_word(_A: @(left => _B,right => _C)),kill_word_left(copy_pointer(_B),copy_pointer(_C),_A)).
+
+:-(kill_word_left([],_A,_B),,(!,kill_to_start_of_word([],_A,_B))).
+
+:-(kill_word_left([_A|_B],_C,_D),,(alphanumeric(_A),,(!,,(backspace,kill_to_start_of_word(_B,[_A|_C],_D))))).
+
+:-(kill_word_left([_A|_B],_C,_D),,(backspace,kill_word_left(_B,[_A|_C],_D))).
+
+:-(kill_to_start_of_word([_A|_B],_C,_D),,(alphanumeric(_A),,(!,,(backspace,kill_to_start_of_word(_B,[_A|_C],_D))))).
+
+:-(kill_to_start_of_word(_A,_B,@(left => _C,right => _D)),,(overwrite(_B,_D),,(backspace_over(_D),<-(_C,_A)))).
+
+:-(rewrite_line(@(left => _A,prompt => _B,right => _C)),,(carriage_return,,(write(_B),,(put_chars(join(_A,_C)),backspace_over(_C))))).
+
+:-(describe_key_briefly(_A),,(get_key_or_xevent(_B,_C),,(;(,(_C,,(nl,setq(xeventflag,true))),,(get_function_bound_to_key(_B,global_map,_D),;(,(=(_D,undefined_key),undefined_key(_A,self => _B)),;(,(=(_D,ignore_key),,(nl,,(write(key2name(_B)," is ignored in line edit mode"),,(nl,rewrite_line(_A))))),,(nl,,(write(key2name(_B)," runs the command ",_D),,(nl,rewrite_line(_A)))))))),!))).
+
+:-(interrupt,,(cond(in_raw,end_raw),,(setq(aborthook,abort),abort))).
+
+:-(quit,,(cond(in_raw,end_raw),,(write_history,halt))).
+
+:-(undefined_key(_A,self => _B),,(nl,,(write(key2name(_B)," is not defined"),,(nl,,(bell,rewrite_line(_A)))))).
+
+ignore_key.
+
+:-(bad_key(self => _A),,(nl,,(write("Oops! Got a bad key ",_A),nl))).
+
+:-(read_keymap_file,,(=(keymap_flag,false),,(exists_file(_A: ".life-keymap"),,(!,,(load(_A),,(write("**** Read keymap file .life-keymap"),,(nl,setq(keymap_flag,true)))))))).
+
+read_keymap_file.
+
+is_keymap(global_map).
+
+is_keymap(esc_map).
+
+is_keymap(esclsb_map).
+
+is_keymap(help_map).
+
+:-(global_set_key(_A,_B),define_key(global_map,_A,_B)).
+
+:-(define_key(_A,_B,_C),,(is_keymap(_A),,(!,,(=([_D|@],name2asc(_B)),,(=(_E,str2psi(strcon(psi2str(_A),int2str(_D)),"shell")),,(dynamic(_E),setq(_E,_C))))))).
+
+:-(define_key(_A),,(nl,,(write(_A," is not a known keymap"),nl))).
+
+:-(get_function_bound_to_key(_A: int,_B,_C),,(=(_D,str2psi(strcon(psi2str(_B),int2str(_A)),"shell")),,(=(_E,eval(_D)),,(;(,(is_defined(_E),=(_C,_E)),=(_C,undefined_key)),!)))).
+
+:-(get_function_bound_to_key([],@,undefined_key),!).
+
+:-(get_function_bound_to_key([_A|_B],_C,_D),,(=(_E,str2psi(strcon(psi2str(_C),int2str(_A)),"shell")),,(=(_F,eval(_E)),,(;(,(is_keymap(_F),get_function_bound_to_key(_B,_F,_D)),;(,(is_defined(_F),=(_D,_F)),=(_D,undefined_key))),!)))).
+
+:-(read_history_file,,(=(history_flag,false),,(exists_file(_A: history_file),,(!,,(open_in(_A,_B),,(read_history_lines,,(close(_B),,(write("**** Read history file ",_A),,(nl,setq(history_flag,true)))))))))).
+
+read_history_file.
+
+:-(read_history_lines,,(get_nonempty_line([],_A),,(!,,(add_to_history(_A),,(setq(current_line_number,+(current_line_number,1)),read_history_lines))))).
+
+read_history_lines.
+
+:-(get_nonempty_line(_A,_B),,(get(_C),cond(is_eol_char(_C),get_nonempty_line([],_B),cond(is_white_char(_C),get_nonempty_line([_C|_A],_B),get_line([_C|_A],_B))))).
+
+:-(get_line(_A,_B),,(get(_C),cond(is_eol_char(_C),=(_B,_A),get_line([_C|_A],_B)))).
+
+:-(add_to_history(_A),,(=(_B,str2psi(strcon("line",int2str(current_line_number)),"shell")),setq(_B,_A))).
+
+:-(write_history,,(>(_A: current_line_number,1),,(!,,(open_out(_B: history_file,_C),,(=(_D,max(1,-(_A,history_limit))),,(write_history_lines(_D,_A),,(close(_C),,(setq(history_flag,true),,(write("**** Wrote history list to file ",_B),nl))))))))).
+
+write_history.
+
+:-(write_history_lines(_A,_A),!).
+
+:-(write_history_lines(_A,_B),,(=(_C,str2psi(strcon("line",int2str(_A)),"shell")),,(=(_D,eval(_C)),,(write(revchars2str(_D)),,(nl,write_history_lines(+(_A,1),_B)))))).
+
+dynamic(history_limit,history_file)?
+
+dynamic(history_flag,keymap_flag,current_line_number,current_line,line,history_ptr)?
+
+non_strict(not_set)?
+
+->(not_set(_A),not(is_function(_A))).
+
+:-(initialize_variables,,(cond(not_set(history_limit),`(setq(history_limit,100))),,(cond(not_set(history_file),`(setq(history_file,".life-history"))),,(cond(not_set(history_flag),`(setq(history_flag,false))),,(cond(not_set(keymap_flag),`(setq(keymap_flag,false))),,(cond(not_set(current_line_number),`(setq(current_line_number,1))),,(setq(xeventflag,false),,(setq(line,@),,(setq(history_ptr,1),,(setq(trace_status,false),,(setq(step_status,false),setq(aborthook,shell2)))))))))))).
+
+dynamic(shell_query)?
+
+shell_query.
+
+:-(return_key(10),!).
+
+return_key(13).
+
+->(is_eol_char(10),true).
+
+->(is_eol_char(end_of_file),true).
+
+->(is_eol_char(@),false).
+
+->(is_white_char(9),true).
+
+->(is_white_char(32),true).
+
+->(is_white_char(@),false).
+
+:-(alphanumeric(_A),,(>=(_A,48),,(=<(_A,57),!))).
+
+:-(alphanumeric(_A),,(>=(_A,65),,(=<(_A,90),!))).
+
+:-(alphanumeric(_A),,(>=(_A,97),=<(_A,122))).
+
+:-(ctl_char(_A),<(_A,32)).
+
+:-(single_char(_A),<(_A,127)).
+
+:-(meta_char(_A),>(_A,127)).
+
+:-(prefix_char(27),!).
+
+prefix_char(8).
+
+->(is_empty([]),true).
+
+->(is_empty([9|_A]),is_empty(_A)).
+
+->(is_empty([32|_A]),is_empty(_A)).
+
+->(is_empty(@),false).
+
+->(is_dot([9|_A]),is_dot(_A)).
+
+->(is_dot([32|_A]),is_dot(_A)).
+
+->(is_dot([46|_A]),is_empty(_A)).
+
+->(is_dot(@),false).
+
+->(is_semicolon([9|_A]),is_semicolon(_A)).
+
+->(is_semicolon([32|_A]),is_semicolon(_A)).
+
+->(is_semicolon([59|_A]),is_empty(_A)).
+
+->(is_semicolon(@),false).
+
+prefix_key([91,27]).
+
+->(line2revchars(@(left => _A,right => _B)),join(_B,_A)).
+
+->(revchars2str(_A),rc2s(_A,"")).
+
+->(rc2s([],_A),_A).
+
+->(rc2s([_A|_B],_C),rc2s(_B,strcon(chr(_A),_C))).
+
+->(key2name(_A: int),asc2name(_A)).
+
+->(key2name([]),"").
+
+->(key2name([_A]),asc2name(_A)).
+
+->(key2name([_A|_B]),strcon(strcon(asc2name(_A)," "),key2name(_B))).
+
+->(asc2name(0),"NUL").
+
+->(asc2name(9),"TAB").
+
+->(asc2name(10),"RET").
+
+->(asc2name(13),"RET").
+
+->(asc2name(27),"ESC").
+
+->(asc2name(32),"SPC").
+
+->(asc2name(127),"DEL").
+
+->(asc2name(_A),cond(<(_A,26),strcon("C-",asc2name(+(_A,96))),cond(<(_A,32),strcon("C-",asc2name(+(_A,64))),cond(>(_A,127),strcon("ESC ",asc2name(-(_A,128))),chr(_A))))).
+
+->(name2asc(_A),n2a(explode(_A))).
+
+->(n2a([]),[]).
+
+->(n2a(["\"|_A]),bs_seq2asc(_A)).
+
+->(n2a([_A|_B]),[asc(_A)|n2a(_B)]).
+
+->(bs_seq2asc(["b"|_A]),[8|n2a(_A)]).
+
+->(bs_seq2asc(["t"|_A]),[9|n2a(_A)]).
+
+->(bs_seq2asc(["n"|_A]),[10|n2a(_A)]).
+
+->(bs_seq2asc(["f"|_A]),[12|n2a(_A)]).
+
+->(bs_seq2asc(["r"|_A]),[13|n2a(_A)]).
+
+->(bs_seq2asc(["\"|_A]),[92|n2a(_A)]).
+
+->(bs_seq2asc(["e"|_A]),esc2asc(_A)).
+
+->(bs_seq2asc(["C","-"|_A]),ctl2asc(_A)).
+
+->(bs_seq2asc(["M","-"|_A]),meta2asc(_A)).
+
+->(bs_seq2asc(_A),[92|n2a(_A)]).
+
+->(ctl2asc([_A|_B]),cond(and(<(64,_C: asc(_A)),<(_C,96)),[-(_C,64)|n2a(_B)],cond(and(<(95,_C),<(_C,123)),[-(_C,96)|n2a(_B)],n2a(_B)))).
+
+->(prompt(0),">> ").
+
+->(prompt(_A),strcon(strcon(dashes(_A),int2str(_A)),">> ")).
+
+->(dashes(0),"").
+
+->(dashes(_A),strcon(dashes(-(_A,1)),"--")).
+
+:-(bell,put_raw(7)).
+
+:-(backspace,put_raw(8)).
+
+:-(carriage_return,put_raw(13)).
+
+:-(space,put_raw(32)).
+
+:-(put_chars(_A: int),,(!,cond(=:=(_A,9),put_raw(32),put_raw(_A)))).
+
+:-(put_chars([]),!).
+
+:-(put_chars([_A|_B]),,(cond(=:=(_A,9),put_raw(32),put_raw(_A)),put_chars(_B))).
+
+:-(blank_out([]),!).
+
+:-(blank_out([@|_A]),,(put_raw(32),blank_out(_A))).
+
+:-(backspace_over([]),!).
+
+:-(backspace_over([@|_A]),,(put_raw(8),backspace_over(_A))).
+
+:-(clear_line(@(left => _A,prompt => _B,right => _C)),,(backspace_over(_A),,(blank_out(_A),,(blank_out(_C),,(carriage_return,write(_B)))))).
+
+:-(overwrite([],_A),,(!,put_chars(_A))).
+
+:-(overwrite(_A: [@|@],[]),,(!,,(blank_out(_A),backspace_over(_A)))).
+
+:-(overwrite([@|_A],[_B|_C]),,(put_chars(_B),overwrite(_A,_C))).
+
+->(last(_A: int),_A).
+
+->(last([_A]),_A).
+
+->(last([@|_A]),last(_A)).
+
+->(join([],_A),_A).
+
+->(join([_A|_B],_C),join(_B,[_A|_C])).
+
+non_strict(is_defined)?
+
+:-(is_defined(_A),or(is_function(_A),is_predicate(_A))).
+
+->(reverse([]),[]).
+
+->(reverse(_A: list),rev(_A,acc => [])).
+
+->(rev([],acc => _A: list),_A).
+
+->(rev([_A|_B],acc => _C: list),rev(_B,acc => [_A|_C])).
+
+->(explode(_A: string),expl(_A,strlen(_A))).
+
+->(expl("",int),[]).
+
+->(expl(_A,_B),[substr(_A,1,1)|expl(substr(_A,2,_C: -(_B,1)),_C)]).
+
+->(global_map0,bad_key).
+
+->(global_map1,beginning_of_line).
+
+->(global_map2,backward_char).
+
+->(global_map3,ignore_key).
+
+->(global_map4,delete_char).
+
+->(global_map5,end_of_line).
+
+->(global_map6,forward_char).
+
+->(global_map7,undefined_key).
+
+->(global_map8,help_map).
+
+->(global_map9,self_insert_command).
+
+->(global_map10,eval_line).
+
+->(global_map11,kill_line).
+
+->(global_map12,rewrite_line).
+
+->(global_map13,eval_line).
+
+->(global_map14,next_line).
+
+->(global_map15,undefined_key).
+
+->(global_map16,previous_line).
+
+->(global_map17,undefined_key).
+
+->(global_map18,undefined_key).
+
+->(global_map19,undefined_key).
+
+->(global_map20,transpose_chars).
+
+->(global_map21,undefined_key).
+
+->(global_map22,undefined_key).
+
+->(global_map23,kill_entire_line).
+
+->(global_map24,undefined_key).
+
+->(global_map25,undefined_key).
+
+->(global_map26,undefined_key).
+
+->(global_map27,esc_map).
+
+->(global_map28,undefined_key).
+
+->(global_map29,undefined_key).
+
+->(global_map30,undefined_key).
+
+->(global_map31,undefined_key).
+
+->(global_map32,self_insert_command).
+
+->(global_map33,self_insert_command).
+
+->(global_map34,self_insert_command).
+
+->(global_map35,self_insert_command).
+
+->(global_map36,self_insert_command).
+
+->(global_map37,self_insert_command).
+
+->(global_map38,self_insert_command).
+
+->(global_map39,self_insert_command).
+
+->(global_map40,self_insert_command).
+
+->(global_map41,self_insert_command).
+
+->(global_map42,self_insert_command).
+
+->(global_map43,self_insert_command).
+
+->(global_map44,self_insert_command).
+
+->(global_map45,self_insert_command).
+
+->(global_map46,self_insert_command).
+
+->(global_map47,self_insert_command).
+
+->(global_map48,self_insert_command).
+
+->(global_map49,self_insert_command).
+
+->(global_map50,self_insert_command).
+
+->(global_map51,self_insert_command).
+
+->(global_map52,self_insert_command).
+
+->(global_map53,self_insert_command).
+
+->(global_map54,self_insert_command).
+
+->(global_map55,self_insert_command).
+
+->(global_map56,self_insert_command).
+
+->(global_map57,self_insert_command).
+
+->(global_map58,self_insert_command).
+
+->(global_map59,self_insert_command).
+
+->(global_map60,self_insert_command).
+
+->(global_map61,self_insert_command).
+
+->(global_map62,self_insert_command).
+
+->(global_map63,self_insert_command).
+
+->(global_map64,self_insert_command).
+
+->(global_map65,self_insert_command).
+
+->(global_map66,self_insert_command).
+
+->(global_map67,self_insert_command).
+
+->(global_map68,self_insert_command).
+
+->(global_map69,self_insert_command).
+
+->(global_map70,self_insert_command).
+
+->(global_map71,self_insert_command).
+
+->(global_map72,self_insert_command).
+
+->(global_map73,self_insert_command).
+
+->(global_map74,self_insert_command).
+
+->(global_map75,self_insert_command).
+
+->(global_map76,self_insert_command).
+
+->(global_map77,self_insert_command).
+
+->(global_map78,self_insert_command).
+
+->(global_map79,self_insert_command).
+
+->(global_map80,self_insert_command).
+
+->(global_map81,self_insert_command).
+
+->(global_map82,self_insert_command).
+
+->(global_map83,self_insert_command).
+
+->(global_map84,self_insert_command).
+
+->(global_map85,self_insert_command).
+
+->(global_map86,self_insert_command).
+
+->(global_map87,self_insert_command).
+
+->(global_map88,self_insert_command).
+
+->(global_map89,self_insert_command).
+
+->(global_map90,self_insert_command).
+
+->(global_map91,self_insert_command).
+
+->(global_map92,self_insert_command).
+
+->(global_map93,self_insert_command).
+
+->(global_map94,self_insert_command).
+
+->(global_map95,self_insert_command).
+
+->(global_map96,self_insert_command).
+
+->(global_map97,self_insert_command).
+
+->(global_map98,self_insert_command).
+
+->(global_map99,self_insert_command).
+
+->(global_map100,self_insert_command).
+
+->(global_map101,self_insert_command).
+
+->(global_map102,self_insert_command).
+
+->(global_map103,self_insert_command).
+
+->(global_map104,self_insert_command).
+
+->(global_map105,self_insert_command).
+
+->(global_map106,self_insert_command).
+
+->(global_map107,self_insert_command).
+
+->(global_map108,self_insert_command).
+
+->(global_map109,self_insert_command).
+
+->(global_map110,self_insert_command).
+
+->(global_map111,self_insert_command).
+
+->(global_map112,self_insert_command).
+
+->(global_map113,self_insert_command).
+
+->(global_map114,self_insert_command).
+
+->(global_map115,self_insert_command).
+
+->(global_map116,self_insert_command).
+
+->(global_map117,self_insert_command).
+
+->(global_map118,self_insert_command).
+
+->(global_map119,self_insert_command).
+
+->(global_map120,self_insert_command).
+
+->(global_map121,self_insert_command).
+
+->(global_map122,self_insert_command).
+
+->(global_map123,self_insert_command).
+
+->(global_map124,self_insert_command).
+
+->(global_map125,self_insert_command).
+
+->(global_map126,self_insert_command).
+
+->(global_map127,delete_backward_char).
+
+->(esc_map60,beginning_of_history).
+
+->(esc_map62,end_of_history).
+
+->(esc_map66,backward_word).
+
+->(esc_map68,kill_word).
+
+->(esc_map70,forward_word).
+
+->(esc_map91,esclsb_map).
+
+->(esc_map98,backward_word).
+
+->(esc_map100,kill_word).
+
+->(esc_map102,forward_word).
+
+->(esc_map127,backward_kill_word).
+
+->(esclsb_map65,previous_line).
+
+->(esclsb_map66,next_line).
+
+->(esclsb_map67,forward_char).
+
+->(esclsb_map68,backward_char).
+
+->(help_map67,describe_key_briefly).
+
+->(help_map99,describe_key_briefly).
+
+module("user")?
+
+open("shell")?
+
+open("accumulators")?
+

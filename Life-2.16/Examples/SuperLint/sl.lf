@@ -1,0 +1,134 @@
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%
+%                                SUPERLINT
+%                                ---------
+%
+%  
+%
+%
+%  AUTHOR : Arnaud Venet                     CREATION : September 21st 1993
+%  ------                                    --------
+%
+%
+%                             ---------------                        
+%
+%                    
+%                   Last modification : September 24th 1993 
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+
+
+
+wl_main(Directory, Args) :-
+  chdir(Directory),
+  sort_args(Args, Superlint, Files),
+  (
+    load(Superlint),
+    open("superlint"),
+    !,
+    chdir(Directory),
+    launch_superlint(convert(Files, 1))
+  ;
+
+    write_err("sl : rules file '", Superlint, "' doesn't exist"),
+    nl_err,
+    chdir(Directory),
+    halt
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+launch_superlint(Files) :-
+  str2psi("main") & Files.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+convert([], N) -> @.
+
+
+convert([File | LFiles], N) -> Term : convert(LFiles, N + 1)
+  | Term.N = File.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+persistent(there_is_a_file) ?
+
+
+%
+% ------------------------------------------------------------------------------
+%  
+
+
+sort_args(["-h"]) :-
+  !,
+  error("Usage : slc [-f superlint-file] name1 name2 ...").
+
+
+sort_args(["-f", Binary | LArgs], Superlint, Files) :-
+  !,
+  cond(Superlint :== @,
+    (
+      Superlint = Binary,
+      sort_args(LArgs, Superlint, Files)
+    ),
+    error("sl : bad arguments")
+  ).
+
+
+sort_args([CFile | LArgs], Superlint, [CFile | Files]) :-
+  !,
+  there_is_a_file <<- true,
+  sort_args(LArgs, Superlint, Files).
+
+
+sort_args([], Superlint, []) :-
+  !,
+  cond(Superlint :== @,
+    Superlint = "superlint"
+  ),
+  cond(there_is_a_file :\== true,
+    error("sl : no C files specified")
+  ).
+
+
+sort_args :-
+  error("sl : bad arguments").
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+error(Message) :-
+  write_err(Message),
+  nl_err,
+  halt.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+

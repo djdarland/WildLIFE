@@ -1,0 +1,24 @@
+write("Testing Large Numbers")?
+A=2<<51?
+B=2<<48?
+% according to extern.h max representable is 2^53 - 1
+% will use maple to check later
+write("1<<51 = ",A)?
+write("1<<48 = ",B)?
+C=A+B?
+write(A, "+",B, "=" ,C)?
+D=C /\ A?
+write("C /\\ A =",D, " should be A = ",A)? 
+E=C \/ A?
+write("C \\/ A =",E, " should be A + B = ", A+B )?
+F=A-B?
+write(A, "-",B, "=" ,F, " should be A = ", A)?
+G=(-(A-B))?
+write("-(A-B) =" ,G)?
+H=A*B?
+write(A, "*",B, "=" ,H)?
+I=A/B?
+write(A, "/",B, "=" ,I)?
+J=A//B?
+write(A, "//",B, "=" ,J)?
+

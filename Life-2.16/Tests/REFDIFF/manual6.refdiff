@@ -1,0 +1,4 @@
+8c8
+< R = square(area => 16,length => 4,side => 4,width => 4).
+---
+> R = square(area => 16,length => _A: 4,side => _A,width => _A).

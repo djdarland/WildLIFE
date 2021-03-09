@@ -1,0 +1,48 @@
+X = foo(foo(titi,Y:titi), pb(action => @(Y)))?
+
+X = foo(foo(_,Y:titi), pb(action => @(Y)))?
+
+p_a(X)?
+
+X=pair(foo_b(Y:titi_b), s_b(B:@(Y)))?
+
+X=pair(foo_b(Y:titi_b), s_b(Y))?
+
+b_1(X)?
+
+b_2(X)?
+
+X=foo_c(foo_c(A,Y:titi_c), p_c(B:@(Y)))?
+
+X=foo_c(foo_c(A,Y:titi_c), p_c(Y))?
+
+Z=p_c(B:@(Y)), X=foo_c(A,Y:titi_c)?
+
+X=foo_c(A,Y:titi_c), Z=p_c(B:@(Y))?
+
+X=foo_c(p_c(@(Y)), foo_c(_,Y:titi_c))?
+
+X=foo_c(p_c(@(Y)), foo_c(_,@(Y:titi_c)))?
+
+X=foo_c(p_c(Y), foo_c(_,Y:titi_c))?
+
+X = foo_d(foo_d(_,Y:titi_d), p_d(@(@(Y))))?
+
+X = foo_d(foo_d(_,Y:titi_d), p_d(@(Y)))?
+
+X = foo_d(foo_d(_,Y:titi_d), p_d(Y))?
+
+d_1(X)?
+
+d_2(X)?
+
+d_3(X)?
+
+X=foo_e(foo_e(_,Y:titi_e), p_e(@(Y)))?
+
+X=foo_e(foo_e(_,Y:titi_e), p_e(Y))?
+
+e_1(X)?
+
+e_2(X)?
+

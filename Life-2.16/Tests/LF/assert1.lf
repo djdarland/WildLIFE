@@ -1,0 +1,47 @@
+% Test of assert, retract, clause:
+
+% Prime the pump a bit:
+dynamic(p)?
+p.
+p.
+p.
+p.
+p.
+p.
+p.
+p.
+p.
+p.
+
+% Go through a long sequence of assert, retract, clause:
+main :- loop(1000).
+
+loop(0) :- !.
+loop(N) :- N>0,
+	pick_op(X:ran),
+	print_special(X),
+	loop(N-1).
+
+% Probabilities of each operation:
+% (And a probability of 5% of failure!)
+pick_op(A) :- A<0.35, !, assert(p).
+pick_op(A) :- A<0.35+0.30, !, retract(p).
+pick_op(A) :- A<0.35+0.30+0.30, !, clause(p).
+
+print_special(X) :- cond((X>0.698 and X<0.702), (write(X),nl)).
+
+% Simple pseudo-random generator in the interval [0,1).
+ran -> A | B=random_step(seed), setq(seed,B), A=B/44449.
+
+random_step(A) -> (A*1237+2116) mod 44449.
+
+dynamic(seed)?
+
+seed -> 1.
+
+% % Simple global variable:
+% non_strict(setq)?
+% 
+% setq(X,V) :- Value = eval(V), retract((X->@)), !, assert((X->Value)).
+% setq(X,V) :- dynamic(X), Value = eval(V), assert((X->Value)).
+% 

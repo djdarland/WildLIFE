@@ -1,0 +1,10 @@
+:: P:person(best_friend => Q:person) | get_along(P,Q).
+delay_check(person)?
+
+cleopatra <| person.
+:: cleopatra(nose => pretty, occupation => queen).
+
+julius <| person.
+:: julius(last_name => caesar).
+
+get_along(cleopatra,julius).

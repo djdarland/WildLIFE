@@ -1,0 +1,13 @@
+%% experimenented with this - once had it correct except door was secret
+module("secret")?
+public(prison)?
+private_feature(entrance)?
+prison(entrance => tunnel).
+
+module("user")?
+open("secret")?
+
+% changed next line to end with .
+P:prison(door => guarded)?
+display_modules(true)?
+F=features(P)?

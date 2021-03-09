@@ -1,0 +1,7 @@
+%
+%		Wild_life testing
+%
+%		Overflow of numbers: undefined Functions
+%
+%
+testno(X) :- ( X=sqrt(-1) ; X=1/0 ; X=log(0) ).

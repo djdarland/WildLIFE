@@ -1,0 +1,4 @@
+% Factorial function:
+factorial(0) -> 1.
+factorial(N:int) -> N*factorial(N-1).
+

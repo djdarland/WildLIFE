@@ -1,0 +1,4 @@
+p(X) :- write("From p: ",X).
+f(X:int) ->X | write("From f:", X).
+p(f(X))?
+X=1?

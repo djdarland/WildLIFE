@@ -1,0 +1,1978 @@
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%
+%                            PARSER FOR C CODE
+%                            -----------------
+%
+%  
+%
+%
+%  AUTHOR : Arnaud Venet                     CREATION : August 9th 1993
+%  ------                                    --------
+%
+%
+%                             ---------------                        
+%
+%                    
+%                   Last modification : March 3rd 1994
+%
+%
+%                             ---------------
+%
+%
+%                (C) Digital Equipment Corporation 1993 - 1994
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%
+%  USE : c_parse(file1, file2, ..., fileN,
+%                parse_mode => {light; heavy}, %% light mode not yet implemented
+%                error_mode => {talkie; mute}, %% mute : don't write error messages
+%                error_log => ErrorLog, %% the errors occured
+%                error => bool, %% true if a major parse error occured
+%                tree => Tree)
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+
+
+
+module("c_parser") ?
+
+
+public(c_parse, light, heavy, talkie, mute, 
+       error, warning) ?
+
+
+%
+% ------------------------------------------------------------------------------
+%
+%  The symbols of the nodes and features of the syntactic tree. It is necessary
+%  because of the currently flat structure of modules to avoid symbols clashes.
+%
+% ------------------------------------------------------------------------------
+%
+
+
+load("c_public_terms") ?
+
+
+open("c_public_terms") ?
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+import("accumulators") ?
+
+acc_info(dcg,Term, Xs, Ys, acc_pred => 'C'(Term,false,Xs,Ys),
+	 in_name => 0, out_name => rest) ?
+
+expand_load(true) ?
+
+load("c_utils") ?
+
+load("c_tokenizer") ?
+
+load("c_builders") ?
+
+
+%
+% ------------------------------------------------------------------------------
+%
+%  The accumulators for the collection of the arithmetic expressions
+%
+% ------------------------------------------------------------------------------
+%
+
+
+acc_info(left_expression, Expression, OldLeftExpression, NewLeftExpression,
+         acc_pred => (NewLeftExpression = Expression)) ?
+
+
+acc_info(left_assignment_expression, Expression, OldLeftExpression, 
+         NewLeftExpression,
+         acc_pred => (NewLeftExpression = Expression)) ?
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+pred_info(expression_tail,
+          [left_assignment_expression]) ?
+
+
+pred_info([conditional_expression,
+           arithmetic_expression,
+           collect_arithmetic_expression,
+           postfix_expression,
+           postfix_expression_tail,
+           constant_expression],
+          [left_expression]) ?
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+report_parse_error(Message) :-
+  parse_error <<- true,
+  current_token = @(line => Line, file => File),
+  error_number <<- error_number + 1,
+  Error = the_error_log.error_number,
+  Error.type <<- error, 
+  Error.message <<- Message, 
+  Error.cause <<- current_token, 
+  Error.file <<- File, 
+  Error.line <<- Line,
+  cond(the_error_mode :== talkie,
+    (
+      nl_err,
+      write_err(">>> parse error : ", root_sort(File), ", line ", Line, 
+                " before '", display_token(current_token), "'"),
+      cond(Message :\== @,
+        write_err(Message)
+      ),
+      nl_err
+    )
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+%  This predicate looks for a particular token. If the current token is not 
+%  the expected one it produces a warning and inserts a token
+%  with a special flag set.
+%
+% ------------------------------------------------------------------------------
+%
+
+
+recover_token(Token, What) :-
+  current_token :== What,
+  !,
+  Token = get_current_token,
+  get_next_token.
+
+
+recover_token(Token, What) :-
+  Token = What & @(inserted => true,
+                   next => current_token,
+                   previous => current_token.previous,
+                   line => current_token.line,
+                   column => current_token.column, 
+                   file => current_token.file,
+                   white_spaces => ""),
+  local_error(strcon(strcon("Missing '", strcon(psi2str(What), "' before ")), 
+                     psi2str(display_token(current_token))),
+                     Token).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+Term : c_parse(tree => Tree, error_log => ErrorLog, 
+               parse_mode => ParseMode, error_mode => ErrorMode,
+               error => ParseError) :-
+  ParseMode = {light; heavy},
+  ErrorMode = {talkie; mute},
+  !,
+  the_parse_mode <<- ParseMode,
+  the_error_mode <<- ErrorMode,
+  error_number <<- 0,
+  ErrorLog = the_error_log,
+  clear_tree,
+  parse_error <<- false,
+  Tree = top_declarations,
+  F = features(Term),
+  (
+    iter_c_parse(F, Term, 1),
+    !
+  ;
+    parse_error <<- true
+  ),
+  ParseError = parse_error,
+  the_error_log.number_of_errors <<- error_number,
+  cond(the_error_mode :== talkie,
+    nl_err
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+iter_c_parse([Feature | LFeatures], Term, FileNumber) :-
+  Feature :== {tree; error_log; parse_mode; error_mode; error},
+  !,
+  iter_c_parse(LFeatures, Term, FileNumber).
+
+
+iter_c_parse([Feature | LFeatures], Term, FileNumber) :-
+  !,
+  File = Term.Feature,
+  (
+    exists_file(File),
+    !,
+    top_declarations.files.FileNumber <<- file_info(name => File)
+  ;
+    write_err(">>> c_parse : file '", File, "' doesn't exist"),
+    nl_err,
+    write_err(">>> c_parse : abort"),
+    nl_err,
+    fail
+  ),
+  CPPFile = strcon(tmp_dir, strcon(basename(File), ".cpp")),
+  Command = 
+    strcon(strcon(strcon(strcon(cpp_name, " "), File), " "),
+           strcon(">", CPPFile)
+    ),
+  ReturnCode = system(Command),
+  (
+    exists_file(CPPFile),
+    !,
+    open_in(CPPFile, InStream),
+    tokenize(File),
+    translation_unit,
+    close(InStream),
+    @ = system(strcon("rm ", CPPFile)),
+    top_declarations.files.FileNumber.first_token <<- get_first_token
+  ;
+    write_err(">>> c_parse : problem with file '", File, "'"),
+    nl_err
+  ),
+  iter_c_parse(LFeatures, Term, FileNumber + 1).
+
+
+iter_c_parse([], Term, FileNumber) :-
+  cond(FileNumber :== 1,
+    (
+      write_err(">>> c_parse : error no file specified"),
+      nl_err,
+      write_err(">>> c_parse : abort"),
+      nl_err,
+      fail
+    ),
+    top_declarations.files.files_number <<- FileNumber - 1
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+basename(Name) -> string_of(base_name_of(str2list(Name))).
+
+
+base_name_of([]) -> [].
+
+base_name_of([47 | L]) -> BaseName  % 47 = asc("/")
+  | BaseNameList = zap2slash(L),
+    cond(BaseNameList :== [],
+      BaseName = L,
+      BaseName = base_name_of(BaseNameList)
+    ).
+
+base_name_of(L) -> BaseName
+  | BaseNameList = zap2slash(L),
+    cond(BaseNameList :== [],
+      BaseName = L,
+      BaseName = base_name_of(BaseNameList)
+    ).
+
+
+zap2slash([]) -> [].
+
+zap2slash(L:[47 | @]) -> L.
+
+zap2slash([@ | L]) -> zap2slash(L).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+%  The main predicate of the parser : it collects the external declarations.
+%
+% ------------------------------------------------------------------------------
+%
+
+
+persistent(error_occured) ?
+
+
+translation_unit :-
+  current_token :== nothing,
+  !,
+  check_struct_and_union_declarations,
+  end_declarations_chain,
+  Toplevel = top_declarations,
+  build_scope(Toplevel).
+
+
+translation_unit :-
+  (
+    external_declaration(ErrorOccured),
+    error_occured <<- ErrorOccured,
+    fail
+  ;
+    succeed
+  ),
+  (
+    error_occured :== true,
+    !,
+    report_parse_error,
+    end_declarations_chain,
+    Toplevel = top_declarations,
+    build_scope(Toplevel)
+  ;
+    translation_unit
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+external_declaration(ErrorOccured) :-
+  declaration_specifiers(0 => DeclarationSpecifiers, rest => []),
+  scan_specifiers(DeclarationSpecifiers, Specifiers, 
+                  Qualification, StoreClass, toplevel),
+  Toplevel = top_declarations,
+  !,
+  (
+    Specifiers = [typedef],
+    !
+  ;
+    current_token :== ';',
+    !,
+    SemiColon = get_current_token,
+    get_next_token,
+    complete_definition(Specifiers, Qualification, StoreClass, SemiColon,
+                        Toplevel)
+  ;
+    cond(Specifiers :== [],
+      TheSpecifiers = [default_type],
+      TheSpecifiers = Specifiers
+    ),
+    BaseType = build_type(TheSpecifiers, Qualification, StoreClass),
+    (
+      init_declarators(BaseType, 0 => InitDeclarators, rest => []),
+      !,
+      (
+        is_a_function_definition(InitDeclarators, Name, Style),
+        !,
+        (
+          Style :== modern,
+          !,
+          (
+            current_token :== left_brace_symbol,
+            !,
+            (
+              set_function_local_declarations,
+              build_modern_local_declarations(InitDeclarators,
+                                              function_head(Name)),
+              compound_instruction(FunctionBody),
+              isolate_instruction(FunctionBody),
+              Declarations = current_declarations,
+              restore_function_local_declarations,
+              build_function(style => modern, InitDeclarators,
+                             Declarations, FunctionBody),
+              !
+            ;
+              ErrorOccured = true
+            )
+          ;
+            (
+              build_declaration(InitDeclarators, Toplevel, 
+                                external_declarations),
+              !
+            ;
+              ErrorOccured = true
+            )
+          )
+        ;
+          base_declarations_list(0 => ArgumentsTypes, rest => []),
+          (
+            set_function_local_declarations,
+            set_previous_declaration(PreviousDeclaration),
+            build_local_declarations(ArgumentsTypes, 
+                                     function_head(Name)),
+            check_coherence(Name, InitDeclarators),
+            end_declarations_chain,
+            compound_instruction(FunctionBody),
+            isolate_instruction(FunctionBody),
+            Declarations = current_declarations,
+            restore_previous_declaration_from(PreviousDeclaration),
+            restore_function_local_declarations,
+            build_function(style => old, InitDeclarators, Declarations,
+                           FunctionBody),
+            !
+          ;
+            ErrorOccured = true
+          )
+        ;
+          (
+            build_declaration(InitDeclarators, Toplevel, external_declarations),
+            !
+          ;
+            ErrorOccured = true
+          )
+        )
+      ;
+        build_declaration(InitDeclarators, Toplevel, external_declarations),
+        !
+      ;
+        ErrorOccured = true
+      )
+    ;
+      ErrorOccured = true
+    )
+  ;
+    ErrorOccured = true
+  ).
+
+
+external_declaration(true).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+type_beginning(Identifier) :-
+  Identifier :== identifier,
+  is_type_name(Identifier),
+  !.
+
+
+type_beginning(What) :-
+  What :== {store_class_specifier; type_qualifier; single_type_specifier;
+            struct; union; enum},
+  !.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+base_declarations_list -->
+  {
+    declaration_specifiers(0 => DeclarationSpecifiers, rest => []),
+    scan_specifiers(DeclarationSpecifiers, Specifiers, 
+                    Qualification, StoreClass, function_head),
+    Specifiers :\== [] or Qualification :\== @ or StoreClass :\== @
+  },
+  !,
+  { 
+    cond(Specifiers :== [],
+      TheSpecifiers = [default_type],
+      TheSpecifiers = Specifiers
+    ),
+    BaseType = build_type(TheSpecifiers, Qualification, StoreClass)
+  },
+  init_declarators(BaseType),
+  base_declarations_list.
+
+
+base_declarations_list --> [].
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+get_local_declarations(Block) :-
+  declaration_specifiers(0 => DeclarationSpecifiers, rest => []),
+  scan_specifiers(DeclarationSpecifiers, Specifiers, 
+                  Qualification, StoreClass, block),
+  (
+    Specifiers = [typedef],
+    !,
+    get_local_declarations(Block)
+  ;
+    current_token :== ';',
+    !,
+    SemiColon = get_current_token,
+    get_next_token,
+    complete_definition(Specifiers, Qualification, StoreClass, SemiColon,
+                        Block),
+    get_local_declarations(Block)
+  ;
+    Specifiers :\== [] or Qualification :\== @ or StoreClass :\== @,
+    !,
+    cond(Specifiers :== [],
+      TheSpecifiers = [default_type],
+      TheSpecifiers = Specifiers
+    ),
+    BaseType = build_type(TheSpecifiers, Qualification, StoreClass),
+    init_declarators(BaseType, 0 => InitDeclarators, rest => []),
+    build_declaration(InitDeclarators, Block, local_declarations),
+    get_local_declarations(Block)
+  ;
+    succeed
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+declaration_specifiers(type_specified => false, typedef => false) -->
+  {
+    current_token :== typedef,
+    !,
+    Typedef = get_current_token,
+    get_next_token,
+    declaration_specifiers(0 => DeclarationSpecifiers, rest => [],
+                           typedef => true),
+    scan_specifiers(DeclarationSpecifiers, Specifiers, Qualification, 
+                    StoreClass, typedef),
+    Specifiers :\== [],
+    BaseType = build_type(Specifiers, Qualification, StoreClass),
+    init_declarators(BaseType, 0 => TypeDeclarators, rest => []),
+    TypeDefinition = build_typedef(Typedef, TypeDeclarators)
+  },
+  [TypeDefinition].
+
+
+declaration_specifiers(type_specified => TypeSpecified, typedef => Typedef) -->
+  {
+    current_token :== single_type_specifier,
+    !,
+    Specifier = get_current_token,
+    get_next_token
+  },
+  [Specifier],
+  declaration_specifiers(type_specified => true, typedef => Typedef).
+
+
+declaration_specifiers(type_specified => TypeSpecified, typedef => Typedef) -->
+  {
+    current_token :== {store_class_specifier; type_qualifier},
+    !,
+    Specifier = get_current_token,
+    get_next_token
+  },
+  [Specifier],
+  declaration_specifiers(type_specified => TypeSpecified, typedef => Typedef).
+
+
+declaration_specifiers(type_specified => false, typedef => Typedef) -->
+  {
+    current_token :== {struct; union},
+    !,
+    Specifier = get_current_token,
+    get_next_token,
+    get_struct_or_union_specifier(Specifier, StructOrUnionSpecifier)      
+  },
+  [StructOrUnionSpecifier],
+  declaration_specifiers(type_specified => true, typedef => Typedef).
+
+
+declaration_specifiers(type_specified => false, typedef => Typedef) -->
+  {
+    current_token :== enum,
+    !,
+    Specifier = get_current_token,
+    get_next_token,
+    get_enum_specifier(Specifier, EnumSpecifier)
+  },
+  [EnumSpecifier],
+  declaration_specifiers(type_specified => true, typedef => Typedef).
+
+
+declaration_specifiers(type_specified => false, typedef => Typedef) -->
+  {
+    current_token :== identifier,
+    is_type_name(current_token),
+    !,
+    Identifier = get_current_token,
+    get_next_token
+  },
+  [build_type_name(Identifier)],
+  declaration_specifiers(type_specified => true, typedef => Typedef).
+
+
+declaration_specifiers --> [].
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+get_struct_or_union_specifier(Specifier, StructOrUnionSpecifier) :-
+  (
+    current_token :== identifier,
+    !,
+    TokenName = get_current_token & @(Name)
+  ;
+    Name = anonymous
+  ),
+  (
+    Name :== anonymous,
+    !,
+    get_struct_or_union_body(Specifier, StructOrUnionBody),
+    StructOrUnionSpecifier = 
+      build_struct_definition(Specifier, anonymous, StructOrUnionBody)
+  ;
+    next_token :== left_brace_symbol,
+    !,
+    get_next_token,
+    get_struct_or_union_body(Specifier, StructOrUnionBody),
+    StructOrUnionSpecifier = 
+      build_struct_definition(Specifier, TokenName, StructOrUnionBody)
+  ;
+    get_next_token,
+    StructOrUnionSpecifier = 
+      build_struct_name(Specifier, TokenName)
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+get_struct_or_union_body(Specifier, StructOrUnionBody) :-
+  current_token :== left_brace_symbol,
+  !,
+  LeftBrace = get_current_token,
+  get_next_token,
+  tag_number <<- 1,
+  set_previous_declaration(PreviousDeclaration),
+  struct_declarations(StructDeclarations),
+  end_declarations_chain,
+  restore_previous_declaration_from(PreviousDeclaration),
+  recover_token(RightBrace, right_brace_symbol),
+  StructOrUnionBody = 
+    build_struct_or_union_body(Specifier, LeftBrace, StructDeclarations,
+                               RightBrace).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+struct_declarations(StructDeclarations) :-
+  struct_declaration(StructDeclarations),
+  !,
+  struct_declarations(StructDeclarations).
+
+
+struct_declarations(StructDeclarations).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+struct_declaration(StructDeclarations) :-
+  declaration_specifiers(0 => DeclarationSpecifiers, rest => []),
+  scan_specifiers(DeclarationSpecifiers, Specifiers,
+                  Qualification, StoreClass, struct),
+  Specifiers :\== [] or Qualification :\== @ or StoreClass :\== @,
+  cond(Specifiers :== [],
+    TheSpecifiers = [default_type],
+    TheSpecifiers = Specifiers
+  ),
+  BaseType = build_type(TheSpecifiers, Qualification, StoreClass),
+  struct_declarators(BaseType, 0 => StructDeclarators, rest => []),
+  build_struct_declaration(StructDeclarators, StructDeclarations).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+struct_declarators(BaseType) -->
+  (
+    {
+      current_token :== ':',
+      !,
+      get_tag(BaseType, StructDeclarator)
+    }
+  ;
+    {
+      current_token :== identifier,
+      next_token :== ':',
+      !,
+      get_tag(BaseType, StructDeclarator)
+    }
+  ;
+    { 
+      declarator(BaseType, Type, Name),
+      !,
+      StructDeclarator = @(name => Name, type => Type)
+    }
+  ),
+  [StructDeclarator],
+  (
+    {
+      current_token :== ',',
+      !,
+      Comma = get_current_token,
+      get_next_token,
+      add_separator(Comma, StructDeclarator)
+    },
+    struct_declarators(BaseType)
+  ;
+    {
+      current_token :== ';',
+      !,
+      SemiColon = get_current_token,
+      get_next_token,
+      add_separator(SemiColon, StructDeclarator)
+    }
+  ;
+    {
+      recover_token(SemiColon, ';'),
+      add_separator(SemiColon, StructDeclarator)
+    }
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+get_tag(BaseType, StructDeclarator) :-
+  current_token :== ':',
+  !,
+  recover_token(Colon, ':'),
+  constant_expression(Initialization),
+  Name = build_tag_name,
+  StructDeclarator = @(name => Name, 
+                       type => build_tag(type => BaseType),
+                       initialization => 
+                         build_tag_value(Initialization, Colon)).
+
+
+get_tag(BaseType, StructDeclarator) :-
+  current_token :== identifier,
+  next_token :== ':',
+  !,
+  recover_token(Name, identifier),
+  recover_token(Colon, ':'),
+  constant_expression(Initialization),
+  StructDeclarator = @(name => Name, 
+                       type => build_tag(type => BaseType),
+                       initialization => 
+                         build_tag_value(Initialization, Colon)).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+init_declarators(BaseType) -->
+  { init_declarator(BaseType, InitDeclarator) },
+  !,
+  [InitDeclarator],
+  (
+    {
+      current_token :== ',',
+      !,
+      Comma = get_current_token,
+      get_next_token,
+      add_separator(Comma, InitDeclarator)
+    },
+    init_declarators(BaseType)
+  ;
+    {
+      current_token :== ';',
+      !,
+      SemiColon = get_current_token,
+      get_next_token,
+      add_separator(SemiColon, InitDeclarator)
+    }
+  ;
+    []
+  ).
+
+
+init_declarators(BaseType) --> [].
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+init_declarator(BaseType, InitDeclarator) :-
+  declarator(BaseType, Type, Name),
+  InitDeclarator = 
+    @(name => Name, type => Type),
+  (
+    current_token :== '=',
+    !,
+    Operator = get_current_token,
+    get_next_token,
+    initializer(InitializerBody),
+    InitDeclarator.initialization = 
+      build_initializer(Operator, InitializerBody)
+  ;
+    succeed
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+initializer(Initializer) :-
+  current_token :== left_brace_symbol,
+  !,
+  LeftBrace = get_current_token,
+  get_next_token,
+  initializers_list(0 => Initializers, rest => []),
+  recover_token(RightBrace, right_brace_symbol),
+  Initializer = 
+    build_complex_initialization(LeftBrace, Initializers, RightBrace).
+
+
+initializer(Initializer) :-
+  assignment_expression(Initializer).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+initializers_list -->
+  { initializer(Initializer) },
+  !,
+  [Initializer],
+  (
+    {
+      current_token :== ',',
+      !,
+      Comma = get_current_token,
+      get_next_token,
+      add_separator(Comma, Initializer)
+    },
+    initializers_list
+  ;
+    { add_separator(nothing, Initializer) }
+  ).
+
+
+initializers_list --> [].
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+type_name(TypeName) :-
+  declaration_specifiers(0 => DeclarationSpecifiers, rest => []),
+  scan_specifiers(DeclarationSpecifiers, Specifiers,
+                  Qualification, StoreClass, type_name),
+  BaseType = build_type(Specifiers, Qualification, StoreClass),
+  declarator(BaseType, TypeName, DeclaratorName),
+  check_for_type_name(DeclaratorName).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+get_enum_specifier(Specifier, EnumSpecifier) :-
+  (
+    current_token :== identifier,
+    !,
+    TokenName = get_current_token & @(Name)
+  ;
+    Name = anonymous
+  ),
+  (
+    Name :== anonymous,
+    !,
+    get_enum_body(EnumBody),
+    EnumSpecifier = 
+      build_enum_definition(Specifier, anonymous, EnumBody)
+  ;
+    next_token :== left_brace_symbol,
+    !,
+    get_next_token,
+    get_enum_body(EnumBody),
+    EnumSpecifier = 
+      build_enum_definition(Specifier, TokenName, EnumBody)
+  ;
+    get_next_token,
+    EnumSpecifier = 
+      build_enum_name(Specifier, TokenName)
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+get_enum_body(EnumBody) :-
+  current_token :== left_brace_symbol,
+  !,
+  LeftBrace = get_current_token,
+  get_next_token,
+  enumerators(0 => Enumerators, rest => []),
+  set_previous_declaration(PreviousDeclaration),
+  build_enum_declaration(Enumerators, Enumeration),
+  end_declarations_chain,
+  restore_previous_declaration_from(PreviousDeclaration),
+  recover_token(RightBrace, right_brace_symbol),
+  EnumBody = build_enum_body(LeftBrace, Enumeration, RightBrace).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+enumerators -->
+  { enumerator(Enumerator) },
+  !,
+  [Enumerator],
+  (
+    {
+      current_token :== ',',
+      !,
+      Comma = get_current_token,
+      get_next_token,
+      add_separator(Comma, Enumerator)
+    }
+  ;
+    { add_separator(nothing, Enumerator) }
+  ),
+  enumerators.
+
+
+enumerators --> [].
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+enumerator(Enumerator) :-
+  current_token :== identifier,
+  !,
+  Name = get_current_token,
+  get_next_token,
+  (
+    current_token :== '=',
+    !,
+    Operator = get_current_token,
+    get_next_token,
+    constant_expression(Initializer),
+    Initialization = build_initializer(Operator, Initializer),
+    Enumerator = @(name => Name, type => enumerator, 
+                   initialization => Initialization)
+  ;
+    Enumerator = @(name => Name, type => enumerator)
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+pointer(BaseType, Pointer) :-
+  current_token :== '*',
+  !,
+  Star = get_current_token,
+  get_next_token,
+  type_qualifiers_list(0 => Qualifiers, rest => []),
+  pointer(build_pointer(BaseType, Qualifiers, Star), Pointer).
+
+
+pointer(Pointer, Pointer).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+type_qualifiers_list -->
+  { current_token :== type_qualifier },
+  !,
+  { 
+    Qualifier = get_current_token,
+    get_next_token
+  },
+  [Qualifier],
+  type_qualifiers_list.
+
+
+type_qualifiers_list --> [].
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+declarator(TypeSpecification, Type, Name) :-
+  pointer(TypeSpecification, BaseType),
+  (
+    current_token :== identifier,
+    !,
+    Name = get_current_token,
+    get_next_token,
+    absolute_declarator(BaseType, Type)
+  ;
+    current_token :== left_parenthesis_symbol,
+    !,
+    LeftParenthesis = get_current_token,
+    get_next_token,
+    (
+      current_token :== right_parenthesis_symbol,
+      !,
+      RightParenthesis = get_current_token,
+      get_next_token,  
+      Name = build_anonymous,
+      Type = 
+        build_function_declaration(Pointer, LeftParenthesis, 
+                                   nothing, RightParenthesis)
+    ;
+      type_beginning(current_token),
+      !,
+      parameters_types_list(0 => Parameters, rest => []),
+      recover_token(RightParenthesis, right_parenthesis_symbol),
+      Name = build_anonymous,
+      Type = 
+        build_function_declaration(Pointer, LeftParenthesis, 
+                                   Parameters, RightParenthesis)
+    ;
+      declarator(NewBaseType, InnerType, Name),
+      recover_token(RightParenthesis, right_parenthesis_symbol),
+      absolute_declarator(BaseType, NewBaseType),
+      Type = 
+        build_protected_type(InnerType, LeftParenthesis, RightParenthesis)
+    )
+  ;
+    Name = build_anonymous,
+    absolute_declarator(BaseType, Type)
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+absolute_declarator(BaseType, Type) :-
+  current_token :== left_parenthesis_symbol,
+  !,
+  LeftParenthesis = get_current_token,
+  get_next_token,
+  (
+    current_token :== right_parenthesis_symbol,
+    !,
+    Parameters = nothing,
+    RightParenthesis = get_current_token,
+    get_next_token
+  ;
+    type_beginning(current_token),
+    !,
+    parameters_types_list(0 => Parameters, rest => []),
+    recover_token(RightParenthesis, right_parenthesis_symbol)    
+  ;
+    set_previous_declaration(PreviousDeclaration),
+    identifiers_list(0 => Parameters, rest => []),
+    end_declarations_chain,
+    restore_previous_declaration_from(PreviousDeclaration),
+    recover_token(RightParenthesis, right_parenthesis_symbol)
+  ),
+  Type = 
+    build_function_declaration(BaseType, 
+                               LeftParenthesis,
+                               Parameters,
+                               RightParenthesis).
+
+
+absolute_declarator(BaseType, Type) :-
+  current_token :== left_bracket_symbol,
+  !,
+  collect_array_declaration(Dimensions : dimensions, 1),
+  Type = build_array(BaseType, Dimensions).
+
+
+absolute_declarator(Type, Type).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+collect_array_declaration(Array, DimensionNumber) :-
+  current_token :== left_bracket_symbol,
+  !,
+  LeftBracket = get_current_token,
+  get_next_token,
+  (
+    current_token :== right_bracket_symbol,
+    !,
+    Dimension = nothing
+  ;
+    constant_expression(Dimension)
+  ),
+  recover_token(RightBracket, right_bracket_symbol),
+  Array.DimensionNumber = 
+    build_dimension(Dimension, LeftBracket, RightBracket),
+  collect_array_declaration(Array, DimensionNumber + 1).
+
+
+collect_array_declaration(Array, DimensionNumber) :-
+  Array.dimensions_number = DimensionNumber - 1.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+parameters_types_list -->
+  { current_token :== '...' },
+  !,
+  {
+    SuspensionPoints = get_current_token,
+    get_next_token
+  },
+  [build_vararg(SuspensionPoints)].
+
+
+parameters_types_list -->
+  {
+    declaration_specifiers(0 => DeclarationSpecifiers, rest => []),
+    scan_specifiers(DeclarationSpecifiers, Specifiers,
+                    Qualification, StoreClass, function_head),
+    BaseType = build_type(Specifiers, Qualification, StoreClass),
+    declarator(BaseType, Type, Name)
+  },
+  (
+    {
+      current_token :== ',',
+      !,
+      Comma = get_current_token,
+      get_next_token
+    }
+  ;
+    []
+  ),
+  [build_parameter(Type, Name, Comma)],
+  parameters_types_list.
+
+
+parameters_types_list --> [].
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+identifiers_list -->
+  { 
+    current_token :== identifier,
+    !,
+    Identifier = get_current_token,
+    get_next_token,
+    Parameter = build_identifier_parameter(Identifier)
+  },
+  [Parameter],
+  (
+    {
+      current_token :== ',',
+      !,
+      Comma = get_current_token,
+      get_next_token,
+      add_separator(Comma, Parameter)
+    },
+    identifiers_list
+  ;
+    { add_separator(nothing, Parameter) }
+  ).
+
+
+identifiers_list --> [].
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+instruction(Instruction) :-
+  rough_instruction(Instruction),
+  set_scope_for_instruction(Instruction).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+rough_instruction(Instruction) :-
+  compound_instruction(Instruction),
+  !.
+
+
+rough_instruction(Instruction) :-
+  labeled_instruction(Instruction),
+  !.
+
+
+rough_instruction(Instruction) :-
+  selection_instruction(Instruction),
+  !.
+
+
+rough_instruction(Instruction) :-
+  iteration_instruction(Instruction),
+  !.
+
+
+rough_instruction(Instruction) :-
+  jump_instruction(Instruction),
+  !.
+
+
+rough_instruction(Instruction) :-
+  void_instruction(Instruction),
+  !.
+
+
+rough_instruction(Instruction) :-
+  expression_instruction(Instruction).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+%  Modified : 2 15 1994
+%
+% ------------------------------------------------------------------------------
+%
+
+
+labeled_instruction(Instruction) :-
+  current_token :== identifier,
+  next_token :== ':',
+  !,
+  recover_token(Label, identifier),
+  recover_token(Colon, ':'),
+  set_previous_instruction_scope(OuterInstruction),
+  set_instruction_scope(Instruction),
+  instruction(Body),
+  restore_instruction_scope_from(OuterInstruction),
+  Instruction <<- build_labeled_instruction(Label, Colon, Body). 
+
+
+labeled_instruction(Instruction) :-
+  current_token :== case,
+  !,
+  Case = get_current_token,
+  get_next_token,
+  constant_expression(Expression),
+  recover_token(Colon, ':'),
+  set_previous_instruction_scope(OuterInstruction),
+  set_instruction_scope(Instruction),
+  instruction(Body),
+  restore_instruction_scope_from(OuterInstruction),
+  Instruction <<- build_case(Case, Expression, Colon, Body).
+
+ 
+labeled_instruction(Instruction) :-
+  current_token :== default,
+  Default = get_current_token,
+  get_next_token,
+  recover_token(Colon, ':'),
+  set_previous_instruction_scope(OuterInstruction),
+  set_instruction_scope(Instruction),
+  instruction(Body),
+  restore_instruction_scope_from(OuterInstruction),
+  Instruction <<- build_default(Default, Colon, Body).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+expression_instruction(Instruction) :-
+  expression(Expression),
+  recover_token(SemiColon, ';'),
+  Instruction = build_expression_instruction(Expression, SemiColon).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+compound_instruction(Block) :-
+  current_token :== left_brace_symbol,
+  LeftBrace = get_current_token,
+  get_next_token,
+  set_local_declarations(LocalDeclarations),
+  init_complex_declaration(LocalDeclarations),
+  set_previous_declaration(PreviousDeclaration),
+  Block <<- block,
+  get_local_declarations(Block),
+  end_declarations_chain,
+  restore_previous_declaration_from(PreviousDeclaration),
+  set_previous_instruction(PreviousInstruction),
+  set_previous_instruction_scope(TheBlock),
+  set_instruction_scope(Block),
+  instructions_list(0 => Body, rest => []),
+  restore_instruction_scope_from(TheBlock),
+  restore_previous_instruction_from(PreviousInstruction),
+  recover_token(RightBrace, right_brace_symbol),
+  Instruction =
+    build_compound_instruction(LeftBrace, Body, RightBrace),
+  Block <<- Instruction,
+  build_scope(Block),
+  chain_body(Body, Block),
+  restore_declarations_from(LocalDeclarations).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+instructions_list -->
+  { current_token :== right_brace_symbol },
+  !.
+
+
+instructions_list -->
+  { 
+    instruction(Instruction),
+    set_current_instruction(Instruction),
+    chain_instructions(Instruction, NewInstruction)
+  },
+  [NewInstruction],
+  instructions_list.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+selection_instruction(Instruction) :-
+  current_token :== if,
+  !,
+  If = get_current_token,
+  get_next_token,
+  recover_token(LeftParenthesis, left_parenthesis_symbol),
+  expression(Condition),
+  recover_token(RightParenthesis, right_parenthesis_symbol),
+  Instruction <<- nothing,
+  set_previous_instruction_scope(OuterInstruction),
+  set_instruction_scope(then_body(instruction => Instruction)),
+  instruction(ThenBody),
+  (
+    current_token :== else,
+    !,
+    Else = get_current_token,
+    get_next_token,
+    set_instruction_scope(else_body(instruction => Instruction)),
+    instruction(ElseBody)
+  ; 
+    succeed
+  ),
+  restore_instruction_scope_from(OuterInstruction),
+  Instruction <<- 
+    build_if(If, LeftParenthesis, Condition, RightParenthesis,
+             ThenBody, Else, ElseBody).
+
+
+selection_instruction(Instruction) :-
+  current_token :== switch,
+  Switch = get_current_token,
+  get_next_token,
+  recover_token(LeftParenthesis, left_parenthesis_symbol),
+  expression(Condition),
+  recover_token(RightParenthesis, right_parenthesis_symbol),
+  Instruction <<- nothing,
+  set_previous_instruction_scope(OuterInstruction),
+  set_instruction_scope(Instruction),
+  instruction(Body),
+  restore_instruction_scope_from(OuterInstruction),
+  Instruction <<-
+    build_switch(Switch, LeftParenthesis, Condition, RightParenthesis, Body).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+iteration_instruction(Instruction) :-
+  current_token :== while,
+  !,
+  While = get_current_token,
+  get_next_token,
+  recover_token(LeftParenthesis, left_parenthesis_symbol),
+  expression(Condition),
+  recover_token(RightParenthesis, right_parenthesis_symbol),
+  Instruction <<- nothing,
+  set_previous_instruction_scope(OuterInstruction),
+  set_instruction_scope(Instruction),
+  instruction(Body),
+  restore_instruction_scope_from(OuterInstruction),
+  Instruction <<-
+    build_while(While, LeftParenthesis, Condition, RightParenthesis, Body).  
+
+
+iteration_instruction(Instruction) :-
+  current_token :== do,
+  !,
+  Do = get_current_token,
+  get_next_token,
+  Instruction <<- nothing,
+  set_previous_instruction_scope(OuterInstruction),
+  set_instruction_scope(Instruction),
+  instruction(Body),
+  restore_instruction_scope_from(OuterInstruction),
+  recover_token(While, while),
+  recover_token(LeftParenthesis, left_parenthesis_symbol),
+  expression(Condition),
+  recover_token(RightParenthesis, right_parenthesis_symbol),
+  recover_token(SemiColon, ';'),
+  Instruction <<-
+    build_do_while(Do, Body, While, LeftParenthesis, Condition,
+                   RightParenthesis, SemiColon).    
+
+
+iteration_instruction(Instruction) :-
+  current_token :== for,
+  For = get_current_token,
+  get_next_token,
+  recover_token(LeftParenthesis, left_parenthesis_symbol),
+  (
+    current_token :== ';',
+    !,
+    Initialization = nothing
+  ;
+    expression(Initialization)
+  ),
+  recover_token(SemiColon1, ';'),
+  (
+    current_token :== ';',
+    !,
+    Condition = nothing
+  ;
+    expression(Condition)
+  ),
+  recover_token(SemiColon2, ';'),  
+  (
+    current_token :== right_parenthesis_symbol,
+    !,
+    Step = nothing
+  ;
+    expression(Step)
+  ),
+  recover_token(RightParenthesis, right_parenthesis_symbol),
+  Instruction <<- nothing,
+  set_previous_instruction_scope(OuterInstruction),
+  set_instruction_scope(Instruction),
+  instruction(Body),
+  restore_instruction_scope_from(OuterInstruction),
+  Instruction <<-
+    build_for(For, LeftParenthesis, Initialization, SemiColon1,
+              Condition, SemiColon2, Step, RightParenthesis, Body).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+jump_instruction(Instruction) :-
+  current_token :== {continue; break},
+  !,
+  Jump = get_current_token,
+  get_next_token,
+  recover_token(SemiColon, ';'),
+  add_semi_colon(SemiColon, Instruction),
+  Instruction = build_jump(Jump).
+
+
+jump_instruction(Instruction) :-
+  current_token :== goto,
+  !,
+  Goto = get_current_token,
+  get_next_token,
+  current_token :== identifier,
+  Label = get_current_token,
+  get_next_token,
+  recover_token(SemiColon, ';'),
+  add_semi_colon(SemiColon, Instruction),
+  Instruction = build_goto(Goto, Label).
+
+
+jump_instruction(Instruction) :-
+  current_token :== return,
+  !,
+  Return = get_current_token,
+  get_next_token,
+  (
+    current_token :== ';',
+    !,
+    Value = nothing
+  ;
+    expression(Value)
+  ),
+  recover_token(SemiColon, ';'),
+  add_semi_colon(SemiColon, Instruction),
+  Instruction = build_return(Return, Value).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+void_instruction(Instruction) :-
+  current_token :== ';',
+  !,
+  SemiColon = get_current_token,
+  get_next_token,
+  Instruction = build_void_instruction(SemiColon).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+expression(Expression) :-
+  assignment_expression(AssignmentExpression),
+  expression_tail(in_left_assignment_expression => AssignmentExpression,
+                  Expression).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+expression_tail(Expression) :--
+  LeftExpression is left_assignment_expression,
+  (
+    {
+      current_token :== ',',
+      !,
+      Comma = get_current_token,
+      get_next_token
+    },
+    { assignment_expression(AssignmentExpression) },
+    build_sequence_expression(LeftExpression, AssignmentExpression, Comma)
+      + left_assignment_expression,
+    expression_tail(Expression)
+  ;
+    Expression is left_assignment_expression
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+assignment_expression(Expression) :-
+  conversion_expression(LeftExpression),
+  (
+    is_assignment(current_token),
+    !,
+    Operator = get_current_token,
+    get_next_token,
+    assignment_expression(RightExpression),
+    Expression = build_binary_expression(Operator, LeftExpression, 
+                                         RightExpression)
+  ;
+    conditional_expression(in_left_expression => LeftExpression,
+                           Expression)
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+conditional_expression(Expression) :--
+  (
+    { get_precedence(current_token) },
+    !,
+    arithmetic_expression(LeftExpression)
+  ;
+    LeftExpression is left_expression
+  ),
+  (
+    {
+      current_token :== '?',
+      !,
+      QuestionMark = get_current_token,
+      get_next_token
+    },
+    expression(Then),
+    { 
+      recover_token(Colon, ':'),
+      conversion_expression(ElseLeftExpression)
+    },
+    ElseLeftExpression + left_expression,
+    conditional_expression(Else),
+    { Expression = 
+        build_conditional_expression(LeftExpression, QuestionMark, Then,
+                                     Colon, Else) }
+  ;
+    { Expression = LeftExpression }
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+constant_expression(Expression) :-
+  conversion_expression(LeftExpression),
+  conditional_expression(in_left_expression => LeftExpression, Expression).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+arithmetic_expression(Expression) :--
+  { get_precedence(current_token, Precedence) },
+  !,
+  collect_arithmetic_expression(LeftExpression, Precedence),
+  LeftExpression + left_expression,
+  arithmetic_expression(Expression).
+
+
+arithmetic_expression(Expression) :--
+  Expression is left_expression.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+%  The arithmetic expression is collected using a precedence analysis algorithm
+%
+% ------------------------------------------------------------------------------
+%
+
+
+collect_arithmetic_expression(Expression, Precedence) :--
+  { 
+    Token1 = get_current_token,
+    get_next_token
+  },
+  LeftExpression is left_expression,
+  { 
+    conversion_expression(RightExpression),
+    Token2 = current_token 
+  },
+  (
+    { get_precedence(Token2, Precedence2) },
+    !,
+    (
+      { Precedence2 :== Precedence },
+      !,
+      build_binary_expression(Token1, LeftExpression, RightExpression)
+        + left_expression,
+      collect_arithmetic_expression(Expression, Precedence)
+    ;
+      { Precedence2 > Precedence },
+      !,
+      RightExpression + left_expression,
+      collect_arithmetic_expression(NewRightExpression, Precedence2),
+      { Expression = 
+          build_binary_expression(Token1, LeftExpression, NewRightExpression) }
+    ;
+      { Expression = 
+          build_binary_expression(Token1, LeftExpression, RightExpression) }
+    )
+  ;
+    { Expression = 
+        build_binary_expression(Token1, LeftExpression, RightExpression) }    
+  ).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+strict_conversion_expression(Expression) :-
+  current_token :== left_parenthesis_symbol,
+  type_beginning(next_token),
+  !,
+  LeftParenthesis = get_current_token,
+  get_next_token,
+  type_name(TypeName),
+  recover_token(RightParenthesis, right_parenthesis_symbol),
+  (
+    strict_conversion_expression(CastExpression),
+    !
+  ;
+    unary_expression(CastExpression),
+    !
+  ;
+    CastExpression = nothing
+  ),
+  { Expression = build_cast(LeftParenthesis, TypeName, CastExpression,
+                            RightParenthesis) }.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+conversion_expression(Expression) :-
+  strict_conversion_expression(Expression),
+  !.
+
+
+conversion_expression(Expression) :-
+  unary_expression(Expression).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+unary_expression(Expression) :-
+  is_incrementation_operation(current_token),
+  !,
+  Operator = get_current_token,
+  get_next_token,
+  unary_expression(InnerExpression),
+  Expression = build_prefix_expression(Operator, InnerExpression).
+
+
+unary_expression(Expression) :-
+  is_unary_operation(current_token),
+  !,
+  Operator = get_current_token,
+  get_next_token,
+  conversion_expression(InnerExpression),
+  Expression = build_prefix_expression(Operator, InnerExpression).
+
+
+unary_expression(Expression) :-
+  current_token :== sizeof,
+  !,
+  Operator = get_current_token,
+  get_next_token,
+  (
+    current_token :== left_parenthesis_symbol,
+    type_beginning(next_token),
+    !,
+    LeftParenthesis = get_current_token,
+    get_next_token,
+    type_name(TypeName),
+    recover_token(RightParenthesis, right_parenthesis_symbol),
+    InnerExpression = 
+      build_protected_expression(TypeName, LeftParenthesis,
+                                 RightParenthesis),
+    Expression = 
+      build_prefix_expression(Operator, InnerExpression)
+  ;
+    unary_expression(InnerExpression),
+    Expression = 
+      build_prefix_expression(Operator, InnerExpression)
+  ).
+
+
+unary_expression(Expression) :-
+  postfix_expression(Expression).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+postfix_expression(Expression) :-
+  primary_expression(LeftExpression),
+  postfix_expression_tail(in_left_expression => LeftExpression,
+                          Expression).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+postfix_expression_tail(Expression) :--
+  { current_token :== left_parenthesis_symbol },
+  !,
+  {
+    LeftParenthesis = get_current_token,
+    get_next_token,
+    expressions_list(0 => Arguments, rest => []),
+    recover_token(RightParenthesis, right_parenthesis_symbol)
+  },
+  LeftExpression is left_expression,
+  build_function_call(LeftExpression, LeftParenthesis, Arguments,
+                      RightParenthesis) + left_expression,
+  postfix_expression_tail(Expression).
+
+
+postfix_expression_tail(Expression) :--
+  { current_token :== left_bracket_symbol },
+  !,
+  {
+    LeftBracket = get_current_token,
+    get_next_token,
+    expression(Index),
+    recover_token(RightBracket, right_bracket_symbol)
+  },
+  LeftExpression is left_expression,
+  { validate_identifier(LeftExpression) },
+  build_array_reference(LeftExpression, LeftBracket, Index, RightBracket)
+    + left_expression,
+  postfix_expression_tail(Expression).
+
+
+postfix_expression_tail(Expression) :--
+  {  
+    current_token :== {'->'; '.'},
+    !,
+    Operator = get_current_token,
+    get_next_token,
+    current_token :== identifier,
+    Field = get_current_token,
+    get_next_token
+  },
+  LeftExpression is left_expression,
+  { validate_identifier(LeftExpression) },  
+  build_struct_reference(LeftExpression, Operator, Field)
+    + left_expression,
+  postfix_expression_tail(Expression).
+
+
+postfix_expression_tail(Expression) :--
+  { 
+    is_incrementation_operation(current_token),
+    !,
+    Operator = get_current_token,
+    get_next_token
+  },
+  LeftExpression is left_expression,
+  { validate_identifier(LeftExpression) },
+  build_postfix_expression(LeftExpression, Operator) + left_expression,
+  postfix_expression_tail(Expression).
+
+
+postfix_expression_tail(Expression) :--
+  Expression is left_expression,
+  { validate_identifier(Expression) }.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+primary_expression(Expression) :-
+  current_token :== {identifier; number; characters_string; character},
+  !,
+  Expression = get_current_token,
+  get_next_token.
+
+
+primary_expression(Expression) :-
+  current_token :== left_parenthesis_symbol,
+  LeftParenthesis = get_current_token,
+  get_next_token, 
+  expression(InnerExpression),
+  recover_token(RightParenthesis, right_parenthesis_symbol),
+  Expression = build_protected_expression(InnerExpression, LeftParenthesis,
+                                          RightParenthesis).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+expressions_list -->
+  { assignment_expression(Expression) },
+  !,
+  { Argument = build_argument(Expression) },
+  [Argument],
+  (
+    {
+      current_token :== ',',
+      !,
+      Comma = get_current_token,
+      get_next_token,
+      add_separator(Comma, Argument)
+    },
+    expressions_list
+  ;
+    { add_separator(nothing, Argument) }
+  ).
+
+
+expressions_list --> [].
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,53 @@
+A = false xor true?
+
+A = false xor false?
+
+A = true xor true?
+
+A = true xor false?
+.
+A = B xor C?
+A=true?
+
+A=false?
+
+B=true?
+
+B=false?
+
+C=true?
+
+C=false?
+
+.
+A = B xor C?
+B=C?
+
+A=C?
+
+A=B?
+
+A=false?
+
+B=false?
+
+C=false?
+
+B=true,C=true?
+
+.
+A = B xor C xor D xor E?
+C=true?
+D=true?
+
+
+A=true?
+
+A=false?
+B=false?
+C=false?
+D=true?
+
+D=false?
+
+.

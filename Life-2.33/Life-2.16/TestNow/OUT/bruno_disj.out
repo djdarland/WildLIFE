@@ -1,0 +1,183 @@
+
+*** Yes
+> > 1
+create CP number1
+create CP number2
+create CP number3
+create CP number4
+create CP number5
+create CP number6
+create CP number7
+create CP number8
+create CP number9
+
+
+*** Yes
+--1> delete CP number9
+delete CP number8
+delete CP number7
+delete CP number6
+delete CP number5
+delete CP number4
+delete CP number3
+delete CP number2
+delete CP number1
+2
+create CP number1
+create CP number2
+create CP number3
+create CP number4
+create CP number5
+create CP number6
+create CP number7
+create CP number8
+
+
+*** Yes
+--1> delete CP number8
+delete CP number7
+delete CP number6
+delete CP number5
+delete CP number4
+delete CP number3
+delete CP number2
+delete CP number1
+3
+create CP number1
+create CP number2
+create CP number3
+create CP number4
+create CP number5
+create CP number6
+create CP number7
+
+
+*** Yes
+--1> delete CP number7
+delete CP number6
+delete CP number5
+delete CP number4
+delete CP number3
+delete CP number2
+delete CP number1
+
+*** No
+> 1
+create CP number1
+create CP number2
+create CP number3
+create CP number4
+create CP number5
+create CP number6
+create CP number7
+create CP number8
+create CP number9
+
+delete CP number9
+delete CP number8
+delete CP number7
+delete CP number6
+delete CP number5
+delete CP number4
+delete CP number3
+delete CP number2
+delete CP number1
+2
+create CP number1
+create CP number2
+create CP number3
+create CP number4
+create CP number5
+create CP number6
+create CP number7
+create CP number8
+
+delete CP number8
+delete CP number7
+delete CP number6
+delete CP number5
+delete CP number4
+delete CP number3
+delete CP number2
+delete CP number1
+3
+create CP number1
+create CP number2
+create CP number3
+create CP number4
+create CP number5
+create CP number6
+create CP number7
+
+delete CP number7
+delete CP number6
+delete CP number5
+delete CP number4
+delete CP number3
+delete CP number2
+delete CP number1
+
+*** No
+> 1
+create CP number1
+create CP number2
+create CP number3
+create CP number4
+create CP number5
+create CP number6
+create CP number7
+create CP number8
+create CP number9
+
+
+*** Yes
+--1> delete CP number9
+delete CP number8
+delete CP number7
+delete CP number6
+delete CP number5
+delete CP number4
+delete CP number3
+delete CP number2
+delete CP number1
+2
+create CP number1
+create CP number2
+create CP number3
+create CP number4
+create CP number5
+create CP number6
+create CP number7
+create CP number8
+
+
+*** Yes
+--1> delete CP number8
+delete CP number7
+delete CP number6
+delete CP number5
+delete CP number4
+delete CP number3
+delete CP number2
+delete CP number1
+3
+create CP number1
+create CP number2
+create CP number3
+create CP number4
+create CP number5
+create CP number6
+create CP number7
+
+
+*** Yes
+--1> delete CP number7
+delete CP number6
+delete CP number5
+delete CP number4
+delete CP number3
+delete CP number2
+delete CP number1
+
+*** No
+> > 

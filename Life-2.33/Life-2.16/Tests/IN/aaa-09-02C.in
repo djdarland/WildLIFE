@@ -1,0 +1,12 @@
+%% modified example to show values correct -- (|| level > 0) change
+
+X = 5?
+X <<- 10?
+X <<- 20?
+
+write(X)?
+;
+
+write(X)?
+
+

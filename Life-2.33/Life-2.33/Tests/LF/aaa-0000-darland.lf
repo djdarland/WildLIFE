@@ -1,0 +1,481 @@
+%% Prolog database for use with predicates to simulate Dennis J. Darlands philosophy. */
+%%  Written 6/14/2007 */
+%% Revised 12/26/2009 adding perception */
+%% Revisaed 5/19/2014 for wild_life
+%% mydb6.pl */
+%% symbol0s are nouns */
+
+
+
+symbol0_r(tom,'cicero',cicero,now).
+symbol0_r(tom,'cataline',cataline,now).
+symbol0_r(tom,'tully',tully,now).
+symbol0_r(tom,'cicero',cicero,now).
+symbol0_r(tom,'cataline',cataline,now).
+symbol0_r(tom,'tully',brutus,now).
+symbol0_r(tom,'tom',tom,now).
+symbol0_r(tom,'tom_n','tom',now).
+%% /* symbol1s are verbs */
+symbol1_r(tom,'denounced',denounced,now).
+symbol1_r(tom,'not_denounced',not_denounced,now).
+symbol1_r(tom,'human',human,now).
+symbol1_r(tom,'featherless_biped',featherless_biped,now).
+symbol1_r(tom,'american',american,now).
+symbol1_r(tom,'roman',roman,now).
+symbol1_r(tom,'symbol0_r',symbol0_r,now).
+symbol1_r(tom,'symbol1_r',symbol1_r,now).
+symbol1_r(tom,'member_of',member_of,now).
+symbol1_r(tom,'tom_believes_now',tom_believes_now,now).
+
+%% /* added for testing on perception predicates 1/19/2010 */
+experiences(tom,now,toms_sense_data).
+experiences(harry,now,harrys_sense_data).
+
+sub_sd_object(toms_sense_data, toms_sns_circle ).
+sub_sd_object(toms_sense_data, toms_sns_square ).
+sub_sd_object(harrys_sense_data, harrys_sns_circle ).
+sub_sd_object(harrys_sense_data, harrys_sns_triangle ).
+
+perceptual_obj_relation(toms_sns_circle, circularity).
+perceptual_obj_relation(toms_sns_square, squareness).
+perceptual_obj_relation(harrys_sns_circle, circularity).
+perceptual_obj_relation(harrys_sns_triangle, triangularity).
+
+perceptual_pred_relation(toms_sns_red, red).
+perceptual_pred_relation(toms_sns_blue, blue).
+perceptual_pred_relation(harrys_sns_red, red).
+perceptual_pred_relation(harrys_sns_green, green).
+
+toms_sns_red(toms_sns_circle).
+toms_sns_blue(toms_sns_square).
+harrys_sns_red(harrys_sns_circle).
+harrys_sns_green(harrys_sns_triangle).
+
+normal_obj_conditions(circularity, circular_object).
+
+normal_pred_conditions(red, redness).
+
+red(circularity).
+
+phys_pred(redness).
+
+phys_obj(circular_object).
+
+%% /* causes stack trouble
+%% symbol1_r(tom,'not_member_of_self',not_member_of_self,now).
+%% */
+%% /*
+%% symbol1_r(tom,'true_of_class',true_of_class,now).
+%% */
+symbol1_r(tom,'belief_r',belief_r,now).
+%% /* predicative functions */
+predicative('denounced',denounced).
+predicative('not_denounced',not_denounced).
+predicative('human',human).
+predicative('featherless_biped',featherless_biped).
+predicative('american',american).
+predicative('roman',roman).
+predicative('symbol0_r',symbol0_r).
+predicative('symbol1_r',symbol1_r).
+predicative('tom_pred',tom_pred).
+predicative('tom_pred2',tom_pred2).
+%% /* beliefs */
+
+belief_psy_1(s ,t,u,w,x,y,z).
+
+
+belief_r(tom,'symbol1_r','tom','denounced_n','denounced',now).
+belief_r(tom,'symbol1_r','tom','not_denounced_n','not_denounced',now).
+belief_r(tom,'symbol0_r','tom','cicero_n','cicero',now).
+belief_r(tom,'symbol0_r','tom','cataline_n','cataline',now).
+belief_r(tom,'symbol0_r','tom','tully_n','tully_n',now).
+belief_r(tom,'denounced','ciceron_n','cataline_n',now).
+belief_r(tom,'not_denounced','tully_','cataline_n',now).
+belief_r(tom,'human','tom',now).
+belief_r(tom,'human','cicero',now).
+belief_r(tom,'human','cataline',now).
+belief_r(tom,'human','tully',now).
+belief_r(tom,'featherless_biped','cicero',now).
+%% /* assertions */
+%% /* prolog croaks if there are no facts so 'no' does not count */
+%%% tom_believes_now(no).
+%%% tom_believes_now(no,no,no).
+%%% tom_believes_now(no,no,no,no).
+%%% tom_believes_now(no,no,no,no,no).
+%%% tom_pred(no).
+%%% tom_pred(no,no,no).
+%%% tom_pred(no,no,no,no).
+%%% tom_pred(no,no,no,no,no).
+%%% tom_pred2(no).
+%%% tom_pred2(no,no,no).
+%%% tom_pred2(no,no,no,no).
+%%% tom_pred2(no,no,no,no,no).
+%%% denounced(no).
+%%% not_denounced(no).
+%%% symbol0_r(no).
+%%% symbol1_r(no).
+%%% member_of(no).
+%%% not_member_of_self(no).
+%%% denounced(no,no).
+%%% not_denounced(no,no).
+%%% symbol0_r(no,no).
+%%% symbol1_r(no,no).
+%%% human(no,no).
+%%% featherless_biped(no,no).
+%%% american(no,no).
+%%% roman(no,no).
+%%% not_member_of_self(no,no).
+%%% true_of_class(no).
+%%% true_of_class(no,no).
+%%% not_denounced(no,no,no).
+%%% denounced(no,no,no,no).
+%%% not_denounced(no,no,no,no).
+%%% symbol0_r(no,no,no).
+%%% symbol1_r(no,no,no).
+%%% human(no,no,no).
+%%% featherless_biped(no,no,no).
+%%% american(no,no,no).
+%%% roman(no,no,no).
+%%% member_of(no,no,no).
+%%% not_member_of_self(no,no,no).
+%%% human(no,no,no,no).
+%%% featherless_biped(no,no,no,no).
+%%% american(no,no,no,no).
+%%% roman(no,no,no,no).
+%%% member_of(no,no,no,no).
+%%% not_member_of_self(no,no,no,no).
+%%% true_of_class(no,no,no,no).
+%%% denounced(no,no,no,no,no).
+%%% not_denounced(no,no,no,no,no).
+%%% denounced(no).
+%%% not_denounced(no).
+%%% human(no,no,no,no,no).
+%%% featherless_biped(no,no,no,no,no).
+%%% american(no,no,no,no,no).
+%%% roman(no,no,no,no,no).
+%%% member_of(no,no,no,no,no).
+%%% not_member_of_self(no,no,no,no,no).
+%%% true_of_class(no,no,no,no,no).
+%%% symbol0_r(no,no,no,no,no).
+%%% symbol1_r(no,no,no,no,no).
+%%% symbol0_r(no).
+%%% symbol1_r(no).
+%%% member_of(no).
+%%% not_member_of_self(no).
+%%% belief_r(no).
+%%% belief_r(no,no).
+%%% belief_r(no,no,no).
+denounced(cicero,cataline,then).
+human(tom).
+human(cicero).
+human(cataline).
+human(tully).
+featherless_biped(tom).
+featherless_biped(cicero).
+featherless_biped(cataline).
+featherless_biped(tully).
+american(tom).
+roman(cicero).
+roman(cataline).
+roman(tully).
+roman(brutus).
+tom_pred('human','tom').
+tom_pred('human','cicero').
+tom_pred('human','cataline').
+tom_pred('human','tully').
+tom_pred2('featherless_biped','tom').
+tom_pred2('featherless_biped','cicero').
+tom_pred2('featherless_biped','cataline').
+tom_pred2('featherless_biped','tully').
+
+
+
+%% Copyright (c) 2010 Dennis J. Darland */
+%% Prolog predicates to simulate Dennis J. Darland’s philosophy. */
+%% Written 6/14/2007 */
+%% Revised 12/26/2009 - adding perception */
+%% Revised 1/14/2010 - after perception breakthrough thoughts */
+%% Revised again 1/16/2010 - after more perception breakthrough thoughts */
+%% Revised again 7/31/2010 - after more general thoughts on philosophy of mind*/
+%% Revised again 10/13/2010 - continued more general thoughts on philosophy of mind*/
+%% Revised again 12/8/2013 - want to make more comprehensive theory of mind. Rsesulting from study of Jerry Fodor, Noam Chomsky, and others. */
+%% Ported to Wild Life 5/19/2014 - with major revisions to philosophy on mind.
+%%  ----------------------------------------------------------
+%% 7/31/2010 More Ideas on philosophy of mind added
+%% 10/13/2010 Revised Further
+%% 10/14/2010 Revised Further
+%% 5/21/2014 Revised as to new ideas - see http://dennisdarland/philosophy/stich.html
+%% ------------------------------------------------------*/
+
+common_symbol1(Time, Subject1,Subject2, Aword, A) :-
+	external_symbol1(Time, Subject1, Aword, A1),
+	external_symbol1(Time, Subject2, Aword, A2),
+	symbol1(Time, Subject1, A1, A),
+	symbol1(Time, Subject2, A2, A).
+
+%% /* Above Subject1 and Subject2 are two persons (which are complex)
+
+%% external_symbol1 is a predicate which may be true at some Time when the external
+%% (written or spoken word Aword of type 1 is associated with a internal symbol
+%% A1 or A2 for Subject 1 or subject2 respectively.)
+
+%% symbol1 is a predicate which may be true at time Time when the internal symbol
+%% A1 or A2 is associated with the object (property A). */
+
+
+common_symbol0(Time,Subject1,Subject2,Aword,A) :-
+	external_symbol0(Time,Subject1,Aword,A1),
+	external_symbol0(Time,Subject2,Aword,A2),
+	symbol0(Time,Subject1,A1,A),
+	symbol0(Time,Subject2,A2,A).
+
+%% /* external_symbol0 is a predicate which may be true at some Time when the external
+%% (written or spoken word Aword of type 0 is associated with a internal symbol
+%% A1 or A2 for Subject 1 or subject2 respectively.)
+
+%% symbol0 is a predicate which may be true at timw Time when the internal symbol
+%% A1 or A2 is associated with the object (thing A). */
+
+
+recognizes_perception(Time,Subject,PR,PA) :-
+	perceives(Time,Subject, PR, PA), 
+	symbol1(Time,Subject,PR,R),
+	symbol0(Time,Subject,PA,A).
+
+%% /* ------------------------------------------------------------------------
+%% 1/23/2010 ideas on perception  
+%% Subject = person doing perceiving
+%% Time = time of perceiving 
+%% Sense_data = particular (but complex) entity = a complete set of a persons
+%%    experiences at that time 
+%% Sd_obj_a =  piece of a Sense_data corresponding to an object (e.g. circular part) 
+%% [could also be additional Sd_obj_b, Sd_obj_c, ...
+%% Sd_pred = predicate true of a Sd_obj (e.g. red)
+%% PA = predicate describing an external object that ordinarily would cause 
+%%     such experience of external object A
+%% PR = predicate corresponding to predicate R of external object that ordinarily
+%%    would cause such experience of object A having such predicate R
+%% A = object perceived
+%% could also be a B, C, ...
+%% R = prredicate object perceived as having (property)  
+%% ------------------------------------------------------------------------*/
+
+perceives(Time, Subject , PR, PA) :- 
+	experiences(Time, Subject, Sense_Data), 
+	phys_pred(R),
+	phys_obj(A),
+	normal_pred_conditions(Time,Subject,PR,R),
+	normal_obj_conditions(Time,Subject,PA, A),
+	perceptual_obj_relation(Sd_obj_a, PA),
+	perceptual_pred_relation(Sd_pred, PR),
+	sub_sd_object(Sense_data, Sd_obj_a),
+	sub_sd_pred(Sense_data, Sd_pred_a),
+	apply(Sd_pred, [Sd_obj_a]).
+
+hallucinates(Time,Subject, PR, PA) :- 
+	experiences(Time, Subject, Sense_Data), 
+	phys_pred(R),
+	phys_obj(A),
+	not normal_pred_conditions(Time,Subject,PR,R),
+	normal_obj_conditions(Time,Subject,PA, A),
+	perceptual_obj_relation(Sd_obj_a, PA),
+	perceptual_pred_relation(Sd_pred, PR),
+	sub_sd_object(Sense_data, Sd_obj_a),
+	sub_sd_pred(Sense_data, Sd_pred_a),
+	apply(Sd_pred, [Sd_obj_a]).
+
+hallucinates(Time, Subject, PR, PA) :- 
+	experiences(Time, Subject, Sense_Data), 
+	phys_pred(R),
+	phys_obj(A),
+	normal_pred_conditions(Time,Subject,PR,R),
+	not normal_obj_conditions(Time,Subject,PA, A),
+	perceptual_obj_relation(Sd_obj_a, PA),
+	perceptual_pred_relation(Sd_pred, PR),
+	sub_sd_object(Sense_data, Sd_obj_a),
+	sub_sd_pred(Sense_data, Sd_pred_a),
+	apply(Sd_pred, [Sd_obj_a]).
+
+
+experience(Time, Subject, PR, PA) :-
+	perceives(Time, Subject , PR, PA).
+
+experience(Time, Subject, PR, PA) :-
+	hallucinates(Time, Subject, PR, PA).
+
+
+
+
+
+
+
+
+
+
+%% /*--------------------------------------------------------------
+%% EXAMPLE 1
+%% Tom and Harry see same red circle
+
+%% VARIABLE            Tom              Harry
+%% Subject             tom              harry
+%% Time                1:00pm           1:00pm
+%% Sense_data          toms_sense_data  harrys_sense_data
+%% Sd_obj_a            toms_sns_circle  harrys_sns_circle
+%% Sd_pred             toms_sns_red     harrys_sns_red
+%% PA                  circlularity     circlularity
+%% PR                  red              red
+%% A                   circular_object  circular_object
+%% R                   redness          redness (not sure need both PR & R)
+%% 
+%% in this case all relations in "perceived" above would hold for these arguments
+%% -------------------------------------------------------------------------
+%% EXAMPLE 2
+%% Tom hallucinates red circle and Harry sees red circle
+%% 
+%% VARIABLE            Tom              Harry
+%% Subject             tom              harry
+%% Time                1:00pm           1:00pm
+%% Sense_data          toms_sense_data  harrys_sense_data
+%% Sd_obj_a            toms_sns_circle  harrys_sns_circle
+%% Sd_pred             toms_sns_red     harrys_sns_red
+%% PA                  circlularity     circlularity
+%% PR                  red              red
+%% A                   circular_object  circular_object
+%% R                   redness          redness (not sure need both PR & R)
+%%
+%% for tom either 
+%%     apply(PR,[PA]) 
+%% or 
+%%     normal_pred_conditions(PR, R),
+%% or
+%%     normal_obj_conditions(PA, A).
+%% would fail
+%% ------------------------------------------------------------------*/
+
+understand_1(S,T,R,A,B,C,D) :-     belief_1(S,T,R,A,B,C,D).
+understand_1(S,T,R,A,B,C,D) :- belief_not_1(S,T,R,A,B,C,D).
+
+belief_1(S,T,R,A,B,C,D) :-    belief_psy_1(S,T,U,W,X,Y,Z), apply(U,[W,X,Y,Z]).
+belief_1(S,T,R,A,B,C,D) :-    belief_psy_1(S,T,U,W,X,Y,Z), not(understands_1(S,T,R,U,A,W,B,X,C,Y,D,Z)).
+belief_1(S,T,R,A,B,C,D) :-    belief_psy_1(S,T,U,W,X,Y,Z), not(symbol_1(S,T,U,R)).
+belief_1(S,T,R,A,B,C,D) :-    belief_psy_1(S,T,U,W,X,Y,Z), not(symbol_0(S,T,A,W)).
+belief_1(S,T,R,A,B,C,D) :-    belief_psy_1(S,T,U,W,X,Y,Z), not(symbol_0(S,T,B,X)).
+belief_1(S,T,R,A,B,C,D) :-    belief_psy_1(S,T,U,W,X,Y,Z), not(symbol_0(S,T,C,Y)).
+belief_1(S,T,R,A,B,C,D) :-    belief_psy_1(S,T,U,W,X,Y,Z), not(symbol_0(S,T,D,Z)).
+
+%% THE ABOVE IS WRONG YET!!!!
+
+
+understand(S,R,A,B,T) :-  symbol1_r(S,W,R,T) ,symbol0_r(S,X,A,T) ,symbol0_r(S,Y,B,T).
+
+understand(S,R,A,B,C,T) :-  symbol1_r(S,W,R,T) ,symbol0_r(S,X,A,T) ,symbol0_r(S,Y,B,T),symbol0_r(S,Z,C,T).
+
+logical_form(RF,W,X,Y) :- RF $== 'r(a,b)', symbol1_r(S,W,R,T), symbol0_r(S,X,A,T), symbol0_r(S,Y,B,T).
+
+belief(S,R,A,T) :- belief_r(S,W,X,T) , symbol1_r(S,W,R,T) ,symbol0_r(S,X,A,T)
+	  . 
+belief(S,R,A,B,T) :- belief_r(S,W,X,Y,T) , symbol1_r(S,W,R,T) ,symbol0_r(S,X,A,T) ,symbol0_r(S,Y,B,T). 
+
+belief(S,R,A,B,C,T) :- belief_r(S,W,X,Y,Z,T) , symbol1_r(S,W,R,T) ,symbol0_r(S,X,A,T) ,symbol0_r(S,Y,B,T) ,symbol0_r(S,Z,C,T). 
+
+proposition(R,A) :- understand(S,R,A,T). 
+proposition(R,A,B) :- understand(S,R,A,B,T). 
+proposition(R,A,B,C) :- understand(S,R,A,B,C,T). 
+
+true_proposition(R,A,T) :- proposition(R,A) , apply(R,[A,T]).
+true_proposition(R,A,B,T) :- proposition(R,A,B) , apply(R,[A,B,T]).
+true_proposition(R,A,B,C,T) :- proposition(R,A,B,C) , apply(R,[A,B,C,T]).
+
+%% /* T1 is time of belief T2 is time it is believed to be true */
+
+true_belief(S,R,A,T1,T2) :- belief(S,R,A,T1) , apply(R,[A,T2]).
+true_belief(S,R,A,B,T1,T2) :- belief(S,R,A,B,T1) , apply(R,[A,B,T2]).
+true_belief(S,R,A,B,C,T1,T2) :- belief(S,R,A,B,C,T1) , apply(R,[A,B,C,T2]).
+
+symbol0(X) :- symbol0_r(S,X,A,T).
+
+symbol1(X) :- symbol1_r(S,X,A,T).
+
+name_1(W) :- belief_r(S,W,X,T).
+
+%% /* the _1 is just to distinguish it from the built in 'name' */
+
+name_1(X) :- belief_r(S,W,X,T).
+
+name_1(W) :- belief_r(S,W,X,Y,T).
+
+name_1(X) :- belief_r(S,W,X,Y,T).
+
+name_1(Y) :- belief_r(S,W,X,Y,T).
+
+name_1(W) :- belief_r(S,W,X,Y,Z,T).
+
+name_1(X) :- belief_r(S,W,X,Y,Z,T).
+
+name_1(Y) :- belief_r(S,W,X,Y,Z,T).
+
+name_1(Z) :- belief_r(S,W,X,Y,Z,T).
+
+%% /* get intensional predicate to test extensionality of classes */
+tom_believes_now(P_N,X_N) :- symbol1_r(tom,P_N,P,now), symbol0_r(tom,X_N,X,now), belief_r(tom,P_N,X_N,now).
+
+%% /* Principia Mathematica definition of classes in Prolog */
+%% /* THIS ONE TO BE USED WITH RUSSELLS CLASS added args to distinguish */
+true_of_class('RUSSELL','RUSSELL',F_N,PSI_N) :-  symbol1_r(S,F_N,F,T), symbol1_r(S,PSI_N,PSI,T), symbol1_r(S,PHI_N,PHI,T), equiv_r(PSI,PHI),  writeln(['applying(russels class) ',F_N,' to ',PHI_N, ' and ',PHI_N]), apply(F,[PHI_N,PHI_N]).
+
+
+%% /* THIS ONE WORKS WITH member_of, and any other 'class function' with 2 args */
+true_of_class(F_N,PSI_N,X_N) :-  symbol1_r(S,F_N,F,T), symbol1_r(S,PSI_N,PSI,T),symbol0_r(S,X_N,X,T), predicative(PHI_N,PHI), equiv_r(PSI,PHI) ,apply(F,[PHI_N,X_N]), X_N :\== no.
+
+%% /* for 'class functions' with 1 arg */ 
+true_of_class(F_N,PSI_N) :- symbol1_r(S,F_N,F,T), symbol1_r(S,PSI_N,PSI,T), symbol1_r(S,PHI_N,PHI,T), equiv_r(PSI,PHI),  apply(F,[PHI_N]).
+
+
+equiv_r(not_member_of_self,not_member_of_self). %% /* otherwise run out of stack */equiv_r(true_of_class,true_of_class). %% /* otherwise run out of stack */
+equiv_r(member_of,member_of). %% /* otherwise run out of stack */
+equiv_r(PSI,PHI) :- not(not_equiv(PSI,PHI)).
+not_equiv(PSI,PHI) :- apply(PSI,[X]),not(apply(PHI,[X])).
+not_equiv(PSI,PHI) :- apply(PHI,[X]), not(apply(PSI,[X])).
+not_equiv(PSI,PHI) :- apply(PSI,[X,Y]),not(apply(PHI,[X,Y])).
+not_equiv(PSI,PHI) :- apply(PHI,[X,Y]), not(apply(PSI,[X,Y])).
+not_equiv(PSI,PHI) :- apply(PSI,[X,Y,Z]),not(apply(PHI,[X,Y,Z])).
+not_equiv(PSI,PHI) :- apply(PHI,[X,Y,Z]), not(apply(PSI,[X,Y,Z])).
+not_equiv(PSI,PHI) :- apply(PSI,[W,X,Y,Z]),not(apply(PHI,[W,X,Y,Z])).
+not_equiv(PSI,PHI) :- apply(PHI,[W,X,Y,Z]), not(apply(PSI,[W,X,Y,Z])).
+member_of(PHI_N,X_N) :- symbol1_r(S,PHI_N,PHI,T), apply(PHI,[X]).
+
+
+%% /* RUSSELLs PARADOX */
+not_member_of_self(X,X_N) :- symbol1_r(S,X_N,X,T), true_of_class('RUSSELL','not_member_of_self','not_member_of_self'). 
+not_member_of_self(X,X_N) :- symbol1_r(S,X_N,X,T), not(true_of_class('member_of','not_member_of_self','not_member_of_self')). 
+russells_class :- true_of_class('RUSSELL',X,Y).
+
+intensional(R) :- symbol1_r(S,R_N,R,T),symbol1_r(S,X_N,X,T),symbol1_r(S,Y_N,Y,T),symbol0_r(S,A_N,A,T), apply(R,[X,A]) , equiv_r(X,Y), not(apply(R,[Y,A])), A :\== no.
+
+intensional(R) :- symbol1_r(S,F_N,F,T), symbol1_r(S,R_N,R,T),symbol1_r(S,X_N,X,T),symbol1_r(S,Y_N,Y,T),symbol0_r(S,A_N,A,T),symbol0_r(S,B_N,B,T), apply(R,[F,X,A,B]) , equiv_r(X,Y),not(apply(R,[F,Y,A,B])), A :\== no.
+intensional(R) :- symbol1_r(S,R_N,R,T),symbol1_r(S,X_N,X,T),symbol1_r(S,Y_N,Y,T),symbol0_r(S,A_N,A,T), apply(R,[S,X_N,A_N,T]) , equiv_r(X,Y),not(apply(R,[S,Y_N,A_N,T])), A :\== no.
+%% /* WITH DEBUGGING 
+
+
+
+
+%% difficuly with below in wild_life -- probably in apply 
+%% tempoararily commented out below 5/19/2014 - till more familiar 
+%%intensional(R) :- symbol1_r(S,F_N,F,T), symbol1_r(S,R_N,R,T),symbol1_r(S,X_N,X,T),symbol1_r(S,Y_N,Y,T),symbol0_r(S,A_N,A,T),symbol0_r(S,B_N,B,T), writeln(['intensionsal R = ',R,' F = ',F,' A = ',A,' B = ',B]),apply(R,[F,X,A,B]) , equiv_r(X,Y),not(apply(R,[F,Y,A,B])).
+%% intensional(R) :- symbol1_r(S,F_N,F,T), symbol1_r(S,R_N,R,T),symbol1_r(S,X_N,X,T),symbol1_r(S,Y_N,Y,T),symbol0_r(S,A_N,A,T), writeln(['intensionsal R = ',R,' F = ',F,' A = ',A,' T = ',T ]),apply(R,[F,X,A,T]) , equiv_r(X,Y),not(apply(R,[F,Y,A,T])), A :\== no.
+%% */
+
+%% NEXT SEEMS OK - ABOVE WAS COMMENTED OUT ON PROLOG ALSO
+intensional(R) :- symbol1_r(S,F_N,F,T), symbol1_r(S,R_N,R,T),symbol0_r(S,X_N,X,T),symbol1_r(S,Y_N,Y,T),symbol0_r(S,A_N,A,T),symbol0_r(S,B_N,B,T),symbol0_r(S,C_N,C,T),apply(R,[F,X,A,B,C]) ,equiv_r(X,Y), not(apply(R,[F,Y,A,B,C])), A :\== no.
+
+
+intensional(R) :- symbol1_r(S,R_N,R,T),symbol0_r(S,X_N,X,T),symbol1_r(S,Y_N,Y,T),symbol0_r(S,A_N,A,T),symbol0_r(S,B_N,B,T),apply(R,[S,X,A,B,T]) ,equiv_r(X,Y), not(apply(R,[S,Y,A,B,T])) , A :\== no.
+
+%% /* NOT NEEDED YET
+%% intensional(R) :- symbol1_r(S,F_N,F,T), symbol1_r(S,R_N,R,T),symbol0_r(S,X_N,X,T),symbol0_r(S,A_N,A,T),symbol0_r(S,B_N,B,T),symbol0_r(S,C_N,C,T),symbol0_r(S,D_N,D,T),apply(R,[F,X,A,B,C,D]) ,equiv_r(X,Y), not(apply(R,[F,Y,A,B,C,D])).
+%% */
+
+%% NEXT SEEMS OK - ABOVE WAS COMMENTED OUT ON PROLOG ALSO
+
+extensional(R) :- symbol1_r(S,R_N,R,T) ,not(intensional(R)).
+

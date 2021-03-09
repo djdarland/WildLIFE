@@ -1,0 +1,4 @@
+f(eggs => X, bacon => Y, toast => Z) -> [X, Y, Z].
+A=f(eggs=>a, bacon => b), write(A)?
+R1 = A(toast =>c), R2 = A(toast => d), write(R1, R2), nl, write(A)?
+

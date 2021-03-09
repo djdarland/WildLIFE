@@ -1,0 +1,52 @@
+% FILE. . . . . /_/udir4/_/hassan/life/prime.life
+% EDIT BY . . . Hassan Ait-Kaci
+% ON MACHINE. . Prlp22
+% STARTED ON. . Tue Jan  8 18:38:50 1991
+
+% Last modified on Mon Feb 22 04:55:53 1993 by Rmeyer
+%      modified on Tue Feb 18 13:50:49 MET 1992 by mezhoud
+%      modified on Mon Jun 10 14:48:43 1991 by Hassan
+
+% A prime number is a positive integer whose number of proper factors is
+% exactly one. This can be expressed in LIFE as:
+
+
+
+
+prime :=  P:posint | number_of_factors(P) = one.
+ 
+posint := I:int | I>0.
+
+	number_of_factors(N)	-> cond	(N<2,
+       		    			{},
+           				factors_from(N,2) 
+					).
+
+	factors_from(N:int,P:int)
+  				-> cond(P*P>N,
+          				one,
+          				cond(R:(N/P)=:=floor(R),
+                				many,
+                				factors_from(N,P+1) 
+					    ) 
+					).
+
+primes_to(N:int) :-	write(posint_stream_to(N) & prime), 
+			nl,
+			fail.
+
+primes_to_gc(N:int) :-	write(posint_stream_to(N) & prime),
+			nl,
+			gc,
+			fail.
+
+	posint_stream_to(N:int) -> cond(N<1,
+					   {},
+					   {1;1+posint_stream_to(N-1)}
+					).
+	
+all_primes :- 		write(posint_stream & prime), 
+			nl, 
+			fail.
+
+	posint_stream 		-> {2;1+posint_stream}.

@@ -1,0 +1,29 @@
+:: t(real).
+persistent(f)?
+f<<-t(7)?
+
+:: ga. f=t,write("OK!"),nl?
+:: gb. f=t,write("OK!"),nl?
+:: gd. f=t,write("OK!"),nl?
+:: ge. f=t,write("OK!"),nl?
+:: gf. f=t,write("OK!"),nl?
+:: gg. f=t,write("OK!"),nl?
+:: gh. f=t,write("OK!"),nl?
+:: gi. f=t,write("OK!"),nl?
+:: gj. f=t,write("OK!"),nl?
+:: gk. f=t,write("OK!"),nl?
+:: gl. f=t,write("OK!"),nl?
+:: gm. f=t,write("OK!"),nl?
+:: gn. f=t,write("OK!"),nl?
+:: go. f=t,write("OK!"),nl?
+:: gp. f=t,write("OK!"),nl?
+:: gq. f=t,write("OK!"),nl?
+:: gr. f=t,write("OK!"),nl?
+:: gs. f=t,write("OK!"),nl?
+:: gt. f=t,write("OK!"),nl?
+:: gu. f=t,write("OK!"),nl?
+:: gv. f=t,write("OK!"),nl?
+:: gw. f=t,write("OK!"),nl?
+:: gx. f=t,write("OK!"),nl?
+:: gy. f=t,write("OK!"),nl?
+:: gz. f=t,write("OK!"),nl?

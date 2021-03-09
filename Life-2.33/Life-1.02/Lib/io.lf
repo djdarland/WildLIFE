@@ -1,0 +1,21 @@
+%	$Id: io.lf,v 1.2 1994/12/08 23:58:13 duchier Exp $	
+module("io") ?
+
+add_man(io,
+	"module(""io"")
+
+         contains io utilities.") ?
+
+public(writeln)?
+
+add_man(writeln,
+     " writeln(args...):
+       input: a variable numbers of arguments
+
+       outputs its arguments on the standard output using ""write"", 
+       followed by a new line.") ? 
+C:writeln :-
+	write&strip(C),
+	nl.
+
+

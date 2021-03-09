@@ -1,0 +1,67 @@
+echo "WildLife Edit Utility"
+echo "Edit any .h file & compared with 1.02 version on top?"
+echo "enter 0 to proceed 999 to quit"
+read select
+while [ $select -ne 999 ]
+do 
+echo "-----------"
+echo ".h files for wild life"
+echo "-----------"
+echo "1 built_ins.h"
+echo "2 c_life.h"
+echo "3 copy.h"
+echo "4 error.h"
+echo "5 extern.h"
+echo "6 info.h"
+echo "7 interrupt.h"
+echo "8 lefun.h"
+echo "9 list.h"
+echo "10 login.h"
+echo "11 memory.h"
+echo "12 modules.h"
+echo "13 parser.h"
+echo "14 print.h"
+echo "15 proto.h"
+echo "16 raw.h"
+echo "17 sys.h"
+echo "18 token.h"
+echo "19 trees.h"
+echo "20 types.h"
+echo "21 xdisplaylist.h"
+echo "22 xpred.h"
+
+echo "777 NOTES_DJD.txt"
+echo "888 NOTES_HAK.txt"
+echo "999 quit"
+echo "select"
+read select
+case $select in
+1) $EDITOR $LIFE_ORIG/Source/built_ins.h built_ins.h ;;
+2) $EDITOR $LIFE_ORIG/Source/c_life.h c_life.h ;;
+3) $EDITOR $LIFE_ORIG/Source/copy.h copy.h ;;
+4) $EDITOR $LIFE_ORIG/Source/error.h error.h ;;
+5) $EDITOR $LIFE_ORIG/Source/extern.h extern.h ;;
+6) $EDITOR $LIFE_ORIG/Source/info.h info.h ;;
+7) $EDITOR $LIFE_ORIG/Source/interrupt.h interrupt.h ;;
+8) $EDITOR $LIFE_ORIG/Source/lefun.h lefun.h ;;
+9) $EDITOR $LIFE_ORIG/Source/list.h list.h ;;
+10) $EDITOR $LIFE_ORIG/Source/login.h login.h ;;
+11) $EDITOR $LIFE_ORIG/Source/memory.h memory.h ;;
+12) $EDITOR $LIFE_ORIG/Source/modules.h modules.h ;;
+13) $EDITOR $LIFE_ORIG/Source/parser.h parser.h ;;
+14) $EDITOR $LIFE_ORIG/Source/print.h print.h ;;
+15) $EDITOR $LIFE_ORIG/Source/proto.h proto.h ;;
+16) $EDITOR $LIFE_ORIG/Source/raw.h raw.h ;;
+17) $EDITOR $LIFE_ORIG/Source/sys.h sys.h ;;
+18) $EDITOR $LIFE_ORIG/Source/token.h token.h ;;
+19) $EDITOR $LIFE_ORIG/Source/trees.h  trees.h ;;
+20) $EDITOR $LIFE_ORIG/Source/types.h  types.h ;;
+21) $EDITOR $LIFE_ORIG/Source/xdisplaylist.h  xdisplaylist.h ;;
+22) $EDITOR $LIFE_ORIG/Source/xpred.h xpred.h ;;
+
+777) $EDITOR NOTES_DJD.txt;;
+888) $EDITOR NOTES_HAK.txt;;
+
+esac
+done
+

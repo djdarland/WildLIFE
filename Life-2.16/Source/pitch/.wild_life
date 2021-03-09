@@ -1,0 +1,10 @@
+verbose, statistics?
+%%  load("djd.lf")?
+%% father(richard,dennis).
+%% father(dennis,randy).
+%% grandfather(X,Y) :- father(X,Z) , father(Z,Y).
+%% load("my_fact.lf")?
+% write(factorial(5))?
+% write(2 * 5)?
+load("djd-pitch.lf")?
+%% play_game(R,S)?

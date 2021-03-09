@@ -1,0 +1,8 @@
+print_depth(0)?
+X=f(f(f(f(a))))?
+print_depth(1)?
+print_depth(2)?
+print_depth(3)?
+print_depth(4)?
+
+

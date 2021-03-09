@@ -1,0 +1,89 @@
+A=1776?
+B=1872?
+C=A+B?
+write(A, "+",B, "=" ,C)?
+;
+
+C=A-B?
+write(A, "-",B, "=" ,C)?
+;
+
+C=A*B?
+write(A, "*",B, "=" ,C)?
+;
+
+C=A/B?
+write(A, "/",B, "=" ,C)?
+;
+
+C=A//B?
+write(A, "//",B, "=" ,C)?
+;
+
+C=floor(A)?
+write(A, "floor ->" ,C)?
+;
+
+C=ceiling(A)?
+write(A, "ceiling ->",C)?
+;
+
+C=A/\B?
+write(A, "bitwise and (/\)",B, "=" ,C)?
+;
+
+C=A\/B?
+write(A, "bitwise or (/\)",B, "=" ,C)?
+;
+
+C=A>>4?
+write(A, "right shift 4 (>>4)=",C)?
+;
+
+C=A<<4?
+write(A, "left shift 4 (<<4)=" ,C)?
+;
+
+.
+A=0.5?
+C=sqrt(A)?
+write(A, "sqrt -> ",C)?
+;
+
+C=exp(A)?
+write(A, "exp -> ",C)?
+;
+
+C=log(A)?
+write(A, "log -> ",C)?
+;
+
+C=sin(A)?
+write(A, " sin-> " ,C)?
+;
+
+C=cos(A)?
+write(A, " cos-> " ,C)?
+;
+
+C=tan(A)?
+write(A, " tan-> " ,C)?
+;
+
+.
+C=0.5?
+C=sin(A)?
+write(C, " arcsin-> " ,A)?
+;
+
+C=cos(A)?
+write(C, " arccos-> " ,A)?
+;
+
+C=tan(A)?
+write(C, " arctan-> " ,A)?
+;
+
+
+
+

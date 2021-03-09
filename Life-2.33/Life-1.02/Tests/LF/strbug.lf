@@ -1,0 +1,8 @@
+
+f(F,strcon(CF,".life")) :- CF=psi2str(F).
+
+f2(strcon(CF,".life"),F) :- CF=psi2str(F).
+
+f(poly,S), write(S), nl?
+
+f2(S,poly), write(S), nl?

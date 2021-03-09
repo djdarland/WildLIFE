@@ -1,0 +1,27 @@
+persistent(g)?
+g<<-get_choice?
+.
+A=get_choice-g, B={a;b}, set_choice(A+g)?
+;
+B={a;b}, A=get_choice-g, set_choice(A+g)?
+;
+;
+A1=get_choice-g, B={a;b}, A2=get_choice-g, C=exists_choice(A1+g,A2+g)?
+;
+;
+A1=get_choice-g, A2=get_choice-g, C=exists_choice(A1+g,A2+g)?
+;
+A1=get_choice-g?
+B={a;b}?
+set_choice(A1+g)?
+;
+A1=get_choice-g?
+B=exists_choice(A1+g,get_choice)?
+;
+;
+A1=get_choice-g?
+A2=get_choice-g?
+B=exists_choice(A1+g,A2+g)?
+;
+;
+;

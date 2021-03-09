@@ -1,0 +1,7 @@
+
+*** Yes
+> > bidon-->[foret(@,[tree(@,list,list),tree(@,list,list),tree(@,list,list)]),tree(c,[tree(c,[b,c],[]),tree(y,list,list),tree(y,list,list)],[])]
+*** Yes
+--1> > det_nom-->[foret(@,[tree(@,list,list),tree(@,list,list),tree(@,list,list)]),tree(nom,[tree(det,[1],[]),tree(adjq,[],[2]),tree(adjq,list,[3])],[])]
+*** Yes
+--1> > > 

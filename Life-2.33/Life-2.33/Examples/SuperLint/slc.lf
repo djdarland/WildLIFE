@@ -1,0 +1,115 @@
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%
+%                              RULE COMPILER
+%                              -------------
+%
+%  
+%
+%
+%  AUTHOR : Arnaud Venet                     CREATION : September 16th 1993
+%  ------                                    --------
+%
+%
+%                             ---------------                        
+%
+%                    
+%                   Last modification : September 21st 1993 
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+
+
+
+import("accumulators") ?
+
+acc_info(dcg,Term, Xs, Ys, acc_pred => 'C'(Term,false,Xs,Ys),
+	 in_name => 0, out_name => rest) ?
+
+expand_load(true) ?
+
+
+load("sl_rule_expander.lf") ?
+
+
+open("sl_rule_expander") ?
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+error(Message) :-
+  write_err(Message),
+  nl_err,
+  halt.
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+sort_args(["-h"]) :-
+  !,
+  error("Usage : slc [-o output-file] name1 name2 ...").
+
+
+sort_args(["-o", Output | LArgs], FileName, Rules, FileNumber) :-
+  !,
+  cond(FileName :== @,
+    (
+      Output = FileName,
+      sort_args(LArgs, FileName, Rules, FileNumber)
+    ),
+    error("slc : bad arguments")
+  ).
+
+
+sort_args([RulesFile | LArgs], FileName, [RulesFile | Rules], 
+          FileNumber) :-
+  !,
+  sort_args(LArgs, FileName, Rules, FileNumber + 1).
+
+
+sort_args([], FileName, [], FileNumber) :-
+  !,
+  cond(FileName :== @,
+    FileName = "superlint.lf"
+  ),
+  cond(FileNumber :== 1,
+    error("slc : no rules file specified")
+  ).
+
+
+sort_args :-
+  error("slc : bad arguments").
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+wl_main(Directory, Args) :-
+  chdir(Directory),
+  sort_args(Args, Binary, Rules, 1),
+  compile_rules(from => Rules, in => Binary).
+
+
+%
+% ------------------------------------------------------------------------------
+%
+
+
+
+
+

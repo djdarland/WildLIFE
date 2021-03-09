@@ -1,0 +1,25 @@
+
+*** Yes
+> > 
+*** Yes
+> 
+*** Yes
+> 
+*** Yes
+> > Had to change pick_func.
+*** Yes
+> 
+*** Yes
+> 
+*** Yes
+> |    |    |    |    |    |    
+*** Yes
+> Function times_four applied to argument 5 is 20
+Function fact applied to argument 5 is 120
+Function times_four applied to argument 3 is 12
+Function fact applied to argument 3 is 6
+Function times_four applied to argument 7 is 28
+Function fact applied to argument 7 is 5040
+
+*** No
+> 

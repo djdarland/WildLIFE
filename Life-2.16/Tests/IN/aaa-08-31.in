@@ -1,0 +1,4 @@
+expand_load(true)?
+term_expansion((H:-B), (H:- write(root_sort(H)),nl,B)) :- !.
+load("FILES/x.lf")?
+listing(third)?

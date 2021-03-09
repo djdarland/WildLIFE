@@ -1,0 +1,12 @@
+*** Error: <-(q) is an incorrect global variable declaration (near line 3).
+*** Error: function + cannot be redeclared as a global variable (near line 25).
+*** Error: function * cannot be redeclared as a global variable (near line 25).
+*** Error: sort int cannot be redeclared as a global variable (near line 27).
+*** Error: sort "s" cannot be redeclared as a global variable (near line 27).
+*** Error: sort 1 cannot be redeclared as a global variable (near line 28).
+*** Error: sort 2 cannot be redeclared as a global variable (near line 28).
+*** Error: sort 3 cannot be redeclared as a global variable (near line 28).
+*** Error: sort 4 cannot be redeclared as a global variable (near line 28).
+*** Error: sort 5 cannot be redeclared as a global variable (near line 28).
+*** Error: sort 5 cannot be redeclared as a global variable (near line 29).
+*** Error: predicate global cannot be redeclared as a global variable (near line 31).

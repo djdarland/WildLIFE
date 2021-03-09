@@ -1,0 +1,7 @@
+% order different
+
+persistent(this)?
+p :- write(this).
+this <<- q(a,b,c)?
+p?
+this=q(D,E,F)?

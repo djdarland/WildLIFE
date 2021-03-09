@@ -1,0 +1,9 @@
+op(1000,fx,if)?
+op(900,xfx,then)?
+op(600,fx,go)?
+op(600,fx,the)?
+op(700,xfx,is)?
+op(700,fx,green)?
+op(1200,xf,quickly)?
+
+write(if the weather is nice then go swimming quickly)?

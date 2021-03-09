@@ -1,0 +1,88 @@
+
+*** Yes
+> > |    |    |    |    |    |    |    Activity 1: **********
+                      ----------
+
+Activity 2: ********************
+            --------------------
+
+Activity 3: ******************************
+            ------------------------------
+
+Activity 4:                     ******************
+                                ------------------
+
+Activity 5:                               ********
+                                             --------
+
+Activity 6:                                       ***
+                                                  ---
+
+Activity 7:                                          ****
+            
+
+*** Yes
+A1 = activity(duration => 10,earlyStart => 0,lateStart => 10,requests => []), 
+A2 = activity(duration => 20,earlyStart => 0,lateStart => 0,requests => []), 
+A3 = activity(duration => 30,earlyStart => 0,lateStart => 0,requests => []), 
+A4 = activity(duration => 18,
+              earlyStart => 20,
+              lateStart => 20,
+              requests => [activity(duration => 10,earlyStart => 0,lateStart => 10,requests => []),
+                           activity(duration => 20,earlyStart => 0,lateStart => 0,requests => [])]), 
+A5 = activity(duration => 8,
+              earlyStart => 30,
+              lateStart => 33,
+              requests => [activity(duration => 20,earlyStart => 0,lateStart => 0,requests => []),
+                           activity(duration => 30,earlyStart => 0,lateStart => 0,requests => [])]), 
+A6 = activity(duration => 3,
+              earlyStart => 38,
+              lateStart => 38,
+              requests => [activity(duration => 10,earlyStart => 0,lateStart => 10,requests => []),
+                           activity(duration => 18,
+                                    earlyStart => 20,
+                                    lateStart => 20,
+                                    requests => [activity(duration => 10,
+                                                          earlyStart => 0,
+                                                          lateStart => 10,
+                                                          requests => []),
+                                                 activity(duration => 20,
+                                                          earlyStart => 0,
+                                                          lateStart => 0,
+                                                          requests => [])])]), 
+A7 = activity(duration => 4,
+              earlyStart => 41,
+              lateStart => 1e+50,
+              requests => [activity(duration => 8,
+                                    earlyStart => 30,
+                                    lateStart => 33,
+                                    requests => [activity(duration => 20,
+                                                          earlyStart => 0,
+                                                          lateStart => 0,
+                                                          requests => []),
+                                                 activity(duration => 30,
+                                                          earlyStart => 0,
+                                                          lateStart => 0,
+                                                          requests => [])]),
+                           activity(duration => 3,
+                                    earlyStart => 38,
+                                    lateStart => 38,
+                                    requests => [activity(duration => 10,
+                                                          earlyStart => 0,
+                                                          lateStart => 10,
+                                                          requests => []),
+                                                 activity(duration => 18,
+                                                          earlyStart => 20,
+                                                          lateStart => 20,
+                                                          requests => [activity(duration => 10,
+                                                                                earlyStart => 0,
+                                                                                lateStart => 10,
+                                                                                requests => []),
+                                                                       activity(duration => 20,
+                                                                                earlyStart => 0,
+                                                                                lateStart => 0,
+                                                                                requests => [])])])]).
+
+--1> 
+*** No
+> > 

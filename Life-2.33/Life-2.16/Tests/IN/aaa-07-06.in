@@ -1,0 +1,21 @@
+%% fails to trace
+%% :: djd_int(djd_val => int).
+
+:: djd_int(djd_val => int).
+Djd_zero = djd_int(djd_val => 0)?
+Djd_one = djd_int(djd_val => 1)?
+Djd_five = djd_int(djd_val => 5)?
+Djd_seven = djd_int(djd_val => 7)?
+X = djd_int(djd_val => 10)?
+Y = djd_int(djd_val => 10)?
+
+%% djd_m1(Y,X, djd_int(djd_val => ((X=>djd_val) - 1)).
+djd_fact(X, Y, Z) :- (Y=>djd_val) =:= 0, (X=>djd_val) =:= 1.  
+djd_fact(X, Y, Z) :- (X => djd_val) > 0,
+		  Z <- (X=>djd_val) - 1,
+		  djd_fact(M,Y,Z),
+		  Y=>djd_val <- (X=>djd_val) * Z.
+
+
+
+

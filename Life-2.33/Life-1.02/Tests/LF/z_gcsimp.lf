@@ -1,0 +1,32 @@
+% This program is a variation of one due to Bruno Dumant
+% which demonstrates a GC bug.  See Aug. 6, 1992 entry in CHANGES.
+
+main :-
+	garb_cont(2=>5).
+
+garb(N,X) :- 
+	write(X), nl,
+	consume_memory(N,P,6),write(P),nl,
+	setq(intermediate,P), 
+	fail ; 
+	P = eval(intermediate),
+	garb_cont(P,X-1).
+
+consume_memory(N,N+1,0) :- !, setq(intermediate,N+1).
+consume_memory(N,P,C) :- 
+	consume_memory(N,P1,C1:(C-1)),
+	consume_memory(P1,P2,C1),		
+	consume_memory(P2,P3,C1),
+	consume_memory(P3,P,C1).
+
+garb_cont(_,0) :- !.
+garb_cont(2=>X) :- garb(0,X).
+
+% non_strict(setq)?
+% 
+% setq(X,V) :- Value = eval(V), retract((X->@)), !, assert((X->Value)).
+% setq(X,V) :- dynamic(X), Value = eval(V), assert((X->Value)).
+% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

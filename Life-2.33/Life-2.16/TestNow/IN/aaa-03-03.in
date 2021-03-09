@@ -1,0 +1,13 @@
+% trace?
+father(john,harry).
+father(john,charles).
+father(harry,michael).
+grandfather(X,Y) :- father(X,Z), father(Z,Y).
+grandfather(A,B)?
+father(A,C)?
+;
+;
+father(C,B)?
+father(A,C)?
+
+.

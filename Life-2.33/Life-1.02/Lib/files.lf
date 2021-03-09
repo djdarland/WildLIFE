@@ -1,0 +1,102 @@
+%	$Id: files.lf,v 1.2 1994/12/08 23:57:59 duchier Exp $	
+module("files") ?
+
+public(set_extension)?
+add_man(set_extension,
+	" NewName = set_extension(FileName,Extension)?
+
+  input: Filename:string, Extension:string
+
+  output: NewName:string
+
+  Changes the extension of a UNIX filename to 'Extension'.
+
+  Examples:
+
+  set_extension(""charley.pl"",""lf"")  -> ""charley.lf""
+  set_extension(""long"",""hair"") -> ""long.hair""
+  set_extension(""~/a.b/c"",""d"") -> ""~/a.b/c.d""
+  ")?
+
+%
+% Change a file's extension
+%
+
+set_extension(Name,Ext) -> change_ext(Name,Ext,strlen(Name)).
+
+change_ext(N,E,L) ->
+
+	cond(	C:substr(N,L,1) $== ".",
+		strcon(substr(N,1,L),E),
+		cond(	C $== "/" or L=<1,
+			strcon(N,strcon(".",E)),
+			change_ext(N,E,L-1)
+		)
+	).
+
+public(remove_extension)?
+add_man(remove_extension,
+	" NewName = remove_extension(FileName)?
+
+  input: Filename:string
+
+  output: NewName:string
+
+  removes the extension of a UNIX filename.
+
+  Examples:
+
+    remove_extension(""charley.pl"")  -> ""charley""
+    remove_extension(""long"") -> ""long""
+    remove_extension(""~/a.b/c"") -> ""~/a.b/c""
+  ")?
+
+%
+% Change a file's extension
+%
+
+remove_extension(Name) -> remove_ext(Name,strlen(Name)).
+
+remove_ext(N,L) ->
+
+	cond(	C:substr(N,L,1) $== ".",
+		substr(N,1,L-1),
+		cond(	C $== "/" or L=<1,
+			N,
+			remove_ext(N,L-1)
+		)
+	).
+
+
+
+
+public(remove_path)?
+add_man(remove_path,
+	" File = remove_path(CompleteName)?
+
+  input: CompleteName:string
+
+  output: File:string
+
+  Removes the UNIX path from a file name.
+
+  Examples:
+
+  remove_path(""/user/loud_mouth/noises/hello.au"") -> ""hello.au"".
+  remove_path(""clap.au"") -> ""clap.au"".
+  ")?
+
+
+
+%
+% Remove the path from a file name.
+%
+
+remove_path(File) -> remove_path_loop(File,strlen(File)).
+
+remove_path_loop(File,0) -> File.
+remove_path_loop(File,L) -> cond(L<1,
+				 File,
+				 cond(substr(File,L,1) $== "/",
+				      substr(File,L+1,strlen(File)-L),
+				      remove_path_loop(File,L-1))).

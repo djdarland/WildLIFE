@@ -1,0 +1,518 @@
+21,26c21,26
+< concat_proc(actions => [disjunc([unif(@,[]),unif(@,@)],
+<                                 [unif(@,[@|@]),
+<                                  unif(@,[@|@]),
+<                                  abscall(concat,[@,@,@])],
+<                                 global_vars => [@,@,@])],
+<             global_vars => [@,@,@]) :-
+---
+> concat_proc(actions => [disjunc([unif(_A,[]),unif(_B,_C)],
+>                                 [unif(_A,[_D|_E]),
+>                                  unif(_C,[_D|_F]),
+>                                  abscall(concat,[_E,_B,_F])],
+>                                 global_vars => [_A,_C,_B])],
+>             global_vars => [_A,_B,_C]) :-
+32,34c32,34
+< toto_proc(actions => [disjunc([unif(@,a),abscall(tata,[@])],
+<                               [disjunc([unif(@,b),abscall(tata,[@])],
+<                                        [disjunc([abscall(tutu,[@,@]),
+---
+> toto_proc(actions => [disjunc([unif(_A,a),abscall(tata,[_B])],
+>                               [disjunc([unif(_A,b),abscall(tata,[_B])],
+>                                        [disjunc([abscall(tutu,[_A,_B]),
+37,40c37,40
+<                                                 global_vars => [@,@])],
+<                                        global_vars => [@,@])],
+<                               global_vars => [@,@])],
+<           global_vars => [@,@]) :-
+---
+>                                                 global_vars => [_A,_B])],
+>                                        global_vars => [_A,_B])],
+>                               global_vars => [_A,_B])],
+>           global_vars => [_A,_B]) :-
+48a49,533
+> X: t(@(type => free2~),g(X,a(type => ground2),type => non_var_true~),type => non_var_true~)
+> *** Yes
+> U = @(type => free2~), 
+> X = t(U,g(X,a(type => ground2),type => non_var_true~),type => non_var_true~).
+> 
+> --1> 
+> *** No
+> U = @(type => free2~), 
+> X = t(U,g(X,a(type => ground2),type => non_var_true~),type => non_var_true~).
+> 
+> --1> 
+> *** No
+> > > > > > > 
+> 
+> *** TESTING EXTEND AND FIND_NODE ***
+> *** Yes
+> > > 
+> *** Yes
+> SAT = hasse.
+> --1> 
+> *** No
+> > |    
+> *** Yes
+> New = true, 
+> NewNode = node(ground,
+>                @,
+>                depend_on_me => [],
+>                fathers => [],
+>                sons => [],
+>                stable => false,
+>                suspended => false), 
+> SAT = hasse(p => [NewNode]).
+> 
+> --1> 
+> *** No
+> > |    
+> *** Yes
+> New = true, 
+> NewNode = node(free,
+>                @,
+>                depend_on_me => [],
+>                fathers => [],
+>                sons => [],
+>                stable => false,
+>                suspended => false), 
+> SAT = hasse(p => [node(ground,
+>                        @,
+>                        depend_on_me => [],
+>                        fathers => [],
+>                        sons => [],
+>                        stable => false,
+>                        suspended => false)],
+>             q => [NewNode]).
+> 
+> --1> 
+> *** No
+> > |    |    |    |    |    |    |    |    
+> 
+> true  true  true
+> 
+> true
+> *** Yes
+> New1 = true, 
+> New2 = true, 
+> New3 = false, 
+> New4 = true, 
+> New5 = true, 
+> Node1 = node(non_var,
+>              @,
+>              depend_on_me => [],
+>              fathers => [Node5],
+>              sons => [Node2],
+>              stable => false,
+>              suspended => false), 
+> Node2 = node(ground,
+>              @,
+>              depend_on_me => [],
+>              fathers => [Node1],
+>              sons => [Node4],
+>              stable => false,
+>              suspended => false), 
+> Node3 = Node2, 
+> Node4 = node(@,
+>              @,
+>              depend_on_me => [],
+>              fathers => [Node2,
+>                          _A: node(free,
+>                                   @,
+>                                   depend_on_me => [],
+>                                   fathers => [Node5],
+>                                   sons => [Node4],
+>                                   stable => false,
+>                                   suspended => false)],
+>              sons => [],
+>              stable => false,
+>              suspended => false), 
+> Node5 = node(any,
+>              @,
+>              depend_on_me => [],
+>              fathers => [],
+>              sons => [_A,Node1],
+>              stable => false,
+>              suspended => false), 
+> Node6 = Node2, 
+> SAT = hasse(p => [node(ground,
+>                        @,
+>                        depend_on_me => [],
+>                        fathers => [],
+>                        sons => [],
+>                        stable => false,
+>                        suspended => false)],
+>             q => [Node5]).
+> 
+> --1> 
+> *** No
+> > > > > > > 
+> 
+> *** TESTING ADJUST ***
+> *** Yes
+> > > |    |    
+> 
+> [AT: node(ground,_A: ground,depend_on_me => [],fathers => [_B: node(non_var,_A,depend_on_me => [],fathers => [_C: node(any,@,depend_on_me => [],fathers => [],sons => [_D: node(free,@,depend_on_me => [],fathers => [_C],sons => [_E: node(@,@,depend_on_me => [],fathers => [AT,_D],sons => [],stable => false,suspended => false)],stable => false,suspended => false),_B],stable => false,suspended => false)],sons => [AT],stable => false,suspended => false)],sons => [_E],stable => false,suspended => false)]
+> *** Yes
+> AT = node(ground,
+>           _A: ground,
+>           depend_on_me => [],
+>           fathers => [_B: node(non_var,
+>                                _A,
+>                                depend_on_me => [],
+>                                fathers => [_C: node(any,
+>                                                     @,
+>                                                     depend_on_me => [],
+>                                                     fathers => [],
+>                                                     sons => [_D: node(free,
+>                                                                       @,
+>                                                                       depend_on_me => [],
+>                                                                       fathers => [_C],
+>                                                                       sons => [_E: node(@,
+>                                                                                         @,
+>                                                                                         depend_on_me => [],
+>                                                                                         fathers => [AT,_D],
+>                                                                                         sons => [],
+>                                                                                         stable => false,
+>                                                                                         suspended => false)],
+>                                                                       stable => false,
+>                                                                       suspended => false),
+>                                                              _B],
+>                                                     stable => false,
+>                                                     suspended => false)],
+>                                sons => [AT],
+>                                stable => false,
+>                                suspended => false)],
+>           sons => [_E],
+>           stable => false,
+>           suspended => false), 
+> Modified = [AT], 
+> SAT = hasse(p => [node(ground,
+>                        @,
+>                        depend_on_me => [],
+>                        fathers => [],
+>                        sons => [],
+>                        stable => false,
+>                        suspended => false)],
+>             q => [_C]).
+> 
+> --1> 
+> *** No
+> > |    |    
+> 
+> [AT: node(free,_A: free,depend_on_me => [],fathers => [_B: node(any,_A,depend_on_me => [],fathers => [],sons => [AT,_C: node(non_var,_D: ground,depend_on_me => [],fathers => [_B],sons => [_E: node(ground,_D,depend_on_me => [],fathers => [_C],sons => [_F: node(@,@,depend_on_me => [],fathers => [_E,AT],sons => [],stable => false,suspended => false)],stable => false,suspended => false)],stable => false,suspended => false)],stable => false,suspended => false)],sons => [_F],stable => false,suspended => false)]
+> *** Yes
+> AT = node(free,
+>           _A: free,
+>           depend_on_me => [],
+>           fathers => [_B: node(any,
+>                                _A,
+>                                depend_on_me => [],
+>                                fathers => [],
+>                                sons => [AT,
+>                                         _C: node(non_var,
+>                                                  _D: ground,
+>                                                  depend_on_me => [],
+>                                                  fathers => [_B],
+>                                                  sons => [_E: node(ground,
+>                                                                    _D,
+>                                                                    depend_on_me => [],
+>                                                                    fathers => [_C],
+>                                                                    sons => [_F: node(@,
+>                                                                                      @,
+>                                                                                      depend_on_me => [],
+>                                                                                      fathers => [_E,AT],
+>                                                                                      sons => [],
+>                                                                                      stable => false,
+>                                                                                      suspended => false)],
+>                                                                    stable => false,
+>                                                                    suspended => false)],
+>                                                  stable => false,
+>                                                  suspended => false)],
+>                                stable => false,
+>                                suspended => false)],
+>           sons => [_F],
+>           stable => false,
+>           suspended => false), 
+> Modified = [AT], 
+> SAT = hasse(p => [node(ground,
+>                        @,
+>                        depend_on_me => [],
+>                        fathers => [],
+>                        sons => [],
+>                        stable => false,
+>                        suspended => false)],
+>             q => [_B]).
+> 
+> --1> 
+> *** No
+> > > > > > 
+> 
+> *** TESTING SUSPENSION ***
+> *** Yes
+> > > |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    
+> 
+> OK
+> *** Yes
+> Node = node(ground,
+>             _A: ground,
+>             depend_on_me => [],
+>             fathers => [_B: node(non_var,
+>                                  _A,
+>                                  depend_on_me => [],
+>                                  fathers => [_C: node(any,
+>                                                       _D: free,
+>                                                       depend_on_me => [],
+>                                                       fathers => [],
+>                                                       sons => [_E: node(free,
+>                                                                         _D,
+>                                                                         depend_on_me => [],
+>                                                                         fathers => [_C],
+>                                                                         sons => [_F: node(@,
+>                                                                                           @,
+>                                                                                           depend_on_me => [],
+>                                                                                           fathers => [Node,
+>                                                                                                       _E],
+>                                                                                           sons => [],
+>                                                                                           stable => false,
+>                                                                                           suspended => false)],
+>                                                                         stable => false,
+>                                                                         suspended => false),
+>                                                                _B],
+>                                                       stable => false,
+>                                                       suspended => false)],
+>                                  sons => [Node],
+>                                  stable => false,
+>                                  suspended => false)],
+>             sons => [_F],
+>             stable => false,
+>             suspended => true), 
+> SAT = hasse(p => [node(ground,
+>                        @,
+>                        depend_on_me => [],
+>                        fathers => [],
+>                        sons => [],
+>                        stable => false,
+>                        suspended => false)],
+>             q => [_C]).
+> 
+> --1> 
+> *** No
+> > > > > > 
+> 
+> *** TESTING DEPENDENCIES ***
+> *** Yes
+> > > |    |    |    |    |    |    |    
+> 
+> hasse(p => [_A: node(ground,@,depend_on_me => [],fathers => [],sons => [],stable => true,suspended => false)],q => [_B: node(any,_C: free,depend_on_me => [],fathers => [],sons => [_D: node(free,_C,depend_on_me => [],fathers => [_B],sons => [_E: node(@,@,depend_on_me => [],fathers => [Node2: node(ground,_F: ground,depend_on_me => [_D],fathers => [Node: node(non_var,_F,depend_on_me => [_D,_A],fathers => [_B],sons => [Node2],stable => true,suspended => false)],sons => [_E],stable => false,suspended => true),_D],sons => [],stable => false,suspended => false)],stable => true,suspended => false),Node],stable => false,suspended => false)])
+> *** Yes
+> Node = node(non_var,
+>             _A: ground,
+>             depend_on_me => [_B: node(free,
+>                                       _C: free,
+>                                       depend_on_me => [],
+>                                       fathers => [_D: node(any,
+>                                                            _C,
+>                                                            depend_on_me => [],
+>                                                            fathers => [],
+>                                                            sons => [_B,Node],
+>                                                            stable => false,
+>                                                            suspended => false)],
+>                                       sons => [_E: node(@,
+>                                                         @,
+>                                                         depend_on_me => [],
+>                                                         fathers => [Node2,_B],
+>                                                         sons => [],
+>                                                         stable => false,
+>                                                         suspended => false)],
+>                                       stable => true,
+>                                       suspended => false),
+>                              _F: node(ground,
+>                                       @,
+>                                       depend_on_me => [],
+>                                       fathers => [],
+>                                       sons => [],
+>                                       stable => true,
+>                                       suspended => false)],
+>             fathers => [_D],
+>             sons => [Node2],
+>             stable => true,
+>             suspended => false), 
+> Node2 = node(ground,
+>              _A,
+>              depend_on_me => [_B],
+>              fathers => [Node],
+>              sons => [_E],
+>              stable => false,
+>              suspended => true), 
+> SAT = hasse(p => [_F],q => [_D]).
+> 
+> --1> 
+> *** No
+> > > 
+> 
+> *** TESTING ANALYSE WITH A SIMPLE DOMAIN ***
+> *** Yes
+> > > 
+> *** Yes
+> X = @, Y = @.
+> --1> 
+> *** No
+> > |    
+> 
+> enter solve_procedure tooo with [free,free]
+> 
+> exit solve_procedure tooo with [ground,ground]
+> 
+> hasse(tooo => [node([free,free],
+>                     [ground,ground],
+>                     depend_on_me => [],
+>                     fathers => [],
+>                     sons => [],
+>                     stable => true,
+>                     suspended => true)])
+> *** Yes
+> > > |    |    |    |    
+> *** Yes
+> X = @, Y = @.
+> --1> 
+> *** No
+> > 
+> *** Yes
+> > > |    
+> 
+> enter solve_procedure tata with [free,free]
+> 
+> enter solve_alter with [free,free]
+> 
+> exit solve_alter with [ground,ground]
+> 
+> enter solve_alter with [free,free]
+> 
+> enter solve_call succeed with []
+> 
+> enter solve_procedure succeed with []
+> 
+> exit solve_procedure succeed with []
+> 
+> exit solve_call succeed with []
+> 
+> exit solve_alter with [free,free]
+> 
+>   first  alternative:[ground,ground]
+> 
+>   second alternative:[free,free]
+> 
+>   union             :[any,any]
+> 
+> exit solve_procedure tata with [any,any]
+> 
+> hasse(succeed => [node([],
+>                        [],
+>                        depend_on_me => [_A: node([free,free],
+>                                                  [any,any],
+>                                                  depend_on_me => [],
+>                                                  fathers => [],
+>                                                  sons => [],
+>                                                  stable => true,
+>                                                  suspended => true)],
+>                        fathers => [],
+>                        sons => [],
+>                        stable => true,
+>                        suspended => false)],
+>       tata => [_A])
+> *** Yes
+> > > |    
+> 
+> enter solve_procedure concat with [ground,ground,free]
+> 
+> enter solve_alter with [ground,free,ground]
+> 
+> exit solve_alter with [ground,ground,ground]
+> 
+> enter solve_alter with [ground,free,ground]
+> 
+> enter solve_call concat with [ground,ground,free]
+> 
+> exit solve_call concat with @
+> 
+> exit solve_alter with [@,@,@]
+> 
+>   first  alternative:[ground,ground,ground]
+> 
+>   second alternative:[@,@,@]
+> 
+>   union             :[ground,ground,ground]
+> 
+> exit solve_procedure concat with [ground,ground,ground]
+> 
+> enter solve_procedure concat with [ground,ground,free]
+> 
+> enter solve_alter with [ground,free,ground]
+> 
+> exit solve_alter with [ground,ground,ground]
+> 
+> enter solve_alter with [ground,free,ground]
+> 
+> enter solve_call concat with [ground,ground,free]
+> 
+> exit solve_call concat with [ground,ground,ground]
+> 
+> exit solve_alter with [ground,ground,ground]
+> 
+>   first  alternative:[ground,ground,ground]
+> 
+>   second alternative:[ground,ground,ground]
+> 
+>   union             :[ground,ground,ground]
+> 
+> exit solve_procedure concat with [ground,ground,ground]
+> 
+> hasse(concat => [_A: node([ground,ground,free],
+>                           [ground,ground,ground],
+>                           depend_on_me => [_A],
+>                           fathers => [],
+>                           sons => [],
+>                           stable => true,
+>                           suspended => true)])
+> *** Yes
+> > > 
+> *** Yes
+> X = @, Y = @, Z = @.
+> --1> 
+> *** No
+> > 
+> *** Yes
+> X = @, Y = @.
+> --1> 
+> *** No
+> > |    
+> 
+> enter solve_procedure tutu with [free]
+> 
+> enter solve_call titi with [free,free]
+> 
+> enter solve_procedure titi with [free,free]
+> 
+> exit solve_procedure titi with [ground,ground]
+> 
+> exit solve_call titi with [ground,ground]
+> 
+> exit solve_procedure tutu with [ground]
+> 
+> hasse(titi => [node([free,free],
+>                     [ground,ground],
+>                     depend_on_me => [_A: node([free],
+>                                               [ground],
+>                                               depend_on_me => [],
+>                                               fathers => [],
+>                                               sons => [],
+>                                               stable => true,
+>                                               suspended => true)],
+>                     fathers => [],
+>                     sons => [],
+>                     stable => true,
+>                     suspended => false)],
+>       tutu => [_A])
+> *** Yes
+> > 

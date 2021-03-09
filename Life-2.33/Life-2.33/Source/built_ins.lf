@@ -1,0 +1,944 @@
+% Copyright 1991 Digital Equipment Corporation.
+% All Rights Reserved.
+%
+% The BUILT_IN module
+%
+% This file should not be modified by the user.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%	$Id: built_ins.lf.in,v 1.2 1996/01/17 00:47:28 vorbeck Exp $	
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Declarations
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% public built_ins
+
+public(trace_input, query, declaration, error, abort, aborthook,abs, append,
+       apply, asc, assert, asserta, bagof, beep, begin_raw, bool,
+       bool_pred,bi_load_path, call_once,
+       call_handler, ceiling, children, chr, clause,
+       close, cond, cons, copy_pointer, copy_rules, copy_term, cos, cpu_time,
+       current_module, delay_check, disj, display_module_status,
+       display_modules, dynamic, end_raw, eval, evalin, exists_file,
+       exists_choice, exp, fail, false, features, floor, fx, fy, gc, genint,
+       get, get_choice, get_raw, glb, halt, has_feature, implies, in_raw,
+       inherited_modules, init, initrandom, input_file, int, int2str,
+       is_function, is_number, is_predicate, is_sort, is_value, least_sorts,
+       length,life_ext, list, listing, load, load_module,
+       load_path,load_suffixes, loaded_file, local_time, log, lub, map, maprel,
+       max, maxint, member, min, module, mresiduate, nil, nl, nl_err,
+       non_strict, nonvar, op, open, open_in, open_modules, open_out, ops,
+       % not, PVR 10.2.94
+       page_width, parents, parse, pause, pretty_write, pretty_writeq,
+       print_codes, print_depth, print_variables, private, project,
+       psi2str, public, put, put_err, put_raw, random, read, read_token, real,
+       real_time, reduce, repeat, reset_window_flag, residuate, retract, rlist,
+       root_sort, run, set_choice, set_input, set_output, setq, simple_load,
+       sin, sqrt, static, statistics, step, str, str2psi, strcon, string,
+       strip, strlen, strval, subsort, substr, succeed,system, tan,
+       time, tprove, trace, true, undo, var, verbose, window_flag,
+       write, write_canonical, write_err, writeq, writeq_err, import,
+       % xor, PVR 10.2.94
+       substitute,is_persistent, global, persistent, display_persistent, alias,
+       bestof, % RM: Apr 15 1993
+       private_feature, % RM: Mar 11 1993
+       split_double, 	% RM: Jun 29 1993
+       string_address,	% RM: Jul 6 1993
+       deref_length, 	% RM: Jul 15 1993
+       argv,         	% RM: Sep 20 1993  PVR 11.2.94
+       public_symbols,	% RM: Jan 28 1994
+       chdir, 		% RM: Feb 10 1994
+       getenv, 		% RM: Feb 10 1994
+       module_name,	% RM: Feb 16 1994
+       combined_name,	% RM: Feb 16 1994
+       quiet,           % BD: Feb 17 1994
+       feature_values)?
+
+%%% These are considered private:
+%%% '*** ERROR ***', '<NULL PSI TERM>',
+%%% bottom,comment,constant,variable,init
+
+private(c_op)? % RM: Feb 24 1993
+
+
+%%% Operators
+
+% c_op(300,yfx,mod)? PVR 24.2.94
+
+
+%%% Built-in sorts.
+
+cons <| list.
+nil <| list.
+list <| built_in.
+
+string <| built_in.
+
+real <| built_in.
+int <| real.
+
+bool <| built_in.
+true <| bool.
+false <| bool.
+
+%%% non strict declarations
+
+non_strict(non_strict)?
+non_strict(dynamic)?
+non_strict(static)?
+non_strict(delay_check)?
+non_strict(listing)?
+non_strict(evalin)?
+non_strict(eval)?
+non_strict(global) ?           %% BD 3.3.94
+non_strict(persistent) ?       %% BD 3.3.94
+
+%%% SYSTEM MODULE
+
+built_ins#set_module("sys")?
+built_ins#open_module("syntax")?
+
+built_ins#public
+	(bitvector,regexp,stream,file_stream,socket_stream,
+	 make_bitvector,bitvector_and,bitvector_or,bitvector_xor,
+	 bitvector_not,bitvector_count,bitvector_get,bitvector_set,
+	 bitvector_clear,
+	 regexp_compile,regexp_execute,
+	 fopen,fclose,get_buffer,get_record,get_code,ftell,fseek,
+	 socket,bind,connect,fwrite,fflush,listen,accept,
+	 errno,errmsg,
+	 import_symbol,
+	 process_no_children,process_exited,process_signaled,
+	 process_stopped,process_continued,
+	 fork,wait,waitpid,kill,int2stream,stdin,stdout,stderr,
+	 cuserid,gethostname,lazy_project,wait_on_feature,my_wait_on_feature,
+	 apply1,getpid,ftruncate,stream2sys_stream,sys_stream2stream
+	 
+)?
+
+% built_ins#non_strict(wait_on_feature)?
+
+bytedata  <| built_ins#built_in. % DENYS: BYTEDATA
+bitvector <| bytedata.
+regexp    <| bytedata.
+stream    <| bytedata.
+file_stream   <| stream.
+socket_stream <| stream.
+
+built_ins#global(stdin  <- int2stream(0,"r")&file_stream)?
+built_ins#global(stdout <- int2stream(1,"w")&file_stream)?
+built_ins#global(stderr <- int2stream(2,"w")&file_stream)?
+
+built_ins#persistent(string_out)?
+string_out <<-
+	S:fopen(Path:built_ins#strcon("/tmp/.life",
+				      built_ins#psi2str(getpid)),"w+")
+    |
+	0=built_ins#system(built_ins#strcon("rm ",Path)),%unlink was non portable
+	S.stream = sys_stream2stream(S),
+	S.stdout = (O|built_ins#open_out("stdout",O))?
+
+psi2string(X) -> S | psi2stringX(X,S).
+
+psi2stringX(X,S) :-
+	fseek(O:string_out,0),
+	built_ins#set_output(O.stream),
+	built_ins#writeq(X),
+	fflush(O),
+	built_ins#set_output(O.stdout),
+	N=ftell(O),
+	fseek(O,0),
+	S=get_buffer(O,N).
+
+built_ins#public(psi2string)?
+
+built_ins#set_module("built_ins")?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%  For correct operation of the interpreter, nothing before this line should
+%%%  be modified.  What comes after is used for definition of built-ins and can
+%%%  be edited (albeit very carefully).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% System built-ins
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% call once must be a boolean function for use in cond
+%non_strict(call_once)?	                          %% DENYS Jan 25 1995
+%call_once(G) -> T | (evalin(G),T=true;T=false),!. %% DENYS Jan 25 1995
+
+%%% A more useful listing predicate from the c_listing built-in.
+
+non_strict(listing)?
+X:listing :-
+	%%	trace(T,U),   % RM: Dec  9 1992 
+	listing_2(features(X), X).
+	%%	trace(T,U).
+
+listing_2([],    _) :- !.
+listing_2([F],   X) :- !, nl, listing_3(F, X).
+listing_2([F|L], X) :- nl, listing_3(F, X), listing_2(L, X).
+
+listing_3(F, X) :- P=X.F, c_listing(P), listing_4(P).
+
+listing_4(P) :- var(P), !,
+        write("% '@' is the top sort."), nl.
+%% listing_4(P:int)    :- !, listing_4a(int).
+%% listing_4(P:real)   :- !, listing_4a(real).
+%% listing_4(P:string) :- !, listing_4a(string).
+listing_4(P) :- listing_4a(P).
+
+listing_4a(P) :- is_sort(P), is_value(P)=false, !, 
+	listing_5(parents(P), P),
+        listing_6(children(P), P).
+	% write("% Parents: "),writeq(parents(P)), nl,
+	% write("% Children: "),writeq(children(P)), nl.
+
+
+listing_4a(_).
+
+listing_5([], _) :- !.
+listing_5([X|Xs], Y) :-
+	writeq(Y), write(" <| "), writeq(X), write("."), nl,
+	listing_5(Xs, Y).
+
+listing_6([], _) :- !.
+listing_6([X|Xs], Y) :-
+	writeq(X), write(" <| "), writeq(Y), write("."), nl,
+	listing_6(Xs, Y).
+
+
+%%% An op predicate that handles any pattern of arguments. 
+
+non_strict(op)?
+op(P,K,F,precedence=>P,kind=>K,functor=>F) :-
+	trace(T,U),
+	( op_2(P,K,F), trace(T,U)
+	; trace(T,U), fail
+	).
+
+op_2(P,K,F) :- nonvar(P), nonvar(K), nonvar(F), F=list, !, op_3(F,P,K).
+op_2(P,K,F) :- nonvar(F), F=list, !,
+	write_err("*** Error: invalid operator declaration."),
+	nl_err.
+op_2(P,K,F) :- nonvar(P), nonvar(K), nonvar(F), !, c_op(P,K,F).
+op_2(P,K,F) :- member(op(P,K,F),ops).
+
+% List of operators.
+op_3([]) :- !.
+op_3([H|T],P,K) :- op_2(P,K,H),op_3(T,P,K).
+
+
+%%% Default call handler.
+%%% This is called for predicates that have no definition.
+%%% More sophisticated call handlers can be written to do auto-loading
+%%% of undefined predicates.
+
+call_handler(P) :- is_sort(P), !,
+	write_err("*** Error: the sort '"),writeq_err(P),
+        write_err("' occurs where a predicate or function is expected."),
+	nl_err, abort.
+call_handler(P) :- !,
+	write_err("*** Error: '"),writeq_err(P),
+        write_err("' is not a predicate or a function."), nl_err,
+	abort.
+
+
+%%% Pause for N seconds.
+pause(N) :-
+	S=real_time,
+	repeat,
+	real_time-S>N,
+	!.
+
+%%% Time a goal (whether it succeeds or fails).
+run(G) :-
+	S=cpu_time,
+	(G;succeed),
+	!,
+	write("Time = ",cpu_time-S," sec"),
+	nl.
+
+
+%%% Personal customizing.
+
+init :-
+	exists_file("./.wild_life"),
+	simple_load("./.wild_life"),
+	quiet_write("Loaded customizing file from current directory."),
+	!.
+
+init :-
+	exists_file("~/.wild_life"),
+	simple_load("~/.wild_life"),
+	quiet_write("Loaded customizing file from home directory."),
+	!.
+
+init :-
+	quiet_write("No customizing file loaded."),
+	!.
+
+%% init :-                                        %% was in .set_up
+%% 	exists_file("+SETUPDIR+/.wild_life"),
+%% 	simple_load("+SETUPDIR+/.wild_life"),
+%% 	write("Loaded default customizing file."), nl
+%% 	!.
+
+init :-
+	write_err("*** Warning: couldn't access any customizing file."),
+	nl_err.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Input-Output
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% Newline
+
+nl :- write("
+").
+
+nl_err :- write_err("
+").
+
+
+%%% Beep
+
+beep :- put(7).
+
+
+%%% Quiet writing for support of '-q' option
+%%% This built-in doesn't write anything if the '-q' option is enabled.
+%%% 21.1 & RM: Feb 17 1993 
+
+quiet_write :- quiet, !.
+S:quiet_write :- quiet_write_loop(features(S),S), nl.
+
+quiet_write_loop([]) :- !.
+quiet_write_loop([X|L], S) :-
+	write(S.X),
+	quiet_write_loop(L, S).
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Loading Files
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% A very useful load that searches a path, does suffix completion,
+%%% and remembers if a file has already been loaded.
+%%% The default path may be extended by an optional user-defined function
+%%% load_path that gives a disjunction of directories to search in.
+%%% The set of default suffixes may be extended by an optional user-defined
+%%% function load_suffixes that gives a disjunction of suffixes.
+%%% This predicate accepts an arbitrary number of arguments.
+
+persistent(load_option,top_load,loading) ?
+load_option <<- false ?
+loading <<- false ?
+
+non_strict(load)?
+X:load :-
+	CM = current_module,
+	F = features(X),
+	(
+	    loading,!,
+	    load_2(F,X)
+	;
+	    loading <<- true,
+	    top_load <<- get_choice,
+	    load_2(F,X),!,loading <<- false
+	;
+	    open_out("stdout",_),
+	    open_in("stdin",_),
+	    set_module(CM),
+	    loading <<- false,
+	    fail
+	).
+
+load_2([F|L],X) :-
+	(
+	    find_file(X.F,CF),!,
+	    (
+		has_feature(CF,consulted,Bool),!,
+		quiet_write("*** File """,CF,""" is already loaded.")
+	    ;
+		quiet_write("*** Loading File """,CF,""""),
+		first_load(CF)
+	    ),
+	    load_2(L,X)
+	;
+	    set_choice(top_load),fail
+	).
+load_2([]).
+
+first_load(CF) :-
+	(
+	    load_option,!,
+	    consulted.CF <<- true,
+	    simple_exp_load(CF)
+	;
+	    consulted.CF <<- false,
+	    simple_load(CF)
+	).
+
+find_file(F:string,CF) :-
+	!,
+        (
+	    CF=strcon(bi_load_path,
+		      strcon(F,
+			     life_ext)),
+	    exists_file(CF), !
+	;
+	    write_err("*** File """,F,""" not found."),nl_err,
+	    fail 
+	).
+find_file(F) :-
+	write_err("*** Error: File name "),
+	writeq_err(F),
+	write_err(" should be a string."),
+	nl_err,
+	fail.
+
+bi_load_path ->  {
+		     ""
+                 ;
+		     strcon((load_path | is_function(`load_path)),
+			    %% {"";"/"}
+			    "/"
+			   )
+		 ;
+		     lib_dir
+		 ;
+		     tools_dir
+                 ; %% "+SETUPDIR+/Examples/"   % BD June 10 1993
+		     examples_dir
+		 ;
+		     superlint_dir
+		 ; %% For the Demo Directory   % MJV January 16 1996
+		     demo_dir
+		 }.
+
+%%% The user may define a function load_suffixes that returns a
+%%% disjunction of other suffixes to be used.
+life_ext -> { ".lf"
+            ; ""
+	    ; (load_suffixes | is_function(`load_suffixes))
+	    ; ".life"
+	    }.
+
+
+%%% reconsult facility
+
+public(reconsult) ?
+
+non_strict(reconsult)?
+
+X:reconsult :-
+	CM = current_module,
+	F = features(X),
+	(
+	    loading,!,
+	    reconsult_2(F,X)
+	;
+	    loading <<- true,
+	    top_load <<- get_choice,
+	    reconsult_2(F,X),!,loading <<- false
+	;
+	    open_out("stdout",_),
+	    open_in("stdin",_),
+	    set_module(CM),
+	    loading <<- false,
+	    fail
+	).
+
+reconsult_2([F|L],X) :-
+	find_file(X.F,CF),!,
+	(
+	    has_feature(CF,consulted,Bool),!,
+	    (
+		Bool,!,
+		reload(CF,Bool)
+	    ;
+		write_err("*** File """,CF,""" cannot be reconsulted."),
+		nl_err
+	    )
+	;
+	    quiet_write("*** Loading File """,CF,""""),
+	    first_load(CF)
+	),
+	reconsult_2(L,X).
+reconsult_2([]).
+
+
+reload(CF,Bool) :-
+	retract_file(Bool),
+	quiet_write("*** Reconsulting File """,CF,""""),
+	quiet_write(" "),
+	quiet_write("*** Warning: sort,public,non_strict and operators ",
+		    "declarations are not undone."),
+	quiet_write("***          Rules added using queries in the ",
+		    "file are not retracted."),
+	quiet_write(" "),
+	first_load(CF).
+
+
+retract_file(B) :-
+	X = current_module,
+	retract_modules(features(B),B),
+	set_module(X).
+
+retract_modules([M1|Ms],B) :- !,
+	M = psi2str(M1),
+	%% set_module(M),
+	retract_functions(features(B.M1.functions,M),B.M1.functions), 
+	retract_predicates(features(B.M1.preds,M),B.M1.preds).
+retract_modules([]).
+
+retract_functions([F|Fs]) :- !,
+	(
+	    retract_all_f(F)
+	;
+	    retract_functions(Fs)
+	).
+retract_functions([]).
+retract_predicates([F|Fs]) :- !,
+	(
+	    retract_all_p(F)
+	;
+	    retract_predicates(Fs)
+	).
+retract_predicates([]).
+
+
+retract_all_f(F) :-
+	retract((F -> @)),
+	retract_all_f(F).
+retract_all_p(F) :-
+	retract((F :- @)),
+	retract_all_p(F).
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Meta features
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% Negation
+
+\+ X :- X,!,fail.
+(\+) .
+
+%%% Quote
+
+non_strict(`)?
+`X -> X.
+
+
+%%% Definition of bagof using non-backtrackable destructive assignment.
+%%% bagof(X,G) -> R:[]:cond(call_once((G,R<<-[X|R],fail)),R,R). % (19.8)
+%%% This version does not allow non-residuating functions in G &
+%%% "leaks" the evaluation of G into X on the outside:
+%%% bagof(X,G) -> R:[] | (G,R<<-[X|R],fail ; true).
+
+%%% This version seems to be completely clean:
+%%% non_strict(bagof)?
+%%% bagof(X,G) -> R:[] | (evalin(G),R<<-[evalin(X)|R],fail ; R<-copy_term(R)).
+
+%%% New version using persistent terms:     RM: Feb 16 1993 
+%%% The old version had a complexity of O(n2), now down to O(n).
+
+non_strict(bagof)?
+bagof(X,G) -> N |
+        L<<-[],
+        ((evalin(G),                         % Prove G
+          L<<-[evalin(X)|copy_pointer(L)],   % Record the binding of X
+          fail)                              % Force back-tracking on G
+        ;
+         (N<-copy_term(L))).                 % Copy the resulting global term
+                                             % back onto the stack.
+
+
+%%% Best solution to a goal by some relation:
+
+non_strict(bestof)?
+bestof(X,R,G) -> N |
+       L<<-first_value,
+       (evalin(G),                         % Prove G
+	cond(L:==first_value,              % Record the binding of X
+	     L<<-evalin(X),
+	     cond(R(X,L),                  % Compare to last value
+		  L<<-evalin(X),
+		  succeed)),
+	fail                               % Force back-tracking on G
+	;
+        N<-copy_term(L)).                  % Copy the resulting global term
+                                           % back onto the stack.
+
+
+% Reducing a monoidal binary operator over a list:
+reduce(F,E,[H|T]) -> F(H,reduce(F,E,T)).
+reduce(F,E,[]) -> E.
+
+% Mapping a function over a list:
+map(F,[H|T])->[F(H)|map(F,T)].
+map(F,[])->[].
+
+% Mapping a unary relation over a list:
+maprel(P,[H|T]) :- !,root_sort(P) & @(H),maprel(P,T).
+maprel(P,[]).
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Basic Lists Manipulation
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+append([H|T],L:list)->[H|append(T,L)].
+append([],L:list)->L.
+
+length([H|T])->1+length(T).
+length([])->0.
+
+member(X,[X|_]).
+member(X,[_|L]) :- member(X,L).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Arithmetic
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+A^N:int -> cond(N<0,1/pwr(A,-N),pwr(A,N)).
+
+pwr(A,0) -> 1.
+pwr(A,1) -> A.
+% PVR 24.2.94
+pwr(A,N) -> cond((N /\ 1)=:=0, X*X, X*X*A) | X=pwr(A,N>>1).
+% pwr(A,N) -> A*pwr(A,(N-1)).
+
+abs(R) -> cond(R<0,-R,R).
+max(A,B) -> cond(A>B,A,B).
+min(A,B) -> cond(A>B,B,A).
+
+
+% Generate a unique integer for each call to genint
+persistent(genint_counter)?
+genint_counter<<-0?
+genint -> copy_term(genint_counter) | genint_counter<<-genint_counter+1.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% String Manipulation
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+"" $== "" -> true.
+S1:string $== S2:string ->
+    (asc(S1)=:=asc(S2)) and
+    lenstreq(substr(S1,2,L1:strlen(S1)),substr(S2,2,L2:strlen(S2)),L1,L2).
+
+lenstreq("","",_,_) -> true.
+lenstreq(S1,S2,L1,L2) ->
+    L1=:=L2 and L1>0 and (asc(S1)=:=asc(S2)) and
+    lenstreq(substr(S1,2,LL1:(L1-1)),substr(S2,2,LL2:(L2-1)),LL1,LL2).
+
+"" $=< string -> true.
+string $=< "" -> false.
+S1:string $=< S2:string ->
+    (C1:asc(S1)<C2:asc(S2))
+    or
+    (C1=:=C2 and lenstrle(substr(S1,2,L1:strlen(S1)),
+                              substr(S2,2,L2:strlen(S2)),
+                              L1,L2)).
+
+lenstrle("",string,_,_) -> true.
+lenstrle(string,"",_,_) -> false.
+lenstrle(S1,S2,L1,L2) ->
+    (C1:asc(S1) < C2:asc(S2))
+    or
+    (C1=:=C2 and lenstrle(substr(S1,2,LL1:(L1-1)),
+                              substr(S2,2,LL2:(L2-1)),
+                              LL1,LL2)).
+
+S1:string $< S2:string -> S1$=<S2 and not(S1$==S2).
+S1:string $> S2:string -> not(S1$=<S2).
+S1:string $>= S2:string -> not(S1$=<S2) or S1$==S2.
+S1:string $\== S2:string -> not(S1$==S2).
+
+%%% Convert "any" psi-term to a string.
+%%% This converts strings to themselves, integers to a string giving their
+%%% value, and other psi-terms to a string giving their print name.
+
+str(X) -> cond(is_value(X),strval(X),psi2str(X)).
+
+strval(S:string) -> S.
+strval(N:int) -> int2str(N).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Declarations of support of modules      RM: Jan  6 1993
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+module(N) :-
+	N:<string,
+        !,
+	set_module(N),
+	setq(open_modules,[]),
+	setq(inherited_modules,[]),
+	open("syntax"),
+	open("built_ins"),
+	open("x").
+						
+module(N) :-                                     % PVR 13.9.93
+	write_err("*** Error: module name '"),writeq_err(N),
+	write_err("' should be a string"),
+	nl_err.
+
+X:open :- open_list(features(X), X).
+
+open_list([]) :- !.
+open_list([F|FL], X) :- open_one(X.F), open_list(FL, X).
+
+open_one(N:string) :- !,
+	open_module(N),
+	setq(open_modules,[N|open_modules]).
+
+open_one(N) :-                                   % PVR 13.9.93
+	write_err("*** Error: module argument '"),writeq_err(N),
+	write_err("' of open should be a string"),
+	nl_err.
+
+
+display_module_status :-
+	write("%%%%%%%%%%%%%%%%%%%%"),nl,
+	write("%%% current module: ",current_module),nl,
+	write("%%% open modules: ",open_modules),nl,
+	write("%%% inherited modules: ",inherited_modules),nl,
+	write("%%%%%%%%%%%%%%%%%%%%"),nl.
+
+
+public(import_clauses)?
+non_strict(import_clauses)?
+
+import_clauses(for => Sort,
+               replacing => RepList) :-
+
+	(
+	    is_function(Sort),
+	    (Connect = ->) ;
+	    
+	    is_predicate(Sort),
+	    (Connect = :-) ;
+	    
+	    write_err("*** Import: ",Sort," is not a predicate or function"),
+	    nl_err,
+	    fail
+        ),
+	! ,
+	get_and_replace(Sort,Connect,RepList);
+	succeed.
+
+
+get_and_replace(Sort,Connect,RepList) :-
+	Connect=@(Sort,Body),
+	clause(Connect),
+	%%	write("Importing clause:"),
+	%%	nl,
+	%%	writeq(Connect),
+	%%	nl,
+	replace(Connect,RepList),
+	%%	write("as clause:"),
+	%%	nl,
+	%%	writeq(Connect),
+	%%	nl,
+	%%	nl,
+	R=root_sort(Connect.1),
+	dynamic(R),
+	assert(Connect),
+	fail.
+
+
+replace(Connect,[]) :- ! .
+replace(Connect,[(A,B)|T]) :-
+	substitute(A,B,Connect),
+	replace(Connect,T).
+
+
+%%% PVR 13.9.93
+non_strict(import)?
+X:import :-
+	load&strip(X),
+	import_list(features(X), X).
+
+import_list([]) :- !.
+import_list([F|FL], X) :- import_one(X.F), import_list(FL,X).
+
+import_one(X) :-
+	Module =remove_path(X),
+	(open(Module),!;succeed).
+
+remove_path(File) -> remove_path_loop(File,strlen(File)).
+
+remove_path_loop(File,0) -> File.
+remove_path_loop(File,L) -> cond(L<1,
+				 File,
+				 cond(substr(File,L,1) $== "/",
+				      substr(File,L+1,strlen(File)-L),
+				      remove_path_loop(File,L-1))).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Compatibility with older versions 
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+project(A,B) -> B.A.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%% Obsolete
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%public('\+','$==','$=<', c_op,append_file, built_in, day, encode,
+%%%       freeze,functor,genint_counter, hour, inf_loop, kind, lenstreq,
+%%%       lenstrle,c_listing,  minute, month, precedence, second, stream,
+%%%       warning, 
+%%%       weekday, where, set_module, open_module,xf, xfx, xfy, yf, yfx,
+%%%       new_block, block_struct, block_valueintset,block_valuerealset,
+%%%       block_valueintget,block_valuerealget,block_subblockset,
+%%%       block_subblockget,is_block,same_block, block_privateintget,
+%%%       block_privateintset,block_privaterealget,block_privaterealset,
+%%%       block_wake,
+%%%       c_xareallzero, c_xareallpos, c_xareallneg,
+%%%       c_xelm, c_xadd_basic, c_xclean_linear, c_xobjective,
+%%%       syntax
+%%%      ) ?
+
+%%%c_op(1200,fx,block_struct)?    % RM 20 Jan 93
+
+
+%%%% To force a type encoding.
+%%%encode?
+
+%%% non_strict(global)?  %% RM: Apr  8 1993 
+
+%%%non_strict(assert)?  %% 17.9
+%%%non_strict(asserta)?  %% 17.9
+%%%non_strict(clause)?  %% 17.9
+%%%non_strict(retract)?  %% 17.9
+%%%non_strict(cond)? %% 24.8
+
+%%%A ## B -> A.B.
+
+
+%%%A poor man's global variable update:
+%%%set(X,V) :- retract((X->@)), !, assert((X->V)).
+%%%set(X,V) :- dynamic(X), assert((X->V)).
+
+%%%This has become a C built-in:
+%%%non_strict(setq)?
+%%%setq(X,V) :- Value = eval(V), retract((X->@)), !, assert((X->Value)).
+%%%setq(X,V) :- dynamic(X), Value = eval(V), assert((X->Value)).
+
+
+%%%These are removed since their functionality is subsumed by that of
+%%%unification.
+%%%Lisp pseudo-compatibility.
+%%%nil -> [].
+%%%cons(H,T) -> [H|T].
+%%%car([H|T]) -> H.
+%%%cdr([H|T]) -> T.
+
+%%%Repeat.
+%%%repeat.
+%%%repeat :- repeat.
+
+%%%Handy for functional programming.
+%%%where -> @.
+
+%%%Logic functions (some are C built-ins).
+
+%%%and(false,bool) -> false.
+%%%and(bool,false) -> false.
+%%%and(true,true) -> true.
+
+%%%or(true,bool) -> true.
+%%%or(bool,true) -> true.
+%%%or(false,false) -> false.
+
+% PVR 10.2.94
+%%%not(true) -> false.
+%%%not(false) -> true.
+%%%xor(true,false) -> true.
+%%%xor(false,true) -> true.
+%%%xor(bool,bool) -> false.
+
+%%%dynamic(genint_counter)?
+%%%genint_counter -> 0.
+%%%genint -> N:genint_counter | setq(genint_counter,N+1).
+
+%%%This works but results in several genints in the same expression
+%%%all getting the same resulting value:
+%%%persistent(genint_counter)?
+%%%genint_counter<<-0?
+%%%genint -> N:genint_counter | genint_counter<<-N+1.
+
+%%%This is now a C built-in:
+%%%int2str(N:int) -> cond(N<0,
+%%%                       strcon("-",num(-N)),
+%%%                       num(N)).
+
+%%%num(N) -> cond(N<10,
+%%%                   psi2str(chr(N+48)),
+%%%                   strcon(num(Q:floor(N/10)),num(N-Q*10))).
+
+%%%This is the same speed:
+%%%num2str(0) -> "0".
+%%%num2str(1) -> "1".
+%%%num2str(2) -> "2".
+%%%num2str(3) -> "3".
+%%%num2str(4) -> "4".
+%%%num2str(5) -> "5".
+%%%num2str(6) -> "6".
+%%%num2str(7) -> "7".
+%%%num2str(8) -> "8".
+%%%num2str(9) -> "9".
+%%%num2str(N:int) ->
+%%%        cond(N<0,
+%%%             strcon("-",num2str(-N)),
+%%%             strcon(num2str(Q:floor(N/10)),num2str(N-Q*10))).
+
+%%% nl :- put(10).
+%%% nl_err :- put_err(10).
+%%% Infinite loop.
+%%% inf_loop -> inf_loop.
+
+%%%copy_rules(Symbol,SourceModule,NewName) :-
+%%%	load_module(SourceModule),
+%%%	var(NewName),
+%%%	copy_rules(Symbol,SourceModule,NewName).

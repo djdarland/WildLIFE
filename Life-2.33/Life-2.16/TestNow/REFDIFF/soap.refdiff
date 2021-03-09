@@ -1,0 +1,12 @@
+5c5
+< C = list.
+---
+> C = [dick,jane,harry].
+10c10,14
+< S = soap_opera.
+---
+> S = soap_opera(characters => [_A: dick,_B: jane,_C: harry],
+>                husband => _A,
+>                mailman => _C,
+>                wife => _B).
+> 

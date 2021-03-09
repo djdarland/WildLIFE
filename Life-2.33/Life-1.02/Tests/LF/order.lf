@@ -1,0 +1,11 @@
+
+% See Bruno's message of Sep.7, 1992:
+
+p1(X) :- cond(true, (p(X),f(X)) ).
+
+p2(X) :- p(X), f(X).
+
+p(X) :- X<-2.
+
+f(2) -> true.
+

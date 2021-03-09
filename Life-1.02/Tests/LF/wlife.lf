@@ -1,0 +1,33 @@
+thing 		:= {animal ; habitat}.
+animal 		:= {mammal ; bird}.
+mammal 		:= {land_mammal ; aquatic_mammal}.
+land_mammal 	:= {feline ; elephant ; ruminant}.
+feline 		:= {lion ; tiger}.
+ruminant 	:= {antelope ; deer}.
+aquatic_mammal 	:= {seal ; cetaceous}.
+cetaceous 	:= {whale ; dolphin}.
+bird 		:= {penguin ; bird_of_prey}.
+bird_of_prey 	:= {eagle ; condor}.
+habitat 	:= {water ; land}.
+water 		:= {sea ; river ; ice}.
+land 		:= {ice ; savanna ; jungle}.
+
+carnivorous({feline;aquatic_mammal;bird}). %penguin;bird_of_prey}).
+
+herbivorous({elephant;ruminant}).
+
+lives_in({lion;elephant;ruminant},savanna).
+lives_in({tiger;antelope},jungle).
+lives_in(cetaceous,sea).
+lives_in({seal;penguin},ice).
+
+fly(bird_of_prey).
+
+aquatic(X) :- lives_in(X,water).
+
+terrestrial(X) :- fly(X:bird).
+terrestrial(X) :- lives_in(X,land).
+
+eat(X:feline,Z:ruminant) :- lives_in(X,Y), lives_in(Z,Y).
+
+what(X) :- carnivorous(X),aquatic(X),terrestrial(X).

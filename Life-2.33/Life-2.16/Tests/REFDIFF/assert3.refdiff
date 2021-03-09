@@ -1,0 +1,68 @@
+12a13,79
+> 
+> *** Yes
+> --1> Rule one: 1
+> 
+> dynamic(p)?
+> p(1) :-
+>         write('Rule one: ').
+> p(3) :-
+>         write('Rule three: ').
+> p(4) :-
+>         write('RULE TWO:: ').
+> 
+> Rule three: 3
+> 
+> dynamic(p)?
+> p(1) :-
+>         write('Rule one: ').
+> p(3) :-
+>         write('Rule three: ').
+> p(4) :-
+>         write('RULE TWO:: ').
+> 
+> RULE TWO:: 4
+> 
+> dynamic(p)?
+> p(1) :-
+>         write('Rule one: ').
+> p(3) :-
+>         write('Rule three: ').
+> p(4) :-
+>         write('RULE TWO:: ').
+> 
+> 
+> *** No
+> --1> > First result---1
+> 
+> dynamic(f)?
+> f(1) -> 'First result---'.
+> f(2) -> 'Second result--'.
+> f(3) -> 'Third result---'.
+> 
+> 
+> *** Yes
+> --1> First result---1
+> 
+> dynamic(f)?
+> f(1) -> 'First result---'.
+> f(3) -> 'Third result---'.
+> f(4) -> 'Forth result---'.
+> 
+> Third result---3
+> 
+> dynamic(f)?
+> f(1) -> 'First result---'.
+> f(3) -> 'Third result---'.
+> f(4) -> 'Forth result---'.
+> 
+> Forth result---4
+> 
+> dynamic(f)?
+> f(1) -> 'First result---'.
+> f(3) -> 'Third result---'.
+> f(4) -> 'Forth result---'.
+> 
+> 
+> *** No
+> --1> 

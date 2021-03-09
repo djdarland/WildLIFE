@@ -4,7 +4,7 @@ rm ../Tests/OUT/*.tmp
 rm ../Tests/ERR/*.tmp
 cd ../Tests
 ./check_edit_all 1
-echo "enter 1 to edit the temporary results script." 
+echo "enter 0 for all results or enter 1 to edit the temporary results script." 
 echo "you can eliminate some parts you do not wish to look at now."
 read choice
 if [ $choice -eq 1 ]

@@ -1,0 +1,209 @@
+
+*** Yes
+> > 
+*** Yes
+A = @, Q = @~, W = s(Q), X = @~, Y = t(r(Z)), Z = @~.
+--1> 
+*** No
+A = @, Q = @~, W = s(Q), X = @~, Y = t(r(Z)), Z = @~.
+--1> 
+*** No
+A = @, Q = @~, W = s(Q), X = @~, Y = t(r(Z)), Z = @~.
+--1> 
+*** No
+A = @, Q = @~, W = s(Q), X = @~, Y = t(r(Z)), Z = @~.
+--1> 
+*** No
+A = @, Q = @~, W = s(Q), X = @~, Y = t(r(Z)), Z = @~.
+--1> 
+*** No
+A = @, Q = @~, W = s(Q), X = @~, Y = t(r(Z)), Z = @~.
+--1> 
+*** No
+A = @, Q = @~, W = s(Q), X = @~, Y = t(r(Z)), Z = @~.
+--1> 
+*** Yes
+A = @, Q = @~, W = s(Q), X = a~, Y = t(r(Z)), Z = b~.
+----2> 
+*** No
+A = @, Q = @~, W = s(Q), X = a~, Y = t(r(Z)), Z = b~.
+----2> 
+*** Yes
+A = @, Q = b~, W = s(Q), X = a~, Y = t(r(Z)), Z = b~.
+------3> 
+*** No
+A = @, Q = b~, W = s(Q), X = a~, Y = t(r(Z)), Z = b~.
+------3> 
+*** Yes
+A = @, Q = b~, W = s(Q), X = ab~, Y = t(r(X)), Z = X.
+--------4> 
+*** No
+A = @, Q = b~, W = s(Q), X = a~, Y = t(r(Z)), Z = b~.
+------3> 
+*** Yes
+A = @, Q = b~, W = s(Q), X = a~, Y = t(r(Q)), Z = Q.
+--------4> 
+*** Yes
+A = 1, Q = ab, W = s(Q), X = Q, Y = t(r(Q)), Z = Q.
+----------5> 
+*** No
+A = @, Q = b~, W = s(Q), X = a~, Y = t(r(Q)), Z = Q.
+--------4> 
+*** No
+A = @, Q = b~, W = s(Q), X = a~, Y = t(r(Z)), Z = b~.
+------3> 
+*** No
+A = @, Q = @~, W = s(Q), X = a~, Y = t(r(Z)), Z = b~.
+----2> 
+*** No
+A = @, Q = @~, W = s(Q), X = @~, Y = t(r(Z)), Z = @~.
+--1> 
+*** Yes
+A = @, Q = @~, W = s(Q), X = @~, Y = t(r(X)), Z = X.
+----2> 
+*** Yes
+A = 1, Q = @, W = s(Q), X = Q, Y = t(r(Q)), Z = Q.
+------3> 
+*** No
+A = @, Q = @~, W = s(Q), X = @~, Y = t(r(X)), Z = X.
+----2> 
+*** No
+A = @, Q = @~, W = s(Q), X = @~, Y = t(r(Z)), Z = @~.
+--1> 
+*** Yes
+A = @, 
+AA = @~, 
+BB = @~, 
+CC = @~, 
+Q = a(AA)~, 
+W = s(Q), 
+X = b(BB)~, 
+Y = t(r(Z)), 
+Z = ab(CC)~.
+
+----2> 
+*** Yes
+A = @, 
+AA = q~, 
+BB = @~, 
+CC = @~, 
+Q = a(AA)~, 
+W = s(Q), 
+X = b(BB)~, 
+Y = t(r(Z)), 
+Z = ab(CC)~.
+
+------3> 
+*** No
+A = @, 
+AA = q~, 
+BB = @~, 
+CC = @~, 
+Q = a(AA)~, 
+W = s(Q), 
+X = b(BB)~, 
+Y = t(r(Z)), 
+Z = ab(CC)~.
+
+------3> 
+*** Yes
+A = @, 
+AA = q~, 
+BB = q~, 
+CC = @~, 
+Q = a(AA)~, 
+W = s(Q), 
+X = b(BB)~, 
+Y = t(r(Z)), 
+Z = ab(CC)~.
+
+--------4> 
+*** No
+A = @, 
+AA = q~, 
+BB = @~, 
+CC = @~, 
+Q = a(AA)~, 
+W = s(Q), 
+X = b(BB)~, 
+Y = t(r(Z)), 
+Z = ab(CC)~.
+
+------3> 
+*** No
+A = @, 
+AA = q~, 
+BB = @~, 
+CC = @~, 
+Q = a(AA)~, 
+W = s(Q), 
+X = b(BB)~, 
+Y = t(r(Z)), 
+Z = ab(CC)~.
+
+------3> 
+*** Yes
+A = @, 
+AA = q~, 
+BB = @~, 
+CC = BB, 
+Q = a(AA)~, 
+W = s(Q), 
+X = ab(BB)~, 
+Y = t(r(X)), 
+Z = X.
+
+--------4> 
+*** Yes
+A = 1, 
+AA = q, 
+BB = AA, 
+CC = AA, 
+Q = ab(AA), 
+W = s(Q), 
+X = Q, 
+Y = t(r(Q)), 
+Z = Q.
+
+----------5> 
+*** No
+A = @, 
+AA = q~, 
+BB = @~, 
+CC = BB, 
+Q = a(AA)~, 
+W = s(Q), 
+X = ab(BB)~, 
+Y = t(r(X)), 
+Z = X.
+
+--------4> 
+*** No
+A = @, 
+AA = q~, 
+BB = @~, 
+CC = @~, 
+Q = a(AA)~, 
+W = s(Q), 
+X = b(BB)~, 
+Y = t(r(Z)), 
+Z = ab(CC)~.
+
+------3> 
+*** No
+A = @, 
+AA = @~, 
+BB = @~, 
+CC = @~, 
+Q = a(AA)~, 
+W = s(Q), 
+X = b(BB)~, 
+Y = t(r(Z)), 
+Z = ab(CC)~.
+
+----2> 
+*** No
+A = @, Q = @~, W = s(Q), X = @~, Y = t(r(Z)), Z = @~.
+--1> 
+*** No
+> 

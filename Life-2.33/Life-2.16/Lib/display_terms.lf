@@ -1,0 +1,234 @@
+%	$Id: display_terms.lf,v 1.2 1994/12/08 23:57:07 duchier Exp $	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% A little program to display psi_terms, using the X toolkit
+%
+% input: display_terms ?
+%        To have an example psi-term displayed: display_example ?
+%        To display a term from the prompt: show_term(Term) ?
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+module("display_terms") ?
+
+public(display_terms,show_term,display_example) ?
+
+import("xtools") ?
+
+
+:: txt(h_space => 0,v_space => 0).
+txt <| text_box.
+
+
+%%% main call
+
+setq(begin,1) ?
+display_terms :-
+	(
+	    catch(begin),
+	    same_size([ B1:text_field_button(text => 
+	       T:"Just enter a Psi Term and type return to have it displayed",
+	                                action => show_psi(T)),
+		    B2:push_button(action => throw(begin),text => "Quit")]),
+  	    create_box(panel(title => "ShowPsi") containing 
+                       vc_list([B1,v_box(5),B2]))
+	;
+	    succeed
+	).
+
+show_psi(T) :-
+	Y = parse(T),
+	Z = evalin(Y),
+	show_term(Z).
+
+
+%%% show_term creates a panel displaying a psi term
+
+show_term(Term) :-
+	TermBox = build_psi(Term),
+	create_box(P:panel(title => "Psi",color_id => psi4) 
+                   containing TermBox).	    
+    
+build_psi(X) ->
+	B
+    |
+        mark_corefs(Y:copy_term(X)),
+	B = build_psi2(Y).
+
+
+%%% first pass: marking coreferences
+
+mark_corefs(X) :-
+	cond( has_feature(coref,X,C),
+	    cond( C :== false,
+	        C <- true(genint)
+	    ),
+	    (
+		X.coref = false,
+		mark_new_coref(X)
+	    )
+	).
+
+mark_new_coref(X) :-
+	mark_corefs_features(features(X),X).
+
+mark_corefs_features([coref|B],X) :-
+	!,
+	mark_corefs_features(B,X).
+mark_corefs_features([A|B],X) :-
+	!,
+	mark_corefs(X.A),
+	mark_corefs_features(B,X).
+mark_corefs_features([]).
+	    
+
+%%% second pass: displaying the term
+
+build_psi2(X) -> 
+	frame containing 
+	cond( C:(X.coref),
+
+	    txt(text=> strcon("C",int2str(C.1)),
+	             text_color_id => psi3)
+
+            t_left_of
+	    cond(has_feature(displayed,X),
+	         null_box,
+		 h_box(5) c_left_of 
+	            display_coreferred(X&@(displayed => true))
+            ),
+
+	    display_coreferred(X&@(displayed => true))
+	).
+
+
+feature_boxes([displayed|T],SB) -> feature_boxes(T,SB).
+feature_boxes([coref|T],SB) -> feature_boxes(T,SB).
+feature_boxes([H|T],SB) -> 
+	[ssize( box
+                containing txt(text=>psi2str(H),font_id => medium)
+	                   c_left_of
+		           txt(text => " => ",font_id => medium),
+	        SB)| feature_boxes(T,SB)].
+feature_boxes([]) -> [].
+
+ssize(A,B) -> A | same_size([A,B]).
+
+
+display_coreferred(X) -> B |
+        (
+	    is_legal_cons(X), 
+	    !,
+	    L = build_list(X),
+	    B = txt(text => "list",text_color_id=>psi2)
+	        l_above
+	        v_box(5)
+	        l_above
+	        array(L,
+		      cond(F:sqrt(length(L)) :< int,
+		          F,
+			  floor(F)+1)
+		      )
+	;
+	    B=build_root(X)
+	).
+
+private_marker(X) -> X:==coref or X:==displayed.
+
+purge([]) -> [].
+purge([H|T]) -> cond(private_marker(H),purge(T),[H|purge(T)]).
+
+is_legal_cons(X) :-
+ 	X :== cons,
+	F=purge(features(X)),
+	(F=[1,2];F=[2,1]),
+	! .
+
+	
+build_list(X) -> B |
+	B=[build_psi2(X.1) | Rest ],
+	T=X.2,
+	(
+		T.coref,
+		!,
+		Rest=[h_box(5) c_left_of frame(width => 5,height => H)
+			c_left_of h_box(5) c_left_of
+		      build_psi2(T) & @(height => H)]
+	;
+		T:==[],
+		purge(features(T))=[],
+		!,
+		Rest=[]
+	;
+		is_legal_cons(T),
+		!,
+		Rest=build_list(T)
+	;
+		Rest=[h_box(5) c_left_of frame(width => 5,height => H)
+			c_left_of h_box(5) c_left_of
+		      build_psi2(T) & @(height => H)]
+	).
+
+build_root(X) ->
+        txt(text=>psi2str(root_sort(X)),
+	    text_color_id => psi2)
+	l_above
+        v_box(5)
+        l_above
+        vl_list build_features(X,F:features(X),feature_boxes(F,null_box)).
+
+
+
+build_features(X,[displayed|T],FB) ->
+	build_features(X,T,FB).
+build_features(X,[coref|T],FB) ->
+	build_features(X,T,FB).
+build_features(X,[H|T],[Box|FB]) ->
+        [ h_box(-d_border) c_left_of
+          Box
+          t_left_of
+	  build_psi2(project(H,X))
+	| build_features(X,T,FB)].
+       
+build_features(X,[]) -> [].
+
+%%% colors used
+
+def_color(main_colors,psi2,red) ?
+def_color(main_colors,psi3,blue) ?
+def_color(main_colors,psi4,'light grey') ?
+def_color(shade_colors,psi4,'dim grey') ?
+def_color(highlight_colors,psi4,white) ?
+
+
+%%% utility
+
+public(catch) ?
+non_strict(catch) ?
+catch(A) :- C = get_choice, setq(A,C).
+
+public(throw) ?
+throw(A) :- set_choice(A), fail.
+
+
+%%% examples
+
+display_example :- 
+	show_term(`big(T:tom(hair => knotted,
+                             hands => clumsy,
+			     brain => slow_witted,
+			     friend => {jeremy(skin => black_and_blue,
+					       known_letters => 
+					           [a,b,c,y,t,w,i,o],
+				               brain => hurts);
+				        martha(brain => plank(number => 2,
+					                      length => short),
+					       beauty => gorgon_like)
+				       },
+		             nose => long(warts => red,
+                                          spots => ugly),
+			     mother => W:witch(son => T,husband => F),
+			     father => F:tax_collector(wife => W,son => T)
+		          )
+		      )
+		 ).

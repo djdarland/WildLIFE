@@ -1,0 +1,66 @@
+% FILE. . . . . /usr/local-europa/hak/life/xtools_utils.lf
+% EDIT BY . . . Hassan Ait-Kaci
+% ON MACHINE. . Europa
+% STARTED ON. . Mon Apr 18 16:18:14 1994
+
+% Last modified on Wed Nov 16 19:56:34 1994 by Hak
+
+module("xtools_utils") ?
+public(frame_box,padded_box,fancy_text_box,reset_text,reset_state,
+       play, strcat) ?
+
+import("xtools") ?
+
+frame_box(B,padding=>P) -> frame
+	containing
+	  vc_list [v_box(P),
+		   hc_list [h_box(P),B,h_box(P)],
+		   v_box(P)].
+
+padded_box(B,padding=>P) -> box
+	containing
+	  vc_list [v_box(P),
+		   hc_list [h_box(P),B,h_box(P)],
+		   v_box(P)].
+
+fancy_text_box(text => Text:string,
+	       font => F,
+	       colors => Colors:list) -> hc_list
+	map2wrap(make_box(font=>F),str2list(Text),Colors).
+
+make_box(Char,Color,font=>F) -> text_box(text=>Char,
+					 font_id=>F,
+					 text_color_id=>Color).
+
+map2wrap(F,L1:list,L2:list) -> map2w(F,L1,L2,L2).
+
+map2w(F,[],list,list) -> [].
+%%% MJV 17-08-95: Added the following to avoid holes in the coloring, due
+%%% to spaces.
+map2w(F,[" "|T1],L1:[H2|T2],L2:list) -> [F(" ",H2)|map2w(F,T1,L1,L2)].
+map2w(F,[H1|T1],[H2|T2],L:list) -> [F(H1,H2)|map2w(F,T1,T2,L)].
+map2w(F,[H1|T1],[],L:[H2|T2]) -> [F(H1,H2)|map2w(F,T1,T2,L)].
+
+str2list("") -> [].
+str2list(S:string) -> [substr(S,1,1)|str2list(substr(S,2,strlen(S)))].
+
+reset_text(B:@(text => T),Text) :- T <<- Text, refresh_look(B).
+
+reset_state(B:@(frame_state => S),State) :- S <<- State, refresh_look(B).
+
+
+%% play actually plays a soundfile at a certain volume (85 by default)
+%% set play to true if no audio is available.
+
+play.
+
+%play :- !.
+%play(S:string, N:{85; int}) :- !,
+%	@ = system(strcat("rsh muenster /usr/bin/audioplay -v ", psi2str(N),
+%			  " /usr/home/demo/Life/Demo/Sounds/", S, ".au &")).
+
+S:strcat -> strcat2(feature_values(S)).
+	
+strcat2([H|T]) -> strcon(H, strcat2(T)).
+strcat2([]) -> "".
+

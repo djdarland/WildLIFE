@@ -1,0 +1,82 @@
+echo "WildLife Difference Utility"
+echo "dff .c file & compared with 1.02 version?"
+echo "Compare Files by selecting file then view differences with 111"
+echo "enter 0 to proceed 999 to quit"
+read select
+while [ $select -ne 999 ]
+do 
+echo "-----------"
+echo ".c files for wild life"
+echo "-----------"
+echo "1 arity.c"
+echo "2 bi_math.c"
+echo "3 bi_sys.c"
+echo "4 bi_type.c"
+echo "5 built_ins.c"
+echo "6 copy.c"
+echo "7 error.c"
+echo "8 hash_table.c"
+echo "9 info.c"
+echo "10 interrupt.c"
+echo "11 lefun.c"
+echo "12 lib.c"
+echo "13 life.c"
+echo "14 list.c"
+echo "15 login.c"
+echo "16 lub.c"
+echo "17 memory.c"
+echo "18 modules.c"
+echo "19 parser.c"
+echo "20 print.c"
+echo "21 raw.c"
+echo "22 sys.c"
+echo "23 sys_dbm.c"
+echo "24 templates.c"
+echo "25 token.c"
+echo "26 trees.c"
+echo "27 types.c"
+echo "28 xdisplaylist.c"
+echo "29 xpred.c"
+echo "111 View Differences"
+
+echo "777 NOTES_DJD.txt"
+echo "999 quit"
+echo "select"
+read select
+case $select in
+1) diff ../../Life-1.02/Source/arity.c arity.c >diffs.out ;;
+2) diff ../../Life-1.02/Source/bi_math.c bi_math.c >diffs.out ;;
+3) diff ../../Life-1.02/Source/bi_sys.c bi_sys.c >diffs.out ;;
+4) diff ../../Life-1.02/Source/bi_type.c bi_type.c >diffs.out ;;
+5) diff ../../Life-1.02/Source/built_ins.c built_ins.c >diffs.out ;;
+6) diff ../../Life-1.02/Source/copy.c copy.c >diffs.out ;;
+7) diff ../../Life-1.02/Source/error.c error.c >diffs.out ;;
+8) diff ../../Life-1.02/Source/hash_table.c hash_table.c >diffs.out ;;
+9) diff ../../Life-1.02/Source/info.c info.c >diffs.out ;;
+10) diff ../../Life-1.02/Source/interrupt.c interrupt.c >diffs.out ;;
+11) diff ../../Life-1.02/Source/lefun.c lefun.c >diffs.out ;;
+12) diff ../../Life-1.02/Source/lib.c lib.c >diffs.out ;;
+13) diff ../../Life-1.02/Source/life.c life.c >diffs.out ;;
+14) diff ../../Life-1.02/Source/list.c list.c >diffs.out ;;
+15) diff ../../Life-1.02/Source/login.c login.c >diffs.out ;;
+16) diff ../../Life-1.02/Source/lub.c lub.c >diffs.out ;;
+17) diff ../../Life-1.02/Source/memory.c memory.c >diffs.out ;;
+18) diff ../../Life-1.02/Source/modules.c modules.c >diffs.out ;;
+19) diff ../../Life-1.02/Source/parser.c  parser.c >diffs.out ;;
+20) diff ../../Life-1.02/Source/print.c  print.c >diffs.out ;;
+21) diff ../../Life-1.02/Source/raw.c raw.c >diffs.out ;;
+22) diff ../../Life-1.02/Source/sys.c sys.c >diffs.out ;;
+23) diff ../../Life-1.02/Source/sys_dbm.c sys_dbm.c >diffs.out ;;
+24) diff ../../Life-1.02/Source/templates.c templates.c >diffs.out ;;
+25) diff ../../Life-1.02/Source/token.c token.c >diffs.out ;;
+26) diff ../../Life-1.02/Source/trees.c trees.c >diffs.out ;;
+27) diff ../../Life-1.02/Source/types.c types.c >diffs.out ;;
+28) diff ../../Life-1.02/Source/xdisplaylist.c xdisplaylist.c >diffs.out ;;
+29) diff ../../Life-1.02/Source/xpred.c xpred.c >diffs.out ;;
+111) $EDITOR diffs.out ;;
+
+777) $EDITOR NOTES_DJD.txt;;
+
+esac
+done
+

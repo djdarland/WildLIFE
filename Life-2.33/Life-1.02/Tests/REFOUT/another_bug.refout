@@ -1,0 +1,72 @@
+
+*** Yes
+> > 
+*** Yes
+> *** Tracing is turned on.
+
+*** Yes
+> T0002 C00   prove p(@)
+T0003 C00   unify @ with {1;2;3;4}
+T0003 C00    setting up function call {1;2;3;4}
+T0004 C00    evaluate {1;2;3;4}
+T0005 C01    unify @ with 1
+T0006 C01   unify @ with 1
+T0008 C01   prove built-in write(A: 1 + 1 = A + 2)
+T0008 C01    setting up function call 1 + 2
+T0008 C01     setting up function call 1 + 1
+T0009 C01     evaluate 1 + 1
+T0010 C01    evaluate 1 + 2
+T0011 C01   prove built-in write(2 = 3)
+2 = 3T0013 C01   prove nl
+T0014 C01   prove built-in write("
+")
+
+T0015 C01  prove built-in fail
+T0015 C00     backtracking
+T0016 C00    evaluate {2;3;4}
+T0017 C01    unify @ with 2
+T0018 C01   unify @ with 2
+T0020 C01   prove built-in write(A: 2 + 1 = A + 2)
+T0020 C01    setting up function call 2 + 2
+T0020 C01     setting up function call 2 + 1
+T0021 C01     evaluate 2 + 1
+T0022 C01    evaluate 2 + 2
+T0023 C01   prove built-in write(3 = 4)
+3 = 4T0025 C01   prove nl
+T0026 C01   prove built-in write("
+")
+
+T0027 C01  prove built-in fail
+T0027 C00     backtracking
+T0028 C00    evaluate {3;4}
+T0029 C01    unify @ with 3
+T0030 C01   unify @ with 3
+T0032 C01   prove built-in write(A: 3 + 1 = A + 2)
+T0032 C01    setting up function call 3 + 2
+T0032 C01     setting up function call 3 + 1
+T0033 C01     evaluate 3 + 1
+T0034 C01    evaluate 3 + 2
+T0035 C01   prove built-in write(4 = 5)
+4 = 5T0037 C01   prove nl
+T0038 C01   prove built-in write("
+")
+
+T0039 C01  prove built-in fail
+T0039 C00     backtracking
+T0040 C00    evaluate {4}
+T0041 C00    unify @ with 4
+T0042 C00   unify @ with 4
+T0044 C00   prove built-in write(A: 4 + 1 = A + 2)
+T0044 C00    setting up function call 4 + 2
+T0044 C00     setting up function call 4 + 1
+T0045 C00     evaluate 4 + 1
+T0046 C00    evaluate 4 + 2
+T0047 C00   prove built-in write(5 = 6)
+5 = 6T0049 C00   prove nl
+T0050 C00   prove built-in write("
+")
+
+T0051 C00  prove built-in fail
+
+*** No
+> 

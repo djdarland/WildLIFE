@@ -1,0 +1,146 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  GRAMMATICAL DEFINITION OF A FLOWER
+%
+%
+% A simpler version of this definition can be found page 27 of the above
+% mentioned book.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+module("flower_def") ?
+
+public( axiomflower,petal_color,stamen_color,leaf_color,
+        stop_draw,stop_drawing,draw_start) ?
+
+open("rewrite_trans") ?
+open("utils") ?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+initAngle(pi/10) ?
+probSymbol(seg,5) ?
+probSymbol(twoleafs,5) ?
+
+axiomflower::> plant ?
+
+plant(oldState=>S,newState=>S ) :- stop_draw.  %%% stop_draw makes the drawing
+					       %%% stop if stop_drawing is set
+					       %%% to true. 
+plant ==>
+	internode,rpu,
+	push,
+            rpu(-2*delta),rph(-2*delta),
+	    push,rpu(-2*delta),leaf,pop,
+	    internode,
+	    push,rpu(2*delta),leaf,pop,
+	    rmu,
+	    push,plant,flower,pop,
+	    rpu(2*delta),plant,flower,
+	pop,
+	push,plant,rpu,flower,pop ?
+
+
+internode(oldState=>S,newState=>S ) :- stop_draw. 
+internode ==> 
+	fd,seg,
+	push,rph(-2*delta),rpl(2*delta),leaf,pop,
+	push,rph(-2*delta),rpl(-2*delta),leaf,pop,
+	fd,seg ?
+
+
+seg(oldState=>S,newState=>S ) :- stop_draw .
+seg ==>  seg,twoleafs,fd,seg ?
+seg ==>  seg,fd,seg ?
+seg ==>  seg,fd,seg ?
+seg ==>  seg ?
+seg ==>  seg ?
+
+twoleafs(oldState=>S,newState=>S):- stop_draw.
+twoleafs ==> 
+	push,rph(-2*delta),rpl(2*delta),leaf,pop,
+	push,rph(-2*delta),rpl(-2*delta),leaf,pop ?
+
+twoleafs ==> 
+	push,rph(-4*delta),rpl(2*delta),leaf,pop,
+	push,rph(-4*delta),rpl(-2*delta),leaf,pop ?
+
+twoleafs ==> 
+	push,rph(-6*delta),rpl(2*delta),leaf,pop,
+	push,rph(-6*delta),rpl(-2*delta),leaf,pop ?
+
+twoleafs ==> 
+	push,rph(-8*delta),rpl(2*delta),leaf,pop,
+	push,rph(-8*delta),rpl(-2*delta),leaf,pop ?
+
+
+twoleafs ==> 
+	push,rph(pi),rpl(2*delta),leaf,pop,
+	push,rph(pi),rpl(-2*delta),leaf,pop ?
+
+
+
+
+leaf(oldState=>S,newState=>S ) :- stop_draw .
+leaf ==>
+	push,
+	     setLeaf,
+	            startPol,
+		            rpu,fu,dot,rmu,fu(`(2*realDistance)),dot,
+			    rmu,fu,dot,rpu,
+                               turn,
+                            rpu,fu,dot,rmu,fu(`(2*realDistance)),dot,
+			    rmu,fu,dot,
+                      endPol,
+             setDefault,
+         pop ?
+
+
+flower(oldState=>S,newState=>S):- stop_draw.
+flower ==> 
+	push,
+	    pedicel,rmh,petal,rph(2*2*delta),
+                        petal,rph(2*2*delta),
+			petal,rph(2*2*delta),
+			petal,rph(2*2*delta),
+			petal,rph(2*2*delta), 
+	pop ?
+
+
+pedicel(oldState=>S,newState=>S) :- stop_draw .
+pedicel ==>  fd(`(2*realDistance)) ?
+
+
+petal(oldState=>S,newState=>S )  .
+petal ==> push,setStamen,rml,fd,pop,
+          push,setPetal,startPol,
+                             rpl(2*2*delta),
+                             rpu(-2*delta),fu(`(2.5*realDistance)),dot,
+                             rpu(2*delta),fu(`(2.5*realDistance)),dot,
+			     turn,
+                             rpu(-2*delta),fu(`(2.5*realDistance)),dot,
+                             rpu(2*delta),fu(`(2.5*realDistance)),dot,
+                        endPol,
+          setDefault,pop ?
+
+
+
+setLeaf(oldState=>S,newState=>S ) :-
+	setq(drColor,leaf_color).
+setLeaf ==> setLeaf ?
+
+setPetal(oldState=>S,newState=>S ) :- setq(drColor,petal_color).
+setPetal ==> setPetal ?
+
+setStamen(oldState=>S,newState=>S) :-  setq(drColor,stamen_color).
+setStamen ==> setStamen ?
+
+stop_draw :-  
+	cond(stop_drawing, 
+	     throw(draw_start)).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

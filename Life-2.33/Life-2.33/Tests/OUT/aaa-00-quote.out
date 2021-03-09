@@ -1,0 +1,24 @@
+
+*** Yes
+> > > > > > > > > > > > 
+*** Yes
+> 
+*** Yes
+> > 
+*** Yes
+AAA = one_two_three, P = r(AAA), Q = r('AAA').
+--1> 
+*** No
+> > 
+r(one_two_three) :-
+        succeed.
+r(one_two_three) :-
+        succeed.
+r('AAA') :-
+        succeed.
+
+s(one_two_three) :-
+        succeed.
+
+*** Yes
+> 

@@ -1,0 +1,24 @@
+X=b?
+Y=c?
+X=Y?
+.
+X=d?
+.
+X=c?
+Y=e?
+X=Y?
+.
+X=a?
+Y=e?
+X=Y?
+.
+c <| f.
+X=e?
+Y=f?
+X=Y?
+.
+:: X:f | w("F:",X).
+X=e?
+Y=f?
+X=Y?
+.

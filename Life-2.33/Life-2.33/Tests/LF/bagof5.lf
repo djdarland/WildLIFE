@@ -1,0 +1,8 @@
+% Test of functions inside bagof call:
+% This works for addition because it
+% residuates.
+
+p(1).
+p(2).
+p(3).
+

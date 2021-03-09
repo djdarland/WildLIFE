@@ -1,0 +1,196 @@
+accumulators.exp::-(xpand_cut(@,in_code => _A,in_context => @(accs => _B,fold => _C: false,pass => _D),out_code => _E,out_context => @(accs => _F,fold => false,pass => _D)),cond(:==(.(_C,1),false),,(link_other_accs(features(_B,"accumulators"),true,dcg,_B,_F),=(_A,,(=(.(_B,dcg),.(_F,dcg)),,(!,_E)))),,(=(_B,_F),=(_A,,(!,_E))))).
+accumulators.exp::-(xpand_code(_A,in_code => _B,in_context => @(accs => _C,fold => _D: false,pass => _E),out_code => _F,out_context => @(accs => _G,fold => false,pass => _E)),cond(:==(.(_D,1),false),,(link_other_accs(features(_C,"accumulators"),true,dcg,_C,_G),=(_B,,(=(.(_C,dcg),.(_G,dcg)),comma(transLifeCode(_A),_F)))),,(=(_C,_G),=(_B,comma(transLifeCode(_A),_F))))).
+accumulators.exp::-(create_context(_A,cur_ctxt => _B,globals => _C,new_ctxt => _D,used => _E),cond(:==(_A,,),create_conjunction(_A,cur_ctxt => _B,globals => _C,new_ctxt => _D,used => _E),cond(:==(_A,with),,(create_context(.(_A,1),cur_ctxt => _B,globals => _C,new_ctxt => _D,used => _E),create_context(.(_A,2),cur_ctxt => _B,globals => _C,new_ctxt => _D,used => _E)),cond(:==(_A,=),create_relation(_A,cur_ctxt => _B,globals => _C,new_ctxt => _D,used => _E),=(@,create_acc(_A,cur_ctxt => _B,globals => _C,new_ctxt => _D,used => _E)))))).
+accumulators.exp:->(create_acc(_A,cur_ctxt => _B,globals => _C,new_ctxt => _D,used => _E),cond(:==(_A,=>),create_composition(_A,cur_ctxt => _B,globals => _C,new_ctxt => _D,used => _E),cond(:==(_A,glob),create_global(.(_A,1),cur_ctxt => _B,globals => _C,new_ctxt => _D,used => _E),cond(:==(_A,inv),create_inverse(.(_A,1),cur_ctxt => _B,globals => _C,new_ctxt => _D,used => _E),cond(:==(_A,init),create_init(.(_A,1),.(_A,2),cur_ctxt => _B,globals => _C,new_ctxt => _D,used => _E),create_local(_A,cur_ctxt => _B,globals => _C,new_ctxt => _D,used => _E)))))).
+accumulators.exp:->(create_init(_A,_B,cur_ctxt => _C,globals => _D,new_ctxt => _E,used => _F),|(&(create_local(_A,cur_ctxt => _C,globals => _D,new_ctxt => _E,used => _F),@(_G,_H)),;(,(get_pass_info(_A,start => _I),,(!,=(_I,_G))),;(,(get_acc_info(_A,in_start => _J,out_start => _K),,(!,cond(:==(_B,in),=(_G,_J),cond(:==(_B,out),=(_H,_K),,(=(_G,_J),=(_H,_K)))))),initialization_error(_A))))).
+accumulators.exp:->(link_other_accs([_A|_B],true,_C,_D,_E),|(succeed,,(cond(:\==(_A,_C),=(.(_D,_A),.(_E,_A))),link_other_accs(_B,true,_C,_D,_E)))).
+accumulators.exp:->(link_other_accs([_A|_B],false,_C,_D,_E),|(_F,,(cond(:\==(_A,_C),,(=(.(_G: accs,_A),.(_D,_A)),=(.(_H: accs,_A),.(_E,_A)))),,(link_other_accs_false(_B,_C,_D,_E,_G,_H),cond(:==(features(_G,"accumulators"),[]),=(_F,succeed),=(_F,=(_G,_H))))))).
+accumulators.exp::-(link_other_accs_false([_A|_B],_C,_D,_E,_F,_G),,(!,,(cond(:\==(_A,_C),,(=(.(_F,_A),.(_D,_A)),=(.(_G,_A),.(_E,_A)))),link_other_accs_false(_B,_C,_D,_E,_F,_G)))).
+accumulators.exp:->(link_accs(_A,false,_B,_C),|(_D,cond(:==(_A,[]),=(_D,succeed),|(true,,(add_features(_A,_C),=(_D,=(&(copy_pointer(_B),accs),&(copy_pointer(_C),accs)))))))).
+accumulators.exp:->(s_member([_A|_B],_C),cond(:\==(_A,_C),s_member(_B,_C))).
+accumulators.exp:->(memberAndRest_sort(_A,[_B|_C],_D),cond(:==(_A,_B),|(true,=(_D,_C)),|(memberAndRest_sort(_A,_C,_E),=(_D,[_B|_E])))).
+accumulators.exp:->(sort_member(_A,[_B|_C]),cond(:==(_A,_B),true,sort_member(_A,_C))).
+accumulators.lf:	cond(   Bool.1 :== false,
+accumulators.lf:	cond(   Bool.1 :== false,
+accumulators.lf:	cond( Constraints :== , ,
+accumulators.lf:	      cond( Constraints :== with,
+accumulators.lf:		    cond( Constraints :== =,
+accumulators.lf:        cond( A :== =>,
+accumulators.lf:	      cond( A :== glob,
+accumulators.lf:		    cond( A :== inv,
+accumulators.lf:			  cond( A :== init,
+accumulators.lf:	    cond( Restriction :== in,
+accumulators.lf:		  cond( Restriction :== out,
+accumulators.lf:%%%		X :== @,!,
+accumulators.lf:%%%		X :== true,!,
+accumulators.lf:%%%		X :== false,
+accumulators.lf:	cond( A :\== C,
+accumulators.lf:	cond( A :\== C,
+accumulators.lf:	cond( features(Tin) :== [],
+accumulators.lf:	cond( A :\== C,
+accumulators.lf:	cond(Fin :== [],
+accumulators.lf:s_member([A|B],C) -> cond( A :\== C,s_member(B,C)).
+accumulators.lf:	cond( A :== B,
+accumulators.lf:% member in a list of sorts, using :==
+accumulators.lf:sort_member(X,[Y|S]) -> cond( X :== Y,
+display_terms.lf:	    cond( C :== false,
+display_terms.lf:private_marker(X) -> X:==coref or X:==displayed.
+display_terms.lf: 	X :== cons,
+display_terms.lf:		T:==[],
+files.lf:	cond(	C:substr(N,L,1) $== ".",
+files.lf:		cond(	C $== "/" or L=<1,
+files.lf:	cond(	C:substr(N,L,1) $== ".",
+files.lf:		cond(	C $== "/" or L=<1,
+files.lf:				 cond(substr(File,L,1) $== "/",
+lists.lf:	cond( A :== B,
+lists.lf:	cond( A === B,
+loader.exp::-(load_first(_A),,(=(_B,first_token),;(,(=(_B,[]),,(!,,(nl,,(nl,,(write("Empty File"),nl))))),;(,(read_new_expr(_B,_C,_D,_E,_F),,(cond(_C,cond(:==(_E,assertion),assert_declaration(_D,_A),prove_query(_D,_A)),,(!,write_syntax_error(_A))),;(,(=(_F,[]),,(!,,(nl,,(write("*** File '",.(_A,input_file_name),"' loaded"),nl)))),fail))),load_next(_A))))).
+loader.exp::-(load_next(_A),;(,(read_new_expr([copy_term(rest_token)|`(next_token)],_B,_C,_D,_E),,(cond(_B,cond(:==(_D,assertion),assert_declaration(_C,_A),prove_query(_C,_A)),,(!,write_syntax_error(_A))),;(,(=(_E,[]),,(!,,(nl,,(write("*** File '",.(_A,input_file_name),"' loaded"),nl)))),fail))),load_next(_A))).
+loader.lf:		  cond(  T :== assertion,
+loader.lf:		  cond( T :== assertion,
+parser.exp::-(term(0 => [construct(_A)|_B],_C,cons => _D,rest => _E,vars => _F),,(=(evalin(_B),_G),,(!,,(;(,(attributes(0 => _G,_A,_H,_I,rest => _E,vars => _F),,(;(,(:==(_H,succeed),,(!,=(_C,_A))),=(_C,`(|(_A,,(_H,=(_I,_A)))))),=(_D,false))),,(=(_G,_E),,(=(_C,_A),=(_D,true)))),,(!,succeed))))).
+parser.exp::-(term(0 => [variable(_A)|_B],_C,cons => false,rest => _D,vars => _E),,(=(evalin(_B),_F),,(!,,(get_variable(_A,_G,_E),;(,(attributes(0 => _F,_H,_I,_J,rest => _D,vars => _E),,(!,;(,(:==(_I,succeed),,(!,=(_C,`(meta_apply(_G,_H))))),=(_C,`(|(_K,,(_I,,(=(_H,_J),=(_K,meta_apply(_G,_H)))))))))),,(=(_F,_D),=(_C,_G))))))).
+parser.exp::-(term(0 => _A,_B,cons => false,rest => _C,vars => _D),,(liste(0 => _A,_E,rest => _F,vars => _D),,(!,,(;(,(attributes(0 => _F,_E,_G,_E,rest => _C,vars => _D),;(,(:==(_G,succeed),,(!,=(_B,_E))),=(_B,`(|(_E,_G))))),,(=(_F,_C),=(_B,_E))),,(!,succeed))))).
+parser.exp::-(term(0 => _A,_B,cons => false,rest => _C,vars => _D),,(disjunction(0 => _A,_E,rest => _F,vars => _D),,(;(,(attributes(0 => _F,_E,_G,_E,rest => _C,vars => _D),;(,(:==(_G,succeed),,(!,=(_B,_E))),=(_B,`(|(_E,_G))))),,(=(_F,_C),=(_B,_E))),,(!,succeed)))).
+parser.exp::-(start_expr(0 => ["("|_A],_B,cons => false,rest => _C,vars => _D),,(=(evalin(_A),_E),,(!,,(expr(0 => _E,_F,max => 1200,rest => [")"|_G],vars => _D),,(=(evalin(_G),_H),;(,(attributes(0 => _H,_I,_J,_K,rest => _C,vars => _D),,(!,;(,(:==(_J,succeed),,(!,=(_B,`(meta_apply(_F,_I))))),=(_B,`(|(_L,,(_J,,(=(_I,_K),=(_L,meta_apply(_F,_I)))))))))),,(=(_H,_C),=(_B,_F)))))))).
+parser.exp::-(sub_expr(0 => _A,_B,left_expr => _C,left_prec => _D,mask => _E,max => _F,prec => _G,rest => _H,vars => _I),,(=<(_D,preced(_J,_K)),,(post_or_infix_op(0 => _A,_L,_K,_M,left_strict => _J,mask => _E,max => _F,rest => _N,right_strict => _O),;(,(=(_N,_H),,(:==(_L,postfix),,(!,,(=(_B,&(_M,@(_C))),=(_G,0))))),,(=(_N,_P),,(:==(_L,infix),,(expr(0 => _P,_Q,mask => _E,max => preced(_O,_K),rest => _H,vars => _I),,(;(,(:==(_M,`(:)),,(!,;(,(or(var(_C),var(_Q)),,(=(_B,&(_C,_Q)),!)),=(_B,`(&(_C,_Q)))))),=(_B,&(_M,@(_C,_Q)))),=(_G,_K))))))))).
+parser.exp::-(post_or_infix_op(0 => _A: [atom(_B)|@],_C,_D,_B,left_strict => _E,mask => _F,max => _G,rest => _H,right_strict => _I),,(,(cond(or(or(or(and(=:=(/\(_F,1),1),:==(_B,,)),and(=:=(/\(_F,2),2),:==(_B,;))),and(=:=(/\(_F,4),4),:==(_B,`(|)))),and(=:=(/\(_F,8),8),:==(_B,`(=>)))),fail),,(has_feature(combined_name(_B),post_infix_table,@(left_strict => _E,precedence => _D,right_strict => _I,type => _C)),>=(_G,_D))),,(=(_A,[@|_J]),=(evalin(_J),_H)))).
+parser.exp::-(hash_op(_A,_B,_C),,(=(_D,&(project(_B,@(fx => @(right_strict => true,type => prefix),fy => @(right_strict => false,type => prefix),xf => @(left_strict => true,right_strict => @,type => postfix),xfx => @(left_strict => true,right_strict => true,type => infix),xfy => @(left_strict => true,right_strict => false,type => infix),yf => @(left_strict => false,right_strict => @,type => postfix),yfx => @(left_strict => false,right_strict => true,type => infix))),@(precedence => _A,type => _E))),,(=(_F,combined_name(_C)),cond(or(has_feature(_F,prefix_table,_G),has_feature(_F,post_infix_table,_H)),cond(or(equ_op(_D,_G),equ_op(_D,_H)),succeed,,(c_op(_A,_B,_C),,(cond(:==(_E,prefix),<<-(.(prefix_table,_F),_D),<<-(.(post_infix_table,_F),_D)),,(write_err("*** Warning: overloading definition"," of operator ",_C," ***"),nl_err)))),,(c_op(_A,_B,_C),cond(:==(_E,prefix),<<-(.(prefix_table,_F),_D),<<-(.(post_infix_table,_F),_D))))))).
+parser.exp:->(equ_op(@(left_strict => _A,precedence => _B,right_strict => _C,type => _D),_E),|(_F,,(=(_E,@(left_strict => _G,precedence => _H,right_strict => _I,type => _J)),=(_F,and(and(and(=:=(_B,_H),:==(_D,_J)),:==(_A,_G)),:==(_C,_I)))))).
+parser.exp::-(init_hash_op(op(_A,_B,_C)),,(=(_D,&(project(_B,@(fx => @(right_strict => true,type => prefix),fy => @(right_strict => false,type => prefix),xf => @(left_strict => true,type => postfix),xfx => @(left_strict => true,right_strict => true,type => infix),xfy => @(left_strict => true,right_strict => false,type => infix),yf => @(left_strict => false,type => postfix),yfx => @(left_strict => false,right_strict => true,type => infix))),@(precedence => _A,type => _E))),cond(:==(_E,prefix),<<-(.(prefix_table,combined_name(_C)),_D),<<-(.(post_infix_table,combined_name(_C)),_D)))).
+parser.exp:->(meta_apply(_A: lambda_exp,_B),|(_C,,(=(_D,copy_lambda(_A)),,(diff_list(features(_B,"parser"),.(_D,args),_E),,(=(evalin(_B),_D),;(,(:==(_E,[]),,(!,,(=(_F,.(_D,expr)),=(_C,evalin(_F))))),,(<-(.(_B,args),_E),=(_C,_B)))))))).
+parser.exp::-(first_statement(_A),,(=(_B,first_token),;(,(=(_B,[]),,(!,,(open_out("stdout",@),,(nl,,(nl,,(write("Empty File"),nl)))))),;(,(read_new_expr(_B,_C,_D,_E,_F),,(cond(_C,cond(:==(_E,assertion),,(nl,,(writeq(_D),write("."))),,(nl,,(writeq(_D),write("?")))),,(close(_A),,(nl_err,,(write_err("Syntax error near line ",.(_A,line_count)," in file '",.(_A,input_file_name),"'"),,(nl_err,,(!,fail)))))),;(,(=(_F,[]),,(!,,(open_out("stdout",@),,(nl,,(write("*** File '",.(_A,input_file_name),"'  parsed"),nl))))),fail))),next_statement(_A))))).
+parser.exp::-(next_statement(_A),;(,(read_new_expr([copy_term(rest_token)|`(next_token)],_B,_C,_D,_E),,(cond(_B,cond(:==(_D,assertion),,(nl,,(nl,,(writeq(_C),write(".")))),,(nl,,(nl,,(writeq(_C),write(" ?"))))),,(close(_A),,(nl_err,,(write_err("*** Syntax error near line ",.(_A,line_count)," in file '",.(_A,input_file_name),"'"),,(nl_err,,(!,fail)))))),;(,(=(_E,[]),,(!,,(open_out("stdout",@),,(nl,,(write("*** File '",.(_A,input_file_name),"' parsed"),nl))))),fail))),next_statement(_A))).
+parser.lf:		    Conds :== succeed, !,
+parser.lf:	            Conds :== succeed, !,
+parser.lf:	        Conds :== succeed, !,
+parser.lf:	        Conds :== succeed, !,
+parser.lf:	        Conds :== succeed, !,
+parser.lf:		Type :== postfix,!,
+parser.lf:	    { Type :== infix},
+parser.lf:		    Operator :== `:,!,
+parser.lf:	    cond( (Mask /\ 1 =:= 1 and Operator :== ,) or
+parser.lf:		  (Mask /\ 2 =:= 2 and Operator :== ;) or
+parser.lf:		  (Mask /\ 4 =:= 4 and Operator :== `(|)) or
+parser.lf:		  (Mask /\ 8 =:= 8 and Operator :== `(=>)),
+parser.lf:				  Type :== 'parser#prefix',
+parser.lf:			  Type :== 'parser#prefix',
+parser.lf:	Bool = ( Precedence1 =:= Precedence2 and Type1 :== Type2 
+parser.lf:                 and LS1 :== LS2 and RS1 :== RS2 ) .
+parser.lf:	        Type :== prefix,
+parser.lf:	    NewArgs :== [], !,
+parser.lf:		  cond( T :== assertion,
+parser.lf:		  cond(  T :== assertion,
+sets.lf:          sort: :== is used to test identity;
+sets.lf:          ad  : === is used to test identity.
+sets.lf:%%% operations on sets; :== is the function used to test for equality.
+sets.lf:       Tests if Elt belongs to set, using :==.")?
+sets.lf:	cond( A :== B,
+sets.lf:       The test that checks the identity of two elements is :== .")?
+sets.lf:       The test that checks the identity of two elements is :== .")?
+sets.lf:       The test that checks the identity of two elements is :== .")? 
+sets.lf:       The test that checks the identity of two elements is :== .")?
+sets.lf:       The test that checks the identity of two elements is :== .")? 
+sets.lf:	cond( A :== B,
+sets.lf:       The test that checks the identity of two elements is :== .")?
+sets.lf:	cond( A :== B,
+sets.lf:       The test that checks the identity of two elements is :== .")? 
+sets.lf:       The test that checks the identity of two elements is :== .")?
+sets.lf:	cond( A :== C,
+sets.lf:       The test that checks the identity of two elements is :== .")?
+sets.lf:          The test that checks the identity of two elements is :== .")?
+sets.lf:%%% operations on sets; === is the function used to test for equality.
+sets.lf:       Tests if Elt belongs to set, using ===.")?
+sets.lf:	cond( A === B,
+sets.lf:       The test that checks the identity of two elements is === .")?
+sets.lf:       The test that checks the identity of two elements is === .")?
+sets.lf:       The test that checks the identity of two elements is === .")? 
+sets.lf:       The test that checks the identity of two elements is === .")?
+sets.lf:       The test that checks the identity of two elements is === .")? 
+sets.lf:	cond( A === B,
+sets.lf:       The test that checks the identity of two elements is === .")?
+sets.lf:	cond( A === B,
+sets.lf:       The test that checks the identity of two elements is === .")?  
+sets.lf:       The test that checks the identity of two elements is === .")?
+sets.lf:	cond( A === C,
+sets.lf:       The test that checks the identity of two elements is === .")?
+sets.lf:          The test that checks the identity of two elements is === .")?
+shell.exp::-(eval_line(_A),,(:==(xeventflag,false),,(!,,(=(_B,current_line),;(,(is_empty(_B),,(!,goto_previous_level(_A))),;(,(is_dot(_B),,(!,goto_top_level(_A))),;(,(is_semicolon(_B),,(!,backtrack(_A))),,(add_to_history(_B),,(setq(current_line_number,+(current_line_number,1)),parse_line(_A,reverse(_B))))))))))).
+shell_interface.exp:->(next_shell_token,|(_A,;(,(=(call_once(read_new_shell_token(_B,copy_term(rest_chars))),_C),;(,(:==(_C,false),,(!,fail)),;(,(:==(_B,none),,(!,,(<<-(rest_token,"the end of the line"),=(_A,[])))),,(<<-(rest_token,`(_B)),fail)))),=(_A,[copy_term(rest_token)|`(next_shell_token)])))).
+shell_interface.exp::-(first_shell_parse(_A,_B,_C,_D,_E,_F),,(init_shell_parse,,(<<-(rest_chars,_A),,(read_new_shell_expr(next_shell_token,_G,_C,_H,_I,vars => _B),,(cond(_G,cond(:==(_H,assertion),=(_D,declaration),=(_D,sh_query)),=(_D,error)),,(=(_E,cond(:==(features(_B,"parser"),[]),false)),=(_F,:==(_I,[])))))))).
+shell_interface.exp::-(next_shell_parse(_A,_B,_C,_D),,(=(_E,next_shell_token),,(read_new_expr(_E,_F,_B,_G,_H,vars => _A),,(cond(_F,cond(:==(_G,assertion),=(_C,declaration),=(_C,sh_query)),=(_C,error)),=(_D,:==(_H,[])))))).
+shell_interface.exp::-(print_vars(@(vars => _A)),cond(:\==(_B: features(_A,"shell"),[]),,(=(build_write_term(_B,_A),_C),,(pretty_write(_C),nl)))).
+shell_interface.lf:		TT :== false, !, fail
+shell_interface.lf:		Tok :== none, !,
+shell_interface.lf:	      cond(  T :== assertion,
+shell_interface.lf:        ExistVars = cond (features(Vars) :== [], false),
+shell_interface.lf:	End = (LeftToken :== []).
+shell_interface.lf:              cond(  T :== assertion,
+shell_interface.lf:        End = (LeftToken :== []).
+shell_interface.lf:	cond( F:features(X) :\== [],
+shell.lf:    xeventflag :== false, !,
+std_expander.exp::-(conj_clause(_A),=(_A,:-(traverse(_B: @(_C,_D),in_clauses => _E,in_code => _F,in_context => _G,out_clauses => _H,out_code => _I,out_context => _J),,(`(:==(_B,,)),,(!,,(traverse(_C,in_clauses => _E,in_code => _F,in_context => _G,out_clauses => _K,out_code => _L,out_context => _M),traverse(_D,in_clauses => _K,in_code => _L,in_context => _M,out_clauses => _H,out_code => _I,out_context => _J))))))).
+std_expander.exp::-(disj_clause(_A),=(_A,:-(traverse(_B: @(_C,_D),in_clauses => _E,in_code => _F,in_context => _G,out_clauses => _H,out_code => _I,out_context => _J),,(`(:==(_B,;)),,(!,comma(split(in => _G,in_code => _F,out1 => _K,out2 => _L,out_code => _M),,(comma(save(in_code => _N,in_context => _K,out_code => _O,out_context => _P),comma(traverse(_C,in_clauses => _E,in_code => _O,in_context => _P,out_clauses => _Q,out_code => _R,out_context => _S),restore(in_code => _R,in_context => _S,out_code => succeed,out_context => _T))),,(comma(save(in_code => _U,in_context => _L,out_code => _V,out_context => _W),comma(traverse(_D,in_clauses => _Q,in_code => _V,in_context => _W,out_clauses => _H,out_code => _X,out_context => _Y),restore(in_code => _X,in_context => _Y,out_code => succeed,out_context => _Z))),,(merge(in1 => _T,in2 => _Z,in_code => _AA,out => _J,out_code => _I),=(_M,`(comma(;(_N,_U),_AA)))))))))))).
+std_expander.exp::-(cond_clause(_A),=(_A,:-(traverse(_B,in_clauses => _C,in_code => _D,in_context => _E,out_clauses => _F,out_code => _G,out_context => _H),,(`(:==(_B,`(cond))),,(!,,(;(,(`(has_feature(1,_B,_I)),!),=(_I,"missing condition in the code!")),comma(split(in => _E,in_code => _D,out1 => _J,out2 => _K,out_code => _L),,(;(,(`(has_feature(2,_B,_M)),,(!,comma(save(in_code => _N,in_context => _J,out_code => _O,out_context => _P),comma(traverse(_M,in_clauses => _C,in_code => _O,in_context => _P,out_clauses => _Q,out_code => _R,out_context => _S),restore(in_code => _R,in_context => _S,out_code => succeed,out_context => _T))))),comma(save(in_code => _U,in_context => _J,out_code => _V,out_context => _W),comma(restore(in_code => _V,in_context => _W,out_code => succeed,out_context => _T),,(=(_C,_Q),=(_N,_U))))),,(;(,(`(has_feature(3,_B,_X)),,(!,comma(save(in_code => _Y,in_context => _K,out_code => _Z,out_context => _AA),comma(traverse(_X,in_clauses => _Q,in_code => _Z,in_context => _AA,out_clauses => _F,out_code => _AB,out_context => _AC),restore(in_code => _AB,in_context => _AC,out_code => succeed,out_context => _AD))))),comma(save(in_code => _AE,in_context => _K,out_code => _AF,out_context => _AG),comma(restore(in_code => _AF,in_context => _AG,out_code => succeed,out_context => _AD),,(=(_Q,_F),=(_Y,_AE))))),,(merge(in1 => _T,in2 => _AD,in_code => _AH,out => _H,out_code => _G),=(_L,`(comma(`(cond(_I,_N,_Y)),_AH))))))))))))).
+std_expander.exp:->(initialize(file => _A,line => _B),cond(:==(init_method,std),succeed,&(root_sort(init_method),@(file => _A,line => _B)))).
+std_expander.exp:->(terminate(_A,in_clauses => _B,in_code => _C,in_context => _D,out_clauses => _E,out_code => _F,out_context => _G),cond(:==(terminate_method,std),|(succeed,,(=(_B,[_A|_E]),=(_C,_F))),&(root_sort(terminate_method),@(in_clauses => _B,in_code => _C,in_context => _D,out_clauses => _E,out_code => _F,out_context => _G)))).
+std_expander.exp:->(head(_A,_B,in_clauses => _C,in_code => _D,in_context => _E,out_clauses => _F,out_code => _G,out_context => _H),cond(:==(head_method,std),|(succeed,,(=(_C,_F),,(=(_B,_A),=(_D,_G)))),&(root_sort(head_method),@(_A,_B,in_clauses => _C,in_code => _D,in_context => _E,out_clauses => _F,out_code => _G,out_context => _H)))).
+std_expander.exp:->(begin_body(in_clauses => _A,in_code => _B,in_context => _C,out_clauses => _D,out_code => _E,out_context => _F),cond(:==(begin_body_method,std),|(succeed,,(=(_A,_D),,(=(_C,_F),=(_B,_E)))),&(root_sort(begin_body_method),@(in_clauses => _A,in_code => _B,in_context => _C,out_clauses => _D,out_code => _E,out_context => _F)))).
+std_expander.exp:->(end_body(in_clauses => _A,in_code => _B,in_context => _C,out_clauses => _D,out_code => _E,out_context => _F),cond(:==(end_body_method,std),|(succeed,,(=(_A,_D),,(=(_C,_F),=(_B,_E)))),&(root_sort(end_body_method),@(in_clauses => _A,in_code => _B,in_context => _C,out_clauses => _D,out_code => _E,out_context => _F)))).
+std_expander.exp:->(split(in => _A,in_code => _B,out1 => _C,out2 => _D,out_code => _E),cond(:==(split_method,std),|(succeed,,(=(_A,_C),,(=(_C,_D),=(_B,_E)))),&(root_sort(split_method),@(in => _A,in_code => _B,out1 => _C,out2 => _D,out_code => _E)))).
+std_expander.exp:->(save(in_code => _A,in_context => _B,out_code => _C,out_context => _D),cond(:==(save_method,std),|(succeed,,(=(_B,_D),=(_A,_C))),&(root_sort(save_method),@(in_code => _A,in_context => _B,out_code => _C,out_context => _D)))).
+std_expander.exp:->(restore(in_code => _A,in_context => _B,out_code => _C,out_context => _D),cond(:==(restore_method,std),|(succeed,,(=(_B,_D),=(_A,_C))),&(root_sort(restore_method),@(in_code => _A,in_context => _B,out_code => _C,out_context => _D)))).
+std_expander.exp:->(merge(in1 => _A,in2 => _B,in_code => _C,out => _D,out_code => _E),cond(:==(merge_method,std),|(succeed,,(=(_D,_A),,(=(_A,_B),=(_C,_E)))),&(root_sort(merge_method),@(in1 => _A,in2 => _B,in_code => _C,out => _D,out_code => _E)))).
+std_expander.exp:->(leaf(_A,in_clauses => _B,in_code => _C,in_context => _D,out_clauses => _E,out_code => _F,out_context => _G),cond(:==(leaf_method,std),|(succeed,,(=(_D,_G),,(=(_B,_E),=(_C,comma(_A,_F))))),&(root_sort(leaf_method),@(_A,in_clauses => _B,in_code => _C,in_context => _D,out_clauses => _E,out_code => _F,out_context => _G)))).
+std_expander.exp:->(comma(_A,_B),cond(:==(_A,succeed),_B,cond(:==(_B,succeed),_A,,(_A,_B)))).
+std_expander.lf:	 `(S1 :== ,),
+std_expander.lf:	 `(S2 :== ;),
+std_expander.lf:	 `(S3 :== `cond),
+std_expander.lf:	cond( init_method :== std,
+std_expander.lf:	cond( terminate_method :== std,
+std_expander.lf:	cond( head_method :== std,
+std_expander.lf:	cond( begin_body_method :== std,
+std_expander.lf:	cond( end_body_method :== std,
+std_expander.lf:	cond( split_method :== std,
+std_expander.lf:	cond( save_method :== std,
+std_expander.lf:	cond( restore_method :== std,
+std_expander.lf:	cond( merge_method :== std,
+std_expander.lf:	cond( leaf_method :== std,
+std_expander.lf:X comma Y -> cond( X :== succeed,
+std_expander.lf:		   cond( Y :== succeed,
+structures.lf:public(+>=,+=<,+>,+<,+><,==,+\>=,+\=<,+\>,+\<,+\><,\==) ?
+structures.lf:op(600,xfx, ==  ) ?  %%% structurally equal to
+structures.lf:op(600,xfx, \== ) ?  %%% is not structurally equal to
+structures.lf:add_man([structures,+>=,+=<,+>,+<,+><,==,+\>=,+\=<,+\>,+\<,+\><,\==],
+structures.lf:  +>=,+=<,+>,+<,+><,==,+\>=,+\=<,+\>,+\<,+\><,\==
+structures.lf:  X == Y returns true if X is structurally identical to Y,   
+structures.lf:	    res <<- (S :== true),
+structures.lf:X == Y -> 
+structures.lf:X \== Y  -> not(X ==  Y).
+structures.lf:	project(visited,A) === B
+structures.lf:	project(visited,A) === B
+structures.lf:	project(visited,A) === B
+structures.lf:	root_sort(A) :== root_sort(B),
+terms.lf:remove_feature_loop(X,F,T,V) :-& (X:==F,!;V.X=T.X) ?
+terms.lf:	(	X:==already_seen,	  % Don't loop over cyclic terms.
+tokenizer.exp::-(tk95(0 => [@|_A],_B,rest => _C),,(=(evalin(_A),_D),,(var_chars(0 => _D,_E,rest => _C),;(,($==(_E,""),,(!,=(_B,atom(@)))),=(_B,variable(str2psi(strcon("_",_E),"tokenizer"))))))).
+tokenizer.exp:->(next_token,|(_A,;(,(cond(=(_B: copy_term(rest_chars),[_C,_D]),=(_E,[_C,_D|`(next_char)]),=(_E,_B)),,(=(call_once(read_new_token(_F,_E)),_G),;(,(:==(_G,false),,(!,fail)),;(,(:==(_F,none),,(!,=(_A,[]))),,(<<-(rest_token,`(_F)),fail))))),=(_A,[copy_term(rest_token)|`(next_token)])))).
+tokenizer.exp:->(first_token,|(_A,,(=(_B,next_char),,(=(_C,evalin(_B)),,(read_new_token(_D,_C),,(cond(:==(_D,none),=(_A,[]),=(_A,[_D|_E])),=(_E,`(next_token)))))))).
+tokenizer.lf:		Y $== "",!,
+tokenizer.lf:		 TT :== false, !, fail 
+tokenizer.lf:		 Tok :== none, !,
+tokenizer.lf:	cond( Tok :== none,
+xtools_b.lf:	    C :\== true,!,
+xtools_c.lf:	cond( BAction:(B.action) :== @,
+xtools_c.lf:	cond( BAction:(B.action) :== @,
+xtools_c.lf:	    Q :== true, !,
+xtools_c.lf:		B:(not( PrevButton ===  A)),
+xtools_c.lf:	cond( BAction:(B.action) :== @,
+xtools_c.lf:	cond( Action:(I.action) :== @,
+xtools_c.lf:	cond( Action :== @,
+xtools_c.lf:	cond( GAction:(B.action) :== @,
+xtools_c.lf:find_panel(X:@(mother => M)) -> cond( M :== no_mother,
+xtools_l.lf:	cond( D :== @ or D :== 1,
+xtools_l.lf:%%%	cond( S :== @,
+xtools_l.lf:	cond( S :== @,
+xtools_l.lf:text_font(X) -> copy_term(cond(X :== @,fonts.bold,fonts.X)).

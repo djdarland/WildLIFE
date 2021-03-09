@@ -1,0 +1,77 @@
+
+*** Yes
+> > 
+*** Yes
+> > 
+
+term: this(one,two,three,charley => brown,view => @(it_s_blue))
+limited outlook here: 
+	[1,2,3,charley,view]
+	[one,two,three,brown,@(it_s_blue)]
+	@(it_s_blue)
+right to the horizon here: 
+	[1,2,3,charley,view]
+	[one,two,three,brown,@(it_s_blue)]
+	@
+
+
+term: this(one,two,three,charley => brown,joke => this_isn_t_funny,view => look_at_the_C(it_s_blue))
+limited outlook here: 
+	[1,2,3,charley,joke,view]
+	[one,two,three,brown,this_isn_t_funny,look_at_the_C(it_s_blue)]
+	look_at_the_C(it_s_blue)
+right to the horizon here: 
+	[1,2,3,charley,joke,view]
+	[one,two,three,brown,this_isn_t_funny,look_at_the_C(it_s_blue)]
+	@
+
+
+term: this(one,two,three,charley => brown,joke => this_isn_t_funny,view => you_cant_see_me,view => look_at_the_C(it_s_blue))
+limited outlook here: 
+	[1,2,3,charley,joke,view]
+	[one,two,three,brown,this_isn_t_funny,look_at_the_C(it_s_blue)]
+	look_at_the_C(it_s_blue)
+right to the horizon here: 
+	[1,2,3,charley,joke,view,view]
+	[one,two,three,brown,this_isn_t_funny,you_cant_see_me,look_at_the_C(it_s_blue)]
+	you_cant_see_me
+
+*** Yes
+> > > 
+*** Yes
+> > > > 
+
+term: me#this(me#one,me#two,me#three,charley => me#brown,view => syntax#@(me#it_s_blue))
+limited outlook here: 
+	[1,2,3,me#charley,me#view]
+	[me#one,me#two,me#three,me#brown,syntax#@(me#it_s_blue)]
+	syntax#@(me#it_s_blue)
+right to the horizon here: 
+	[1,2,3,phew#charley,phew#view]
+	[me#one,me#two,me#three,me#brown,syntax#@(me#it_s_blue)]
+	syntax#@
+
+
+term: me#this(me#one,me#two,me#three,charley => me#brown,joke => you#this_isn_t_funny,view => you#look_at_the_C(me#it_s_blue))
+limited outlook here: 
+	[1,2,3,me#charley,me#joke,me#view]
+	[me#one,me#two,me#three,me#brown,you#this_isn_t_funny,you#look_at_the_C(me#it_s_blue)]
+	you#look_at_the_C(me#it_s_blue)
+right to the horizon here: 
+	[1,2,3,phew#charley,phew#joke,phew#view]
+	[me#one,me#two,me#three,me#brown,you#this_isn_t_funny,you#look_at_the_C(me#it_s_blue)]
+	syntax#@
+
+
+term: me#this(me#one,me#two,me#three,charley => me#brown,joke => you#this_isn_t_funny,phew#view => phew#you_cant_see_me,view => you#look_at_the_C(me#it_s_blue))
+limited outlook here: 
+	[1,2,3,me#charley,me#joke,me#view]
+	[me#one,me#two,me#three,me#brown,you#this_isn_t_funny,you#look_at_the_C(me#it_s_blue)]
+	you#look_at_the_C(me#it_s_blue)
+right to the horizon here: 
+	[1,2,3,phew#charley,phew#joke,phew#view,phew#view]
+	[me#one,me#two,me#three,me#brown,you#this_isn_t_funny,phew#you_cant_see_me,you#look_at_the_C(me#it_s_blue)]
+	phew#you_cant_see_me
+
+*** Yes
+> 

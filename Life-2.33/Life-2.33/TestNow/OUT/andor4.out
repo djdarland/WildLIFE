@@ -1,0 +1,39 @@
+
+*** Yes
+> > 
+*** Yes
+A = and(@), B = @.
+--1> 
+*** Yes
+A = and(bool~), B = bool~, C = bool~.
+--1> 
+*** Yes
+A = and(false), B = false, C = false.
+--1> 
+*** No
+A = and(bool~), B = bool~, C = bool~.
+--1> 
+*** No
+A = and(@), B = @.
+--1> 
+*** Yes
+A = and(false), B = false.
+--1> > 
+*** Yes
+A = and(2 => @), B = @.
+--1> 
+*** Yes
+A = and(2 => bool~), B = bool~, C = bool~.
+--1> 
+*** Yes
+A = and(2 => false), B = false, C = bool.
+--1> 
+*** No
+A = and(2 => bool~), B = bool~, C = bool~.
+--1> 
+*** No
+A = and(2 => @), B = @.
+--1> 
+*** Yes
+A = and(2 => false), B = false.
+--1> > 

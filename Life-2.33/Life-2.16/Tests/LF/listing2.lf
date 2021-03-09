@@ -1,0 +1,5 @@
+positive :=  I:int | I > 0.
+zero := I | I = 0.
+
+listing(positive)?
+listing(zero)?

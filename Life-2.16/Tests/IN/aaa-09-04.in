@@ -1,0 +1,5 @@
+persistent(that)?
+that <<- thing(int)?
+that = thing(5)?
+that = thing(X)?
+X=5?

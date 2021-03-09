@@ -1,0 +1,22 @@
+% Multiply list by U, up to maximum element of N.
+mult_list(U,N,[H|T]) ->
+	cond(R:(U*H)<N,
+             [R|mult_list(U,N,T)],
+             []).
+
+% Merge two lists.
+merge(L,[]) -> L.
+merge([],L) -> L.
+merge(L1:[H1|T1],L2:[H2|T2]) ->
+	cond(H1=:=H2,
+             [H1|merge(T1,T2)],
+             cond(H1>H2,
+                  [H2|merge(L1,T2)],
+	          [H1|merge(T1,L2)])).
+
+
+% Generate hamming sequence up to N.
+hamming(N) -> R:[1|merge(mult_list(2,N,R),
+			 merge(mult_list(3,N,R),
+			       mult_list(5,N,R)))].
+

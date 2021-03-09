@@ -1,0 +1,349 @@
+p_deal.
+p_bid.
+ruth bids 2.
+5 c_7_of_hearts.
+11 k_of_hearts.
+12 c_a_of_hearts.
+6 c_8_of_hearts.
+8 c_10_of_hearts.
+19 c_8_of_diamonds.
+0 c_2_of_hearts.
+46 c_9_of_clubs.
+38 c_a_of_spades.
+enter bid value.
+enter bid suite.
+@ bids 4.
+bid_is dennis 4 hearts.
+p_discard.
+p_deal2.
+p_discard.
+dennis hand.
+0 c_2_of_hearts.
+5 c_7_of_hearts.
+6 c_8_of_hearts.
+8 c_10_of_hearts.
+11 k_of_hearts.
+12 c_a_of_hearts.
+play what card.
+dennis plays c_a_of_hearts.
+ruth plays c_3_of_hearts.
+dick plays c_5_of_hearts.
+john plays high_joker.
+dennis takes_the_hand.
+dennis hand.
+0 c_2_of_hearts.
+5 c_7_of_hearts.
+6 c_8_of_hearts.
+8 c_10_of_hearts.
+11 k_of_hearts.
+play what card.
+dennis plays k_of_hearts.
+ruth plays c_4_of_hearts.
+dick is_out.
+john plays j_of_diamonds.
+dennis takes_the_hand.
+dennis hand.
+0 c_2_of_hearts.
+5 c_7_of_hearts.
+6 c_8_of_hearts.
+8 c_10_of_hearts.
+play what card.
+dennis plays c_2_of_hearts.
+ruth plays c_6_of_hearts.
+dick is_out.
+john plays q_of_hearts.
+john takes_the_hand.
+dennis hand.
+5 c_7_of_hearts.
+6 c_8_of_hearts.
+8 c_10_of_hearts.
+john is_out.
+play what card.
+dennis plays c_7_of_hearts.
+ruth plays low_joker.
+dick is_out.
+ruth takes_the_hand.
+dennis hand.
+6 c_8_of_hearts.
+8 c_10_of_hearts.
+ruth plays j_of_hearts.
+dick is_out.
+john is_out.
+play what card.
+dennis plays c_8_of_hearts.
+ruth takes_the_hand.
+dennis hand.
+8 c_10_of_hearts.
+ruth plays c_9_of_hearts.
+dick is_out.
+john is_out.
+play what card.
+dennis plays c_10_of_hearts.
+dennis takes_the_hand.
+dennis hand.
+dennis is_out.
+ruth is_out.
+dick is_out.
+john is_out.
+p_out.
+p_score.
+[[dennis,dick],[ruth,john]].
+[0,0].
+[5,2].
+p_deal.
+p_bid.
+john bids 2.
+53 high_joker.
+52 low_joker.
+49 q_of_clubs.
+8 c_10_of_hearts.
+13 c_2_of_diamonds.
+16 c_5_of_diamonds.
+22 j_of_diamonds.
+37 k_of_spades.
+47 c_10_of_clubs.
+enter bid value.
+enter bid suite.
+@ bids 3.
+bid_is dennis 3 diamonds.
+p_discard.
+p_deal2.
+p_discard.
+dennis hand.
+13 c_2_of_diamonds.
+16 c_5_of_diamonds.
+52 low_joker.
+53 high_joker.
+22 j_of_diamonds.
+play what card.
+dennis plays c_2_of_diamonds.
+ruth plays j_of_hearts.
+dick plays q_of_diamonds.
+john plays c_a_of_diamonds.
+john takes_the_hand.
+dennis hand.
+16 c_5_of_diamonds.
+52 low_joker.
+53 high_joker.
+22 j_of_diamonds.
+john plays c_8_of_diamonds.
+play what card.
+dennis plays c_5_of_diamonds.
+ruth plays c_3_of_diamonds.
+dick plays c_9_of_diamonds.
+dick takes_the_hand.
+dennis hand.
+52 low_joker.
+53 high_joker.
+22 j_of_diamonds.
+dick plays c_7_of_diamonds.
+john plays c_10_of_diamonds.
+play what card.
+dennis plays low_joker.
+ruth plays k_of_diamonds.
+ruth takes_the_hand.
+dennis hand.
+53 high_joker.
+22 j_of_diamonds.
+ruth plays c_4_of_diamonds.
+dick is_out.
+john is_out.
+play what card.
+dennis plays high_joker.
+dennis takes_the_hand.
+dennis hand.
+22 j_of_diamonds.
+play what card.
+dennis plays j_of_diamonds.
+ruth plays c_6_of_diamonds.
+dick is_out.
+john is_out.
+dennis takes_the_hand.
+dennis hand.
+dennis is_out.
+ruth is_out.
+dick is_out.
+john is_out.
+p_out.
+p_score.
+[[dennis,dick],[ruth,john]].
+[5,2].
+[8,6].
+p_deal.
+p_bid.
+34 c_10_of_spades.
+33 c_9_of_spades.
+31 c_7_of_spades.
+17 c_6_of_diamonds.
+29 c_5_of_spades.
+35 j_of_spades.
+50 k_of_clubs.
+49 q_of_clubs.
+48 j_of_clubs.
+enter bid value.
+enter bid suite.
+@ bids 3.
+bid_is dennis 3 clubs.
+p_discard.
+p_deal2.
+p_discard.
+dennis hand.
+39 c_2_of_clubs.
+35 j_of_spades.
+48 j_of_clubs.
+49 q_of_clubs.
+50 k_of_clubs.
+play what card.
+dennis plays k_of_clubs.
+ruth plays c_7_of_clubs.
+dick plays c_4_of_clubs.
+john plays c_3_of_clubs.
+dennis takes_the_hand.
+dennis hand.
+39 c_2_of_clubs.
+35 j_of_spades.
+48 j_of_clubs.
+49 q_of_clubs.
+play what card.
+dennis plays q_of_clubs.
+ruth plays c_8_of_clubs.
+dick plays c_6_of_clubs.
+john plays c_5_of_clubs.
+dennis takes_the_hand.
+dennis hand.
+39 c_2_of_clubs.
+35 j_of_spades.
+48 j_of_clubs.
+play what card.
+dennis plays j_of_clubs.
+ruth plays c_10_of_clubs.
+dick plays c_9_of_clubs.
+john plays c_a_of_clubs.
+john takes_the_hand.
+dennis hand.
+39 c_2_of_clubs.
+35 j_of_spades.
+john plays low_joker.
+play what card.
+dennis plays j_of_spades.
+ruth plays high_joker.
+dick is_out.
+dennis takes_the_hand.
+dennis hand.
+39 c_2_of_clubs.
+play what card.
+dennis plays c_2_of_clubs.
+ruth is_out.
+dick is_out.
+john is_out.
+dennis takes_the_hand.
+dennis hand.
+dennis is_out.
+ruth is_out.
+dick is_out.
+john is_out.
+p_out.
+p_score.
+[[dennis,dick],[ruth,john]].
+[8,6].
+[12,9].
+p_deal.
+p_bid.
+6 c_8_of_hearts.
+34 c_10_of_spades.
+21 c_10_of_diamonds.
+9 j_of_hearts.
+26 c_2_of_spades.
+28 c_4_of_spades.
+4 c_6_of_hearts.
+50 k_of_clubs.
+51 c_a_of_clubs.
+enter bid value.
+enter bid suite.
+@ bids 2.
+ruth bids 3.
+bid_is ruth 3 clubs.
+p_discard.
+p_deal2.
+p_discard.
+dennis hand.
+40 c_3_of_clubs.
+42 c_5_of_clubs.
+50 k_of_clubs.
+51 c_a_of_clubs.
+ruth plays c_2_of_clubs.
+dick plays c_10_of_clubs.
+john plays low_joker.
+play what card.
+dennis plays c_a_of_clubs.
+dennis takes_the_hand.
+dennis hand.
+40 c_3_of_clubs.
+42 c_5_of_clubs.
+50 k_of_clubs.
+play what card.
+dennis plays k_of_clubs.
+ruth plays c_9_of_clubs.
+dick plays c_6_of_clubs.
+john plays c_8_of_clubs.
+dennis takes_the_hand.
+dennis hand.
+40 c_3_of_clubs.
+42 c_5_of_clubs.
+play what card.
+dennis plays c_5_of_clubs.
+ruth plays high_joker.
+dick plays c_7_of_clubs.
+john is_out.
+ruth takes_the_hand.
+dennis hand.
+40 c_3_of_clubs.
+ruth plays q_of_clubs.
+dick is_out.
+john is_out.
+play what card.
+play what card.
+play what card.
+dick is_out.
+john is_out.
+play what card.
+play what card.
+play what card.
+john is_out.
+ruth takes_the_hand.
+dennis hand.
+40 c_3_of_clubs.
+ruth plays q_of_clubs.
+dick is_out.
+john is_out.
+play what card.
+play what card.
+play what card.
+dick is_out.
+john is_out.
+play what card.
+play what card.
+play what card.
+dick plays c_7_of_clubs.
+john is_out.
+ruth takes_the_hand.
+dennis hand.
+40 c_3_of_clubs.
+ruth plays q_of_clubs.
+dick is_out.
+john is_out.
+play what card.
+play what card.
+play what card.
+dick is_out.
+john is_out.
+play what card.
+play what card.
+play what card.
+dennis hand.
+40 c_3_of_clubs.
+ruth plays q_of_clubs.
+dick is_out.
+john is_out.
+play what card.
+

@@ -1,0 +1,5 @@
+:: rectangle(length => L:real, width => S:real, area => L*S).
+
+square <| rectangle.
+
+:: square(side => S, length => S, width => S).

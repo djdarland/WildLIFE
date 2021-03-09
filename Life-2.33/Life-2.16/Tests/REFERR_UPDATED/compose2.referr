@@ -1,0 +1,2 @@
+*** Error: attempt to unify with curried function comp(func1 => comp(func1 => succ,func2 => succ),func2 => succ)
+*** Error: attempt to unify with curried function comp(func1 => comp(func1 => comp(func1 => comp(func1 => succ,func2 => succ),func2 => succ),func2 => comp(func1 => comp(func1 => succ,func2 => succ),func2 => succ)),func2 => succ)

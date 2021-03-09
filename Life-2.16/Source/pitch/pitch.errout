@@ -1,0 +1,19 @@
+*** Garbage Collect 
+*** Begin [97% free (159517K), 1% heap, 2% stack]
+*** End   [99% free (162605K), 1% heap, 0% stack, 0.050s cpu (50%)]
+*** Stack depths [11 goals, 5 choice points, 1521 trail entries]
+*** Garbage Collect 
+*** Begin [94% free (154745K), 1% heap, 5% stack]
+*** Error: in garbage collection, 64 < 133 place 2.
+*** End   [99% free (161390K), 1% heap, 1% stack, 0.067s cpu (2%)]
+*** Stack depths [11 goals, 633 choice points, 16107 trail entries]
+*** Garbage Collect 
+*** Begin [94% free (153757K), 1% heap, 5% stack]
+*** Error: in garbage collection, 64 < 133 place 2.
+*** End   [98% free (160273K), 1% heap, 1% stack, 0.083s cpu (1%)]
+*** Stack depths [11 goals, 1177 choice points, 29458 trail entries]
+*** Error: attempt to read past end of file (near line 45).
+
+*** Abort
+
+*** END Abort

@@ -1,0 +1,24 @@
+A=X:a(X), write(A," ",X), nl?
+
+A=eval(X:a(X)), write(A," ",X), nl?
+
+A=`(X:a(X)), write(A," ",X), nl?
+
+A=g(X:a(X)), write(A," ",X), nl?
+
+nl?
+
+A=X:f(X), write(A," ",X), nl?
+
+A=eval(X:f(X)), write(A," ",X), nl?
+
+A=`(X:f(X)), write(A," ",X), nl?
+
+A=g(X:f(X)), write(A," ",X), nl?
+
+nl?
+
+A=f(X:f(X)), write(A," ",X), nl?
+
+A=g(X:f(X)), write(A," ",X), nl?
+

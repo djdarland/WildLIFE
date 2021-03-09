@@ -1,0 +1,8 @@
+%% my result appears correct - differs from handbook.
+
+
+:: rectangle(length =>L:real, width =>W:real, area => L*W).
+:: square(length =>S, width =>S, side => S).
+square <| rectangle.
+R=rectangle(area => 16, width =>4)?
+R=square?

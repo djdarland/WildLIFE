@@ -1,0 +1,86 @@
+echo "WildLife Edit Utility"
+echo "Edit any .c file & compared with 1.02 version on top?"
+echo "enter 0 to proceed 999 to quit"
+read select
+while [ $select -ne 999 ]
+do 
+echo "-----------"
+echo ".c files for wild life"
+echo "-----------"
+echo "1 arity.c"
+echo "2 bi_math.c"
+echo "3 bi_sys.c"
+echo "4 bi_type.c"
+echo "5 built_ins.c"
+echo "6 copy.c"
+echo "7 error.c"
+echo "8 hash_table.c"
+echo "9 info.c"
+echo "10 interrupt.c"
+echo "11 lefun.c"
+echo "12 lib.c"
+echo "13 life.c"
+echo "14 list.c"
+echo "15 login.c"
+echo "16 lub.c"
+echo "17 memory.c"
+echo "18 modules.c"
+echo "19 parser.c"
+echo "20 print.c"
+echo "21 raw.c"
+echo "22 sys.c"
+echo "23 sys_dbm.c"
+echo "24 templates.c"
+echo "25 token.c"
+echo "26 trees.c"
+echo "27 types.c"
+echo "28 xdisplaylist.c"
+echo "29 xpred.c"
+
+
+
+
+
+
+echo "777 NOTES_DJD.txt"
+echo "888 NOTES_HAK.txt"
+echo "999 quit"
+echo "select"
+read select
+case $select in
+1) $EDITOR $LIFE_ORIG/Source/arity.c arity.c ;;
+2) $EDITOR $LIFE_ORIG/Source/bi_math.c bi_math.c ;;
+3) $EDITOR $LIFE_ORIG/Source/bi_sys.c bi_sys.c ;;
+4) $EDITOR $LIFE_ORIG/Source/bi_type.c bi_type.c ;;
+5) $EDITOR $LIFE_ORIG/Source/built_ins.c built_ins.c ;;
+6) $EDITOR $LIFE_ORIG/Source/copy.c copy.c ;;
+7) $EDITOR $LIFE_ORIG/Source/error.c error.c ;;
+8) $EDITOR $LIFE_ORIG/Source/hash_table.c hash_table.c ;;
+9) $EDITOR $LIFE_ORIG/Source/info.c info.c ;;
+10) $EDITOR $LIFE_ORIG/Source/interrupt.c interrupt.c ;;
+11) $EDITOR $LIFE_ORIG/Source/lefun.c lefun.c ;;
+12) $EDITOR $LIFE_ORIG/Source/lib.c lib.c ;;
+13) $EDITOR $LIFE_ORIG/Source/life.c life.c ;;
+14) $EDITOR $LIFE_ORIG/Source/list.c list.c ;;
+15) $EDITOR $LIFE_ORIG/Source/login.c login.c ;;
+16) $EDITOR $LIFE_ORIG/Source/lub.c lub.c ;;
+17) $EDITOR $LIFE_ORIG/Source/memory.c memory.c ;;
+18) $EDITOR $LIFE_ORIG/Source/modules.c modules.c ;;
+19) $EDITOR $LIFE_ORIG/Source/parser.c  parser.c ;;
+20) $EDITOR $LIFE_ORIG/Source/print.c  print.c ;;
+21) $EDITOR $LIFE_ORIG/Source/raw.c raw.c ;;
+22) $EDITOR $LIFE_ORIG/Source/sys.c sys.c ;;
+23) $EDITOR $LIFE_ORIG/Source/sys_dbm.c sys_dbm.c ;;
+24) $EDITOR $LIFE_ORIG/Source/templates.c templates.c ;;
+25) $EDITOR $LIFE_ORIG/Source/token.c token.c ;;
+26) $EDITOR $LIFE_ORIG/Source/trees.c trees.c ;;
+27) $EDITOR $LIFE_ORIG/Source/types.c types.c ;;
+28) $EDITOR $LIFE_ORIG/Source/xdisplaylist.c xdisplaylist.c ;;
+29) $EDITOR $LIFE_ORIG/Source/xpred.c xpred.c ;;
+
+777) $EDITOR NOTES_DJD.txt;;
+888) $EDITOR NOTES_HAK.txt;;
+
+esac
+done
+

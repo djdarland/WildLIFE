@@ -1,0 +1,32 @@
+A=term_size(p(a,b,c,d)) ?
+
+A=term_size(B:[a,b|B]) ?
+
+A=term_size(B = [a,b|B])?
+
+A=term_size(X:s(Y:t(int:Z,s,Y,X,Y,X,s(X,Y,X,t,u,s(X,W:s(X,W))))))?
+
+A=term_size(int(int))?
+
+A=term_size(2(2))?
+
+A=term_size(1(1(1(1))))?
+
+A=term_size("a"("b"("c"("d"))))?
+
+A=term_size(X:"a"(Y:"b"(Z:"c"(X,Y,Z,W,W))))?
+
+f(X) -> X*X.
+
+A=term_size(f(3))?
+
+A=term_size(`f(3))?
+
+A=term_size(`f)?
+
+A=term_size(f)?
+
+A=term_size(f(charley=>brown))?
+
+F=f(donald=>duck), A=term_size(F)?
+

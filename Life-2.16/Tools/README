@@ -1,0 +1,69 @@
+Copyright 1992-93 Digital Equipment Corporation
+All Rights Reserved
+#	$Id: README,v 1.2 1994/12/08 23:47:53 duchier Exp $	
+
+
+Tools
+-----
+
+  o Accumulators Expander
+  -----------------------
+
+  Main File: accumulators.lf
+
+  This program expands an extended version of Definite Clause
+  Grammars. You will find more information about this in the manual.
+
+
+  o Shell
+  -------
+
+  Main File: shell.lf
+
+  This program is a top level for Life, written in Life, and based on
+  parser also written in Life. There are two versions of this program
+  here: one uses the files with the .lf suffix, the other uses the files
+  with the .exp suffix. The latter is better if you intend to actually
+  use the shell, since all grammar rules are already expanded. 
+  To use it, type:
+   > load_exp("shell")? shell ?
+
+  The first one is better if you want to look at the code or modify it.
+
+
+  o Debugger
+  ----------
+
+  Main File: debug.lf
+ 
+  This program provides some debugging facilities. You will find more
+  information about this in Debug.doc.
+
+
+  o Profiler
+  ----------
+
+  Main File: profiler.lf
+
+  This is a small profiling module for Life programs. You will find more
+  information about it in the manual.
+
+ 
+How to load a program
+---------------------
+
+Type " import(MainFile) ? ", where MainFile is the main file of the tool.
+For example, the profiler is loaded and opened with the query:
+
+	> import("profiler")?
+
+
+Notes:
+-----
+
+The shell program is the only one to use the builtins defined
+in the source file raw.c; if this source file is left out then
+only the shell will stop working.  The file raw.c defines raw
+(i.e., unbuffered) terminal I/O and is dependent on low-level
+system calls.  It is the most non-portable part of the system.
+

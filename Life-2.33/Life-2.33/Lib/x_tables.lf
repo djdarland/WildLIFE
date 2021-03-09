@@ -1,0 +1,386 @@
+%	$Id: x_tables.lf,v 1.2 1994/12/09 00:28:09 duchier Exp $	
+module("x")? % RM: Mar 24 1993 
+
+% Copyright 1992 Digital Equipment Corporation.
+% Distributed only by permission.
+%
+% Last modified on Mon Jun  7 17:18:12 MET DST 1993 by dumant
+%      modified on Wed Mar 24 06:25:00 1993 by Rmeyer
+%      modified on Tue Nov 24 19:13:33 MET 1992 by herve
+%
+%
+% X tables for Life
+% 
+
+% boolean
+xBoolean(false,0) :- !.
+xBoolean(true, 1).
+
+% can be any                        %% unused - BD 06/07/93
+%xFunctionAny(xAny, 0) :- !.
+%xFunctionAny(N, N).
+
+% can be none                       %% unused - BD 06/07/93
+%xFunctionNone(xNone, 0) :- !.
+%xFunctionNone(N, N).
+
+% default                       %% unused - BD 06/07/93
+%xFunctionDefault(xDefault, 0) :- !.
+%xFunctionDefault(N, N).
+
+% parent                       %% unused - BD 06/07/93
+%xFunctionParent(xCopyFromParent, 0) :- !.
+%xFunctionParent(N, N).
+
+% time                       %% unused - BD 06/07/93
+%xFunctionTime(xCurrentTime, 0) :- !.
+%xFunctionTime(N, N).
+
+% functions                       %% unused - BD 06/07/93
+%xGCFunction(xClear, 0) :- !.
+%xGCFunction(xAnd, 1) :- !.
+%xGCFunction(xAndReverse, 2) :- !.
+%xGCFunction(xCopy, 3) :- !.
+%xGCFunction(xAndInverted, 4) :- !.
+%xGCFunction(xNoop, 5) :- !.
+%xGCFunction(xXor, 6) :- !.
+%xGCFunction(xOr, 7) :- !.
+%xGCFunction(xNor, 8) :- !.
+%xGCFunction(xEquiv, 9) :- !.
+%xGCFunction(xInvert, 10) :- !.
+%xGCFunction(xOrReverse, 11) :- !.
+%xGCFunction(xCopyInverted, 12) :- !.
+%xGCFunction(xOrInverted, 13) :- !.
+%xGCFunction(xNand, 14) :- !.
+%xGCFunction(xSet, 15).
+
+% line widths                       %% unused - BD 06/07/93
+%xLineWidth(xThinLine, 0) :- !.
+%xLineWidth(N,N).
+
+% line styles                       %% unused - BD 06/07/93
+% xLineStyle(xSolid, 0) :- !.
+% xLineStyle(xOnOffDash, 1) :- !.
+% xLineStyle(xDoubleDash, 2).
+
+% cap styles
+
+% xCapStyle(xNotLast, 0) :- !.
+% xCapStyle(xButt, 1) :- !.
+% xCapStyle(xRound, 2) :- !.
+% xCapStyle(xProjecting, 3).
+
+xCapStyle(xRound, 2) :- !.
+xCapStyle(N,N).
+
+% join styles
+% xJoinStyle(xMiter, 0) :- !.
+% xJoinStyle(xRound, 1) :- !.
+% xJoinStyle(xBevel, 2).
+
+xJoinStyle(xRound, 1) :- !.
+xJoinStyle(N,N).
+
+% fill styles                       %% unused - BD 06/07/93
+% xFillStyle(xSolid, 0) :- !.
+% xFillStyle(xTiled, 1) :- !.
+% xFillStyle(xStippled, 2) :- !.
+% xFillStyle(xOpaqueStippled, 3).
+
+% backing store                       %% unused - BD 06/07/93
+% xBackingStore(xNotUseful, 0) :- !.
+% xBackingStore(xWhenMapped, 1) :- !.
+% xBackingStore(xAlways, 2).
+ 
+
+% visual class                       %% unused - BD 06/07/93
+% xVisualClass(xStaticGray, 0) :- !.
+% xVisualClass(xGrayScale, 1) :- !.
+% xVisualClass(xStaticColor, 2) :- !.
+% xVisualClass(xPseudoColor, 3) :- !.
+% xVisualClass(xTrueColor, 4) :- !.
+% xVisualClass(xDirectColor, 5).
+
+% window class (xCreateWindow)       %% unused - BD 06/07/93
+% xWindowClass(xCopyFromParent, 0) :- !.
+% xWindowClass(xInputOutput, 1) :- !.
+% xWindowClass(xInputOnly, 2).
+
+% window depth (xCreateWindow)       %% unused - BD 06/07/93
+% xWindowDepth(xCopyFromParent, 0) :- !.
+% xWindowDepth(xNone, 0) :- !. 
+% xWindowDepth(N, N).
+
+% bit gravity                       %% unused - BD 06/07/93
+% xBitGravity(xForget, 0) :- !.
+% xBitGravity(xNorthWest, 1) :- !.
+% xBitGravity(xNorth, 2) :- !.
+% xBitGravity(xNorthEast, 3) :- !.
+% xBitGravity(xWest, 4) :- !.
+% xBitGravity(xCenter, 5) :- !.
+% xBitGravity(xEast, 6) :- !.
+% xBitGravity(xSouthWest, 7) :- !.
+% xBitGravity(xSouth, 8) :- !.
+% xBitGravity(xSouthEast, 9) :- !.
+% xBitGravity(xStatic, 10).
+
+% window gravity                       %% unused - BD 06/07/93
+% xWindowGravity(xUnmap, 0) :- !.
+% xWindowGravity(xNorthWest, 1) :- !.
+% xWindowGravity(xNorth, 2) :- !.
+% xWindowGravity(xNorthEast, 3) :- !.
+% xWindowGravity(xWest, 4) :- !.
+% xWindowGravity(xCenter, 5) :- !.
+% xWindowGravity(xEast, 6) :- !.
+% xWindowGravity(xSouthWest, 7) :- !.
+% xWindowGravity(xSouth, 8) :- !.
+% xWindowGravity(xSouthEast, 9) :- !.
+% xWindowGravity(xStatic, 10).
+
+% WM window gravity (for WM_SIZE_HINTS)    %% unused - BD 06/07/93
+% xWMWindowGravity(xNorthWest, 1) :- !.
+% xWMWindowGravity(xNorth, 2) :- !.
+% xWMWindowGravity(xNorthEast, 3) :- !.
+% xWMWindowGravity(xWest, 4) :- !.
+% xWMWindowGravity(xCenter, 5) :- !.
+% xWMWindowGravity(xEast, 6) :- !.
+% xWMWindowGravity(xSouthWest, 7) :- !.
+% xWMWindowGravity(xSouth, 8) :- !.
+% xWMWindowGravity(xSouthEast, 9).
+
+% directions
+% global(xNorthWest<-1) ?
+% global(xNorth<-2) ?
+% global(xNorthEast<-3) ?
+% global(xWest<-4) ?
+% global(xCenter<-5) ?
+% global(xEast<-6) ?
+% global(xSouthWest<-7) ?
+% global(xSouth<-8) ?
+% global(xSouthEast<-9) ?
+
+% window state    %% unused - BD 06/07/93
+% xWindowState(xUnmapped, 0) :- !.
+% xWindowState(xUnviewable, 1) :- !.
+% xWindowState(xViewable, 2).
+
+% stack mode    %% unused - BD 06/07/93
+% xStackMode(xAbove, 0) :- !.
+% xStackMode(xBelow, 1) :- !.
+% xStackMode(xTopIf, 2) :- !.
+% xStackMode(xBottomIf, 3) :- !.
+% xStackMode(xOpposite, 4).
+
+% back pixmap    %% unused - BD 06/07/93
+% xBackPixmap(xParentRelative, 1) :- !.
+% xBackPixmap(xNone, 0) :- !. 
+% xBackPixmap(N, N).
+
+% property mode (xSetProperty)      %% unused - BD 06/07/93
+% xPropertyMode(xReplace, 0) :- !.
+% xPropertyMode(xPrepend, 1) :- !.
+% xPropertyMode(xAppend, 2).
+
+% size query (xQueryBestSize)       %% unused - BD 06/07/93
+% xSizeQuery(xCursor, 0) :- !.
+% xSizeQuery(xTile, 1) :- !.
+% xSizeQuery(xStipple, 2).
+
+% clip ordering (xSetClips)         %% unused - BD 06/07/93
+% xClipOrdering(xUnsorted, 0) :- !.
+% xClipOrdering(xYSorted, 1) :- !.
+% xClipOrdering(xYXSorted, 2) :- !.
+% xClipOrdering(xYXBanded, 3).
+
+% polygon shape (xFillPolygon)      %% unused - BD 06/07/93
+% xPolygonShape(xComplex, 0) :- !.
+% xPolygonShape(xNonconvex, 1) :- !.
+% xPolygonShape(xConvex, 2).
+
+% image format (xCreateImage)      %% unused - BD 06/07/93
+% xImageFormat(xXYPixmap, 1) :- !.
+% xImageFormat(xZPixmap, 2).
+
+% key masks                         %% unused - BD 06/07/93
+% xKey(xShift, 0) :- !.
+% xKey(xLock, 1) :- !.
+% xKey(xControl, 2) :- !.
+% xKey(xMod1, 3) :- !.
+% xKey(xMod2, 4) :- !.
+% xKey(xMod3, 5) :- !.
+% xKey(xMod4, 6) :- !.
+% xKey(xMod5, 7) :- !.
+% xKey(xButton1, 8) :- !.
+% xKey(xButton2, 9) :- !.
+% xKey(xButton3, 10) :- !.
+% xKey(xButton4, 11) :- !.
+% xKey(xButton5, 12) :- !.
+% xKey(xAny, 15) :- !.				
+
+% mouse masks                       %% unused - BD 06/07/93
+% xButton(xLeft, 1) :- !.
+% xButton(xMiddle, 2) :- !.
+% xButton(xRight, 3) :- !.
+
+% keyboard settings
+xKeyboardDefault(xDefault, -1) :- !.
+xKeyboardDefault(N, N).
+
+% auto repeat mode
+% xAutoRepeat(xFalse, 0) :- !.			
+% xAutoRepeat(xTrue, 1) :- !.			
+% xAutoRepeat(xDefault, 2) :- !.		
+
+xAutoRepeat(xDefault, 2) :- !.
+xAutoRepeat(N, N).
+
+% no symbol
+%xFunctionNoSymbol(xNoSymbol, 0) :- !.
+%xFunctionNoSymbol(N, N).
+
+% close down mode (xSetCloseDown)    %% unused - BD 06/07/93
+% xCloseDown(xDestroy, 0) :- !.
+% xCloseDown(xPermanent, 1) :- !.
+% xCloseDown(xTemporary, 2).
+
+% kill client resource (xKillClient)    %% unused - BD 06/07/93
+% xKillResource(xAllTemporary, 0) :- !.
+% xKillResource(N, N).
+
+% focus window (xGetInputFocus, xSetInputFocus)    %% unused - BD 06/07/93
+% xFocusWindow(xPointerRoot, 1) :- !.
+% xFocusWindow(xNone, 0) :- !.
+% xFocusWindow(N, N).
+
+% revert state (xGetInputFocus, xSetInputFocus)    %% unused - BD 06/07/93
+% xRevertState(xPointerRoot, 1) :- !.		
+% xRevertState(xParent, 2) :- !.
+% xRevertState(xNone, 0) :- !.			
+
+% grab status (xGrabPointer, xGrabKeyboard)    %% unused - BD 06/07/93
+% xGrabStatus(xSuccess, 0) :- !.
+% xGrabStatus(xAlreadyGrabbed, 1) :- !.
+% xGrabStatus(xInvalidTime, 2) :- !.
+% xGrabStatus(xNotViewable, 3) :- !.
+% xGrabStatus(xFrozen, 4).
+
+% event mode (xAllowEvents)     %% unused - BD 06/07/93
+% xEventMode(xAsyncPointer, 0) :- !.
+% xEventMode(xSyncPointer, 1) :- !.
+% xEventMode(xReplayPointer, 2) :- !.
+% xEventMode(xAsyncKeyboard, 3) :- !.
+% xEventMode(xSyncKeyboard, 4) :- !.
+% xEventMode(xReplayKeyboard, 5) :- !.
+% xEventMode(xAsyncBoth, 6) :- !.
+% xEventMode(xSyncBoth, 7).
+
+% blanking (xGetScreenSaver, xSetScreenSaver)
+%xFunctionBlanking(xNoBlanking, 0) :- !.
+%xFunctionBlanking(xBlanking, 1) :- !.
+%xFunctionBlanking(xDefault, 2) :- !.			
+
+% exposures (xGetScreenSaver, xSetScreenSaver)
+%xFunctionExposures(xNoExposures, 0) :- !.
+%xFunctionExposures(xExposures, 1) :- !.
+%xFunctionExposures(xDefault, 2) :- !.		
+%
+% screen saver timeout (xSetScreenSaver)     %% unused - BD 06/07/93
+% xTimeout(xDisable, 0) :- !.
+% xTimeout(xDefault, -1) :- !. 
+% xTimeout(N, N).
+
+% screen saver change interval (xSetScreenSaver)     %% unused - BD 06/07/93
+% xInterval(xDisable, 0) :- !.
+% xInterval(N, N).
+
+% event queue (xEventsQueued)     %% unused - BD 06/07/93
+% xEventQueue(xAlready, 0) :- !.
+% xEventQueue(xAfterReading, 1) :- !.
+% xEventQueue(xAfterFlush, 2).
+
+% event types (xGetEvent, xEventGet, xEventPut)     %% unused - BD 06/07/93
+% xEventType(xAny, 0, xAny) :- !.			% struct should fail
+% xEventType(xKeyPress, 2, xInput) :- !.
+% xEventType(xKeyRelease, 3, xInput) :- !.
+% xEventType(xButtonPress, 4, xInput) :- !.
+% xEventType(xButtonRelease, 5, xInput) :- !.
+% xEventType(xMotionNotify, 6, xMotionNotify) :- !.
+% xEventType(xEnterNotify, 7, xCrossing) :- !.
+% xEventType(xLeaveNotify, 8, xCrossing) :- !.
+% xEventType(xFocusIn, 9, xFocus) :- !.
+% xEventType(xFocusOut, 10, xFocus) :- !.
+% xEventType(xKeymapNotify, 11, xKeymapNotify) :- !.
+% xEventType(xExpose, 12, xRequest10) :- !.
+% xEventType(xGraphicsExpose, 13, xRequest12) :- !.
+% xEventType(xNoExpose, 14, xRequest7) :- !.
+% xEventType(xVisibilityNotify, 15, xVisibilityNotify) :- !.
+% xEventType(xCreateNotify, 16, xCreateNotify) :- !.
+% xEventType(xDestroyNotify, 17, xRequest6) :- !.
+% xEventType(xUnmapNotify, 18, xNotify7) :- !.
+% xEventType(xMapNotify, 19, xNotify7) :- !.
+% xEventType(xMapRequest, 20, xRequest6) :- !.
+% xEventType(xReparentNotify, 21, xReparentNotify) :- !.
+% xEventType(xConfigureNotify, 22, xConfigureNotify) :- !.
+% xEventType(xConfigureRequest, 23, xConfigureRequest) :- !.
+% xEventType(xGravityNotify, 24, xRequest8) :- !.
+% xEventType(xResizeRequest, 25, xRequest7) :- !.
+% xEventType(xCirculateNotify, 26, xNotify7) :- !.
+% xEventType(xCirculateRequest, 27, xNotify7) :- !.
+% xEventType(xPropertyNotify, 28, xPropertyNotify) :- !.
+% xEventType(xSelectionClear, 29, xSelectionClear) :- !.
+% xEventType(xSelectionRequest, 30, xSelectionRequest) :- !.
+% xEventType(xSelectionNotify, 31, xSelectionNotify) :- !.
+% xEventType(xColormapNotify, 32, xColormapNotify) :- !.
+% xEventType(xClientMessage, 33, xClientMessage) :- !.
+% xEventType(xMappingNotify, 34, xMappingNotify) :- !.
+% xEventType(xWMMessage, 33554431, xWMMessage) :- !.	% type = 2^25 - 1
+
+
+% notify mode     %% unused - BD 06/07/93
+% xNotifyMode(xNormal, 0) :- !. 
+% xNotifyMode(xGrab, 1) :- !.
+% xNotifyMode(xUngrab, 2) :- !.
+% xNotifyMode(xWhileGrabbed, 3).
+
+% notify detail     %% unused - BD 06/07/93
+% xNotifyDetail(xAncestor, 0) :- !.
+% xNotifyDetail(xVirtual, 1) :- !.
+% xNotifyDetail(xInferior, 2) :- !.
+% xNotifyDetail(xNonlinear, 3) :- !.
+% xNotifyDetail(xNonlinearVirtual, 4) :- !.
+% xNotifyDetail(xPointer, 5) :- !.
+% xNotifyDetail(xPointerRoot, 6) :- !.		
+% xNotifyDetail(xNone, 7) :- !.		
+
+% visibility     %% unused - BD 06/07/93
+% xVisibility(xUnobscured, 0) :- !.
+% xVisibility(xPartial, 1) :- !.
+% xVisibility(xObscured, 2).
+
+% configure masks     %% unused - BD 06/07/93
+% xConfigure(xX, 0) :- !.
+% xConfigure(xY, 1) :- !.
+% xConfigure(xWidth, 2) :- !.
+% xConfigure(xHeight, 3) :- !.
+% xConfigure(xBorderWidth, 4) :- !.
+% xConfigure(xSibling, 5) :- !.
+% xConfigure(xStackMode, 6) :- !.
+% xConfigure(maxindex, 7).
+
+% mapping request type     %% unused - BD 06/07/93
+% xMapping(xModifier, 0) :- !.
+% xMapping(xKeyboard, 1) :- !.
+% xMapping(xPointer, 2).
+
+% send event window (xSendEvent) %% unused - BD 06/07/93
+% xSendWindow(xPointerWindow, 0) :- !.
+% xSendWindow(xInputFocus, 1) :- !.
+% xSendWindow(N, N).
+
+% WM_HINTS Initial State        %% unused - BD 06/07/93
+% xInitialState(xWithdrawn, 0) :- !.
+% xInitialState(xNormal, 1) :- !.
+% xInitialState(xIconic, 3).
+
+
+

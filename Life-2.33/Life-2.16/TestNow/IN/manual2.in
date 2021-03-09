@@ -1,0 +1,14 @@
+X=two_wheels & vehicle?
+;
+.
+X=four_wheels & vehicle?
+;
+.
+X=two_wheels & four_wheels?
+.
+X=rolls_royce & car?
+;
+.
+X=truck & @?
+;
+.

@@ -1,0 +1,9 @@
+A=bagof(X,p(X))?
+.
+A=bagof((X,Y),(p(X),p(Y)))?
+.
+A=bagof(X,(p(X),X<3))?
+.
+A=bagof(X,(p(X),p(Y),X<3,Y<3))?
+.
+
