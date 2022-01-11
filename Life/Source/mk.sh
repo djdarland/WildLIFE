@@ -17,5 +17,5 @@ if test -f wild_life
 then
 cp wild_life ~/bin
 fi
-$EDITOR djd3 djd4
+$EDITOR regexp/djd3 regexp/djd4
 $EDITOR djd1 djd2

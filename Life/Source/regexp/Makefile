@@ -1,4 +1,4 @@
-#CC=gcc
+CC=gcc
 
 # Things you might want to put in ENV and LENV:
 # -Dvoid=int		compilers that don't do void

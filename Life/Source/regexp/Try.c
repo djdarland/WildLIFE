@@ -31,7 +31,14 @@
  */
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include "regexp.h"
+
+void multiple();
+void error(char *s1, char *s2);
+void complain(char *s1, char *s2);
+void try(char **fields);
+
 
 #ifdef ERRAVAIL
 char *progname;
@@ -49,7 +56,7 @@ char *errseen = NULL;		/* Error message. */
 int status = 0;			/* Exit status. */
 
 /* ARGSUSED */
-main(argc, argv)
+int main(argc, argv)
 int argc;
 char *argv[];
 {
@@ -99,9 +106,7 @@ char *s;
 }
 
 #ifndef ERRAVAIL
-error(s1, s2)
-char *s1;
-char *s2;
+void error(char *s1, char *s2)
 {
 	fprintf(stderr, "regexp: ");
 	fprintf(stderr, s1, s2);
@@ -114,7 +119,7 @@ int lineno;
 
 regexp badregexp;		/* Implicit init to 0. */
 
-multiple()
+void multiple()
 {
 	char rbuf[BUFSIZ];
 	char *field[5];
@@ -187,8 +192,7 @@ multiple()
 		complain("regsub(nonsense, ..., ...) doesn't complain", "");
 }
 
-try(fields)
-char **fields;
+void try(char **fields)
 {
 	regexp *r;
 	char dbuf[BUFSIZ];
@@ -228,9 +232,7 @@ char **fields;
 	free((char *)r);
 }
 
-complain(s1, s2)
-char *s1;
-char *s2;
+void complain(char *s1, char *s2)
 {
 	fprintf(stderr, "try: %d: ", lineno);
 	fprintf(stderr, s1, s2);
