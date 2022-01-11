@@ -25,8 +25,10 @@
  */
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include "regexp.h"
 #include "regmagic.h"
+regexp *regcomp(char *exp);
 
 /*
  * The "internal use only" fields in regexp.h are present to pass info from
@@ -187,16 +189,14 @@ STATIC int strcspn();
  * Beware that the optimization-preparation code in here knows about some
  * of the structure of the compiled regexp.
  */
-regexp *
-regcomp(exp)
-char *exp;
+regexp *regcomp(char *exp)
 {
 	register regexp *r;
 	register char *scan;
 	register char *longest;
 	register int len;
 	int flags;
-	extern char *malloc();
+	//	extern char *malloc();
 
 	if (exp == NULL)
 		FAIL("NULL argument");

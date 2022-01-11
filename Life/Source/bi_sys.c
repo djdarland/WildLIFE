@@ -191,7 +191,7 @@ static long c_cputime()
   success=get_real_value(result,&val,&num);
   if (success) {
     times(&life_end);
-    thetime=(life_end.tms_utime-life_start.tms_utime)/60.0;
+    thetime= ((REAL)life_end.tms_utime-life_start.tms_utime)/(REAL)sysconf(_SC_CLK_TCK);
     if (num)
       success=(val==thetime);
     else

@@ -1,3 +1,47 @@
+I now have a couple computers I can experiment with.
+I started with a fresh install of Ubuntu Linux 20.04
+
+I found the following prerquisites.
+I installed emacs (GUI) using Ubuntu Software.
+I added "export EDITOR=emacs" to .profile
+(you could use a different editor)
+Must reboot to take effect.
+
+create directories "bin" and "src" under home directory.
+create directory "WildLIFE" under "src"
+
+You will need to following if you do not already
+have them.
+
+sudo apt install make
+sudo apt install gcc
+sudo apt install csh
+
+Get WildLIFE from github
+
+https://github.com/djdarland/WildLIFE
+
+Under Code
+Download ZIP (WildLIFE-master.zip)
+
+Move to src/WildLIFE & extract
+
+change directory to
+~/src/WildLIFE/WildLIFE-master/Life/Source
+
+run command
+./cp_local.sh
+
+run
+./ee
+
+choose 111 to compile
+
+choose 116 to run test suite.
+
+There are some opts that require more software,
+but are not required for WildLIFE itself.
+
 WildLIFE
 
 3/8/2021

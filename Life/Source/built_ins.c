@@ -2098,11 +2098,10 @@ long nl_flag;
   if (NOTQUIET) { /* 21.1 */
     if (nl_flag) printf("\n");
     printf("*** Exiting Wild_Life  ");
-    printf("[%1.3fs cpu, %1.3fs gc (%2.1f%%)]\n",
-           (life_end.tms_utime-life_start.tms_utime)/60.0,
+    printf("[%1.3lfs cpu, %1.3lfs gc (%2.1lf%%)]\n",
+           ((REAL)(life_end.tms_utime-life_start.tms_utime)/(REAL)sysconf(_SC_CLK_TCK)),
            garbage_time,
-           garbage_time*100 / ((life_end.tms_utime-life_start.tms_utime)/60.0)
-	   );
+           (REAL)garbage_time * 100.0) / (REAL) (life_end.tms_utime-life_start.tms_utime)/(REAL)sysconf(_SC_CLK_TCK);
   }
 
 #ifdef ARITY  /*  RM: Mar 29 1993  */
