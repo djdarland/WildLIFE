@@ -14,8 +14,11 @@ You will need to following if you do not already
 have them.
 
 sudo apt install make
+
 sudo apt install gcc
+
 sudo apt install libx11-dev
+
 sudo apt install csh
 
 Get WildLIFE from github
