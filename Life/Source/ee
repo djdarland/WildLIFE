@@ -21,7 +21,9 @@ echo "116 Run and View Test Suite"
 echo "117 Only View Test Suite"
 echo "118 Run and View One (current) Test"
 echo "119 Run wild_life interactively"
-
+echo "120 Run wild_life_X interactively"
+echo "121 Edit Makefile"
+echo "122 Copy local files"
 
 echo "666 Port.txt"
 echo "777 NOTES_DJD.txt"
@@ -48,7 +50,9 @@ $EDITOR djd1 djd2 ;;
 117) ./ts2.sh;;
 118) ./tsnow.sh;;
 119)  wild_life;;
-
+120)  wild_life_X;;
+121) $EDITOR Makefile;;
+122) ./cp_local.sh;;
 
 666) $EDITOR Port.txt & ;;
 777) $EDITOR NOTES_DJD.txt & ;;
@@ -77,6 +81,9 @@ echo "116 Run and View Test Suite"
 echo "117 Only View Test Suite"
 echo "118 Run and View One (current) Test"
 echo "119 Run wild_life interactively"
+echo "120 Run wild_life_X interactively"
+echo "121 Edit Makefile"
+echo "122 Copy local files"
 
 echo "666 Port.txt"
 echo "777 NOTES_DJD.txt"

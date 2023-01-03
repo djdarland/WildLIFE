@@ -28,10 +28,12 @@ static unsigned int libseed;
 
 
 // REV401PLUS -- moved nex 4 down
-long noisy=TRUE;
+/* long noisy=TRUE;
 long file_date=3;
 long types_done=FALSE;
 float garbage_time=0;
+*/ // REMOVED above for MINT
+
 
 char **group_features(f,n)
      char **f;

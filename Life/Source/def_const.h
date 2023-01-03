@@ -3,6 +3,12 @@
 
 */
 
+#ifndef  EXTERN
+#define EXTERN
+#endif
+
+
+
 /*! \def least_sel
   \brief used by collect_symbols in built_ins.c 
 

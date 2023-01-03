@@ -34,12 +34,12 @@ static char vcid[] = "$Id: sys.c,v 1.9 1996/01/17 00:33:09 duchier Exp $";
 #endif
 
 
-ptr_definition sys_bytedata; /* DENYS: BYTEDATA */
-ptr_definition sys_bitvector;
-ptr_definition sys_regexp;
-ptr_definition sys_stream;
-ptr_definition sys_file_stream;
-ptr_definition sys_socket_stream;
+// ptr_definition sys_bytedata; /* DENYS: BYTEDATA */
+// ptr_definition sys_bitvector;
+// ptr_definition sys_regexp;
+// ptr_definition sys_stream;
+// ptr_definition sys_file_stream;
+// ptr_definition sys_socket_stream;
 
 long
 call_primitive(fun,num,argi,info)
@@ -1289,11 +1289,9 @@ errmsg_internal(args,result,funct)
      ptr_psi_term args[],result,funct;
 {
   long n = args[0]?(long)*(REAL*)args[0]->value_3:errno;
-  if (n<0 || n>=sys_nerr) return FALSE;
-  else {
-    push_goal(unify,stack_string((char *)sys_errlist[n]),result,NULL); // REV401PLUS added cast
-    return TRUE;
-  }
+  push_goal(unify,stack_string((char *)strerror(n)),result,NULL); // REV401PLUS added cast
+  return TRUE;
+  
 }
 
 static long
@@ -1421,11 +1419,12 @@ get_numeric_feature(n)
 #include <sys/wait.h>
 #endif
 
-ptr_definition sys_process_no_children;
+/* ptr_definition sys_process_no_children;
 ptr_definition sys_process_exited;
 ptr_definition sys_process_signaled;
 ptr_definition sys_process_stopped;
 ptr_definition sys_process_continued;
+*/
 
 static long
 unify_wait_result(result,id,status)

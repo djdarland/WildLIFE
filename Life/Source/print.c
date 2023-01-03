@@ -14,24 +14,6 @@ static char vcid[] = "$Id: print.c,v 1.4 1995/01/14 00:27:20 duchier Exp $";
 #endif
 
 // REV401PLUS moved initializations down
-long print_depth=PRINT_DEPTH;
-long indent=FALSE;
-long const_quote=TRUE;
-long write_resids=FALSE;
-long write_canon=FALSE;
-long write_stderr=FALSE;
-long write_corefs=TRUE;
-
-long gen_sym_counter;
-long page_width=PAGE_WIDTH;
-
-long display_persistent=FALSE;
-  
-char *no_name="pointer";
-char *name="symbol";
-char *buffer;
-char seg_format[PRINT_POWER+4];
-
 /* Used to distinguish listings from other writes */
 static long listing_flag;
 /* Precedence of the comma and colon operators (or 0 if none exists) */

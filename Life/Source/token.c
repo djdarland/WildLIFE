@@ -13,7 +13,7 @@ static char vcid[] = "$Id: token.c,v 1.4 1995/07/27 19:22:17 duchier Exp $";
 #endif
 
 // REV401PLUS moved down
-long trace_input=FALSE;
+// long trace_input=FALSE;
 
 /***********************************************/
 /* Utilities */
@@ -392,7 +392,7 @@ void init_parse_state()
 
 static long inchange, outchange;
 static FILE *out;
-ptr_psi_term old_state=NULL; /*  RM: Feb 17 1993  */
+// ptr_psi_term old_state=NULL; /*  RM: Feb 17 1993  */
 
 
 

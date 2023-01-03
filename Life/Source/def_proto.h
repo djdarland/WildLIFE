@@ -711,3 +711,4 @@ long xcQueryTextExtents();
 long x_postscript_window(Display *display,Window window,ListHeader *displaylist,char *filename);
 #endif
 ptr_goal GoalFromPsiTerm(ptr_psi_term psiTerm);
+void init_globals();

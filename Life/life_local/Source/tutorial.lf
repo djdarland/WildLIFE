@@ -1,0 +1,6 @@
+module("tutorial") ?
+public(start) ?
+
+start :-
+	@ = system("okular ~/life_local/Demo/slides.pdf &").
+	
