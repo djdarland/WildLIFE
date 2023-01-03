@@ -136,7 +136,7 @@ long **infoptr;
 
 /* TRUE means: heap_flag==TRUE & only copy to heap those objects not */
 /* already on heap, i.e. incremental copy to heap.                   */
-long to_heap;
+// long to_heap;    // removed for MINT
 
 /* TRUE iff R is on the heap */
 #define ONHEAP(R) ((GENERIC)R>=heap_pointer)

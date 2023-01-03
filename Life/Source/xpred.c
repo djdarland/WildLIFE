@@ -81,18 +81,18 @@ typedef struct wl_EventClosure
 
 
 
-ptr_definition xevent,xkeyboard_event,xbutton_event,/* RM: 7/12/92 */
-  xexpose_event,xdestroy_event,xmotion_event,
+// ptr_definition xevent,xkeyboard_event,xbutton_event,/* RM: 7/12/92 */
+//  xexpose_event,xdestroy_event,xmotion_event,
   
-  xenter_event,xleave_event,xmisc_event,/* RM: 3rd May 93 */
+//  xenter_event,xleave_event,xmisc_event,/* RM: 3rd May 93 */
   
-  xdisplay,xdrawable,xwindow,xpixmap,xconfigure_event,
-  xgc,xdisplaylist;
+//  xdisplay,xdrawable,xwindow,xpixmap,xconfigure_event,
+//   xgc,xdisplaylist;
 
 
-ptr_psi_term xevent_existing = NULL;
-ptr_psi_term xevent_list = NULL;
-long x_window_creation = FALSE;
+// ptr_psi_term xevent_existing = NULL;
+// ptr_psi_term xevent_list = NULL;
+// long x_window_creation = FALSE;
 
 /*****************************************/
 

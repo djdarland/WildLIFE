@@ -68,7 +68,7 @@ if(-e LF/$I:r.lf) then
    (echo 'load("LF/' $I:r.lf '")?' | tr -d ' ' ;echo "" ; \
 	cat IN/$I:r.in  ; echo "halt?") | \
 	($WLIFE |  \
-egrep -v '(Loading|already loaded|Version|customizing|Copyright|Garbage|Exiting|X interface)' > OUT/$I:r.out.tmp \
+egrep -v '(Loading|already loaded|Version|customizing|Copyright|Garbage|Exiting|Ported|Dennis|X interface)' > OUT/$I:r.out.tmp \
         ) |& \
         sed "s/.......s cpu (.*)//" > ERR/$I:r.err.tmp
 

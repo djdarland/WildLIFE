@@ -13,13 +13,13 @@ static char vcid[] = "$Id: login.c,v 1.4 1995/01/14 00:25:33 duchier Exp $";
 
 
 /* Statistics on trail cleaning */
-long clean_iter=0;
-long clean_succ=0;
+/* long clean_iter=0;
+   long clean_succ=0; */ // removed for MINT
 
 #ifdef TS
 /* Should never wrap (32 bit is enough) 9.6 */
 /* Rate of incrementing: One per choice point */
-unsigned long global_time_stamp=INIT_TIME_STAMP; /* 9.6 */
+// unsigned long global_time_stamp=INIT_TIME_STAMP; /* 9.6 */ // removed for MINT
 #endif
 
 

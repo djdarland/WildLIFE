@@ -41,7 +41,7 @@ int main(int argc, char *argv[])  // REV401PLUS correct main proto
   for(i=0;i<256;i++)
     rand_array[i]=random();
 #endif
-  
+  init_globals();
   arg_c=argc;
   if (argc < 10)
     {
@@ -164,4 +164,75 @@ int main(int argc, char *argv[])  // REV401PLUS correct main proto
   exit_life(TRUE);
 }
 
+void init_globals()
+{
+  first_definition=NULL;
+  interrupted=TRUE;
+  warningflag=TRUE;
+  quietflag=FALSE;  // 21.1
+  trace=FALSE;
+  verbose=FALSE; // 21.1 
 
+  module_table=NULL;        /* The table of modules */
+  current_module=NULL;    /* The current module for the tokenizer */
+  
+  no_module=NULL;
+  bi_module=NULL;
+  syntax_module=NULL;
+  sys_module=NULL;
+  print_depth=PRINT_DEPTH;
+  indent=FALSE;
+  const_quote=TRUE;
+  write_resids=FALSE;
+  write_canon=FALSE;
+  write_stderr=FALSE;
+  write_corefs=TRUE;
+  
+  page_width=PAGE_WIDTH;
+  
+  display_persistent=FALSE;
+  
+  no_name="pointer";
+  name="symbol";
+  
+  display_modules=TRUE;   /* Should really default to FALSE */
+  
+  numbers[0] = "1";
+  numbers[1] = "2";
+  numbers[2] = "3";
+  numbers[3] = "4";
+  numbers[4] = "5";
+  numbers[5] = "6";
+  numbers[6] = "7";
+  numbers[7] = "8";
+  numbers[8] = "9";
+  numbers[9] = "10";
+  numbers[10] = "11";
+  numbers[11] = "12";
+  numbers[12] = "13";
+  numbers[13] = "14";
+  numbers[14] = "15";
+  numbers[15] = "16";
+  numbers[16] = "17";
+  numbers[17] = "18";
+  numbers[18] = "19";
+  numbers[19] = "20";
+  numbers[20] = NULL;
+
+  set_extra_args[0] = set_empty;
+  set_extra_args[1] = set_1;
+  set_extra_args[2] = set_2;
+  set_extra_args[3] = set_1_2;
+  set_extra_args[4] = set_1_2_3;
+  set_extra_args[5] = set_1_2_3_4;
+
+  old_state=NULL; /*  RM: Feb 17 1993  */
+  trace_input=FALSE;
+
+#ifdef X11
+  xevent_existing = NULL;
+  xevent_list = NULL;
+  x_window_creation = FALSE;
+#endif
+  
+}

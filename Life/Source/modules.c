@@ -16,21 +16,6 @@ static char vcid[] = "$Id: modules.c,v 1.3 1994/12/15 22:05:39 duchier Exp $";
 #endif
 
 // REV401PLUS moved the next several down
-ptr_node module_table=NULL;        /* The table of modules */
-ptr_module current_module=NULL;    /* The current module for the tokenizer */
-
-string module_buffer;              /* Temporary storage place for strings */
-
-ptr_module no_module=NULL;
-ptr_module bi_module=NULL;
-ptr_module user_module;
-ptr_module syntax_module=NULL;
-ptr_module x_module;
-ptr_module sys_module=NULL;
-
-long display_modules=TRUE;   /* Should really default to FALSE */
-
-ptr_goal resid_aim;
 
 
 /******** INIT_MODULES()

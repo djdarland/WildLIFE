@@ -11,12 +11,6 @@ static char vcid[] = "$Id: templates.c,v 1.2 1994/12/08 23:33:53 duchier Exp $";
 #include "defs.h"
 #endif
 
-char *numbers[] = {"1","2","3","4","5","6","7","8","9","10",
-		   "11","12","13","14","15","16","17","18","19","20",
-		   NULL};
-
-long set_extra_args[] = {set_empty, set_1, set_2, set_1_2, set_1_2_3, set_1_2_3_4};
-
 /******** GET_ARG
 
   assign the argument "number" of the goal "g" in "arg".

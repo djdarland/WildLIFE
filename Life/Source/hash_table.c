@@ -24,11 +24,11 @@ static char vcid[] = "$Id: hash_table.c,v 1.2 1994/12/08 23:24:09 duchier Exp $"
   Create a hash-table for max size keywords.
   */
   
-ptr_definition first_definition=NULL;  // REV401PLUS moved
+// ptr_definition first_definition=NULL;  // REV401PLUS moved // removed MINT
 
-ptr_hash_table hash_create(size)
+ptr_hash_table hash_create(int size)
 
-     int size;
+//     int size; // Moved MINT
 {
   ptr_hash_table new;
   int i;

@@ -11,7 +11,7 @@ static char vcid[] = "$Id: interrupt.c,v 1.2 1994/12/08 23:25:19 duchier Exp $";
 #include "defs.h"
 #endif
 
-long interrupted=FALSE;  // REV401PLUS moved down
+// long interrupted=FALSE;  // REV401PLUS moved down removed for MINT
 
 /******** INTERRUPT()
   This routine is called whenever the user types CONTROL C which generates an

@@ -1,6 +1,0 @@
-module("tutorial") ?
-public(start) ?
-
-start :-
-	@ = system("ghostview +SETUPDIR+/Demo/slides.ps &").
-	

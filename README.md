@@ -1,3 +1,28 @@
+I had the basic setup done on the one of my computers.
+Now using Mint - I had done previous work in Ununtu.
+I had probably unrelated problems in Ubuntu.
+LOTS of errors Compiling and Linking.
+Basically it came down to
+1) Replacing a function for reporting system errors (gone from language).
+2) Made changes to Makefile to not use ar and make it simpler.
+(And faster by really using as Makefiles are intended to work).
+3) There was difference in how globals and externs work. And initialized.
+Already had them in one .h file. Added EXTERN which I set to extern for all except the main file.
+5) Added function in main file to initialize all that had ben initialized
+in declarations.
+6) I had to create a bin directory in my home directory and also
+7) copy the local life files to the home directory.
+8) I added to my ee script entries for editing the Makefile and
+9) copying the local files
+10 )There is an extensive Test Suite and once I had it running,
+it passed all except one test. I have not investigated this yet.
+11) You MUST make SURE that FONTS are installed for X-Winows
+12) comand is wild_life for non-x version
+13) wild_life_X for x version.
+14) Makefile makes both versions without any changes.
+15) Although I added MINT define when PORTING, it should be KEPT for Ubuntu.
+Still Investigate the one error. 
+
 I now have a couple computers I can experiment with.
 I started with a fresh install of Ubuntu Linux 20.04
 

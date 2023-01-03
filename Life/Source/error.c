@@ -22,14 +22,15 @@ static char vcid[] = "$Id: error.c,v 1.3 1995/07/11 01:53:03 duchier Exp $";
 // There were many changes using stdarg.h instead of varargs.h
 // 
 
+/* REMOVED for MINT
 long warningflag=TRUE;
-long quietflag=FALSE; /* 21.1 */
+long quietflag=FALSE;  // 21.1 
 long trace=FALSE;
-long verbose=FALSE; /* 21.1 */
+long verbose=FALSE; // 21.1 
 long stepflag;
 long steptrace;
 long stepcount;
-
+*/   
 /*! \fn static long depth_gs()
   \brief depth_gs
 

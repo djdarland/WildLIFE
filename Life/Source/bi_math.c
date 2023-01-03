@@ -21,6 +21,18 @@
 static char vcid[] = "$Id: bi_math.c,v 1.2 1994/12/08 23:07:37 duchier Exp $";
 #endif /* lint */
 
+/*
+#ifndef NULL
+#define NULL 0
+#endif
+#ifndef TRUE
+#define TRUE 1
+#endif
+#ifndef FALSE
+#define FALSE 0
+#endif
+*/
+
 #ifdef REV401PLUS
 #include "defs.h"
 #endif

@@ -1,6 +1,0 @@
-module("tutorial") ?
-public(start) ?
-
-start :-
-	@ = system("okular ~/life_local_xxxx_redo2/Demo/slides.pdf &").
-	

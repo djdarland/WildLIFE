@@ -1,12 +1,8 @@
-if test -d ~/life_local_redo
+if test -d ~/life_local
 then
-    rm -r ~/life_local_redo
+    rm -r ~/life_local
 fi
-cp -r ../life_local_redo ~
-if test -d ~/life_local_xxxx_redo2
-then
-    rm -r ~/life_local_xxxx_redo2
-fi
-cp -r ../life_local_xxxx_redo2 ~
+cp -r ../life_local ~
+
 
 

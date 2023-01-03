@@ -10,6 +10,7 @@ static char vcid[] = "$Id: info.c,v 1.4 1995/01/30 21:03:55 duchier Exp $";
 #ifdef REV401PLUS
 #include "defs.h"
 #endif
+#include <stdio.h>
 
 /******** PNF(s,n)
   This prints one line of info cleanly. The string S is the name of the
@@ -41,7 +42,10 @@ void title()
   
   printf("Wild_Life Interpreter Version +VERSION+ +DATE+\n");
   printf("Copyright (C) 1991-93 DEC Paris Research Laboratory\n");
-  printf("Extensions, Copyright (C) 1994-1995 Intelligent Software Group, SFU -- Ported to Linux and Cygwin August 2019 after many efforts since 1995\n");
+  printf("Extensions, Copyright (C) 1994-1995 Intelligent Software Group, SFU\n"); 
+  printf("Ported to Linux and Cygwin December 2022 after many efforts since 1995\n");
+  printf("By Dennis J. Darland dennis.darland@hotmail.com\n");
+  
   
 #ifndef X11
   printf("X interface not installed.\n");
