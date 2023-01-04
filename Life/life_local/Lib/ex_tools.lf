@@ -168,7 +168,7 @@ def_color(main_colors,3,green) ?
 
 %%% font table
 
-def_font(custom,new_font("souvenir_demi10")) ?
+def_font(custom,new_font("-misc-fixed-medium-o-semicondensed--13-120-75-75-c-60-iso10646-1")) ?
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -90,22 +90,16 @@ pixmap <| drawable.
 % X predicates
 
 xOpenConnection (D,Screen:{xDefaultScreen;string}) :- !,
-%%						      write("XXXXX0001"),
 	xcOpenConnection (Screen, Display:@(id => D)), 
-%%						      write("XXXXX0002"),
                               %%% en attendant de modifier le C
 	xBlack<<- xGetScreenBlackPixel (D, xGetConnectionDefaultScreen (D))
                   & @(name => "black"),
-						      write("XXXXX0003"),
 	xWhite<<- xGetScreenWhitePixel (D, xGetConnectionDefaultScreen (D))
                   & @(name => "white").
-%%						      write("XXXXX0004"),
 
-%%	setq (xBlack, BlackPixel),
-%%						      write("XXXXX0005"),
-%%	setq (xWhite, WhitePixel),
-%%						      write("XXXXX0006"),
-%%	pause(0.5).
+%	setq (xBlack, BlackPixel),
+%	setq (xWhite, WhitePixel),
+%	pause(0.5)
 
 
 

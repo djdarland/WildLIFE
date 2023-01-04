@@ -1,6 +1,7 @@
 module("x_mathwiz")?
 public(mathwiz)?
 
+% import("xtools")?
 import("xtools_utils")?
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -150,15 +151,25 @@ def_color(main_colors, b, blue)?
 def_color(main_colors, y, yellow)?
 def_color(main_colors, z_color, 'blue violet')?
 
+%def_font(z_font,
+%	 new_font(cond(life_demo#using_demo_fonts,
+%		       "terminal_bold_narrow18",
+%		       "-adobe-helvetica-bold-r-narrow--17-120-100-100-p-72-*")))?
+
+%def_font(title_font,
+%	 new_font(cond(life_demo#using_demo_fonts,
+%		       "terminal_bold_narrow28",
+%		       "-adobe-helvetica-bold-r-narrow--25-180-100-100-p-116-*")))?
+
 def_font(z_font,
-	 new_font(cond(life_demo#using_demo_fonts,
-		       "terminal_bold_narrow18",
-		       "-adobe-helvetica-bold-r-narrow--17-120-100-100-p-72-*")))?
+	 new_font(cond(true,
+		       "-misc-fixed-medium-o-semicondensed--13-120-75-75-c-60-iso10646-1",
+		       "-misc-fixed-medium-o-semicondensed--13-120-75-75-c-60-iso10646-1")))?
 
 def_font(title_font,
-	 new_font(cond(life_demo#using_demo_fonts,
-		       "terminal_bold_narrow28",
-		       "-adobe-helvetica-bold-r-narrow--25-180-100-100-p-116-*")))?
+	 new_font(cond(true,
+		       "-misc-fixed-medium-o-semicondensed--13-120-75-75-c-60-iso10646-1",
+		       "-misc-fixed-medium-o-semicondensed--13-120-75-75-c-60-iso10646-1")))?
 
 % The control and display panel:
 
