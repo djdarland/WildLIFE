@@ -1,0 +1,312 @@
+Copyright by Denys Duchier, Jan 1995
+Simon Fraser University
+
+All the new primitives and sort added WILD Life belong to module
+"sys".  Unless otherwise specified, all functions residuate as
+appropriate.
+
+----------------------------------------------------------------------
+			     BIT VECTORS
+----------------------------------------------------------------------
+make_bitvector(Size:int)
+	a function returning a bitvector value that can contain at
+	least Size bits.
+
+bitvector_and(B1:bitvector,B2:bitvector)
+	a function returning a new bitvector that is the logical and
+	of its arguments.  If B1 and B2 are of different size, the
+	result is of size the maximum of the 2, and the smaller
+	argument behaves as if it was padded with zeros at the upper
+	end.
+
+bitvector_or(B1:bitvector,B2:bitvector)
+	same as above but for logical or.
+
+bitvector_xor(B1:bitvector,B2:bitvector)
+	same as above but for logical xor (exclusive or).
+
+bitvector_not(B:bitvector)
+	returns a bitvector where the bits have been flipped.
+
+bitvector_count(B:bitvector)
+	returns an integer which is the number of 1 bits in B.
+
+bitvector_get(B:bitvector,I:int)
+	returns 1 or 0 depending on whether bit I is set in bitvector
+	B.
+
+bitvector_set(B:bitvector,I:int)
+	set bit I to 1 in B.
+
+bitvector_clear(B:bitvector,I:int)
+	set bit I to 0 in B.
+
+----------------------------------------------------------------------
+			 REGULAR EXPRESSIONS
+----------------------------------------------------------------------
+
+The regular expression facility makes use of Henry Spencer's free
+implementation of V8 egrep-style regular expressions library.
+
+regexp_compile(S:string)
+	takes a string representing a regular expression and returns a
+	value of sort regexp which is a compiled of version of that
+	regular expression.
+
+regexp_execute can function either as a predicate or as a function
+depending on whether you supply a mask (3rd arg) or not.
+
+regexp_execute(R:regexp,S:string [,offset=>I:int])
+	function that attempts to match R with S.  The optional offset
+	indicates where to start the match in S (by default at the
+	first character).  Returns a term where numeric feature n has
+	value (i,j) if group n in R matched the substring of S
+	starting at character i and ending before character j.  Keep
+	in mind that for some stupid reason strings in WILD Life use
+	1-based indexing.
+
+regexp_execute(R:regexp,S:string,Mask [,offset=>I:int])
+	this works as a predicate.  The Mask indicates for what groups
+	information is desired.  If numeric feature n is present in
+	Mask, this unifies (i,j) with its value (with same
+	interpretation for i and j as above).
+
+module("regexp")?
+
+re_compile(X:{string;regexp})
+	function returning a regexp given a string representing a
+	regular expression or a compiled regular expression (in which
+	case it simply returns its argument).
+
+re_match(R:{string;regexp},S:string)
+	behaves like the functional version of regexp_execute, but
+	also accepts a non-compiled regular expression as its 1st
+	argument.
+
+re_match(R:{string;regexp},S:string,Mask)
+	behaves like the predicate version of regexp_execute...
+
+re_split(R:{string;regexp},S:string,Mask)
+	a predicate which fills the numeric features of Mask with the
+	corresponding substrings of S rather than the bounds of the
+	corresponding group.
+
+re_matching(R:{string;regexp})
+	function returning a non-instantiated string that is
+	constrained to match the regular expression R.
+
+----------------------------------------------------------------------
+			     FILE STREAMS
+----------------------------------------------------------------------
+
+file_stream <| stream.
+
+stdin, stdout, stderr are global vars bound the appropriate file_streams
+
+int2stream(FD:int,Mode:string)
+	function returning a stream (which you should then specialize
+	appropriately).  FD is an integer denoting a file descriptor,
+	and Mode is "r" or "w" etc...
+
+fopen(Path:string,Mode:string)
+	function returning a file_stream.  Mode is like for the C
+	call, i.e. "r", or "w", etc...
+
+fclose(S:stream)
+	predicate to close a stream.
+
+fwrite(S:stream,Text:string)
+	predicate that writes the Text to the stream.
+
+fflush(S:stream)
+	predicate causing all buffered text written to S to be
+	effectively sent to S.  This is very useful for client/server
+	communication through sockets.
+
+get_buffer(S:stream,Size:int)
+	function that reads Size bytes from S and returns them as a
+	string.  The string can be shorter than Size if fewer than
+	Size bytes are available from S (i.e. EOF).
+
+get_record(S:stream,Terminator:string)
+	function that reads from S up to and including the given
+	Terminator.  If no more bytes are available from S but we
+	haven't found the terminator yet, what has been read up to now
+	is returned as a string.  If the Terminator is empty, we read
+	everything until we run out.
+
+get_code(S:stream)
+	function that returns the next character from S, as an integer.
+	or fails if EOF has been reached.
+
+ftell(S:file_stream)
+	returns the current position in the file as an integer.
+
+fseek(S:file_stream,I:int [,Whence:int])
+	sets the current position in S to offset I.  Whence has the
+	same signification as for the C call and should 0 (default)
+	for counting from the beginning, 1 for counting from the
+	current position, or 2 for counting from the end of the file
+	onward.
+
+stream2sys_stream(S)
+	turns an old style stream into a new style stream.
+
+sys_stream2stream(S)
+	turns a new style stream into an old style stream.
+
+----------------------------------------------------------------------
+			SOCKETS AND NETWORKING
+----------------------------------------------------------------------
+
+socket_stream <| stream.
+
+socket(Family:{"AF_INET";"AF_UNIX"},
+       Type:{"SOCK_STREAM";"SOCK_DGRAM";"SOCK_RAW"})
+	both arguments are optional Family defaults to "AF_INET" and
+	Type to "SOCK_STREAM".  function returns a socket_stream.
+
+bind(S:socket_stream [,host=>H:string] , port=>P:int)
+	predicate binds the socket to a port on host (which is
+	optional and naturally defaults to the current host :-)
+	actually INADDR_ANY).  the socket should be in family AF_INET.
+	H can be a hostname or an IP address.
+
+bind(S:socket_stream,path=>P:string)
+	binds the socket to path P in the file system.  the socket
+	should be in family AF_UNIX.
+
+connect(S:socket_stream[,host=>H:string],port=>P:int)
+connect(S:socket_stream,path=>P:string)
+	connects (to a server).  same interface as bind (see above).
+
+listen(S:socket_stream,N:int)
+	accept at most N simultaneous connections.  Of course, since
+	we don't have threads this isn't too terribly useful at the
+	moment.
+
+accept(S:socket_stream)
+	function blocks until a client attempts to connect, at which
+	point it returns a new socket_stream to communicate with the
+	client.
+
+module("client-server")?
+
+connect_to_server(Host:string,Port:int)
+	function returns a socket connected to the server running on
+	machine Host at port Port.
+
+http_query(URL)
+	function returns a term @(headers=>H,body=>B) where B is the
+	document proper, and H is the collection of MIME headers
+	transmitted by the server; each header field is stored on the
+	feature by that name.
+
+	this function won't stay in this module, but will eventually
+	migrate to an http module or something.
+
+start_server(port=>P:int,handler=>H)
+	predicate that turns the current WILD Life process into a
+	server that accepts connections on port P on the local
+	machine.  H should be a boolean function that takes a
+	socket_stream as its argument; it handles communication with
+	one client on the given socket.
+
+Example:
+
+	import("client-server")?
+	client_fun(S)->true|sys#fwrite(S,"Hello World\n").
+	start_server(port=>5000,handler=>client_fun)?
+
+The above implements a simple server that says "Hello World" to
+anybody who connects to this machine on port 5000.  E.g.:
+
+	% telnet roquefort 5000
+	Trying 199.60.4.216...
+	Connected to roquefort.cs.sfu.ca.
+	Escape character is '^]'.
+	Hello World
+	Connection closed by foreign host.
+
+	start_server is written so that it calls fflush and fclose on
+	the client socket no matter what happens.
+
+----------------------------------------------------------------------
+			    SYSTEM ERRORS
+----------------------------------------------------------------------
+
+errno
+	function returns the current C Lib errno as an integer.
+
+errmsg([I:int])
+	returns error message string for error number I.  I defaults
+	to the current errno.
+
+----------------------------------------------------------------------
+			       MODULES
+----------------------------------------------------------------------
+
+import_symbol(Symbol [,as=>Name])
+	predicate. creates in the current module a new name for the
+	definition currently associated with Symbol.  If as=>Name is
+	given then Name must be a symbol and is used as the name.  If
+	omitted, use the same as that of Symbol.
+
+----------------------------------------------------------------------
+			      PROCESSES
+----------------------------------------------------------------------
+
+fork	function returning an integer.  Spawns off as a child process
+	a copy of the current WILD Life process.  returns 0 to the
+	child and the child's process id to the parent.
+
+wait	function returning one of:
+		process_no_children
+		process_exited(PID:int,EXITSTATUS:int)
+		process_signaled(PID:int,SIGNAL:int)
+		process_stopped(PID:int,STOPSTATUS:int)
+		process_continued(PID:int)
+
+waitpid(Pid:int [,Options:int])
+	function returning same as above, but waiting only on child
+	process Pid.
+
+kill(Pid:int,Signal:int)
+	predicate sending a signal to another process.
+
+----------------------------------------------------------------------
+		   ANSI ESCAPE SEQUENCES IN STRINGS
+----------------------------------------------------------------------
+
+ansi escape sequences are now allowed in strings.
+
+----------------------------------------------------------------------
+			    MISCELLANEOUS
+----------------------------------------------------------------------
+
+cuserid -> string
+	returns the username associated with the current process.
+
+gethostname -> string
+	returns the current host's domain name as a string.
+
+lazy_project(X,Feature)
+	function that residuates until the feature becomes available
+	on X. (cf "bullshit" comment in sys.c).
+
+wait_on_feature(X,Feature,Goal)
+	suspends until X acquires Feature, then executes Goal.  To
+	denote the value associated with the feature in Goal, just
+	use X.Feature.  In order to install a value on X's Feature,
+	use X=@(Feature=>Value), because X.Feature = Value will
+	first create Feature, then release Goal, and finally unify
+	Feature's value with Value.
+
+apply1(Fun,Feature,Value)
+	residuates on Fun.  Applies curried function Fun to one more
+	argument as specified by Feature and Value.
+
+getpid	returns the process's id as an integer.
+
+psi2string(X)
+	returns a writeq'ed representation of X as a string.

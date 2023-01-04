@@ -715,7 +715,7 @@ collect_operator -->
 
 
 collect_characters(TerminationChar) -->
-  { current_char :== asc("\\") },
+  { current_char :== asc("\\") },   %% added 2nd \ REV401PLUS
   !,
   { read_char },
   cond(current_char :== end_of_file,
@@ -779,8 +779,8 @@ escape_char(102) -> 12.
 
 escape_char(97) -> 7.
 
-escape_char(92) -> asc("\\").
-
+escape_char(92) -> asc("\\").   %% added 2nd \ REV401PLUS
+ 
 escape_char(63) -> asc("?").
 
 escape_char(39) -> asc("'").

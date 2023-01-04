@@ -75,15 +75,9 @@ def_color(main_colors,d_slider, grey) ?
 
 %%% Default Fonts
 
-%%def_font(bold,new_font("-*-helvetica-bold-r-*-*-14-*-*-*-*-*-*-*")) ?
+def_font(bold,new_font("-misc-fixed-medium-o-semicondensed--13-120-75-75-c-60-iso10646-1")) ?
 
-%% def_font(medium,new_font("-*-helvetica-medium-r-*-*-14-*-*-*-*-*-*-*")) ?
-
-%% Changed to something I had 7/14/2016 DJD 
-
-def_font(bold,new_font("lucidasans-bold-14")) ?
-
-def_font(medium,new_font("lucidasans-14")) ?
+def_font(medium,new_font("-misc-fixed-medium-o-semicondensed--13-120-75-75-c-60-iso10646-1")) ?
 
 
 %%% Dimensions

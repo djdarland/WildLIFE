@@ -8,8 +8,8 @@
 module("color_edit") ?
 public(color_edit) ?
 
+import("xtools")?
 import("xtools_utils")?
-open("xtools")?
 
 persistent(main_panel) ?
 persistent(color_window) ?
@@ -156,10 +156,15 @@ set_color_box(R,G,B) :-
 	xFillRectangle(color_window,X+1,Y+1,W-2,H-2,color => Color),
 	xFreeColor(color_window,Color).
 
+%def_font(title_font,
+%	 new_font(cond(life_demo#using_demo_fonts,
+%		       "-misc-fixed-medium-o-semicondensed--13-120-75-75-c-60-iso10646-1",
+%		       "-misc-fixed-medium-o-semicondensed--13-120-75-75-c-60-iso10646-1")))?
+
 def_font(title_font,
-	 new_font(cond(life_demo#using_demo_fonts,
-		       "terminal_bold_narrow28",
-		       "-adobe-helvetica-bold-r-narrow--25-180-100-100-p-116-*")))?
+	 new_font(cond(true,
+		       "-misc-fixed-medium-o-semicondensed--13-120-75-75-c-60-iso10646-1",
+		       "-misc-fixed-medium-o-semicondensed--13-120-75-75-c-60-iso10646-1")))?
 
 def_color(main_colors,red_color,red)?
 def_color(main_colors,green_color,'lime green')?

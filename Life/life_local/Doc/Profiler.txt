@@ -1,0 +1,549 @@
+
+Arnaud Venet                                                    Jan 14th 1994
+
+
+
+
+                          A simple profiler for LIFE
+                          ==========================
+
+
+
+
+
+This document describes a small profiling module for LIFE. It works by reading
+and rewriting the clauses of the predicates and functions intended for profiling. 
+It gives all the informations allowed by this method, although the statistics
+for the functions are less detailed than for the predicates.
+
+
+
+1- Using the profiler
+---------------------
+
+The profiler is implemented as a module which must be imported by typing :
+
+    > import("profiler")?
+
+You can get on-line help by typing :
+
+    > profile_help?
+
+You can choose to register a predicate or a function for profiling through the
+predicate 'profile' :
+
+    > profile(Name1, Name2 ... NameN, level => Level)?
+
+where the Names are the names of the functions or predicates to profile. 
+'Level' may be 'call', 'clause' or 'goal'. The default value for 'Level' is 
+'call'. Read the next section for more information on the different levels of 
+profiling. All the clauses or rules attached to a predicate or function are 
+preserved and replaced by the rewritten ones.
+If one of the specified names does not refer to an existing predicate or
+function, an error message appears and the name is simply discarded.
+
+You can restore the original clauses attached to 'Name' by simply typing :
+If 'Name' does not refer to a clause or function previously modified by the
+profiler nothing happens and the predicate succeeds.
+Like 'profile', 'unprofile' allows another syntax :
+
+    > unprofile(Name1, Name2 ... NameN)?
+
+To restore the original clauses of all functions and predicates registered for
+profiling type :
+
+    > unprofile?
+
+To display the statistics of use for a predicate or a function type :
+
+    > write_stats(Name, verbosity => Verbosity, file => FileName)?
+
+Verbosity may be 'normal' or 'verbose', default is 'normal'. See section 3 to
+have more information about display modes. 'FileName' is the name of the file
+where you want to store the statistics. Default is @, meaning that the standard
+output is used. If it is specified, as a string, the statistics are stored in
+the file whose name is 'FileName.log'.
+
+To reset the statistics for Name1, ..., NameN just type :
+
+    > clear_stats(Name1, Name2, ... , NameN)?
+
+If no name is specified, the statistics of all the predicates and functions 
+registered for profiling are cleared.
+
+
+WARNING :
+---------
+All the profiling statistics are contained in a persistent variable named 
+'profile_stats'. You can read it as you want, but avoid to modify its contents
+directly. The persistent variables 'profile_backtracking' and 'profile_fail_occured'
+are made public because they are used by the predicates registered for profiling, 
+but DON'T MODIFY THEIR CONTENTS.
+
+
+
+2- Using the different levels
+-----------------------------
+
+a) 'call' level
+   ------------
+   The informations given for a predicate are :
+   _ the number of calls
+   _ the number of successful calls
+   _ the rate of total failures (relatively to the number of calls)
+   _ the rate of explicit failures (relatively to the number of calls)
+   
+   The latter percentage is more precise than the former : it indicates 
+   the failures of a predicate whose origin is inner to the clauses of the 
+   predicate, i.e. a 'fail' into the goals of a clause or the exhaustion of all
+   the choice points. Then a failure of a predicate that previously succeeded
+   but has been retried, due to a backtrack, won't be counted as an explicit 
+   failure, unless a goal 'fail' is encountered during the backtrack. However 
+   it will be counted in the total number of failures.
+
+   The informations given for a function are : 
+   _ the number of calls
+   _ the number of successful calls
+   _ the rate of total failures (relatively to the number of calls)
+   
+
+b) 'clause' level
+   ---------------
+   This mode gives clause-by-clause informations, i.e., for each clause:
+   _ the number of calls
+   _ the number of successful head unifications
+   _ the number of successful calls
+   _ the rate of total failures (relatively to the number of calls)
+   _ the rate of explicit failures (relatively to the number of calls)
+
+   Respectively for each function rule :
+   _ the number of calls
+   _ the number of successful head matchings
+   _ the rate of successful evaluations (relatively to the number of calls)
+   _ the number of successful calls (i.e. successful evaluation AND
+     execution of the function body, if any)
+   _ the rate of total failures (relatively to the number of calls)
+
+
+
+c) 'goal' level
+   ------------
+   This mode adds statistics for each goal of the predicate (or function) body,
+   i.e. the number of times each goal has been tried and its success rate.
+   For the disjunction ';' and the 'cond' statements, statistics are added
+   recursively for each term of the disjunction or condition.
+
+
+   NOTE : in order to avoid confusions : empty bodies for clauses are
+   ----   interpreted by a single goal 'succeed'. So don't be surprised
+          to see a goal for clauses with empty bodies when you display the
+          statistics.
+
+
+
+3- Display modes
+----------------
+
+a) 'normal' mode
+   -------------
+   The statistics are displayed in a condensed fashion, as a chart, each line 
+   corresponding to a predicate(function), a clause(rule) or a goal.
+   The columns correspond to particular statistics. A cell can be filled with
+   "--", meaning that the corresponding statistics don't have sense at this
+   line(e.g. the Entries column for a line describing a goal) or that 
+   it cannot be calculated for the moment (e.g. a failure rate with a null
+   number of calls).
+   At the 'goal' level only the statistics for the goals appearing in a
+   conjunction are displayed. Disjunctions and conditions are then considered 
+   like single goals and the statistics for the goals appearing in their
+   subterms are not displayed. To visualize them use the 'verbose' mode.
+   In fact there are several charts displayed, each of them being sorted
+   relatively to the values of a particular column whose name is printed
+   between stars.
+   The titles of the columns can be modified by reassigning the persistent 
+   public variables provided for this effect :
+   'titles_for_functions' and 'titles_for_predicates'. They must contain five
+   strings representing the names of the columns in the order in which they
+   are displayed. Inconsistent assignments are detected. 
+
+   Example :
+   ---------
+
+> write_stats(app, f)?
+
+Profiling statistics for predicates :
+-----------------------------------
+
+  *Tries*    Entries    Success   %Tot.fail %Expl.fail   predicates
+     9         ---        14        55.55      11.11     app
+
+  *Tries*    Entries    Success   %Tot.fail %Expl.fail   predicates
+     9          5          5         80          0       app#1
+     8          6          9         50          0       app#2
+
+   Tries    *Entries*   Success   %Tot.fail %Expl.fail   predicates
+     8          6          9         50          0       app#2
+     9          5          5         80          0       app#1
+
+   Tries     Entries   *Success*  %Tot.fail %Expl.fail   predicates
+     8          6          9         50          0       app#2
+     9          5          5         80          0       app#1
+
+Profiling statistics for functions :
+----------------------------------
+
+  *Tries*     Match      %Eval    Successes  %Tot.fail   functions
+     3         ---        ---         2        66.66     f
+
+   Tries     *Match*     %Eval    Successes  %Tot.fail   functions
+    ---         2        100          2         50       f#1
+    ---         1        100          0        100       f#2
+
+
+   The notations are :
+
+    ... predicates/functions
+        Name       ---> statistics for the predicate/function
+        Name#1     ---> statistics for the first clause/rule of the 
+                        predicate/function
+
+   The columns represent :
+
+   i)  for the predicates :
+       ------------------
+       . Tries : number of tries of the predicate (resp. clause)
+       . Entries : rate of head unification for the clause, relatively to Tries
+       . Success : rate of success for the predicate (resp. clause), relatively to
+                   the number of tries (resp. head unifications)
+       . Tot.fail : rate of general failure (including failure on backtrack),
+                    relatively to the number of tries (head unifications)
+       . Expl.fail : rate of explicit failure, relatively to the number of
+                     tries (head unifications) 
+
+   ii) for the functions :
+       -----------------
+       . Tries : number of tries of the function
+       . Match : number of times the pattern of the rule matches
+       . Eval : rate of successful evaluation for the rule, relatively
+                to the number of pattern matchings
+       . Successes : rate of success for the function (or rule) relatively to
+                     Tries (or Match)
+       . Tot.fail : rate of general failure (including failure on backtrack),
+                    relatively to Tries (or Match)
+
+
+b) 'verbose' mode
+   --------------
+   The statistics are displayed in detail, without percentage (except for the
+   success rate) and recursively (for condition and disjunction at the goal
+   level).
+
+   Example :
+   ---------
+
+> write_stats(app, f, verbosity => verbose)?
+
+Profiling statistics for predicates :
+-----------------------------------
+
+Profile statistics for predicate 'app' :
+----------------------------------------
++ Number of tries : 9
++ Number of explicit failures : 1
++ Total number of failures : 5
++ Number of successes : 14
++ Success rate : 155.556 %
+
+CLAUSE #1 :
+----------------------------------------
++ Number of tries : 9
++ Number of explicit failures : 0
++ Total number of failures : 4
++ Number of head unifications : 5
++ Number of successes : 5
++ Success rate : 100 %
+
+Statistics for the goals :
+----------------------------------------
+| G#1 <CALL> Tries: 5, Successes: 5
+
+
+CLAUSE #2 :
+----------------------------------------
++ Number of tries : 8
++ Number of explicit failures : 0
++ Total number of failures : 3
++ Number of head unifications : 6
++ Number of successes : 9
++ Success rate : 150 %
+
+Statistics for the goals :
+----------------------------------------
+| G#1 <CALL> Tries: 6, Successes: 9
+
+
+**************************************************
+
+
+Profiling statistics for functions :
+----------------------------------
+
+Profile statistics for function 'f' :
+----------------------------------------
++ Number of tries : 3
++ Number of failures : 2
++ Number of successes : 2
++ Success rate : 66.6667 %
+
+RULE #1 :
+----------------------------------------
++ Number of pattern matchings : 2
++ Number of failures : 1
++ Number of successful evaluations : 2
++ Number of successes : 2
++ Success rate : 100 %
+
+RULE #2 :
+----------------------------------------
++ Number of pattern matchings : 1
++ Number of failures : 1
++ Number of successful evaluations : 1
++ Number of successes : 0
++ Success rate : 0 %
+
+
+**************************************************
+
+
+
+4- Examples
+-----------
+
+a) The difference between failure and explicit failure
+   ---------------------------------------------------
+
+  > app(L, [], L).
+  > app([X | Ls], L, [X | La]) :- app(Ls, L, La).
+
+  > profile(app, level => clause)?
+
+  > app(A, B, [1, 2, 3])?
+
+  *** Yes
+  A = [], B = [1,2,3].
+  --1> ;
+  
+  *** Yes
+  A = [1], B = [2,3].
+  --1> ;
+
+  *** Yes
+  A = [1,2], B = [3].
+  --1> ;
+
+  *** Yes
+  A = [1,2,3], B = [].
+  --1> ;
+
+  *** No
+
+  > write_stats(app)?
+
+Profiling statistics for predicates :
+-----------------------------------
+
+  *Tries*    Entries    Success   %Tot.fail %Expl.fail   predicates
+     4         ---        10        100          0       app
+
+  *Tries*    Entries    Success   %Tot.fail %Expl.fail   predicates
+     4          4          4        100          0       app#1
+     4          3          6        100          0       app#2
+
+   Tries    *Entries*   Success   %Tot.fail %Expl.fail   predicates
+     4          4          4        100          0       app#1
+     4          3          6        100          0       app#2
+
+   Tries     Entries   *Success*  %Tot.fail %Expl.fail   predicates
+     4          3          6        100          0       app#2
+     4          4          4        100          0       app#1
+
+
+  The failures due to backtrack are not counted as explicit failures.
+  But if we type now :
+
+  > app(1, [], X)?
+
+  ** No
+
+  > write_stats(app)?
+
+Profiling statistics for predicates :
+-----------------------------------
+
+  *Tries*    Entries    Success   %Tot.fail %Expl.fail   predicates
+     5         ---        10        100         20       app
+
+  *Tries*    Entries    Success   %Tot.fail %Expl.fail   predicates
+     5          4          4        100          0       app#1
+     5          3          6        100          0       app#2
+
+   Tries    *Entries*   Success   %Tot.fail %Expl.fail   predicates
+     5          4          4        100          0       app#1
+     5          3          6        100          0       app#2
+
+   Tries     Entries   *Success*  %Tot.fail %Expl.fail   predicates
+     5          3          6        100          0       app#2
+     5
+
+  The failure is counted as an explicit failure.
+
+
+
+b) Functions
+   ---------
+
+  > g(S:string) -> S + 1 | S $== "anything".
+  > g(N:int)    -> R | N =:= 0, !, R = "zero" ; R = "<> 0".
+
+  > profile(g, level => goal)?
+
+  > X = g(0)?
+
+  *** Yes
+  X = "zero".
+  
+  --1> Y = g(1)?
+
+  *** Yes
+  X = "zero", Y = "<> 0".
+
+  ----2> Z = g("something")?
+  *** Warning: non-numeric argument(s) in '"something" + 1'.
+
+  *** No
+  X = "zero", Y = "<> 0".
+
+  > write_stats(g)?
+
+Profiling statistics for functions :
+----------------------------------
+
+  *Tries*     Match      %Eval    Successes  %Tot.fail   functions
+     3         ---        ---         2        33.33     g
+
+   Tries     *Match*     %Eval    Successes  %Tot.fail   functions
+    ---         2        100          2          0       g#2
+    ---         1          0          0        100       g#1
+
+
+  > write_stats(g, verbosity => verbose)?
+
+Profiling statistics for functions :
+----------------------------------
+
+Profile statistics for function 'g' :
+----------------------------------------
++ Number of tries : 3
++ Number of failures : 1
++ Number of successes : 2
++ Success rate : 66.6667 %
+
+RULE #1 :
+----------------------------------------
++ Number of pattern matchings : 1
++ Number of failures : 1
++ Number of successful evaluations : 0
++ Number of successes : 0
++ Success rate : 0 %
+
+Statistics for the body :
+----------------------------------------
++ Number of tries : 0
++ Number of successes : 0
++ Number of failures : 0
++ Success rate : ---%
+
+| G#1 <CALL> Tries: 0, Successes: 0
+
+RULE #2 :
+----------------------------------------
++ Number of pattern matchings : 2
++ Number of failures : 0
++ Number of successful evaluations : 2
++ Number of successes : 2
++ Success rate : 100 %
+
+Statistics for the body :
+----------------------------------------
++ Number of tries : 2
++ Number of successes : 2
++ Number of failures : 0
++ Success rate : 100%
+
+| G#1 <DISJUNCTION> Tries: 2, Successes: 2
+| <FIRST TERM> Tries: 2, Successes: 1
+| | G#1 <CALL> Tries: 2, Successes: 1
+| | G#2 <CUT> Tries: 1
+| | G#3 <CALL> Tries: 1, Successes: 1
+| <SECOND TERM> Tries: 1, Successes: 1
+| | G#1 <CALL> Tries: 1, Successes: 1
+
+
+**************************************************
+
+ 
+
+5- What the profiler does
+-------------------------
+
+The profiler retracts the original clauses of predicates and rewrites them 
+by including directives which modify the corresponding terms in 'profile_stats'.
+The main point to know is the adjunction of choice points during the execution
+of the predicates. Two choice-points exactly are added for each call of a clause :
+
+ _ one at the beginning of the execution of the clause. It is used when the
+   clause fails to determine the origin of the failure and to modify the field
+   'explicit_failures' in 'profile_stats' accordingly. It also updates the
+   variables 'profile_fail_occured' and 'profile_backtracking' which save the
+   informations about backtrack and failure, in order to handle correctly the
+   possible failure of the entire predicate.
+ 
+ _ one at the end of the clause. This choice point is left when the clause
+   succeeds and is entered only when the clause is retried, i.e. when a
+   backtrack occurs outside of the predicate. This permits to handle explicit
+   failures correctly.
+
+This can cause notable performance degradation and memory usage, particularly 
+in the case of recursive predicates.
+
+
+6- Possible enhancements
+------------------------
+
+ _ extend function handling (currying, residuation)
+
+ _ allow the profiling of private predicates/functions in modules
+
+
+
+
+
+
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

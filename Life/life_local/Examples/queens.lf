@@ -279,9 +279,11 @@ n <<- 8 ?
 global(q_white <- new_color(180, 224, 201)),
 global(q_black <- new_color(19, 123, 103) ),
 global(queencolor <- new_color(204, 125, 50)),
-global(chessfont <- new_font("-*-symbol-*-*-*-*-*-240-*-*-*-*-*-*")),
+global(chessfont <- new_font("-misc-fixed-medium-o-semicondensed--13-120-75-75-c-60-iso10646-1")),
 global(queensymbol <- "Y") ?
 			%% If your system has the MIT chess font "chs-s50"
 			%% installed, change the previous two lines to
 			%%	load_font(Chessfont, "chs-s50"),
 			%%	global(queensymbol <- "b").
+      module("user")?
+      open("queens")?
