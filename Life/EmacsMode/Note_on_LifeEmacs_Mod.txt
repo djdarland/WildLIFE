@@ -1,0 +1,1 @@
+LifeEmacs_Mod: This directory contains the emacs mode I was able to get to work best. It is not perfect, but I find it useful. Sample on how to use it is in .emcs and .my-gnu-custom-emacs in that directory.
