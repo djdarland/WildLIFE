@@ -10,21 +10,21 @@
 
 
 /*! \def least_sel
-  \brief used by collect_symbols in built_ins.c 
+  \brief used by collect_symbols in built_ins.c
 
 */
- 
+
 #define least_sel 0
 
 /*! \def greatest_sel
-  \brief used by collect_symbols in built_ins.c 
+  \brief used by collect_symbols in built_ins.c
 
 */
 
 #define greatest_sel 1
 
 /*! \def op_sel
-  \brief used by collect_symbols in built_ins.c 
+  \brief used by collect_symbols in built_ins.c
 
 */
 
@@ -33,35 +33,35 @@
 // from c_life.h
 
 /*! \def WFno
-  \brief Input failed 
+  \brief Input failed
 
 */
 
 #define WFno 0
 
 /*! \def WFyes
-  \brief Input succeeded 
+  \brief Input succeeded
 
 */
 
 #define WFyes  1
 
 /*! \def WFmore
-  \brief Input succeeded with possibly more answers 
+  \brief Input succeeded with possibly more answers
 
 */
 #define WFmore 2
 
 // from externs.h
 
-/*! \def WORDALIGN 
-  \brief Memory Alignment 
+/*! \def WORDALIGN
+  \brief Memory Alignment
 
 */
 
 #define WORDALIGN 1 
 
-/*! \def WORD 
+/*! \def WORD
   \brief Memory Word Size
 
 */
@@ -75,7 +75,7 @@
 #endif
 
 /*! \def TS
-  \brief Time stamp technique 
+  \brief Time stamp technique
 
 */
 
@@ -90,15 +90,15 @@
 /*! \def LOCALSETUP
   \brief Enable looking first for local set_up file
 
-  In the final release, LOCALSETUP should be undefined. 
+  In the final release, LOCALSETUP should be undefined.
 */
- 
+
 #define LOCALSETUP
 
 /*! \def LOCALSETUPFILE
   \brief local setup file name
 
-  In the final release, LOCALSETUP should be undefined. 
+  In the final release, LOCALSETUP should be undefined.
 */
 
 #define LOCALSETUPFILE	"./.set_up"
@@ -112,428 +112,428 @@
    number of psi-terms can be allocated in either.
    */
 
-// from extern.h
+   // from extern.h
 
-/*! \def GC_THRESHOLD
-  \brief Garbage collection threshold (1/8 of MEM_SIZE is reasonable). 
+   /*! \def GC_THRESHOLD
+	 \brief Garbage collection threshold (1/8 of MEM_SIZE is reasonable).
 
-  number of words 
-*/
+	 number of words
+   */
 
 #define GC_THRESHOLD (alloc_words>>3) 
 
-/*! \def COPY_THRESHOLD
-  \brief Copy threshold (1/8 of GC_THRESHOLD is reasonable) 
+   /*! \def COPY_THRESHOLD
+	 \brief Copy threshold (1/8 of GC_THRESHOLD is reasonable)
 
-  number of words 
-*/
+	 number of words
+   */
 
 #define COPY_THRESHOLD (GC_THRESHOLD>>3)
 
-/*! \fn REAL
-  \brief Which C type to use to represent reals and integers in Wild_Life. 
+   /*! \fn REAL
+	 \brief Which C type to use to represent reals and integers in Wild_Life.
 
-*/
+   */
 
 #define REAL double
 
-/*! \def WL_MAXINT
-  \brief Maximum exactly representable integer (2^53-1 for double IEEE format) 
- 
-  May be incorrect for Alpha - haven't checked. RM: Mar  1 1994  
-*/
+   /*! \def WL_MAXINT
+	 \brief Maximum exactly representable integer (2^53-1 for double IEEE format)
+
+	 May be incorrect for Alpha - haven't checked. RM: Mar  1 1994
+   */
 
 #define WL_MAXINT 9007199254740991.0
 
-/*! \def PRETTY_SIZE
-  \brief Maximum number of syntactic tokens in a pretty-printed output term. 
+   /*! \def PRETTY_SIZE
+	 \brief Maximum number of syntactic tokens in a pretty-printed output term.
 
-*/
+   */
 
 #define PRETTY_SIZE 20000L
 
-/*! \def MAX_BUILT_INS
-  \brief  Maximum number of built_ins 
+   /*! \def MAX_BUILT_INS
+	 \brief  Maximum number of built_ins
 
-*/
+   */
 
 #define MAX_BUILT_INS 300L
 
-/*! \def STRLEN
-  \brief  Maximum size of file names and input tokens (which includes input strings) 
-  (Note: calculated tokens can be arbitrarily large) 
+   /*! \def STRLEN
+	 \brief  Maximum size of file names and input tokens (which includes input strings)
+	 (Note: calculated tokens can be arbitrarily large)
 
-*/
+   */
 
 #define STRLEN 10000L
 
-/*! \def PAGE_WIDTH
-  \brief Initial page width for printing 
+   /*! \def PAGE_WIDTH
+	 \brief Initial page width for printing
 
-*/
+   */
 
 #define PAGE_WIDTH 80L
 
-/*! \def PRINT_DEPTH
-  \brief  Initial depth limit for printing 
+   /*! \def PRINT_DEPTH
+	 \brief  Initial depth limit for printing
 
-*/
+   */
 
 #define PRINT_DEPTH 1000000000L
 
-/*! \def PRINT_SPLIT
-  \brief Size at which to split printing (REALs are often more precise than ints
+   /*! \def PRINT_SPLIT
+	 \brief Size at which to split printing (REALs are often more precise than ints
 
-*/
+   */
 
 #define PRINT_SPLIT 1000000000L
 
-/*! \def PRINT_POWER
-  \brief Power of ten to split printing (REALs are often more precise than ints 
+   /*! \def PRINT_POWER
+	 \brief Power of ten to split printing (REALs are often more precise than ints
 
-*/
+   */
 
 #define PRINT_POWER 9L
 
-/*! \def PARSER_STACK_SIZE
-  \brief Maximum depth of the parser stack 
+   /*! \def PARSER_STACK_SIZE
+	 \brief Maximum depth of the parser stack
 
-  = maximum depth of embedded brackets etc... 
-*/
+	 = maximum depth of embedded brackets etc...
+   */
 
 #define PARSER_STACK_SIZE 10000L
 
-/*! \def MAX_PRECEDENCE
-  \brief  Maximum operator precedence 
+   /*! \def MAX_PRECEDENCE
+	 \brief  Maximum operator precedence
 
-*/
+   */
 
 #define MAX_PRECEDENCE 1200L
 
-/*! \def PRINT_BUFFER
-  \brief Size of print buffer 
+   /*! \def PRINT_BUFFER
+	 \brief Size of print buffer
 
-*/
+   */
 #define PRINT_BUFFER 100000L
 
-/*! \def PROMPT
-\brief Head of prompt 
+   /*! \def PROMPT
+   \brief Head of prompt
 
-*/
+   */
 
 #define PROMPT "> "
 
-/*! \def PROMPT_BUFFER
-  \brief Size of prompt buffer 
+   /*! \def PROMPT_BUFFER
+	 \brief Size of prompt buffer
 
-*/
+   */
 
 #define PROMPT_BUFFER 200L
 
-/*! \def MAX_LEVEL
-  \brief Maximum indent level
+   /*! \def MAX_LEVEL
+	 \brief Maximum indent level
 
-*/
+   */
 
 #define MAX_LEVEL ((PROMPT_BUFFER-4-strlen(PROMPT))/2)
 
-/*! \def XEVENTDELAY
-  \brief Maximum number of goals executed between event polling 
+   /*! \def XEVENTDELAY
+	 \brief Maximum number of goals executed between event polling
 
-  Ideally, this should be a function of machine speed. 
-*/
+	 Ideally, this should be a function of machine speed.
+   */
 
 #define XEVENTDELAY 1000L
 
-/*! \def MAX_TRACE_INDENT
-  \brief Maximum goal indentation during tracing 
+   /*! \def MAX_TRACE_INDENT
+	 \brief Maximum goal indentation during tracing
 
-*/
+   */
 
 #define MAX_TRACE_INDENT 40L
 
-/*! \def QUOTED_TRUE
-  \brief True flags for the flags field of psi-terms 
+   /*! \def QUOTED_TRUE
+	 \brief True flags for the flags field of psi-terms
 
-*/
+   */
 
 #define QUOTED_TRUE   1L
 
-/*! \def UNFOLDED_TRUE
-  \brief True flags for the flags field of psi-terms 
+   /*! \def UNFOLDED_TRUE
+	 \brief True flags for the flags field of psi-terms
 
-*/
+   */
 
 #define UNFOLDED_TRUE 2L
 
-/*! \def TRUE
-  \brief Standard boolean 
+   /*! \def TRUE
+	 \brief Standard boolean
 
-*/
+   */
 
 #define TRUE      1L
 
-/*! \def FALSE
-  \brief Standard boolean 
+   /*! \def FALSE
+	 \brief Standard boolean
 
-*/
+   */
 
 #define FALSE     0L
 
-/*! \def TRUEMASK
-  \brief Standard boolean 
+   /*! \def TRUEMASK
+	 \brief Standard boolean
 
-*/
+   */
 
 #define TRUEMASK  1L
 
-/*! \def UNDEF
-  \brief For LIFE boolean calculation built-in
-*/
+   /*! \def UNDEF
+	 \brief For LIFE boolean calculation built-in
+   */
 
 #define UNDEF     2L
 
-/*! \def NOT_CODED
-  \brief For LIFE boolean calculation built-in
-*/
+   /*! \def NOT_CODED
+	 \brief For LIFE boolean calculation built-in
+   */
 
 #define NOT_CODED 0L
 
-/*! \def DEFRULES
-  \brief Must be different from NULL, a built-in index, and a pointer
-  Used to indicate that the rules of the definition are needed. 
+   /*! \def DEFRULES
+	 \brief Must be different from NULL, a built-in index, and a pointer
+	 Used to indicate that the rules of the definition are needed.
 
-*/
+   */
 
 #define DEFRULES  -1L
 
-/*! \def EOLN
-  \brief End of line 
+   /*! \def EOLN
+	 \brief End of line
 
-*/
+   */
 
 #define EOLN 10L
 
-/*! \def INT_SIZE
-  \brief How many types can be encoded on one integer 
-  in the transitive closure encoding. 
+   /*! \def INT_SIZE
+	 \brief How many types can be encoded on one integer
+	 in the transitive closure encoding.
 
-*/
+   */
 
 #define INT_SIZE 8*sizeof(unsigned long)
 
-/*! \def HEAP
-  \brief Flag to indicate heap allocation 
+   /*! \def HEAP
+	 \brief Flag to indicate heap allocation
 
-*/
+   */
 
 #define HEAP TRUE
 
-/*! \def STACK
-  \brief Flag to indicate stack allocation 
+   /*! \def STACK
+	 \brief Flag to indicate stack allocation
 
-*/
+   */
 
 #define STACK FALSE
 
-/*! \def FACT
-  \brief Fact Kind of user input 
+   /*! \def FACT
+	 \brief Fact Kind of user input
 
-*/
+   */
 
 #define FACT 100L
 
-/*! \def QUERY 
-  \brief Query Kind of user input 
+   /*! \def QUERY
+	 \brief Query Kind of user input
 
-*/
+   */
 
 #define QUERY 200L
 
-/*! \def ERROR
-  \brief Error Kind of user input 
+   /*! \def ERROR
+	 \brief Error Kind of user input
 
-*/
+   */
 
 #define ERROR 999L
- 
-/*! \def RMASK
-  \brief Bit mask for status field of psi-terms: RMASK is used as a flag to 
-  avoid infinite loops when tracing psi-terms.
-*/
+
+   /*! \def RMASK
+	 \brief Bit mask for status field of psi-terms: RMASK is used as a flag to
+	 avoid infinite loops when tracing psi-terms.
+   */
 
 #define RMASK 256L
 
-/*! \def SMASK 
-  \brief Bit mask for status field of psi-terms: SMASK masks off the    
-  status bits.  These are used in the 'mark' routines (copy.c) and in 
-  check_out. 
-*/
+   /*! \def SMASK
+	 \brief Bit mask for status field of psi-terms: SMASK masks off the
+	 status bits.  These are used in the 'mark' routines (copy.c) and in
+	 check_out.
+   */
 
 #define SMASK 255L
 
-/*! \def TS
-  \brief Initial value of time stamp (for variable binding) 
+   /*! \def TS
+	 \brief Initial value of time stamp (for variable binding)
 
-*/
+   */
 
 #ifdef TS
 #define INIT_TIME_STAMP 1L
 #endif
 
-/*! \def psi_term_ptr
-  \brief values of type_ptr
+   /*! \def psi_term_ptr
+	 \brief values of type_ptr
 
-*/
+   */
 
 #define psi_term_ptr	0
 
-/*! \def resid_ptr
-  \brief values of type_ptr
+   /*! \def resid_ptr
+	 \brief values of type_ptr
 
-*/
+   */
 
 #define resid_ptr	1
 
-/*! \def int_ptr
-  \brief values of type_ptr
+   /*! \def int_ptr
+	 \brief values of type_ptr
 
-*/
+   */
 
 #define int_ptr		2
 
-/*! \def def_ptr	
-  \brief values of type_ptr
+   /*! \def def_ptr
+	 \brief values of type_ptr
 
-*/
+   */
 
 #define def_ptr		3
 
-/*! \def code_ptr
-  \brief values of type_ptr
+   /*! \def code_ptr
+	 \brief values of type_ptr
 
-*/
+   */
 
 #define code_ptr	4
 
-/*! \def goal_ptr
-  \brief values of type_ptr
+   /*! \def goal_ptr
+	 \brief values of type_ptr
 
-*/
+   */
 
 #define goal_ptr	5
 
-/*! \def cut_ptr 
-  \brief values of type_ptr  22.9 
+   /*! \def cut_ptr
+	 \brief values of type_ptr  22.9
 
-*/
+   */
 
 #define cut_ptr         6 
 
 #ifdef CLIFE
 
-/*! \def block_ptr
-  \brief values of type_ptr
+   /*! \def block_ptr
+	 \brief values of type_ptr
 
-*/
+   */
 
 #define block_ptr      12
 
-/*! \def value_ptr
-  \brief values of type_ptr
+   /*! \def value_ptr
+	 \brief values of type_ptr
 
-*/
+   */
 
 #define value_ptr      13
 #endif /* CLIFE */
 
-/*! \def destroy_window
-  \brief To backtrack on window creation 
+   /*! \def destroy_window
+	 \brief To backtrack on window creation
 
-*/
+   */
 
 #define destroy_window	7+32 
 
-/*! \def show_window
-  \brief To backtrack on show window 
+   /*! \def show_window
+	 \brief To backtrack on show window
 
-*/
+   */
 
 #define show_window	8+32 
 
-/*! \def hide_window
-  \brief To backtrack on hide window 
+   /*! \def hide_window
+	 \brief To backtrack on hide window
 
-*/
+   */
 
 #define hide_window	9+32 
 
-/*! \def show_subwindow
-  \brief To backtrack on show sub windows RM 8/12/92 
+   /*! \def show_subwindow
+	 \brief To backtrack on show sub windows RM 8/12/92
 
-*/
+   */
 
 #define show_subwindow  10+32 
 
-/*! \def hide_subwindow
-  \brief To backtrack on hide sub windows RM 8/12/92 
+   /*! \def hide_subwindow
+	 \brief To backtrack on hide sub windows RM 8/12/92
 
-*/
+   */
 
 #define hide_subwindow  11+32 
 
-/*! \def undo_action
-  \brief Fast checking for an undo action 
+   /*! \def undo_action
+	 \brief Fast checking for an undo action
 
-*/
+   */
 
 #define undo_action	  32 
 
-// from lefun.h
+   // from lefun.h
 
-/*! \def set_empty
-  \brief Set constants for deref_args in lefun.c 
+   /*! \def set_empty
+	 \brief Set constants for deref_args in lefun.c
 
-*/
+   */
 
 #define set_empty    0
 
-/*! \def set_1
-  \brief Set constants for deref_args in lefun.c 
+   /*! \def set_1
+	 \brief Set constants for deref_args in lefun.c
 
-*/
+   */
 
 #define set_1        1
 
-/*! \def set_2
-  \brief Set constants for deref_args in lefun.c 
+   /*! \def set_2
+	 \brief Set constants for deref_args in lefun.c
 
-*/
+   */
 
 #define set_2        2
 
-/*! \def set_1_2
-  \brief Set constants for deref_args in lefun.c 
+   /*! \def set_1_2
+	 \brief Set constants for deref_args in lefun.c
 
-*/
+   */
 
 #define set_1_2      3
 
-/*! \def set_1_2_3
-  \brief Set constants for deref_args in lefun.c 
+   /*! \def set_1_2_3
+	 \brief Set constants for deref_args in lefun.c
 
-*/
+   */
 
 #define set_1_2_3    7
 
-/*! \def set_1_2_3_4
-  \brief Set constants for deref_args in lefun.c 
+   /*! \def set_1_2_3_4
+	 \brief Set constants for deref_args in lefun.c
 
-*/
+   */
 
 #define set_1_2_3_4 15
 
-// from list.h
+   // from list.h
 
 #ifndef NULL
 #define NULL 0
@@ -547,25 +547,25 @@
   When calling a primitive, you always need to process the arguments
   according to the same protocol.  The call_primitive procedure does
   all this work for you.  It should be called as follows:
-  
+
   call_primitive(f,n,args,info)
-  
+
   where f is the primitive implementing the actual functionality, n
   is the number of arguments described in args, and args is an array
   of argument descriptions, and info is a pointer to extra info to be
   passed to f.  Each argument is described by a psi_arg structure
   whose 1st field is a string naming the feature, 2nd field is a type
   restriction, and 3rd field describes processing options, e.g.:
-  
+
   { "1" , quoted_string , REQUIRED }
-  
+
   describes a required argument on feature 1, that must be a string.
   The 3rd field is a mask of boolean flags and is constructed by
   ORing some constants chosen from the set:
-  
+
   OPTIONAL	for an optional argument
   REQUIRED	for a required argument (i.e. residuate on it if not
-                present
+				present
   UNEVALED	if the argument should not be evaluated
   JUSTFAIL	to just fail is the argument does not meet its type
 		restriction
@@ -573,13 +573,13 @@
 		in that case the 2nd psi_arg field is interpreted as
 		a pointer to a NULL terminated array of ptr_definitions
   MANDATORY	like REQUIRED, but it is an error for it not to be
-  		present; don't residuate.  This is useful for
+		present; don't residuate.  This is useful for
 		predicates since it doesn't make sense for them to
 		residuate.
   NOVALUE	no value required for this argument.
 
   The primitive must be defined to take the following arguments
-  		f(argl,result,funct[,info])
+		f(argl,result,funct[,info])
   where argl is an array containing the arguments obtained by call_
   primitive, result is the result in case we are implementing a
   function, and info (optional) is extra information, typically a
@@ -589,362 +589,362 @@
 
 #define OPTIONAL  0
 
-/*! \def REQUIRED
-  \brief for call_primitive
+ /*! \def REQUIRED
+   \brief for call_primitive
 
-  When calling a primitive, you always need to process the arguments
-  according to the same protocol.  The call_primitive procedure does
-  all this work for you.  It should be called as follows:
-  
-  call_primitive(f,n,args,info)
-  
-  where f is the primitive implementing the actual functionality, n
-  is the number of arguments described in args, and args is an array
-  of argument descriptions, and info is a pointer to extra info to be
-  passed to f.  Each argument is described by a psi_arg structure
-  whose 1st field is a string naming the feature, 2nd field is a type
-  restriction, and 3rd field describes processing options, e.g.:
-  
-  { "1" , quoted_string , REQUIRED }
-  
-  describes a required argument on feature 1, that must be a string.
-  The 3rd field is a mask of boolean flags and is constructed by
-  ORing some constants chosen from the set:
-  
-  OPTIONAL	for an optional argument
-  REQUIRED	for a required argument (i.e. residuate on it if not
-                present
-  UNEVALED	if the argument should not be evaluated
-  JUSTFAIL	to just fail is the argument does not meet its type
-		restriction
-  POLYTYPE	sometimes you want to permit several particular sorts
-		in that case the 2nd psi_arg field is interpreted as
-		a pointer to a NULL terminated array of ptr_definitions
-  MANDATORY	like REQUIRED, but it is an error for it not to be
-  		present; don't residuate.  This is useful for
-		predicates since it doesn't make sense for them to
-		residuate.
-  NOVALUE	no value required for this argument.
+   When calling a primitive, you always need to process the arguments
+   according to the same protocol.  The call_primitive procedure does
+   all this work for you.  It should be called as follows:
 
-  The primitive must be defined to take the following arguments
-  		f(argl,result,funct[,info])
-  where argl is an array containing the arguments obtained by call_
-  primitive, result is the result in case we are implementing a
-  function, and info (optional) is extra information, typically a
-  pointer to a structure.
- */
+   call_primitive(f,n,args,info)
+
+   where f is the primitive implementing the actual functionality, n
+   is the number of arguments described in args, and args is an array
+   of argument descriptions, and info is a pointer to extra info to be
+   passed to f.  Each argument is described by a psi_arg structure
+   whose 1st field is a string naming the feature, 2nd field is a type
+   restriction, and 3rd field describes processing options, e.g.:
+
+   { "1" , quoted_string , REQUIRED }
+
+   describes a required argument on feature 1, that must be a string.
+   The 3rd field is a mask of boolean flags and is constructed by
+   ORing some constants chosen from the set:
+
+   OPTIONAL	for an optional argument
+   REQUIRED	for a required argument (i.e. residuate on it if not
+				 present
+   UNEVALED	if the argument should not be evaluated
+   JUSTFAIL	to just fail is the argument does not meet its type
+		 restriction
+   POLYTYPE	sometimes you want to permit several particular sorts
+		 in that case the 2nd psi_arg field is interpreted as
+		 a pointer to a NULL terminated array of ptr_definitions
+   MANDATORY	like REQUIRED, but it is an error for it not to be
+		 present; don't residuate.  This is useful for
+		 predicates since it doesn't make sense for them to
+		 residuate.
+   NOVALUE	no value required for this argument.
+
+   The primitive must be defined to take the following arguments
+		 f(argl,result,funct[,info])
+   where argl is an array containing the arguments obtained by call_
+   primitive, result is the result in case we are implementing a
+   function, and info (optional) is extra information, typically a
+   pointer to a structure.
+  */
 
 #define REQUIRED  1
 
-/*! \def UNEVALED
-  \brief for call_primitive
+  /*! \def UNEVALED
+	\brief for call_primitive
 
-  When calling a primitive, you always need to process the arguments
-  according to the same protocol.  The call_primitive procedure does
-  all this work for you.  It should be called as follows:
-  
-  call_primitive(f,n,args,info)
-  
-  where f is the primitive implementing the actual functionality, n
-  is the number of arguments described in args, and args is an array
-  of argument descriptions, and info is a pointer to extra info to be
-  passed to f.  Each argument is described by a psi_arg structure
-  whose 1st field is a string naming the feature, 2nd field is a type
-  restriction, and 3rd field describes processing options, e.g.:
-  
-  { "1" , quoted_string , REQUIRED }
-  
-  describes a required argument on feature 1, that must be a string.
-  The 3rd field is a mask of boolean flags and is constructed by
-  ORing some constants chosen from the set:
-  
-  OPTIONAL	for an optional argument
-  REQUIRED	for a required argument (i.e. residuate on it if not
-                present
-  UNEVALED	if the argument should not be evaluated
-  JUSTFAIL	to just fail is the argument does not meet its type
-		restriction
-  POLYTYPE	sometimes you want to permit several particular sorts
-		in that case the 2nd psi_arg field is interpreted as
-		a pointer to a NULL terminated array of ptr_definitions
-  MANDATORY	like REQUIRED, but it is an error for it not to be
-  		present; don't residuate.  This is useful for
-		predicates since it doesn't make sense for them to
-		residuate.
-  NOVALUE	no value required for this argument.
+	When calling a primitive, you always need to process the arguments
+	according to the same protocol.  The call_primitive procedure does
+	all this work for you.  It should be called as follows:
 
-  The primitive must be defined to take the following arguments
-  		f(argl,result,funct[,info])
-  where argl is an array containing the arguments obtained by call_
-  primitive, result is the result in case we are implementing a
-  function, and info (optional) is extra information, typically a
-  pointer to a structure.
- */
+	call_primitive(f,n,args,info)
+
+	where f is the primitive implementing the actual functionality, n
+	is the number of arguments described in args, and args is an array
+	of argument descriptions, and info is a pointer to extra info to be
+	passed to f.  Each argument is described by a psi_arg structure
+	whose 1st field is a string naming the feature, 2nd field is a type
+	restriction, and 3rd field describes processing options, e.g.:
+
+	{ "1" , quoted_string , REQUIRED }
+
+	describes a required argument on feature 1, that must be a string.
+	The 3rd field is a mask of boolean flags and is constructed by
+	ORing some constants chosen from the set:
+
+	OPTIONAL	for an optional argument
+	REQUIRED	for a required argument (i.e. residuate on it if not
+				  present
+	UNEVALED	if the argument should not be evaluated
+	JUSTFAIL	to just fail is the argument does not meet its type
+		  restriction
+	POLYTYPE	sometimes you want to permit several particular sorts
+		  in that case the 2nd psi_arg field is interpreted as
+		  a pointer to a NULL terminated array of ptr_definitions
+	MANDATORY	like REQUIRED, but it is an error for it not to be
+		  present; don't residuate.  This is useful for
+		  predicates since it doesn't make sense for them to
+		  residuate.
+	NOVALUE	no value required for this argument.
+
+	The primitive must be defined to take the following arguments
+		  f(argl,result,funct[,info])
+	where argl is an array containing the arguments obtained by call_
+	primitive, result is the result in case we are implementing a
+	function, and info (optional) is extra information, typically a
+	pointer to a structure.
+   */
 
 #define UNEVALED  (1<<1)
 
-/*! \def JUSTFAIL
-  \brief for call_primitive
+   /*! \def JUSTFAIL
+	 \brief for call_primitive
 
-  When calling a primitive, you always need to process the arguments
-  according to the same protocol.  The call_primitive procedure does
-  all this work for you.  It should be called as follows:
-  
-  call_primitive(f,n,args,info)
-  
-  where f is the primitive implementing the actual functionality, n
-  is the number of arguments described in args, and args is an array
-  of argument descriptions, and info is a pointer to extra info to be
-  passed to f.  Each argument is described by a psi_arg structure
-  whose 1st field is a string naming the feature, 2nd field is a type
-  restriction, and 3rd field describes processing options, e.g.:
-  
-  { "1" , quoted_string , REQUIRED }
-  
-  describes a required argument on feature 1, that must be a string.
-  The 3rd field is a mask of boolean flags and is constructed by
-  ORing some constants chosen from the set:
-  
-  OPTIONAL	for an optional argument
-  REQUIRED	for a required argument (i.e. residuate on it if not
-                present
-  UNEVALED	if the argument should not be evaluated
-  JUSTFAIL	to just fail is the argument does not meet its type
-		restriction
-  POLYTYPE	sometimes you want to permit several particular sorts
-		in that case the 2nd psi_arg field is interpreted as
-		a pointer to a NULL terminated array of ptr_definitions
-  MANDATORY	like REQUIRED, but it is an error for it not to be
-  		present; don't residuate.  This is useful for
-		predicates since it doesn't make sense for them to
-		residuate.
-  NOVALUE	no value required for this argument.
+	 When calling a primitive, you always need to process the arguments
+	 according to the same protocol.  The call_primitive procedure does
+	 all this work for you.  It should be called as follows:
 
-  The primitive must be defined to take the following arguments
-  		f(argl,result,funct[,info])
-  where argl is an array containing the arguments obtained by call_
-  primitive, result is the result in case we are implementing a
-  function, and info (optional) is extra information, typically a
-  pointer to a structure.
- */
+	 call_primitive(f,n,args,info)
+
+	 where f is the primitive implementing the actual functionality, n
+	 is the number of arguments described in args, and args is an array
+	 of argument descriptions, and info is a pointer to extra info to be
+	 passed to f.  Each argument is described by a psi_arg structure
+	 whose 1st field is a string naming the feature, 2nd field is a type
+	 restriction, and 3rd field describes processing options, e.g.:
+
+	 { "1" , quoted_string , REQUIRED }
+
+	 describes a required argument on feature 1, that must be a string.
+	 The 3rd field is a mask of boolean flags and is constructed by
+	 ORing some constants chosen from the set:
+
+	 OPTIONAL	for an optional argument
+	 REQUIRED	for a required argument (i.e. residuate on it if not
+				   present
+	 UNEVALED	if the argument should not be evaluated
+	 JUSTFAIL	to just fail is the argument does not meet its type
+		   restriction
+	 POLYTYPE	sometimes you want to permit several particular sorts
+		   in that case the 2nd psi_arg field is interpreted as
+		   a pointer to a NULL terminated array of ptr_definitions
+	 MANDATORY	like REQUIRED, but it is an error for it not to be
+		   present; don't residuate.  This is useful for
+		   predicates since it doesn't make sense for them to
+		   residuate.
+	 NOVALUE	no value required for this argument.
+
+	 The primitive must be defined to take the following arguments
+		   f(argl,result,funct[,info])
+	 where argl is an array containing the arguments obtained by call_
+	 primitive, result is the result in case we are implementing a
+	 function, and info (optional) is extra information, typically a
+	 pointer to a structure.
+	*/
 
 #define JUSTFAIL  (1<<2)
 
-/*! \def POLYTYPE
-  \brief for call_primitive
+	/*! \def POLYTYPE
+	  \brief for call_primitive
 
-  When calling a primitive, you always need to process the arguments
-  according to the same protocol.  The call_primitive procedure does
-  all this work for you.  It should be called as follows:
-  
-  call_primitive(f,n,args,info)
-  
-  where f is the primitive implementing the actual functionality, n
-  is the number of arguments described in args, and args is an array
-  of argument descriptions, and info is a pointer to extra info to be
-  passed to f.  Each argument is described by a psi_arg structure
-  whose 1st field is a string naming the feature, 2nd field is a type
-  restriction, and 3rd field describes processing options, e.g.:
-  
-  { "1" , quoted_string , REQUIRED }
-  
-  describes a required argument on feature 1, that must be a string.
-  The 3rd field is a mask of boolean flags and is constructed by
-  ORing some constants chosen from the set:
-  
-  OPTIONAL	for an optional argument
-  REQUIRED	for a required argument (i.e. residuate on it if not
-                present
-  UNEVALED	if the argument should not be evaluated
-  JUSTFAIL	to just fail is the argument does not meet its type
-		restriction
-  POLYTYPE	sometimes you want to permit several particular sorts
-		in that case the 2nd psi_arg field is interpreted as
-		a pointer to a NULL terminated array of ptr_definitions
-  MANDATORY	like REQUIRED, but it is an error for it not to be
-  		present; don't residuate.  This is useful for
-		predicates since it doesn't make sense for them to
-		residuate.
-  NOVALUE	no value required for this argument.
+	  When calling a primitive, you always need to process the arguments
+	  according to the same protocol.  The call_primitive procedure does
+	  all this work for you.  It should be called as follows:
 
-  The primitive must be defined to take the following arguments
-  		f(argl,result,funct[,info])
-  where argl is an array containing the arguments obtained by call_
-  primitive, result is the result in case we are implementing a
-  function, and info (optional) is extra information, typically a
-  pointer to a structure.
- */
+	  call_primitive(f,n,args,info)
+
+	  where f is the primitive implementing the actual functionality, n
+	  is the number of arguments described in args, and args is an array
+	  of argument descriptions, and info is a pointer to extra info to be
+	  passed to f.  Each argument is described by a psi_arg structure
+	  whose 1st field is a string naming the feature, 2nd field is a type
+	  restriction, and 3rd field describes processing options, e.g.:
+
+	  { "1" , quoted_string , REQUIRED }
+
+	  describes a required argument on feature 1, that must be a string.
+	  The 3rd field is a mask of boolean flags and is constructed by
+	  ORing some constants chosen from the set:
+
+	  OPTIONAL	for an optional argument
+	  REQUIRED	for a required argument (i.e. residuate on it if not
+					present
+	  UNEVALED	if the argument should not be evaluated
+	  JUSTFAIL	to just fail is the argument does not meet its type
+			restriction
+	  POLYTYPE	sometimes you want to permit several particular sorts
+			in that case the 2nd psi_arg field is interpreted as
+			a pointer to a NULL terminated array of ptr_definitions
+	  MANDATORY	like REQUIRED, but it is an error for it not to be
+			present; don't residuate.  This is useful for
+			predicates since it doesn't make sense for them to
+			residuate.
+	  NOVALUE	no value required for this argument.
+
+	  The primitive must be defined to take the following arguments
+			f(argl,result,funct[,info])
+	  where argl is an array containing the arguments obtained by call_
+	  primitive, result is the result in case we are implementing a
+	  function, and info (optional) is extra information, typically a
+	  pointer to a structure.
+	 */
 
 #define POLYTYPE  (1<<3)
-/*! \def MANDATORY
-  \brief for call_primitive
+	 /*! \def MANDATORY
+	   \brief for call_primitive
 
-  When calling a primitive, you always need to process the arguments
-  according to the same protocol.  The call_primitive procedure does
-  all this work for you.  It should be called as follows:
-  
-  call_primitive(f,n,args,info)
-  
-  where f is the primitive implementing the actual functionality, n
-  is the number of arguments described in args, and args is an array
-  of argument descriptions, and info is a pointer to extra info to be
-  passed to f.  Each argument is described by a psi_arg structure
-  whose 1st field is a string naming the feature, 2nd field is a type
-  restriction, and 3rd field describes processing options, e.g.:
-  
-  { "1" , quoted_string , REQUIRED }
-  
-  describes a required argument on feature 1, that must be a string.
-  The 3rd field is a mask of boolean flags and is constructed by
-  ORing some constants chosen from the set:
-  
-  OPTIONAL	for an optional argument
-  REQUIRED	for a required argument (i.e. residuate on it if not
-                present
-  UNEVALED	if the argument should not be evaluated
-  JUSTFAIL	to just fail is the argument does not meet its type
-		restriction
-  POLYTYPE	sometimes you want to permit several particular sorts
-		in that case the 2nd psi_arg field is interpreted as
-		a pointer to a NULL terminated array of ptr_definitions
-  MANDATORY	like REQUIRED, but it is an error for it not to be
-  		present; don't residuate.  This is useful for
-		predicates since it doesn't make sense for them to
-		residuate.
-  NOVALUE	no value required for this argument.
+	   When calling a primitive, you always need to process the arguments
+	   according to the same protocol.  The call_primitive procedure does
+	   all this work for you.  It should be called as follows:
 
-  The primitive must be defined to take the following arguments
-  		f(argl,result,funct[,info])
-  where argl is an array containing the arguments obtained by call_
-  primitive, result is the result in case we are implementing a
-  function, and info (optional) is extra information, typically a
-  pointer to a structure.
- */
+	   call_primitive(f,n,args,info)
+
+	   where f is the primitive implementing the actual functionality, n
+	   is the number of arguments described in args, and args is an array
+	   of argument descriptions, and info is a pointer to extra info to be
+	   passed to f.  Each argument is described by a psi_arg structure
+	   whose 1st field is a string naming the feature, 2nd field is a type
+	   restriction, and 3rd field describes processing options, e.g.:
+
+	   { "1" , quoted_string , REQUIRED }
+
+	   describes a required argument on feature 1, that must be a string.
+	   The 3rd field is a mask of boolean flags and is constructed by
+	   ORing some constants chosen from the set:
+
+	   OPTIONAL	for an optional argument
+	   REQUIRED	for a required argument (i.e. residuate on it if not
+					 present
+	   UNEVALED	if the argument should not be evaluated
+	   JUSTFAIL	to just fail is the argument does not meet its type
+			 restriction
+	   POLYTYPE	sometimes you want to permit several particular sorts
+			 in that case the 2nd psi_arg field is interpreted as
+			 a pointer to a NULL terminated array of ptr_definitions
+	   MANDATORY	like REQUIRED, but it is an error for it not to be
+			 present; don't residuate.  This is useful for
+			 predicates since it doesn't make sense for them to
+			 residuate.
+	   NOVALUE	no value required for this argument.
+
+	   The primitive must be defined to take the following arguments
+			 f(argl,result,funct[,info])
+	   where argl is an array containing the arguments obtained by call_
+	   primitive, result is the result in case we are implementing a
+	   function, and info (optional) is extra information, typically a
+	   pointer to a structure.
+	  */
 
 #define MANDATORY (1<<4)
 
-/*! \def NOVALUE
-  \brief for call_primitive
+	  /*! \def NOVALUE
+		\brief for call_primitive
 
-  When calling a primitive, you always need to process the arguments
-  according to the same protocol.  The call_primitive procedure does
-  all this work for you.  It should be called as follows:
-  
-  call_primitive(f,n,args,info)
-  
-  where f is the primitive implementing the actual functionality, n
-  is the number of arguments described in args, and args is an array
-  of argument descriptions, and info is a pointer to extra info to be
-  passed to f.  Each argument is described by a psi_arg structure
-  whose 1st field is a string naming the feature, 2nd field is a type
-  restriction, and 3rd field describes processing options, e.g.:
-  
-  { "1" , quoted_string , REQUIRED }
-  
-  describes a required argument on feature 1, that must be a string.
-  The 3rd field is a mask of boolean flags and is constructed by
-  ORing some constants chosen from the set:
-  
-  OPTIONAL	for an optional argument
-  REQUIRED	for a required argument (i.e. residuate on it if not
-                present
-  UNEVALED	if the argument should not be evaluated
-  JUSTFAIL	to just fail is the argument does not meet its type
-		restriction
-  POLYTYPE	sometimes you want to permit several particular sorts
-		in that case the 2nd psi_arg field is interpreted as
-		a pointer to a NULL terminated array of ptr_definitions
-  MANDATORY	like REQUIRED, but it is an error for it not to be
-  		present; don't residuate.  This is useful for
-		predicates since it doesn't make sense for them to
-		residuate.
-  NOVALUE	no value required for this argument.
+		When calling a primitive, you always need to process the arguments
+		according to the same protocol.  The call_primitive procedure does
+		all this work for you.  It should be called as follows:
 
-  The primitive must be defined to take the following arguments
-  		f(argl,result,funct[,info])
-  where argl is an array containing the arguments obtained by call_
-  primitive, result is the result in case we are implementing a
-  function, and info (optional) is extra information, typically a
-  pointer to a structure.
- */
+		call_primitive(f,n,args,info)
+
+		where f is the primitive implementing the actual functionality, n
+		is the number of arguments described in args, and args is an array
+		of argument descriptions, and info is a pointer to extra info to be
+		passed to f.  Each argument is described by a psi_arg structure
+		whose 1st field is a string naming the feature, 2nd field is a type
+		restriction, and 3rd field describes processing options, e.g.:
+
+		{ "1" , quoted_string , REQUIRED }
+
+		describes a required argument on feature 1, that must be a string.
+		The 3rd field is a mask of boolean flags and is constructed by
+		ORing some constants chosen from the set:
+
+		OPTIONAL	for an optional argument
+		REQUIRED	for a required argument (i.e. residuate on it if not
+					  present
+		UNEVALED	if the argument should not be evaluated
+		JUSTFAIL	to just fail is the argument does not meet its type
+			  restriction
+		POLYTYPE	sometimes you want to permit several particular sorts
+			  in that case the 2nd psi_arg field is interpreted as
+			  a pointer to a NULL terminated array of ptr_definitions
+		MANDATORY	like REQUIRED, but it is an error for it not to be
+			  present; don't residuate.  This is useful for
+			  predicates since it doesn't make sense for them to
+			  residuate.
+		NOVALUE	no value required for this argument.
+
+		The primitive must be defined to take the following arguments
+			  f(argl,result,funct[,info])
+		where argl is an array containing the arguments obtained by call_
+		primitive, result is the result in case we are implementing a
+		function, and info (optional) is extra information, typically a
+		pointer to a structure.
+	   */
 
 #define NOVALUE   (1<<5)
 
-// from token.h
+	   // from token.h
 
-/* Names of the features */
+	   /* Names of the features */
 
-/*! \def STREAM
-  \brief feature name
-  
-*/
+	   /*! \def STREAM
+		 \brief feature name
+
+	   */
 
 #define STREAM "stream"
 
-/*! \def INPUT_FILE_NAME
-  \brief feature name
+	   /*! \def INPUT_FILE_NAME
+		 \brief feature name
 
-*/
+	   */
 
 #define INPUT_FILE_NAME "input_file_name"
 
-/*! \def LINE_COUNT
-  \brief feature name
+	   /*! \def LINE_COUNT
+		 \brief feature name
 
-*/
+	   */
 
 #define LINE_COUNT "line_count"
 
-/*! \def START_OF_LINE
-  \brief feature name
+	   /*! \def START_OF_LINE
+		 \brief feature name
 
-*/
+	   */
 
 #define START_OF_LINE "start_of_line"
 
-/*! \def SAVED_CHAR
-  \brief feature name
+	   /*! \def SAVED_CHAR
+		 \brief feature name
 
-*/
+	   */
 
 #define SAVED_CHAR "saved_char"
 
-/*! \def OLD_SAVED_CHAR
-  \brief feature name
+	   /*! \def OLD_SAVED_CHAR
+		 \brief feature name
 
-*/
+	   */
 
 #define OLD_SAVED_CHAR "old_saved_char"
 
-/*! \def SAVED_PSI_TERM
-  \brief feature name
+	   /*! \def SAVED_PSI_TERM
+		 \brief feature name
 
-*/
+	   */
 
 #define SAVED_PSI_TERM "saved_psi_term"
 
-/*! \def OLD_SAVED_PSI_TERM
-  \brief feature name
+	   /*! \def OLD_SAVED_PSI_TERM
+		 \brief feature name
 
-*/
+	   */
 
 #define OLD_SAVED_PSI_TERM "old_saved_psi_term"
 
-/*! \def EOF_FLAG
-  \brief feature name
+	   /*! \def EOF_FLAG
+		 \brief feature name
 
-*/
+	   */
 
 #define EOF_FLAG "eof_flag"
 
-/*! \def CURRENT_MODULE
-  \brief feature name
+	   /*! \def CURRENT_MODULE
+		 \brief feature name
 
-*/
+	   */
 
 #define CURRENT_MODULE "current_module"
 
-// from xdisplaylist.h
+	   // from xdisplaylist.h
 
 #define xDefaultFont -1
 #define xDefaultLineWidth -1
@@ -961,7 +961,7 @@
 #define MAXNBARGS 20
 
 /*! \def STRCMP
-  \brief indicates to use strcmp for comparison (c function) 
+  \brief indicates to use strcmp for comparison (c function)
 
   original wild_life had passed functions
 */
@@ -969,7 +969,7 @@
 #define STRCMP  1L 
 
 /*! \def INTCMP
-  \brief indicates to use intcmp for comparison (in trees.c) 
+  \brief indicates to use intcmp for comparison (in trees.c)
 
   original wild_life had passed functions
 */
@@ -977,7 +977,7 @@
 #define INTCMP  2L
 
 /*! \def FEATCMP
-  \brief indicates to use featcmp for comparison (in trees.c) 
+  \brief indicates to use featcmp for comparison (in trees.c)
 
   original wild_life had passed functions
 */
@@ -986,42 +986,42 @@
 
 /*! \def nop
   \brief was enum (operator) but va_arg could not handle - now typedef
- 
+
 */
 
 #define nop 0
 
 /*! \def xf
   \brief was enum (operator) but va_arg could not handle - now typedef
- 
+
 */
 
 #define xf 1
 
 /*! \def fx
   \brief was enum (operator) but va_arg could not handle - now typedef
- 
+
 */
 
 #define fx 2
 
 /*! \def yf
   \brief was enum (operator) but va_arg could not handle - now typedef
- 
+
 */
 
 #define yf 3
 
 /*! \def fy
   \brief was enum (operator) but va_arg could not handle - now typedef
- 
+
 */
 
 #define fy 4
 
 /*! \def xfx
   \brief was enum (operator) but va_arg could not handle - now typedef
- 
+
 */
 
 #define  xfx 5
@@ -1030,14 +1030,14 @@
 
 /*! \def xfy
   \brief was enum (operator) but va_arg could not handle - now typedef
- 
+
 */
 
 #define xfy 6
 
 /*! \def yfx
   \brief was enum (operator) but va_arg could not handle - now typedef
- 
+
 */
 
 #define yfx 7
@@ -1282,23 +1282,23 @@
 
 
 /*! \def HASHSIZE
-  \brief  Size of hash table; must be a power of 2 
-  
-  A big hash table means it is sparse and therefore fast 
+  \brief  Size of hash table; must be a power of 2
+
+  A big hash table means it is sparse and therefore fast
 */
 
 #define HASHSIZE 2048L
 
 /*! \def NUMBUCKETS
-  \brief Total number of buckets in initial hash table; 
+  \brief Total number of buckets in initial hash table;
 
-  this is dynamically increased if necessary.    
+  this is dynamically increased if necessary.
 */
 
 #define NUMBUCKETS 1024L
 
 /*! \def HASHEND
-  \brief Tail of hash bucket 
+  \brief Tail of hash bucket
 
 */
 
@@ -1328,7 +1328,7 @@
 /*! \def QUOTE_STUB
   \brief flag having to do with copying in copy.c
 
-  See mark_quote_c: 15.9 
+  See mark_quote_c: 15.9
 */
 
 #define QUOTE_STUB 3
@@ -1426,7 +1426,7 @@
 */
 
 #define   global_it 5
-   /*  RM: Feb  8 1993  */
+/*  RM: Feb  8 1993  */
 #ifdef CLIFE
 
 /*! \def block_it
@@ -1435,7 +1435,7 @@
 */
 
 #define   block_it 6
-       /*  AA: Mar  8 1993  */
+/*  AA: Mar  8 1993  */
 #endif 
 /* CLIFE */
 

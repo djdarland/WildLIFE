@@ -34,9 +34,9 @@
 
 
 
-/******************************** MACROS *******************************/
+   /******************************** MACROS *******************************/
 
-/* *** Macros for the tokenizer, define the types of ASCII characters. */
+   /* *** Macros for the tokenizer, define the types of ASCII characters. */
 
 
 #define DIGIT(C) (C>='0' && C<='9')
@@ -121,7 +121,7 @@
 	  (unsigned long) mem_base,   \
 	  (unsigned long) mem_limit),FALSE;
 
-	    RM: Jan  4 1993   An idea
+		RM: Jan  4 1993   An idea
 */
 
 #define VALID_RANGE(A) ((GENERIC)A>=mem_base && (GENERIC)A<mem_limit)

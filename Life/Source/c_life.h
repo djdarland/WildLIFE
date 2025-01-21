@@ -6,7 +6,7 @@
 
 
 /* Type for psi-terms, hidden from users */
-typedef void *PsiTerm;
+typedef void* PsiTerm;
 
 
 /* Replies to queries */
@@ -39,13 +39,13 @@ int WFInput(/* char *query */);
 PsiTerm WFGetVar(/* char *name */);
 
 /* Get the type of a psi-term */
-char *WFType(/* PsiTerm psi */);
+char* WFType(/* PsiTerm psi */);
 
 /* Get the value of a psi-term if it's a double */
 double WFGetDouble(/* PsiTerm psi, int *ok */);
 
 /* Get the value of a psi-term if it's a string */
-char *WFGetString(/* PsiTerm psi, int *ok */);
+char* WFGetString(/* PsiTerm psi, int *ok */);
 
 /* Count the features of a psi-term */
 int WFFeatureCount(/* PsiTerm psi */);
@@ -54,7 +54,7 @@ int WFFeatureCount(/* PsiTerm psi */);
 PsiTerm WFGetFeature(/* PsiTerm psi, char *featureName */);
 
 /* Get all the feature names as a NULL-terminated array of strings */
-char **WFFeatures(/* PsiTerm psi */);
+char** WFFeatures(/* PsiTerm psi */);
 
 
 

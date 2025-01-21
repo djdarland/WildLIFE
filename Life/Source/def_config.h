@@ -12,7 +12,7 @@
 // #define X11 1 
 
 /*! \def NEEDXLIBINT
-   \brief whether X11/Xlibint.h needed 
+   \brief whether X11/Xlibint.h needed
 
 */
 

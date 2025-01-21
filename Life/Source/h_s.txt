@@ -1,0 +1,39 @@
+
+c:\Users\denni\dsa\source\repos\CPM_WL01>dir *.h  
+ Volume in drive C is OS
+ Volume Serial Number is 445A-2430
+
+ Directory of c:\Users\denni\dsa\source\repos\CPM_WL01
+
+01/19/2025  06:22 PM             1,316 built_ins.h
+01/19/2025  06:22 PM               863 copy.h
+01/19/2025  04:19 PM               235 CPM_WL01.h
+01/19/2025  06:22 PM             1,316 c_life.h
+01/19/2025  06:22 PM               967 defs.h
+01/19/2025  06:22 PM               980 defs_static.h
+01/19/2025  06:22 PM               550 def_config.h
+01/19/2025  06:22 PM            33,461 def_const.h
+01/19/2025  06:22 PM            17,503 def_glob.h
+01/19/2025  06:22 PM             9,713 def_macro.h
+01/19/2025  06:22 PM            27,971 def_proto.h
+01/19/2025  06:22 PM            10,629 def_struct.h
+01/19/2025  06:22 PM             1,617 error.h
+01/19/2025  06:22 PM            23,553 extern.h
+01/19/2025  06:22 PM               230 info.h
+01/19/2025  06:22 PM               333 interrupt.h
+01/19/2025  06:22 PM             2,035 lefun.h
+01/19/2025  06:22 PM             2,253 list.h
+01/19/2025  06:22 PM             1,318 login.h
+01/19/2025  06:22 PM               442 memory.h
+01/19/2025  04:50 PM                 0 modules.h
+01/19/2025  06:22 PM               346 parser.h
+01/19/2025  04:17 PM                26 Pract.h
+01/19/2025  06:22 PM             1,111 print.h
+01/19/2025  06:22 PM               244 raw.h
+01/19/2025  06:22 PM             2,907 sys.h
+01/19/2025  06:22 PM             2,620 templates.h
+01/19/2025  06:22 PM             2,394 token.h
+01/19/2025  06:22 PM               702 trees.h
+01/19/2025  06:22 PM               934 types.h
+              30 File(s)        148,569 bytes
+               0 Dir(s)  998,943,350,784 bytes free

@@ -57,13 +57,13 @@ extern long can_curry;
 extern void save_resid();
 extern void restore_resid();
 
-typedef struct wl_resid_block *ptr_resid_block;
+typedef struct wl_resid_block* ptr_resid_block;
 
 typedef struct wl_resid_block {
-   long cc_cr; /* 11.9 */
-   ptr_goal ra;
-   /* long cc; 11.9 */
-   /* long cr; 11.9 */
-   ptr_resid_list rv; /* 21.9 */
-   ptr_psi_term md;
+	long cc_cr; /* 11.9 */
+	ptr_goal ra;
+	/* long cc; 11.9 */
+	/* long cr; 11.9 */
+	ptr_resid_list rv; /* 21.9 */
+	ptr_psi_term md;
 } resid_block;

@@ -1,0 +1,37 @@
+
+c:\Users\denni\dsa\source\repos\CPM_WL01>dir *.cpp  
+ Volume in drive C is OS
+ Volume Serial Number is 445A-2430
+
+ Directory of c:\Users\denni\dsa\source\repos\CPM_WL01
+
+01/19/2025  05:01 PM                 0 arity.cpp
+01/19/2025  06:22 PM            31,162 bi_math.cpp
+01/19/2025  06:22 PM            17,397 bi_sys.cpp
+01/19/2025  06:22 PM            18,827 bi_type.cpp
+01/19/2025  06:22 PM           171,257 built_ins.cpp
+01/19/2025  06:22 PM            21,132 copy.cpp
+01/19/2025  04:19 PM               211 CPM_WL01.cpp
+01/19/2025  06:22 PM            23,161 error.cpp
+01/19/2025  06:22 PM             4,330 hash_table.cpp
+01/19/2025  06:22 PM             2,412 info.cpp
+01/19/2025  06:22 PM             3,471 interrupt.cpp
+01/19/2025  06:22 PM            41,691 lefun.cpp
+01/19/2025  06:22 PM             9,157 lib.cpp
+01/19/2025  06:22 PM             6,190 life.cpp
+01/19/2025  06:22 PM            11,316 list.cpp
+01/19/2025  06:22 PM            80,532 login.cpp
+01/19/2025  06:22 PM             5,529 lub.cpp
+01/19/2025  06:22 PM            45,775 memory.cpp
+01/19/2025  06:22 PM            33,160 modules.cpp
+01/19/2025  06:22 PM            20,870 parser.cpp
+01/19/2025  06:22 PM            42,192 print.cpp
+01/19/2025  06:22 PM             8,738 raw.cpp
+01/19/2025  06:22 PM            57,318 sys.cpp
+01/19/2025  06:22 PM             3,729 sys_dbm.cpp
+01/19/2025  06:22 PM               744 templates.cpp
+01/19/2025  06:22 PM            32,319 token.cpp
+01/19/2025  06:22 PM            12,280 trees.cpp
+01/19/2025  06:22 PM            45,987 types.cpp
+              28 File(s)        750,887 bytes
+               0 Dir(s)  998,943,354,880 bytes free

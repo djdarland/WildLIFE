@@ -11,9 +11,9 @@
 
 /* defined in templates.c */
 
-extern char *numbers[];
+extern char* numbers[];
 extern long set_extra_args[];
-extern long get_arg ();
+extern long get_arg();
 
 
 

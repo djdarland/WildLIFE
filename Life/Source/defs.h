@@ -4,12 +4,12 @@
 */
 #include "def_config.h"
 
-#include <unistd.h>
+// #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
-#include <strings.h>
+// #include <strings.h>
 #include <time.h>
 #include <math.h>
 #include <assert.h>
@@ -20,10 +20,12 @@
 #include <signal.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <sys/time.h>
-#include <sys/times.h>
+// #include <sys/time.h>
+// #include <sys/times.h>
 #include <sys/types.h>
-#include <sys/ioctl.h>
+#include <ctime>
+#include <cstddef>
+// #include <sys/ioctl.h>
 #ifndef NORAW
 #include <sgtty.h>
 #include <termio.h>
@@ -34,10 +36,10 @@
 
 
 #endif
-#include <sys/wait.h>
+// #include <sys/wait.h>
 #include <sys/stat.h>
 #include <limits.h>
-#include <pwd.h>
+// #include <pwd.h>
 
 
 #ifdef X11

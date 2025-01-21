@@ -1,8 +1,8 @@
 # Makefile made manually from studying Mkefile.in - did not use configure
 # There is much obsolete - It should be cleaned up. Don't have time yet. 
 SHELL		= /bin/sh
-CC		= gcc
-CFLAGS		= -g -O
+CC		= g++
+CFLAGS		= -g -O -Wno-write-strings 
 # CPPFLAGS	= 
 # LDFLAGS		= 
 LIBS		=  -lm
@@ -54,7 +54,7 @@ SETUP		= ${prefix}/Source/.set_up
 
 #=====================================================================
 # -DNORAW
-# Add this if the low-level (unbuffered) terminal input file (raw.c) won't
+# Add this if the low-level (unbuffered) terminal input file (raw.cpp) won't
 # compile on your system.  On SunOS for some reason this file will include some
 # library files twice. This does not seem to make any difference.
 #
@@ -73,7 +73,7 @@ SETUP		= ${prefix}/Source/.set_up
 # If defined causes the 'debug' mode to show matching and unification sub-goals.
 #=====================================================================
 
-# COMPILE.c	= $(CC) $(CFLAGS) $(CPPFLAGS) $(DEFS) -c
+# COMPILE.ch	= $(CC) $(CFLAGS) $(CPPFLAGS) $(DEFS) -c
 # COMPILE_EXT_MINT.c	= $(CC) $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
 # COMPILE_MAIN_MINT.c	= $(CC) $(CFLAGS) $(CPPFLAGS) $(DEFS_MAIN_MINT) -c
 # XCOMPILE.c	= $(CC) $(CFLAGS) $(X_CFLAGS) $(CPPFLAGS) $(DEFS) -c
@@ -99,15 +99,15 @@ SETUP		= ${prefix}/Source/.set_up
 #MEMORY = 524288
 #=====================================================================
 
-XSRC = xpred.c xdisplaylist.c
+XSRC = xpred.cpp xdisplaylist.cpp
 XOBJ = xpred.o xdisplaylist.o
 XINC = xpred.h xdisplaylist.h
 
 LIBSOURCE = \
-	arity.c bi_math.c bi_sys.c bi_type.c built_ins.c copy.c error.c \
-	hash_table.c info.c interrupt.c lefun.c lib.c list.c login.c \
-	lub.c memory.c modules.c parser.c print.c raw.c sys.c templates.c \
-	token.c trees.c types.c $(XSOURCE) $(DBMSOURCE)
+	arity.cpp bi_math.cpp bi_sys.cpp bi_type.cpp built_ins.cpp copy.cpp error.cpp \
+	hash_table.cpp info.cpp interrupt.cpp lefun.cpp lib.cpp list.cpp login.cpp \
+	lub.cpp memory.cpp modules.cpp parser.cpp print.cpp raw.cpp sys.cpp templates.cpp \
+	token.cpp trees.cpp types.cpp $(XSOURCE) $(DBMSOURCE)
 
 LIBOBJECT_X = \
 	arity_x.o bi_math_x.o bi_sys_x.o bi_type_x.o built_ins_x.o copy_x.o \
@@ -151,172 +151,172 @@ all: wild_life wild_life_X
 Demo:
 	cd ../Demo; $(MAKE) SETUPDIR="$(SETUPDIR)"
 
-life2.o : life2.c $(LIBINCLUDE)
-	$(CC) life2.c -o life2.o $(CFLAGS) $(CPPFLAGS) $(DEFS_MAIN_MINT) -c
+life2.o : life2.cpp $(LIBINCLUDE)
+	$(CC) life2.cpp -o life2.o $(CFLAGS) $(CPPFLAGS) $(DEFS_MAIN_MINT) -c
 
-arity.o : arity.c $(LIBINCLUDE)
-	$(CC) arity.c -o arity.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
+arity.o : arity.cpp $(LIBINCLUDE)
+	$(CC) arity.cpp -o arity.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
 
-bi_math.o : bi_math.c  $(LIBINCLUDE)
-	$(CC) bi_math.c -o bi_math.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
+bi_math.o : bi_math.cpp  $(LIBINCLUDE)
+	$(CC) bi_math.cpp -o bi_math.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
 
-bi_sys.o : bi_sys.c  $(LIBINCLUDE)
-	$(CC) bi_sys.c -o bi_sys.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
+bi_sys.o : bi_sys.cpp  $(LIBINCLUDE)
+	$(CC) bi_sys.cpp -o bi_sys.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
 
-bi_type.o : bi_type.c  $(LIBINCLUDE)
-	$(CC) bi_type.c -o bi_type.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
+bi_type.o : bi_type.cpp  $(LIBINCLUDE)
+	$(CC) bi_type.cpp -o bi_type.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
 
-built_ins.o : built_ins.c  $(LIBINCLUDE)
-	$(CC) built_ins.c -o built_ins.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
+built_ins.o : built_ins.cpp  $(LIBINCLUDE)
+	$(CC) built_ins.cpp -o built_ins.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
 
-copy.o : copy.c  $(LIBINCLUDE)
-	$(CC) copy.c -o copy.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
+copy.o : copy.cpp  $(LIBINCLUDE)
+	$(CC) copy.cpp -o copy.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
 
-error.o : error.c  $(LIBINCLUDE)
-	$(CC) error.c -o error.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
+error.o : error.cpp  $(LIBINCLUDE)
+	$(CC) error.cpp -o error.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
 
-hash_table.o : hash_table.c  $(LIBINCLUDE)
-	$(CC) hash_table.c -o hash_table.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
+hash_table.o : hash_table.cpp  $(LIBINCLUDE)
+	$(CC) hash_table.cpp -o hash_table.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
 
-info2.o : info2.c  $(LIBINCLUDE)
-	$(CC) info2.c -o info2.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
+info2.o : info2.cpp  $(LIBINCLUDE)
+	$(CC) info2.cpp -o info2.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
 
-interrupt.o : interrupt.c  $(LIBINCLUDE)
-	$(CC) interrupt.c -o interrupt.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
+interrupt.o : interrupt.cpp  $(LIBINCLUDE)
+	$(CC) interrupt.cpp -o interrupt.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
 
-lefun.o : lefun.c  $(LIBINCLUDE)
-	$(CC) lefun.c -o lefun.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
+lefun.o : lefun.cpp  $(LIBINCLUDE)
+	$(CC) lefun.cpp -o lefun.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
 
-lib2.o : lib2.c  $(LIBINCLUDE)
-	$(CC) lib2.c -o lib2.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
+lib2.o : lib2.cpp  $(LIBINCLUDE)
+	$(CC) lib2.cpp -o lib2.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
 
-list.o : list.c  $(LIBINCLUDE)
-	$(CC) list.c -o list.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
+list.o : list.cpp  $(LIBINCLUDE)
+	$(CC) list.cpp -o list.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
 
-login.o : login.c  $(LIBINCLUDE)
-	$(CC) login.c -o login.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
+login.o : login.cpp  $(LIBINCLUDE)
+	$(CC) login.cpp -o login.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
 
-lub.o : lub.c  $(LIBINCLUDE)
-	$(CC) lub.c -o lub.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
+lub.o : lub.cpp  $(LIBINCLUDE)
+	$(CC) lub.cpp -o lub.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
 
-memory.o : memory.c  $(LIBINCLUDE)
-	$(CC) memory.c -o memory.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
+memory.o : memory.cpp  $(LIBINCLUDE)
+	$(CC) memory.cpp -o memory.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
 
-modules.o : modules.c  $(LIBINCLUDE)
-	$(CC) modules.c -o modules.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
+modules.o : modules.cpp  $(LIBINCLUDE)
+	$(CC) modules.cpp -o modules.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
 
-parser.o : parser.c  $(LIBINCLUDE)
-	$(CC) parser.c -o parser.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
+parser.o : parser.cpp  $(LIBINCLUDE)
+	$(CC) parser.cpp -o parser.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
 
-print.o : print.c  $(LIBINCLUDE)
-	$(CC) print.c -o print.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
+print.o : print.cpp  $(LIBINCLUDE)
+	$(CC) print.cpp -o print.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
 
-raw.o : raw.c  $(LIBINCLUDE)
-	$(CC) raw.c -o raw.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
+raw.o : raw.cpp  $(LIBINCLUDE)
+	$(CC) raw.cpp -o raw.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
 
-sys.o : sys.c  $(LIBINCLUDE)
-	$(CC) sys.c -o sys.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
+sys.o : sys.cpp  $(LIBINCLUDE)
+	$(CC) sys.cpp -o sys.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
 
-templates.o : templates.c  $(LIBINCLUDE)
-	$(CC) templates.c -o templates.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
+templates.o : templates.cpp  $(LIBINCLUDE)
+	$(CC) templates.cpp -o templates.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
 
-token.o : token.c  $(LIBINCLUDE)
-	$(CC) token.c -o token.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
+token.o : token.cpp  $(LIBINCLUDE)
+	$(CC) token.cpp -o token.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
 
-trees.o : trees.c  $(LIBINCLUDE)
-	$(CC) trees.c -o trees.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
+trees.o : trees.cpp  $(LIBINCLUDE)
+	$(CC) trees.cpp -o trees.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
 
-types.o : types.c  $(LIBINCLUDE)
-	$(CC) types.c -o types.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
+types.o : types.cpp  $(LIBINCLUDE)
+	$(CC) types.cpp -o types.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
 
 # End regular Life
 
 # Start X Life
 
-life2_x.o : life2.c $(LIBINCLUDE)
-	echo $(CC) life2.c -o life2_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_MAIN_MINT_X) -c
-	$(CC) life2.c -o life2_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_MAIN_MINT_X) -c
+life2_x.o : life2.cpp $(LIBINCLUDE)
+	echo $(CC) life2.cpp -o life2_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_MAIN_MINT_X) -c
+	$(CC) life2.cpp -o life2_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_MAIN_MINT_X) -c
 
-arity_x.o : arity.c $(LIBINCLUDE)
-	$(CC) arity.c -o arity_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
+arity_x.o : arity.cpp $(LIBINCLUDE)
+	$(CC) arity.cpp -o arity_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
 
-bi_math_x.o : bi_math.c  $(LIBINCLUDE)
-	$(CC) bi_math.c -o bi_math_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
+bi_math_x.o : bi_math.cpp  $(LIBINCLUDE)
+	$(CC) bi_math.cpp -o bi_math_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
 
-bi_sys_x.o : bi_sys.c  $(LIBINCLUDE)
-	$(CC) bi_sys.c -o bi_sys_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
+bi_sys_x.o : bi_sys.cpp  $(LIBINCLUDE)
+	$(CC) bi_sys.cpp -o bi_sys_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
 
-bi_type_x.o : bi_type.c  $(LIBINCLUDE)
-	$(CC) bi_type.c -o bi_type_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
+bi_type_x.o : bi_type.cpp  $(LIBINCLUDE)
+	$(CC) bi_type.cpp -o bi_type_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
 
-built_ins_x.o : built_ins.c  $(LIBINCLUDE)
-	$(CC) built_ins.c -o built_ins_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
+built_ins_x.o : built_ins.cpp  $(LIBINCLUDE)
+	$(CC) built_ins.cpp -o built_ins_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
 
-copy_x.o : copy.c  $(LIBINCLUDE)
-	$(CC) copy.c -o copy_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
+copy_x.o : copy.cpp  $(LIBINCLUDE)
+	$(CC) copy.cpp -o copy_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
 
-error_x.o : error.c  $(LIBINCLUDE)
-	$(CC) error.c -o error_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
+error_x.o : error.cpp  $(LIBINCLUDE)
+	$(CC) error.cpp -o error_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
 
-hash_table_x.o : hash_table.c  $(LIBINCLUDE)
-	$(CC) hash_table.c -o hash_table_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
+hash_table_x.o : hash_table.cpp  $(LIBINCLUDE)
+	$(CC) hash_table.cpp -o hash_table_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
 
-info2_x.o : info2.c  $(LIBINCLUDE)
-	$(CC) info2.c -o info2_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
+info2_x.o : info2.cpp  $(LIBINCLUDE)
+	$(CC) info2.cpp -o info2_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
 
-interrupt_x.o : interrupt.c  $(LIBINCLUDE)
-	$(CC) interrupt.c -o interrupt_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
+interrupt_x.o : interrupt.cpp  $(LIBINCLUDE)
+	$(CC) interrupt.cpp -o interrupt_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
 
-lefun_x.o : lefun.c  $(LIBINCLUDE)
-	$(CC) lefun.c -o lefun_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
+lefun_x.o : lefun.cpp  $(LIBINCLUDE)
+	$(CC) lefun.cpp -o lefun_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
 
-lib2_x.o : lib2.c  $(LIBINCLUDE)
-	$(CC) lib2.c -o lib2_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
+lib2_x.o : lib2.cpp  $(LIBINCLUDE)
+	$(CC) lib2.cpp -o lib2_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
 
-list_x.o : list.c  $(LIBINCLUDE)
-	$(CC) list.c -o list_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
+list_x.o : list.cpp  $(LIBINCLUDE)
+	$(CC) list.cpp -o list_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
 
-login_x.o : login.c  $(LIBINCLUDE)
-	$(CC) login.c -o login_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
+login_x.o : login.cpp  $(LIBINCLUDE)
+	$(CC) login.cpp -o login_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
 
-lub_x.o : lub.c  $(LIBINCLUDE)
-	$(CC) lub.c -o lub_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
+lub_x.o : lub.cpp  $(LIBINCLUDE)
+	$(CC) lub.cpp -o lub_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
 
-memory_x.o : memory.c  $(LIBINCLUDE)
-	$(CC) memory.c -o memory_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
+memory_x.o : memory.cpp  $(LIBINCLUDE)
+	$(CC) memory.cpp -o memory_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
 
-modules_x.o : modules.c  $(LIBINCLUDE)
-	$(CC) modules.c -o modules_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
+modules_x.o : modules.cpp  $(LIBINCLUDE)
+	$(CC) modules.cpp -o modules_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
 
-parser_x.o : parser.c  $(LIBINCLUDE)
-	$(CC) parser.c -o parser_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
+parser_x.o : parser.cpp  $(LIBINCLUDE)
+	$(CC) parser.cpp -o parser_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
 
-print_x.o : print.c  $(LIBINCLUDE)
-	$(CC) print.c -o print_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
+print_x.o : print.cpp  $(LIBINCLUDE)
+	$(CC) print.cpp -o print_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
 
-raw_x.o : raw.c  $(LIBINCLUDE)
-	$(CC) raw.c -o raw_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
+raw_x.o : raw.cpp  $(LIBINCLUDE)
+	$(CC) raw.cpp -o raw_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
 
-sys_x.o : sys.c  $(LIBINCLUDE)
-	$(CC) sys.c -o sys_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
+sys_x.o : sys.cpp  $(LIBINCLUDE)
+	$(CC) sys.cpp -o sys_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
 
-templates_x.o : templates.c  $(LIBINCLUDE)
-	$(CC) templates.c -o templates_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
+templates_x.o : templates.cpp  $(LIBINCLUDE)
+	$(CC) templates.cpp -o templates_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
 
-token_x.o : token.c  $(LIBINCLUDE)
-	$(CC) token.c -o token_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
+token_x.o : token.cpp  $(LIBINCLUDE)
+	$(CC) token.cpp -o token_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
 
-trees_x.o : trees.c  $(LIBINCLUDE)
-	$(CC) trees.c -o trees_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
+trees_x.o : trees.cpp  $(LIBINCLUDE)
+	$(CC) trees.cpp -o trees_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
 
-types_x.o : types.c  $(LIBINCLUDE)
-	$(CC) types.c -o types_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
+types_x.o : types.cpp  $(LIBINCLUDE)
+	$(CC) types.cpp -o types_x.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
 
-xpred.o : xpred.c  $(LIBINCLUDE) $(XINC)
-	$(CC) xpred.c -o xpred.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
+xpred.o : xpred.cpp  $(LIBINCLUDE) $(XINC)
+	$(CC) xpred.cpp -o xpred.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
 
-xdisplaylist.o : xdisplaylist.c  $(LIBINCLUDE) $(XINC)
-	$(CC) xdisplaylist.c -o xdisplaylist.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
+xdisplaylist.o : xdisplaylist.cpp  $(LIBINCLUDE) $(XINC)
+	$(CC) xdisplaylist.cpp -o xdisplaylist.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
 
 
 
@@ -339,29 +339,29 @@ wild_life_X: life2_x.o $(LIBOBJECT_X) regexp/regexp.o regexp/regsub.o
 	sed -e "s%+SETUPDIR+%$(SETUPDIR)%g" < .set_up_basis > .set_up
 
 clean:
-	-rm *~ *.o.set_up life2.c lib2.c $(PROGRAM)
+	-rm *~ *.o.set_up life2.cpp lib2.cpp $(PROGRAM)
 	cd regexp; $(MAKE) clean
 
 veryclean: clean
 	-rm *.cache *.status Makefile
 	cd regexp; $(MAKE) veryclean
 
-life2.c: life.c Makefile
-	sed -e "s%+SETUP+%$(SETUP)%" < life.c > life2.c
+life2.cpp: life.cpp Makefile
+	sed -e "s%+SETUP+%$(SETUP)%" < life.cpp > life2.cpp
 
-lib2.c:	lib.c Makefile
-	sed -e "s%+SETUP+%$(SETUP)%" < lib.c > lib2.c
+lib2.cpp:	lib.cpp Makefile
+	sed -e "s%+SETUP+%$(SETUP)%" < lib.cpp > lib2.cpp
 
-info2.c: info.c  Makefile
+info2.cpp: info.cpp  Makefile
 	@echo Don\'t be surprised, info is compiled "for ${DATE} because" something has changed
 	sed -e "s/+DATE+/$(DATE)/" \
-	    -e "s/+VERSION+/$(VERSION)/" < info.c > info2.c
+	    -e "s/+VERSION+/$(VERSION)/" < info.cpp > info2.cpp
 
-# xpred.o: xpred.c
-# 	$(XCOMPILE.c) -o $@ $<
+# xpred.o: xpred.cpp
+# 	$(XCOMPILE.cpp) -o $@ $<
 
-# xdisplaylist.o: xdisplaylist.c
-#	$(XCOMPILE.c) -o $@ $<
+# xdisplaylist.o: xdisplaylist.cpp
+#	$(XCOMPILE.cpp) -o $@ $<
 
 MKINSTALL = $(MAKE) MKDIRHIER="$(MKDIRHIER)"\
  libdir="$(libdir)" INSTALL="$(INSTALL)" srcdir="$(srcdir)" install

@@ -190,6 +190,7 @@ static long c_cputime()
   deref_ptr(result);
   success=get_real_value(result,&val,&num);
   if (success) {
+    life_end = clock() * 1000 / CLOCKS_PER_SEC;
     times(&life_end);
     thetime= ((REAL)life_end.tms_utime-life_start.tms_utime)/(REAL)sysconf(_SC_CLK_TCK);
     if (num)
@@ -224,11 +225,12 @@ static long c_realtime()
   success=get_real_value(result,&val,&num);
   if (success) {
     gettimeofday(&tp, &tzp);
-    thetime=(REAL)tp.tv_sec + ((REAL)tp.tv_usec/1000000.0);
+    // thetime=(REAL)tp.tv_sec + ((REAL)tp.tv_usec/1000000.0);
     /* thetime=times(&life_end)/60.0; */
     //    if (num)
     //  success=(val==thetime);
     // else
+    thetime = clock() * 1000 / CLOCKS_PER_SEC;
       success=unify_real_result(result,thetime);
   }
   return success;
@@ -252,8 +254,9 @@ static long c_realtime()
   success=get_real_value(result,&val,&num);
   if (success) {
     gettimeofday(&tp, &tzp);
-    thetime=(REAL)tp.tv_sec + ((REAL)tp.tv_usec/1000000.0);
+    //   thetime=(REAL)tp.tv_sec + ((REAL)tp.tv_usec/1000000.0);
     /* thetime=times(&life_end)/60.0; */
+    thetime = clock() * 1000 / CLOCKS_PER_SEC;
     if (num)
       success=(val==thetime);
     else

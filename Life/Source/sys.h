@@ -4,7 +4,7 @@
    All new system utilities and extensions to Wild LIFE 1.02
    are implemented using the new call_primitive interface
    */
-/*	$Id: sys.h,v 1.2 1995/07/27 20:16:30 duchier Exp $	*/
+   /*	$Id: sys.h,v 1.2 1995/07/27 20:16:30 duchier Exp $	*/
 #ifndef _LIFE_SYS_H_
 #define _LIFE_SYS_H_
 #include "extern.h"
@@ -14,7 +14,7 @@
   according to the same protocol.  The call_primitive procedure does
   all this work for you.  It should be called as follows:
 
-		       call_primitive(f,n,args,info)
+			   call_primitive(f,n,args,info)
 
   where f is the primitive implementing the actual functionality, n
   is the number of arguments described in args, and args is an array
@@ -31,7 +31,7 @@
 
   OPTIONAL	for an optional argument
   REQUIRED	for a required argument (i.e. residuate on it if not
-  		present
+		present
   UNEVALED	if the argument should not be evaluated
   JUSTFAIL	to just fail is the argument does not meet its type
 		restriction
@@ -39,13 +39,13 @@
 		in that case the 2nd psi_arg field is interpreted as
 		a pointer to a NULL terminated array of ptr_definitions
   MANDATORY	like REQUIRED, but it is an error for it not to be
-  		present; don't residuate.  This is useful for
+		present; don't residuate.  This is useful for
 		predicates since it doesn't make sense for them to
 		residuate.
   NOVALUE	no value required for this argument.
 
   The primitive must be defined to take the following arguments
-  		f(argl,result,funct[,info])
+		f(argl,result,funct[,info])
   where argl is an array containing the arguments obtained by call_
   primitive, result is the result in case we are implementing a
   function, and info (optional) is extra information, typically a
@@ -61,9 +61,9 @@
 #define NOVALUE   (1<<5)
 
 typedef struct {
-  char *feature;
-  ptr_definition type;
-  unsigned int options;
+	char* feature;
+	ptr_definition type;
+	unsigned int options;
 } psi_arg;
 
 #define SETARG(args,i,the_feature,the_type,the_options) \

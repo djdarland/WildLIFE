@@ -176,9 +176,9 @@ extern int alloc_words;
 
 
 
-/******************************** MACROS *******************************/
+   /******************************** MACROS *******************************/
 
-/* *** Macros for the tokenizer, define the types of ASCII characters. */
+   /* *** Macros for the tokenizer, define the types of ASCII characters. */
 
 
 #define DIGIT(C) (C>='0' && C<='9')
@@ -261,7 +261,7 @@ extern int alloc_words;
 	  (unsigned long) mem_base,   \
 	  (unsigned long) mem_limit),FALSE;
 
-	    RM: Jan  4 1993   An idea
+		RM: Jan  4 1993   An idea
 */
 
 #define VALID_RANGE(A) ((GENERIC)A>=mem_base && (GENERIC)A<mem_limit)
@@ -286,24 +286,24 @@ extern int alloc_words;
 /* that kind.  ANSI uses "void *" instead.  */
 
 
-typedef unsigned long *                    GENERIC;
+typedef unsigned long* GENERIC;
 /* typedef void * GENERIC; */
 
 
 typedef char                      string[STRLEN];
-typedef struct wl_operator_data *   ptr_operator_data;
-typedef struct wl_int_list *        ptr_int_list;
-typedef struct wl_resid_list *      ptr_resid_list; /* 21.9 */
-typedef struct wl_definition *      ptr_definition;
-typedef struct wl_residuation *     ptr_residuation;
-typedef struct wl_psi_term *        ptr_psi_term;
-typedef struct wl_node *            ptr_node;
-typedef struct wl_pair_list *       ptr_pair_list;
-typedef struct wl_triple_list *     ptr_triple_list;
-typedef struct wl_list *            ptr_list;
-typedef struct wl_stack *           ptr_stack;
-typedef struct wl_goal *            ptr_goal;
-typedef struct wl_choice_point *    ptr_choice_point;
+typedef struct wl_operator_data* ptr_operator_data;
+typedef struct wl_int_list* ptr_int_list;
+typedef struct wl_resid_list* ptr_resid_list; /* 21.9 */
+typedef struct wl_definition* ptr_definition;
+typedef struct wl_residuation* ptr_residuation;
+typedef struct wl_psi_term* ptr_psi_term;
+typedef struct wl_node* ptr_node;
+typedef struct wl_pair_list* ptr_pair_list;
+typedef struct wl_triple_list* ptr_triple_list;
+typedef struct wl_list* ptr_list;
+typedef struct wl_stack* ptr_stack;
+typedef struct wl_goal* ptr_goal;
+typedef struct wl_choice_point* ptr_choice_point;
 
 /****************************** DATA STRUCTURES **************************/
 
@@ -312,68 +312,69 @@ typedef struct wl_choice_point *    ptr_choice_point;
 typedef enum { nop, xf, fx, yf, fy, xfx, /* yfy, */ xfy, yfx } operator;
 
 typedef struct wl_operator_data {
-  operator type;
-  long precedence;
-  ptr_operator_data next;
+	operator type;
+	long precedence;
+	ptr_operator_data next;
 } operator_data;
 
 /* List of integers or pointers */
 typedef struct wl_int_list {
-  GENERIC value;
-  ptr_int_list next;
+	GENERIC value;
+	ptr_int_list next;
 } int_list;
 
 /* List of residuation variables */ /* 21.9 */
-typedef struct wl_resid_list { 
-  ptr_psi_term var;
-  ptr_psi_term othervar; /* needed for its sort only */
-  ptr_resid_list next;
+typedef struct wl_resid_list {
+	ptr_psi_term var;
+	ptr_psi_term othervar; /* needed for its sort only */
+	ptr_resid_list next;
 } resid_list;
 
-typedef enum {   undef,
-		 predicate,
-		 function,
-		 type,
-		 global    /*  RM: Feb  8 1993  */
+typedef enum {
+	undef,
+	predicate,
+	function,
+	type,
+	global    /*  RM: Feb  8 1993  */
 #ifdef CLIFE
-		 ,block       /*  AA: Mar  8 1993  */
+	, block       /*  AA: Mar  8 1993  */
 #endif /* CLIFE */
-		 } def_type;
+} def_type;
 
 
 
 
-typedef struct wl_hash_table * ptr_hash_table;
+typedef struct wl_hash_table* ptr_hash_table;
 
 
 /************ MODULES **************/
 /*        RM: Jan  7 1993          */
 
 struct wl_module {
-  char *module_name;
-  char *source_file;
-  ptr_int_list open_modules;
-  ptr_int_list inherited_modules;
-  ptr_hash_table symbol_table;
+	char* module_name;
+	char* source_file;
+	ptr_int_list open_modules;
+	ptr_int_list inherited_modules;
+	ptr_hash_table symbol_table;
 };
 
 
-typedef struct wl_module * ptr_module;
+typedef struct wl_module* ptr_module;
 
 extern ptr_node module_table;        /* The table of modules */
 extern ptr_module current_module;    /* The current module for the tokenizer */
 
 
 struct wl_keyword {
-  ptr_module module;
-  char *symbol;
-  char *combined_name; /* module#symbol */
-  int public;
-  int private_feature; /*  RM: Mar 11 1993  */
-  ptr_definition definition;
+	ptr_module module;
+	char* symbol;
+	char* combined_name; /* module#symbol */
+	int public;
+	int private_feature; /*  RM: Mar 11 1993  */
+	ptr_definition definition;
 };
 
-typedef struct wl_keyword * ptr_keyword;
+typedef struct wl_keyword* ptr_keyword;
 
 /********* END MODULES *************/
 
@@ -386,9 +387,9 @@ typedef struct wl_keyword * ptr_keyword;
 /* Hash tables for keywords */
 
 struct wl_hash_table {
-  int size;
-  int used;
-  ptr_keyword *data;
+	int size;
+	int used;
+	ptr_keyword* data;
 };
 
 /*
@@ -418,58 +419,58 @@ extern ptr_definition first_definition;
 /* Definition of a keyword. */
 /* This includes the rules associated to the symbol and how old they are.  */
 typedef struct wl_definition {
-  long date;
+	long date;
 
-  ptr_keyword keyword; /*  RM: Jan 11 1993  */
-  
-  ptr_pair_list rule;
-  ptr_triple_list properties;
+	ptr_keyword keyword; /*  RM: Jan 11 1993  */
 
-  ptr_int_list code;
-  ptr_int_list parents;
-  ptr_int_list children;
+	ptr_pair_list rule;
+	ptr_triple_list properties;
 
-  def_type type;
-  char always_check;  /* TRUE by default */
-  char protected;     /* TRUE by default */
-  char evaluate_args; /* TRUE by default */
-  char already_loaded; /* Cleared at the prompt, set upon loading */
+	ptr_int_list code;
+	ptr_int_list parents;
+	ptr_int_list children;
 
-  ptr_operator_data op_data;
+	def_type type;
+	char always_check;  /* TRUE by default */
+	char protected;     /* TRUE by default */
+	char evaluate_args; /* TRUE by default */
+	char already_loaded; /* Cleared at the prompt, set upon loading */
 
-  ptr_psi_term global_value; /*  RM: Feb  8 1993  */
-  ptr_psi_term init_value;   /*  RM: Mar 23 1993  */
-  
+	ptr_operator_data op_data;
+
+	ptr_psi_term global_value; /*  RM: Feb  8 1993  */
+	ptr_psi_term init_value;   /*  RM: Mar 23 1993  */
+
 #ifdef CLIFE
-  ptr_block_definition block_def; /* AA: Mar 10 1993 */
+	ptr_block_definition block_def; /* AA: Mar 10 1993 */
 #endif /* CLIFE */
-  
-  ptr_definition next;
+
+	ptr_definition next;
 } definition;
 
 /* 22.9 */
 typedef struct wl_residuation {
-  long sortflag; /* bestsort == if TRUE ptr_definition else ptr_int_list */
-  GENERIC bestsort; /* 21.9 */
-  GENERIC value; /* to handle psi-terms with a value field 6.10 */
-  ptr_goal goal;
-  ptr_residuation next;
+	long sortflag; /* bestsort == if TRUE ptr_definition else ptr_int_list */
+	GENERIC bestsort; /* 21.9 */
+	GENERIC value; /* to handle psi-terms with a value field 6.10 */
+	ptr_goal goal;
+	ptr_residuation next;
 } residuation;
 
 /* PSI_TERM */
 typedef struct wl_psi_term {
 #ifdef TS
-  unsigned long time_stamp; /* Avoid multiple trailing on a choice point. 9.6 */
+	unsigned long time_stamp; /* Avoid multiple trailing on a choice point. 9.6 */
 #endif
-  ptr_definition type;
-  long status; /* Indicates whether the properties of the type have been */
-              /* checked or the function evaluated */
-  /* long curried; Distinguish between quoted and curried object 20.5 */
-  long flags; /* 14.9 */
-  GENERIC value;
-  ptr_node attr_list;
-  ptr_psi_term coref;
-  ptr_residuation resid; /* List of goals to prove if type is narrowed. */
+	ptr_definition type;
+	long status; /* Indicates whether the properties of the type have been */
+	/* checked or the function evaluated */
+/* long curried; Distinguish between quoted and curried object 20.5 */
+	long flags; /* 14.9 */
+	GENERIC value;
+	ptr_node attr_list;
+	ptr_psi_term coref;
+	ptr_residuation resid; /* List of goals to prove if type is narrowed. */
 } psi_term;
 
 /* Binary tree node. */
@@ -478,32 +479,32 @@ typedef struct wl_psi_term {
 /* to a PSI-TERM.  */
 
 typedef struct wl_node {
-  char *key;
-  ptr_node left;
-  ptr_node right;
-  GENERIC data;
+	char* key;
+	ptr_node left;
+	ptr_node right;
+	GENERIC data;
 } node;
 
 typedef struct wl_pair_list {
-  ptr_psi_term a;
-  ptr_psi_term b;
-  ptr_pair_list next;
+	ptr_psi_term a;
+	ptr_psi_term b;
+	ptr_pair_list next;
 } pair_list;
 
 /* Used for type properties */
 typedef struct wl_triple_list {
-  ptr_psi_term a;   /* Attributes */
-  ptr_psi_term b;   /* Constralong */
-  ptr_definition c; /* Original type of attribute & constralong */
-  ptr_triple_list next;
+	ptr_psi_term a;   /* Attributes */
+	ptr_psi_term b;   /* Constralong */
+	ptr_definition c; /* Original type of attribute & constralong */
+	ptr_triple_list next;
 } triple_list;
 
 /*  RM: Dec 15 1992  Away goes the old list structure!!
-    typedef struct wl_list {
-    ptr_psi_term car;
-    ptr_psi_term cdr;
-    } list;
-    */
+	typedef struct wl_list {
+	ptr_psi_term car;
+	ptr_psi_term cdr;
+	} list;
+	*/
 
 
 #ifdef CLIFE
@@ -511,8 +512,8 @@ typedef struct wl_triple_list {
 #endif /* CLIFE */
 
 
-/* Used to identify the object on the undo_stack */
-/* Use define instead of enums because quick masking is important */
+	/* Used to identify the object on the undo_stack */
+	/* Use define instead of enums because quick masking is important */
 typedef long type_ptr;
 #define psi_term_ptr	0
 #define resid_ptr	1
@@ -535,48 +536,48 @@ typedef long type_ptr;
 #define undo_action	  32 /* Fast checking for an undo action */
 
 typedef struct wl_stack {
-  type_ptr type; 
-  GENERIC a;
-  GENERIC b;
-  ptr_stack next;
+	type_ptr type;
+	GENERIC a;
+	GENERIC b;
+	ptr_stack next;
 } stack;
 
 typedef enum {
-  fail,
-  prove,
-  unify,
-  unify_noeval,
-  disj,
-  what_next,
-  eval,
-  eval_cut,
-  freeze_cut,
-  implies_cut,
-  general_cut,
-  match,
-  type_disj,
-  clause,
-  del_clause,
-  retract,
-  load,
-  c_what_next /*  RM: Mar 31 1993  */
+	fail,
+	prove,
+	unify,
+	unify_noeval,
+	disj,
+	what_next,
+	eval,
+	eval_cut,
+	freeze_cut,
+	implies_cut,
+	general_cut,
+	match,
+	type_disj,
+	clause,
+	del_clause,
+	retract,
+	load,
+	c_what_next /*  RM: Mar 31 1993  */
 } goals;
 
 typedef struct wl_goal {
-  goals type;
-  ptr_psi_term a;
-  ptr_psi_term b;
-  GENERIC c;
-  ptr_goal next;
-  long pending;
+	goals type;
+	ptr_psi_term a;
+	ptr_psi_term b;
+	GENERIC c;
+	ptr_goal next;
+	long pending;
 } goal;
 
 typedef struct wl_choice_point {
-  unsigned long time_stamp;
-  ptr_stack undo_point;
-  ptr_goal goal_stack;
-  ptr_choice_point next;
-  GENERIC stack_top;
+	unsigned long time_stamp;
+	ptr_stack undo_point;
+	ptr_goal goal_stack;
+	ptr_choice_point next;
+	GENERIC stack_top;
 } choice_point;
 
 /***************************** EXTERNAL VARIABLES ************************/
@@ -587,7 +588,7 @@ typedef struct wl_choice_point {
 /* Garbage collection is done when HEAP_POINTER-STACK_POINTER<MEM_LIMIT. */
 
 extern int arg_c;
-extern char **arg_v;
+extern char** arg_v;
 
 extern GENERIC mem_base;
 extern GENERIC heap_pointer;
@@ -597,7 +598,7 @@ extern GENERIC stack_alloc();
 extern GENERIC heap_alloc();
 
 extern float garbage_time;
-extern struct tms life_start,life_end;
+extern struct tms life_start, life_end;
 
 extern GENERIC other_base;
 extern GENERIC other_limit;
@@ -614,19 +615,19 @@ extern long gen_sym_counter;
 
 extern long warningflag;
 extern long verbose;
-extern long trace,noisy;
+extern long trace, noisy;
 extern long types_done;
 extern long interrupted;
 
-extern FILE *input_stream;
+extern FILE* input_stream;
 extern long line_count;
 extern string input_file_name;
-extern FILE *output_stream;
-extern char *prompt;
+extern FILE* output_stream;
+extern char* prompt;
 extern long page_width;
 
 /* extern ptr_psi_term empty_list; 5.8 */
-extern ptr_definition *gamma_table;
+extern ptr_definition* gamma_table;
 extern long type_count;
 extern long types_modified;
 
@@ -723,16 +724,16 @@ extern ptr_definition final_question;
 
 extern ptr_psi_term null_psi_term; /* Used to represent an empty parse token */
 
-extern char *one;
-extern char *two;
-extern char *three;
-extern char *year_attr;
-extern char *month_attr;
-extern char *day_attr;
-extern char *hour_attr;
-extern char *minute_attr;
-extern char *second_attr;
-extern char *weekday_attr;
+extern char* one;
+extern char* two;
+extern char* three;
+extern char* year_attr;
+extern char* month_attr;
+extern char* day_attr;
+extern char* hour_attr;
+extern char* minute_attr;
+extern char* second_attr;
+extern char* weekday_attr;
 
 
 extern ptr_psi_term old_state; /*  RM: Feb 17 1993  */
@@ -741,7 +742,7 @@ extern ptr_psi_term old_state; /*  RM: Feb 17 1993  */
 
 extern void init_system(); /* in life.c */ /* 26.1 */
 
-extern long (* c_rule[])(); /* in built_ins.c */
+extern long (*c_rule[])(); /* in built_ins.c */
 
 extern ptr_psi_term stack_psi_term(); /* in lefun.c */
 extern ptr_psi_term real_stack_psi_term(); /* in lefun.c */
@@ -821,14 +822,14 @@ VarArgBaseDecl;			/* must have this as last decl */
 				 * ARGUMENTS, the parameter to this macro is
 				 * ALWAYS the parameter preceding VarArgBase
 				 */
-	
 
-	/* usage to send argument list to one of the v-printf functions */
-	
+
+				 /* usage to send argument list to one of the v-printf functions */
+
 	vfprintf(of, format, VarArg);
 
 	/* usage to get an element off the argument list */
-	
+
 	var3 = VarArgNext(typename);
 
 	/* for saftey sake use this to finish up */
@@ -850,7 +851,7 @@ VarArgBaseDecl;			/* must have this as last decl */
 
 /**********************************************************************/
 
-/** TEMPORARY ANSI DECLARATIONS 
+/** TEMPORARY ANSI DECLARATIONS
 
 ptr_definition update_symbol(ptr_module m,char *s);
 

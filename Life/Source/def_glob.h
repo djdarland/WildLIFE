@@ -1,13 +1,13 @@
 /*! \file def_glob.h
   \brief globals
-  
+
 */
 
 // from extern.h
 
 /*! \var first_definition
   \brief All definition are stores in a linked list starting at first_definition.
-   
+
 */
 
 EXTERN ptr_definition first_definition;
@@ -24,7 +24,7 @@ EXTERN int arg_c;
 
 */
 
-EXTERN char *arg_v[ARGNN]; // Modified DJD
+EXTERN char* arg_v[ARGNN]; // Modified DJD
 
 /*! \var alloc_words
   \brief number of words to allocate - from either command lind or ALLOC_WORDS define
@@ -34,14 +34,14 @@ EXTERN char *arg_v[ARGNN]; // Modified DJD
 EXTERN int alloc_words;
 
 /*! \var mem_size
-  \brief number of words from memory = alloc_words * sizeof word 
+  \brief number of words from memory = alloc_words * sizeof word
 
 */
 
 EXTERN int mem_size;
 
 /*! \var mem_base
-  \brief mem_size memory allocated in init_memory by malloc 
+  \brief mem_size memory allocated in init_memory by malloc
 
 */
 
@@ -80,17 +80,17 @@ EXTERN float garbage_time;
 
 */
 
-EXTERN struct tms life_start;
+EXTERN long life_start;
 
 /*! \var life_start
   \brief time life ended - seconds
 
 */
 
-EXTERN struct tms life_end;
+EXTERN long life_end;
 
 /*! \var other_base
-  \brief mem_size memory allocated in init_memory by malloc 
+  \brief mem_size memory allocated in init_memory by malloc
 
   only used for the half-space garbage collector
 */
@@ -168,7 +168,7 @@ EXTERN long parser_stack_index; /* 26.1 */
 
 */
 
-EXTERN ptr_definition and;
+EXTERN ptr_definition wl_and;
 
 /*! \var apply
   \brief symbol in bi module
@@ -644,20 +644,20 @@ EXTERN ptr_definition sys_process_stopped;
 
 /*! \var sys_process_continued
   \brief symbol in sys module
-  
+
 */
 
 EXTERN ptr_definition sys_process_continued;
 
 /*! \var null_psi_term
-  \brief Used to represent an empty parse token 
-  
+  \brief Used to represent an empty parse token
+
 */
-EXTERN ptr_psi_term null_psi_term; 
+EXTERN ptr_psi_term null_psi_term;
 
 /*! \var old_state
   \brief used in token.c to save state to restore it later
-  
+
 */
 
 EXTERN ptr_psi_term old_state; /*  RM: Feb 17 1993  */
@@ -679,53 +679,53 @@ EXTERN long goal_count;
 // from modules.h
 
 /*! \var bi_module
-  \brief Module for public built-ins 
+  \brief Module for public built-ins
 
 */
 
-EXTERN ptr_module bi_module;      
+EXTERN ptr_module bi_module;
 
 /*! \var user_module
-  \brief Default module for user input 
+  \brief Default module for user input
 
 */
 
-EXTERN ptr_module user_module;    
+EXTERN ptr_module user_module;
 
 /*! \var no_module
   \brief ???
 
 */
 
-EXTERN ptr_module no_module;     
+EXTERN ptr_module no_module;
 
 /*! \var x_module
   \brief 'ifdef X11' unnecessary
 
 */
 
-EXTERN ptr_module x_module;     
+EXTERN ptr_module x_module;
 
 /*! \var syntax_module
   \brief Module for minimal Prolog syntax
 
 */
 
-EXTERN ptr_module syntax_module;  
+EXTERN ptr_module syntax_module;
 
 /*! \var module_table
-  \brief The table of modules 
+  \brief The table of modules
 
 */
 
-EXTERN ptr_node module_table;     
+EXTERN ptr_node module_table;
 
 /*! \var current_module
-  \brief The current module for the tokenizer 
+  \brief The current module for the tokenizer
 
 */
 
-EXTERN ptr_module current_module; 
+EXTERN ptr_module current_module;
 
 /*! \var current_module
   \brief system module
@@ -770,53 +770,53 @@ EXTERN long parse_ok;
 
 */
 
-EXTERN char *no_name;
+EXTERN char* no_name;
 
 /*! \var buffer
   \brief buffer used only in print.c - there is local with same name in xpred.c
 
 */
 
-EXTERN char *buffer;
+EXTERN char* buffer;
 
 /*! \var print_depth
-  \brief Global flag that modifies how writing is done. 
+  \brief Global flag that modifies how writing is done.
 */
 
 EXTERN long print_depth;
 
 /*! \var indent
-  \brief Global flag that modifies how writing is done. 
+  \brief Global flag that modifies how writing is done.
 */
 
 EXTERN long indent;
 
 /*! \var const_quote
-  \brief Global flag that modifies how writing is done. 
+  \brief Global flag that modifies how writing is done.
 */
 
 EXTERN long const_quote;
 
 /*! \var write_stderr
-  \brief Global flag that modifies how writing is done. 
+  \brief Global flag that modifies how writing is done.
 */
 
 EXTERN long write_stderr;
 
 /*! \var write_corefs
-  \brief Global flag that modifies how writing is done. 
+  \brief Global flag that modifies how writing is done.
 */
 
 EXTERN long write_corefs;
 
 /*! \var write_resids
-  \brief Global flag that modifies how writing is done. 
+  \brief Global flag that modifies how writing is done.
 */
 
 EXTERN long write_resids;
 
 /*! \var write_canon
-  \brief Global flag that modifies how writing is done. 
+  \brief Global flag that modifies how writing is done.
 */
 
 EXTERN long write_canon;
@@ -856,7 +856,7 @@ EXTERN ptr_psi_term input_state;
 EXTERN ptr_psi_term stdin_state;
 /* For parsing from a string */
 EXTERN long stringparse;
-EXTERN char *stringinput;
+EXTERN char* stringinput;
 
 // from types.h
 
@@ -869,7 +869,7 @@ EXTERN long can_curry;
 
 // from templates.h
 
-EXTERN char *numbers[21];
+EXTERN char* numbers[21];
 EXTERN long set_extra_args[6];
 
 // from lib.c
@@ -879,24 +879,24 @@ EXTERN char prompt_buffer[PROMPT_BUFFER];
 // from lub.c
 
 // from arity.c
-EXTERN FILE *features;
+EXTERN FILE* features;
 
 // from built_ins.c
-EXTERN FILE *bi_list;
+EXTERN FILE* bi_list;
 
-EXTERN long (* c_rule[MAX_BUILT_INS])();
+EXTERN long (*c_rule[MAX_BUILT_INS])();
 
 
-EXTERN char *one;
-EXTERN char *two;
-EXTERN char *three;
-EXTERN char *year_attr;
-EXTERN char *month_attr;
-EXTERN char *day_attr;
-EXTERN char *hour_attr;
-EXTERN char *minute_attr;
-EXTERN char *second_attr;
-EXTERN char *weekday_attr;
+EXTERN char* one;
+EXTERN char* two;
+EXTERN char* three;
+EXTERN char* year_attr;
+EXTERN char* month_attr;
+EXTERN char* day_attr;
+EXTERN char* hour_attr;
+EXTERN char* minute_attr;
+EXTERN char* second_attr;
+EXTERN char* weekday_attr;
 
 // from copy.c
 /* TRUE means: heap_flag==TRUE & only copy to heap those objects not */
@@ -936,7 +936,7 @@ EXTERN long clean_succ;
 
 /* ptr_choice_point prompt_choice_stack; 12.7 */
 
-EXTERN struct tms start_time,end_time;
+EXTERN long start_time, end_time;
 
 EXTERN long xeventdelay;
 EXTERN long xcount;
@@ -944,10 +944,10 @@ EXTERN long xcount;
 EXTERN long more_u_attr; /* TRUE if U has attributes V doesn't */
 EXTERN long more_v_attr; /* Vice-versa */
 
-EXTERN long u_func,v_func;  /* TRUE if U or V is a curried function */
+EXTERN long u_func, v_func;  /* TRUE if U or V is a curried function */
 EXTERN long new_stat;
 
-EXTERN ptr_definition *gamma_table;
+EXTERN ptr_definition* gamma_table;
 
 // from modules.c
 EXTERN string module_buffer;              /* Temporary storage place for strings */
@@ -957,21 +957,21 @@ EXTERN long cmp_debug_flag;
 // from parser.c
 EXTERN psi_term psi_term_stack[PARSER_STACK_SIZE];
 EXTERN long int_stack[PARSER_STACK_SIZE];
-EXTERN operator op_stack[PARSER_STACK_SIZE];
+EXTERN wl_operator op_stack[PARSER_STACK_SIZE];
 
 EXTERN long no_var_tree;
 
 // from print.c
 
-EXTERN char *name;
-EXTERN char seg_format[PRINT_POWER+4];
+EXTERN char* name;
+EXTERN char seg_format[PRINT_POWER + 4];
 
 EXTERN item pretty_things[PRETTY_SIZE];
 EXTERN ptr_item indx;
 
 /* The output stream for a given print command is put in here */
 /* This will be set to stdout, to stderr, or to output_stream */
-EXTERN FILE *outfile;
+EXTERN FILE* outfile;
 
 // from sys.c
 
@@ -995,12 +995,12 @@ EXTERN ptr_node symbol_table;
 /* Global input file state information */
 /* Note: all characters should be stored in longs.  This ensures
    that noncharacters (i.e., EOF) can also be stored. */
-/* For parsing from a string */
+   /* For parsing from a string */
 
-// from types.h
-EXTERN ptr_int_list adults,children;
+   // from types.h
+EXTERN ptr_int_list adults, children;
 
-EXTERN long parser_stack_index;
+// EXTERN long parser_stack_index;
 
 EXTERN ptr_node var_tree;
 EXTERN ptr_node printed_vars;
@@ -1011,11 +1011,11 @@ EXTERN long gen_sym_counter;
 EXTERN long noisy;
 EXTERN long types_done;
 
-EXTERN FILE *input_stream;
+EXTERN FILE* input_stream;
 EXTERN long line_count;
 EXTERN string input_file_name;
-EXTERN FILE *output_stream;
-EXTERN char *prompt;
+EXTERN FILE* output_stream;
+EXTERN char* prompt;
 EXTERN long page_width;
 
 EXTERN long type_count;
@@ -1038,14 +1038,14 @@ EXTERN ptr_psi_term xevent_list, xevent_existing;
 
 EXTERN ptr_definition
 xevent, xkeyboard_event, xbutton_event, /* RM: 7.12.92 */
-  xexpose_event, xdestroy_event, xmotion_event,
-  xdisplay, xdrawable, xwindow, xpixmap, xconfigure_event,
-  xenter_event,xleave_event, xmisc_event,  /* RM: 3rd May 93 */
-  xgc, xdisplaylist;
+xexpose_event, xdestroy_event, xmotion_event,
+xdisplay, xdrawable, xwindow, xpixmap, xconfigure_event,
+xenter_event, xleave_event, xmisc_event,  /* RM: 3rd May 93 */
+xgc, xdisplaylist;
 
 EXTERN long x_window_creation;
 
-EXTERN char  *numbers[21];
+// EXTERN char* numbers[21];
 
-EXTERN long  set_extra_args[6];
+// EXTERN long  set_extra_args[6];
 

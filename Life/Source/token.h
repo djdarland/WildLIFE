@@ -9,7 +9,7 @@ extern long stdin_terminal;
 extern void stdin_cleareof();
 extern void begin_terminal_io();
 extern void end_terminal_io();
-extern char *expand_file_name();
+extern char* expand_file_name();
 extern long open_input_file();
 extern long open_output_file();
 
@@ -30,7 +30,7 @@ extern long old_saved_char;
 extern ptr_psi_term saved_psi_term;
 extern ptr_psi_term old_saved_psi_term;
 extern long eof_flag;
-extern FILE *input_stream;
+extern FILE* input_stream;
 
 /* File state ADT */
 extern ptr_psi_term input_state;
@@ -63,25 +63,25 @@ extern void stack_add_int_attr();
 extern void stack_add_str_attr();
 /* extern void stack_mod_str_attr(); */
 extern void stack_add_psi_attr();
-extern FILE *get_stream();
+extern FILE* get_stream();
 
 /* For parsing from a string */
 extern long stringparse;
-extern char *stringinput;
+extern char* stringinput;
 
 /* Parser/tokenizer state handling */
 extern void save_parse_state();
 extern void restore_parse_state();
 extern void init_parse_state();
 
-typedef struct wl_parse_block *ptr_parse_block;
+typedef struct wl_parse_block* ptr_parse_block;
 
 typedef struct wl_parse_block {
-  long lc;
-  long sol;
-  long sc;
-  long osc;
-  ptr_psi_term spt;
-  ptr_psi_term ospt;
-  long ef;
+	long lc;
+	long sol;
+	long sc;
+	long osc;
+	ptr_psi_term spt;
+	ptr_psi_term ospt;
+	long ef;
 } parse_block;

@@ -3,9 +3,9 @@
 *****************************************************************/
 /* 	$Id: trees.h,v 1.3 1995/07/27 21:23:18 duchier Exp $	 */
 
-extern char *heap_ncopy_string();
-extern char *heap_copy_string();
-extern char *stack_copy_string();
+extern char* heap_ncopy_string();
+extern char* heap_copy_string();
+extern char* stack_copy_string();
 
 extern ptr_node heap_insert();
 extern ptr_node stack_insert();

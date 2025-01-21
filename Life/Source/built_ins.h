@@ -35,8 +35,8 @@ ptr_psi_term collect_symbols();
 #define op_sel 2
 
 ptr_psi_term makePsiTerm ARGS((ptr_definition x));
-ptr_psi_term makePsiList ARGS((GENERIC head, ptr_psi_term (*valueFunc)(), \
-                               GENERIC (*nextFunc)()));
+ptr_psi_term makePsiList ARGS((GENERIC head, ptr_psi_term(*valueFunc)(), \
+    GENERIC(*nextFunc)()));
 
 /* functions for accessing next and value fields of some structures */
 

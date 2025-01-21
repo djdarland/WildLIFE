@@ -42,4 +42,4 @@ extern long stepflag;
 extern long ignore_eff;
 extern long goal_count;
 extern void show_count();
-extern struct tms start_time,end_time;
+extern struct tms start_time, end_time;

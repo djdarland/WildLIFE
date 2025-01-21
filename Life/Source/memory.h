@@ -12,6 +12,6 @@ extern long memory_check();
 
 extern void fail_all();
 
-extern char *GetStrOption();
+extern char* GetStrOption();
 extern int GetBoolOption();
 extern int GetIntOption();
