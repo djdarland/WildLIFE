@@ -1,0 +1,364 @@
+bi_math.cpp: * The standard digital prl copyrights exist and where compatible
+bi_math.cpp: * Permission to use, copy, modify, and distribute this
+bi_math.cpp: * software and its documentation for any purpose and without
+bi_math.cpp:  Similar to division, but arguments and result must be integers.
+bi_math.cpp:/* Main routine for sine and cosine */
+bi_math.cpp:  Return the bitwise operation: ARG1 and ARG2.
+bi_math.cpp:static long c_bit_and()
+bi_math.cpp:					if (bit_and_warning(arg1, val1)) return FALSE;
+bi_math.cpp:					if (bit_and_warning(arg2, val2)) return FALSE;
+bi_math.cpp:					if (bit_and_warning(arg1, val1) || bit_and_warning(arg2, val2))
+bi_math.cpp:					if (bit_and_warning(arg1, val1)) return FALSE;
+bi_math.cpp:					if (bit_and_warning(arg2, val2)) return FALSE;
+bi_math.cpp:					if (bit_and_warning(arg1, val1) || bit_and_warning(arg2, val2))
+bi_math.cpp:  Addition is further complicated by the fact that it is both a unary and
+bi_math.cpp:	new_built_in(syntax_module, "/\\", (def_type)function_it, c_bit_and);
+bi_sys.cpp:  With argument 1: If it is top, return the trace flag and disable tracing.
+bi_sys.cpp:  With argument 2: If it is top, return the stepflag and disable stepping.
+bi_sys.cpp:  hour, minute, second, and weekday.
+bi_type.cpp: * The standard digital prl copyrights exist and where compatible
+bi_type.cpp: * Permission to use, copy, modify, and distribute this
+bi_type.cpp: * software and its documentation for any purpose and without
+bi_type.cpp:  Main routine to handle all the isa built-in functions.
+bi_type.cpp:  This boolean function requires two arguments and never residuates.
+bi_type.cpp:  and lists.  For lists, it looks only at the top level, i.e. whether the
+bi_type.cpp:  strings (which are potentially infinite sets of objects), and list objects.
+bi_type.cpp:  if A is a subsort of B => succeed and residuate on B
+built_ins.cpp:static unsigned int randomseed;
+built_ins.cpp:    pair->type = wl_and;
+built_ins.cpp:  GET_REAL_VALUE. The values handled here have to be booleans.
+built_ins.cpp:      Warningline("the persistent term '%P' appears in a boolean constraint and cannot be refined\n",t);
+built_ins.cpp:        Warningline("the persistent term '%P' appears in an arithmetic constraint and cannot be refined\n", t);
+built_ins.cpp:  Internal built-in predicate that handles functions in predicate positions.
+built_ins.cpp:                    /* Both true and false are disentailed. */
+built_ins.cpp:/* Main routine to handle the and & or functions. */
+built_ins.cpp:/* sel = TRUE (for and) or FALSE (for or) */
+built_ins.cpp:  Logical and & or.
+built_ins.cpp:static long c_and()
+built_ins.cpp:  a known function, then it builds the psi-term F(Args), and evaluates it.
+built_ins.cpp:/* Return TRUE iff t has only argument "1", and return the argument. */
+built_ins.cpp:  given attributes, and they are not checked as long as the psi-term has
+built_ins.cpp:    e = expand_file_name(s);
+built_ins.cpp:  Load a file.  This load accepts and executes any queries in the loaded
+built_ins.cpp:  file, including calls to user-defined predicates and other load predicates.
+built_ins.cpp:  Together, get_choice and set_choice allow one to implement an "ancestor cut"
+built_ins.cpp:  and an execution point arbitarily remote in the past.
+built_ins.cpp:  The built-ins get_choice, set_choice, and exists_choice are implemented
+built_ins.cpp:  point is identified by an integer and that the integers are in increasing
+built_ins.cpp:  i.e. A is more recent than the choice point marked by arg1 and no more
+built_ins.cpp:  Print the global variables and their values,
+built_ins.cpp:  Parse a string and return a quoted psi-term.
+built_ins.cpp:  Create a function with one rule F -> X, where F and X are the
+built_ins.cpp:  arguments of setq.  Setq evaluates its first argument and quotes the first.
+built_ins.cpp:  This routine is used both for CLAUSE and RETRACT.
+built_ins.cpp:  Handle multiple arguments and initialization
+built_ins.cpp:  then evaluate and declare nothing.
+built_ins.cpp:// long* error_2, * eval_2; // REV401PLUS added _2 and made long 
+built_ins.cpp:  Read the next character from the current input stream and return
+built_ins.cpp:  in the range 0..255), and any other psi-term (in which case its name is
+built_ins.cpp:  both A and B being evaluated before the disjunction is.
+built_ins.cpp:/* Collect properties of the symbols in the symbol table, and make a
+built_ins.cpp:   Note the similarity between this routine and a tree-to-list
+built_ins.cpp:/* PVR 23.2.94 -- Added this to fix c_strip and c_copy_pointer */
+built_ins.cpp:  Evaluate an expression and return its value.
+built_ins.cpp:  Evaluate an expression and return its value.
+built_ins.cpp:            success = !chdir(expand_file_name((char*)arg1->value_3));
+built_ins.cpp:  arguments as before (i.e., copying the sort and feature table but not
+built_ins.cpp:  stack the pair (ADDRESS=NULL, VALUE=GOAL) onto the trail and when undoing
+built_ins.cpp:  This implements the freeze and implies predicates.
+built_ins.cpp:  V is evaluated and unified before G is proved.
+built_ins.cpp:/* Return a psi term with one or two args, and the addresses of the args */
+built_ins.cpp:/* and for a type with constraints. */
+built_ins.cpp:  List the definition of a predicate or a function, and the own constraints
+built_ins.cpp:                        /* Handle an attribute constraint with no predicate: */
+built_ins.cpp:  Declare that string S is an operator of precedence P and of type T where
+built_ins.cpp:  Concatenate the strings in arguments 1 and 2.
+built_ins.cpp:  Return an integer random number between 0 and abs(argument1).
+built_ins.cpp:  Uses the Unix random() function (rand_r(&seed) for Solaris).
+built_ins.cpp:long c_random()
+built_ins.cpp:            c_result = (rand_r(&randomseed) << 15) + rand_r(&randomseed);
+built_ins.cpp:            c_result = random();
+built_ins.cpp:  the random number generator, which is the Unix random() function.
+built_ins.cpp:long c_initrandom()
+built_ins.cpp:    if (success && all_args) randomseed = c_arg1;
+built_ins.cpp:    if (success && all_args) srandom(c_arg1);
+built_ins.cpp:  Declare all built-in predicates and functions.
+built_ins.cpp:  Declare all standard operators.
+built_ins.cpp:    wl_and = update_symbol(syntax_module, ",");
+built_ins.cpp:    call_handlersym = update_symbol(bi_module, "call_handler");
+built_ins.cpp:    new_built_in(syntax_module, "and", (def_type)function_it, c_and);
+built_ins.cpp:    /* Unification and assignment */
+built_ins.cpp:    /* String and character utilities */
+built_ins.cpp:    new_built_in(bi_module, "random", (def_type)function_it, c_random);
+built_ins.cpp:    new_built_in(bi_module, "initrandom", (def_type)predicate_it, c_initrandom);
+copy.cpp:/* They are based on a hash table with buckets and timestamp. */
+copy.cpp:/* This allows fast clearing of the table and fast insertion  */
+copy.cpp:/* and lookup.                                                */
+copy.cpp:/* A big hash table means it is sparse and therefore fast */
+copy.cpp:        /* *** Do error handling here *** */
+copy.cpp:  Get the translation of address A and the info field stored with it.
+copy.cpp:  This routine uses hash tables with buckets and partial inlining for speed.
+copy.cpp:  The following three versions of copy all rename their variables and return
+copy.cpp:  Make a distinct copy of T and T's attribute tree, which are identical to T,
+copy.cpp:/* A (possibly) correct mark_eval and its companion mark_quote. */
+copy.cpp:/* of a nonstrict term, which are marked quoted.  Set status correctly and  */
+copy.cpp:/* only occurs if the first occurrence encountered is strict and a later    */
+copy.cpp:/* whether a term has already been traversed, and if so, (2) whether there  */
+CPM_WL01.cpp:        rand_array[i] = rand_r(&lifeseed);
+CPM_WL01.cpp:        rand_array[i] = random();
+CPM_WL01.cpp:        Errorline("Too many command line arguments\n");
+error.cpp:/* Utilities for tracing and single stepping */
+error.cpp:  Main routine for report_error and report_warning
+error.cpp:  Main routine for report_error2 and report_warning2
+error.cpp:/* Error checking routines for bit_and, bit_or, shift, and modulo */
+error.cpp:/*! \fn long bit_and_warning(ptr_psi_term arg, REAL val)
+error.cpp:  \brief bit_and_warning
+error.cpp:long bit_and_warning(ptr_psi_term arg, REAL val)
+error.cpp:	return nonint_warning(arg, val, "of bitwise 'and' operation is not an integer");
+hash_table.cpp:  New version of the keyword table and related routines.
+hash_table.cpp:void hash_expand(ptr_hash_table table, int new_size)
+hash_table.cpp:        n ^= rand_array[*symbol] + rand_array[n & 255];
+hash_table.cpp:  Add a symbol and data to a table. Overwrite previous data.
+hash_table.cpp:        hash_expand(table, table->size * 2);
+info2.cpp:    printf("Ported to Linux and Cygwin December 2022 after many efforts since 1995\n");
+info2.cpp:    printf("By Dennis J. Darland dennis.darland@hotmail.com\n");
+info.cpp:    printf("Ported to Linux and Cygwin December 2022 after many efforts since 1995\n");
+info.cpp:    printf("By Dennis J. Darland dennis.darland@hotmail.com\n");
+interrupt.cpp:    void (*f)(); /*  RM: Apr  7 1993   Weird problem in GCC and C89 */
+interrupt.cpp:  This initialises interrupts by trapping the interrupt signal and sending it
+interrupt.cpp:    void (*f)(); /*  RM: Apr  7 1993   Weird problem in GCC and C89 */
+interrupt.cpp:void handle_interrupt()
+interrupt.cpp:        printf("*** Command ");
+lefun.cpp:/* Create a new psi_term on the stack with value '@' (top) and no attributes. */
+lefun.cpp:/* Create a new psi_term on the heap with value '@' (top) and no attributes. */
+lefun.cpp:  Residuate the current function on the two variables U and V.
+lefun.cpp:  Residuate the current function on the three variables U, V, and W.
+lefun.cpp:  Two versions of this routine exist: one which trails t and one which never
+lefun.cpp:  This copies the current definition of the function and
+lefun.cpp:    /* For currying and residuation */
+lefun.cpp:  Match the attribute trees of psi_terms U and V.
+lefun.cpp:  This routine is careful to push nested eval and match goals in
+lefun.cpp:  and the second argument is the function definition (which may be changed).
+lefun.cpp:                /* Here we have U <| V but U and V have values which cannot match. */
+lefun.cpp:  They deal with conjunctions, disjunctions, functions and arguments which
+lefun.cpp:        /* (cond and such_that) */
+lefun.cpp:  :: H:husband(spouse => wife(spouse => H)).
+lefun.cpp:  :: W:wife(spouse => husband(spouse => W)).
+lefun.cpp:  to handle the case.  If all is dealt with then CHECK_OUT returns TRUE.
+lefun.cpp:  i_eval_args, and the dereference routines are called from outside of this
+lefun.cpp:    of unification, matching, built-ins, and user-defined routines.
+lefun.cpp:    /* Traceline("PVR: entering check_out with status %d and term %P\n",
+lefun.cpp:                /* Function evaluation handled during matching and unification */
+lefun.cpp:/* These routines handle evaluation-by-need.  Check_out is changed  */
+lefun.cpp:/* These two needed only for match_aim and match_attr: */
+lib2.cpp:        rand_array[i] = rand_r(&libseed);
+lib2.cpp:        rand_array[i] = random();
+lib2.cpp:        Errorline("Too many command line arguments\n");
+lib.cpp:        rand_array[i] = rand_r(&libseed);
+lib.cpp:        rand_array[i] = random();
+lib.cpp:        Errorline("Too many command line arguments\n");
+life2.cpp:        rand_array[i] = rand_r(&lifeseed);
+life2.cpp:        rand_array[i] = random();
+life2.cpp:        Errorline("Too many command line arguments\n");
+life.cpp:        rand_array[i] = rand_r(&lifeseed);
+life.cpp:        rand_array[i] = random();
+life.cpp:        Errorline("Too many command line arguments\n");
+list.cpp:** with 2 entries (first and last element)
+list.cpp:        - The container is 'updated' two times if the first and last atom
+login.cpp:    Get the arguments labelled '1' and '2' as quickly as possible from the
+login.cpp:    binary tree ATTR_LIST, place them in ARG1 and ARG2. This routine nearly
+login.cpp:  For types, insert HEAD as a term of type attributes and BODY as a type
+login.cpp:  PROOF and UNIFICATION routines.
+login.cpp:  UNIFY and vice-versa.
+login.cpp:  the real work, involving calls to UNIFY_AIM, PROVE_AIM and backtracking.
+login.cpp:  that is modified.  Both the definition and the time_stamp must be trailed.
+login.cpp:  that is modified.  Both the coref and the time_stamp must be trailed.
+login.cpp:/* This includes objects outside of the Life data space and entries in  */
+login.cpp:  Push the window information (operation, display and window identifiers) on
+login.cpp:  T is the type of the goal, A,B and C are various parameters.
+login.cpp:  a and b are the terms to unify.
+login.cpp:  when the goal fails, everything done after it can be undone and the memory
+login.cpp:  Undo everything back to the previous choice-point and take the alternative
+login.cpp:  and the cutpt, whose addresses are between the cutpt and stack_pointer.
+login.cpp:/* Merge v's loners into u and evaluate the corresponding arguments */
+login.cpp:  U and V are two binary trees containing the
+login.cpp:  attributes fields of psi-terms.  U and V are merged together, that is U
+login.cpp:  becomes the union of U and V:
+login.cpp:  For each label L in V and L->Vpsi_term:
+login.cpp:  Fetch the type definition of a psi_term and execute it.
+login.cpp:  Fetch the type definition of a psi_term and execute it.
+login.cpp:  'Term' is one of the type's attributes and 'pred' is a constraint.
+login.cpp:  below both type1 and type2, the types of the two psi-terms whose
+login.cpp:  have attributes it is not checked, and the addition of an attribute will
+login.cpp:  U and V are the two psi-terms to unify.
+login.cpp:  overall performance of Wild_Life, and the code is not duplicated elsewhere.
+login.cpp:        /**** Calculate their Greatest Lower Bound and compare them ****/
+login.cpp:                    /* and it does not check anything if u has no attributes. */
+login.cpp:  proof step, that is: finding the definition to use to prove AIM, and
+login.cpp:  sub-goals onto the goal_stack. Special cases are CUT and AND (","). Built-in
+login.cpp:        deref_ptr(thegoal); /* Evaluation is explicitly handled later. */
+login.cpp:        if (thegoal->type != wl_and) {
+login.cpp:                                    /* and fails if it returns false.  It can residuate too. */
+login.cpp:                                /* Call the call_handler (which may do an auto-load). */
+login.cpp:                                ptr_psi_term call_handler;
+login.cpp:                                /* Warningline("call handler invoked for %P\n",thegoal); */
+login.cpp:                                call_handler = stack_psi_term(0);
+login.cpp:                                call_handler->type = call_handlersym;
+login.cpp:                                stack_add_psi_attr(call_handler, "1", thegoal);
+login.cpp:                                push_goal(prove, call_handler, (ptr_psi_term)DEFRULES, NULL); // REV401PLUS cast
+login.cpp:  decoded and found to be a disjunction of types, enumerates the different
+login.cpp:  unify the calling argument with the current rule. If this succeeds and
+login.cpp:/* Cut away up to and including the first 'what_next' choice point. */
+login.cpp:/* NULL causes an exit from main_prove and will then reset all other    */
+login.cpp:        /* Must remember var_occurred from the what_next goal and from */
+login.cpp:            /* has not increased and there are no variables. */
+login.cpp:            /* and no 'No' message should be given on the lowest level,   */
+login.cpp:    /* The system waits for either an input command or an X event. */
+login.cpp:    /* An X event is treated *exactly* like an input command that  */
+login.cpp:        /* while loading files and variables in file queries are *not* added. */
+login.cpp:            /* Handle both successful and failing queries correctly. */
+login.cpp:                Warningline("frozen goal has a missing parameter '%P' and fails.\n", aim->aaaa_1);
+login.cpp:                Warningline("implied goal has a missing parameter '%P' and fails.\n", aim->aaaa_1);
+login.cpp:                handle_interrupt();
+login.cpp:                    handle_interrupt();
+lub.cpp: * The standard digital prl copyrights exist and where compatible
+lub.cpp: * Permission to use, copy, modify, and distribute this
+lub.cpp: * software and its documentation for any purpose and without
+lub.cpp:	/* now do a breadth first search for each of arg1 and arg2 */
+memory.cpp:    printf("stack pointer is: %lx\n", (unsigned long)stack_pointer); // REV401PLUS  "%x" -> "%lx" and cast
+memory.cpp:  All goals are abandoned.
+memory.cpp:  This routine compresses the memory contents and
+memory.cpp:  This goes through the type tree which contains the parents and children lists
+memory.cpp:  for all types, and the attributed code. The code field is not checked as
+memory.cpp:  and definitions not contained in the type table.
+memory.cpp:  fields (A,B and C) present in each goal.
+memory.cpp:        /* Handling of the value field (6.10) */
+memory.cpp:  (Could improve this by randomly picking left or right subtree
+memory.cpp:  Check and update the code
+memory.cpp:  later to distinguish between the various data types and to
+memory.cpp:  determine the type of the VALUE field in psi_terms. Misunderstanding this
+memory.cpp:  Check and update the code reversing table.
+memory.cpp:  This routine checks all pointers and psi_terms to find out which memory cells
+memory.cpp:  must be preserved and which can be discarded.
+memory.cpp:  COMPRESS uses to compact the memory and recalculate the addresses.
+memory.cpp:       Kids and Parents cannot be checked because the built-in types have codes
+memory.cpp:    /* Now, check the rest of the definitions and all global roots */
+memory.cpp:    check_definition(& wl_and);
+memory.cpp:    check_definition(&call_handlersym);
+memory.cpp:  compresses the heap and the stack, then during the second pass assigns
+memory.cpp:  there is enough memory available to work, and will call the GC if not
+memory.cpp:  the macro ALIGN is supposed to be a power of 2 and the pointer returned
+memory.cpp:  the macro ALIGN is supposed to be a power of 2 and the pointer returned
+memory.cpp:  The start and end addresses of the blocks are re-aligned correctly.
+memory.cpp:  execution to continue.  It causes a garbage collection if not, and if that
+modules.cpp:    /* First clean up the arguments and find out which module to use */
+modules.cpp:                                Warningline("benign module name clash: %s and %s\n",
+modules.cpp:                                Errorline("serious module name clash: \"%s\" and \"%s\"\n",
+modules.cpp:                        Errorline("symbol clash '%s' and '%s'\n",
+modules.cpp:   c_public, c_private, and c_private_feature.
+modules.cpp:  This routine really matches U and V, it will only succeed if V is more
+modules.cpp:    /**** Calculate their Greatest Lower Bound and compare them ****/
+modules.cpp:                        return FALSE; /* Don't unify CUTs and STREAMs and things */
+modules.cpp:          Warningline("attributes don't unify in %P and %P\n",u,v);
+parser.cpp:  Push psi_term and precedence and operator onto parser stack.
+parser.cpp:  This function pops PSI_TERM and OP off the parser stack and returns
+parser.cpp:  Note that this allows both a binary and unary minus.
+parser.cpp:  not create the old (slightly more compact and a lot more complicated) list
+parser.cpp:		/* The syntax <a,b,c> for conjunctions has been abandoned.
+parser.cpp:  This routine inserts ARG1 and ARG2 as the first and second attributes of
+parser.cpp:	   I will have to rewrite the tokeniser and the parser to handle
+parser.cpp:  is <= PREC, and replace it with the corresponding psi-term. Do not go any
+parser.cpp:  [A,4*5,b-4!] then STR1="," and STR2="|" . It would be incorrect if "," were
+parser.cpp:  It handles psi_terms rather than pointers which causes a lot of messy code
+parser.cpp:  and is somewhat slower.
+print.cpp:/* Precedence of the comma and colon operators (or 0 if none exists) */
+print.cpp:/* integers are represented as REALS, and therefore can have higher        */
+print.cpp:/* Time to print a term is proportional to product of var_tree size and */
+print.cpp: WORK_OUT_LENGTH tries (by trial and error) to print the psi_term into
+print.cpp: /* Does the work of prettyf and prettyf_quote */
+print.cpp:/* s starts with '_' or a lowercase symbol and contains */
+print.cpp:/* all digits, letters, and '_'. */
+print.cpp:    (1) const_quote==TRUE, and
+print.cpp:    (2) S does not represent an integer, and
+print.cpp:        or starts with a non-lowercase character, and
+print.cpp:        non-SINGLE SYMBOL characters (in that case, S does not need quotes),and
+print.cpp:  Copy the item's string into global space and point to the next item.
+print.cpp:/* Utility to correctly handle '\n' inside strings being printed: */
+print.cpp:/* Same as strlen, except that the length count starts with pos and */
+print.cpp:  This is done by a trial and error mechanism.
+print.cpp:  Check that T is of type T_TYPE, that it has exactly the attributes '1' and
+print.cpp:  '2' and that the 2nd is either nil or also long check_legal_cons(t,t_type)
+print.cpp:/* Routines to handle printing of operators. */
+print.cpp:/* Returns existence of arguments 1 and 2 in low two bits of result. */
+print.cpp:/* If only arguments "1" and "2"  exist, returns 3. */
+print.cpp:/* {INFIX, PREFIX, POSTFIX} and also its precedence and type.        */
+print.cpp:/* and prec=0.                                                       */
+print.cpp:/* a valid operator, and is therefore taken care of here).                */
+print.cpp:        /* The p1 and p2 flags tell whether to put parens around t's args */
+print.cpp:  and by the built-in predicate listing.
+raw.cpp:  and don't echo the character on the standard output.
+raw.cpp:    /* with IXON, do not interpret ctrl-S and ctrl-Q */
+raw.cpp:                        /* I don't understand - jch - Fri Aug 28 1992 */
+raw.cpp:  write the specified char on the standard output
+sys.cpp:   All new system utilities and extensions to Wild LIFE 1.01
+sys.cpp:   are implemented in this file and made available in LIFE
+sys.cpp:           just follow the chain of corefs and don't do
+sys.cpp:                /* if arg present and should be evaled but has no value */
+sys.cpp:static long c_bitvector_and()
+sys.cpp:       have counted twice, i.e. those between the start of the program and
+sys.cpp:       to be, and also to count the 1 byte of program included in the decl
+sys.cpp:       offset and each time we need to pass it to regexec or regsub we must
+sys.cpp:  and returns a boolean so that it can be used as a predicate.
+sys.cpp:            /* create a term to represent all the groups and return it */
+sys.cpp:    flush or file positioning operation; and the other way around
+sys.cpp:   buffer buf.  if found place new buffer and index in rbuf and
+sys.cpp:   ridx and return 1, else return 0
+sys.cpp:   full, allocate a new buffer and link it to the current one,
+sys.cpp:    new_built_in(sys_module, "bitvector_and", (def_type)function_it, c_bitvector_and);
+token.cpp:/* Parser/tokenizer state handling */
+token.cpp:   This is to avoid mix-ups between terminal and file I/O since the
+token.cpp:   program's input and output streams may be different from stdin stdout.
+token.cpp:char* expand_file_name(char* s)
+token.cpp:  restore the stdin state.  Otherwise, open the file and create a new global
+token.cpp:  If the file can't be opened, print an error and open "stdin" instead.
+token.cpp:    file = expand_file_name(file);
+token.cpp:    file = expand_file_name(file);
+token.cpp:                    /* missing \ooo and \xhh */
+token.cpp:            /* Remove this for Bruno who didn't like it, and doesn't like
+token.cpp:                /* and is no longer a variable whose name must be remembered.  */
+token.cpp:                /* As a result, '@' and '_' are synonyms in the program input. */
+trees.cpp:/* Return number of significant digits in the integer and its sign. */
+trees.cpp:            return strcmp(s1, s2); /* Use strcmp only if same sign and length */
+trees.cpp:  Make a copy of the string in the heap, and return a pointer to that.
+trees.cpp:  Exceptions: "1" and "2" are unique (and in the heap).
+trees.cpp:  Make a copy of the string in the heap, and return a pointer to that.
+trees.cpp:  Exceptions: "1" and "2" are unique (and in the heap).
+trees.cpp:  Make a copy of the string in the stack, and return a pointer to that.
+trees.cpp:  Exceptions: "1" and "2" are unique (and in the heap).
+trees.cpp:  Return the node containing the data P in tree T. This is a linear search and
+trees.cpp:  otherwise create a definition for it, and return that.
+types.cpp:                /* The term was entered in a previous file, and therefore */
+types.cpp:                    /* d is a built-in, and therefore cannot be altered. */
+types.cpp:                    /* d is not a built-in, and therefore can be altered. */
+types.cpp:                /* This is done by Richard's version, and I don't know why. */
+types.cpp:                Warningline("'%s' is a sort--only functions and predicates\
+types.cpp:  appended to T's definition, and will be propagated after ENCODING to T's
+types.cpp:  A type's attributes and constraints are stored in the 'rule' field of the
+types.cpp:  If cyclic, return a TRUE error condition and print an error message
+types.cpp:        /* If unmarked, mark and recurse */
+types.cpp:            Errorline("the sorts 'real' and 'string' are not disjoint.\n");
+types.cpp:        Errorline("the sorts 'real' and 'list' are not disjoint.\n");
+types.cpp:        Errorline("the sorts 'list' and 'string' are not disjoint.\n");
+types.cpp:    /* and must be compared. */
+types.cpp:  Calculate glb of two type codes C1 and C2, put result in C3.
+types.cpp:  This is needed to correctly handle psi-terms that don't have a sort code
+types.cpp:  (for example, functions, predicates, and singleton sorts).
+types.cpp:  The routine handles a bunch of special cases that keep f3==TRUE.
+types.cpp:  This function returns the Greatest Lower Bound of two types T1 and T2 in T3.
+types.cpp:  If T3 is not a simple type then C3 is its code, and T3=NULL.
+types.cpp:  It also does some type comparing, and returns
+types.cpp:  4 otherwise   ( T3 strictly <| T1 and T3 strictly <| T2 )
+types.cpp:        /* printf("glb of %s and %s\n",
+types.cpp:  We already know that t1 and t2 are not top.
+types.cpp:  Because of the implementation of ints, reals, strings, and lists,
+types.cpp:  this has to take the value field into account, and thus must

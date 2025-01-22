@@ -74,10 +74,10 @@ extern long get_arg();
 		else \
 		    Errorline ("in template: type %T not expected (built-in FUNCNAME).\n", types[ii]); \
 	    else \
-		if (args[ii]->type == true) \
+		if (args[ii]->type == lf_true) \
 		    val[ii] = TRUE; \
 		else \
-		if (args[ii]->type == false) \
+		if (args[ii]->type == lf_false) \
 		    val[ii] = FALSE; \
 		else \
 		  XPART(args[ii],val[ii],num[ii]) /* 16.12 */ \

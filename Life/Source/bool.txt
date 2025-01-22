@@ -1,0 +1,126 @@
+bi_sys.cpp:            unify_bool_result(arg1, trace);
+bi_sys.cpp:            unify_bool_result(arg2, stepflag);
+bi_type.cpp:        unify_bool_result(result, ans);
+bi_type.cpp:  This boolean function requires two arguments and never residuates.
+bi_type.cpp:        unify_bool_result(result, ans);
+bi_type.cpp:        unify_bool_result(result, ans);
+bi_type.cpp:        unify_bool_result(result, ans);
+bi_type.cpp:        unify_bool_result(result, ans);
+bi_type.cpp:        unify_bool_result(result, ans);
+bi_type.cpp:        unify_bool_result(result, ans);
+built_ins.cpp:  GET_REAL_VALUE. The values handled here have to be booleans.
+built_ins.cpp:  Check if psi_term T is a boolean. V <- TRUE or FALSE value of T.
+built_ins.cpp:static long get_bool_value(ptr_psi_term t, REAL* v, long* n)
+built_ins.cpp:        success = matches(t->type, boolean, &smaller);
+built_ins.cpp:                    t->type = boolean;
+built_ins.cpp:  Unify psi_term T to the boolean value V = TRUE or FALSE.
+built_ins.cpp:void unify_bool_result(ptr_psi_term t, long v)
+built_ins.cpp:      Warningline("the persistent term '%P' appears in a boolean constraint and cannot be refined\n",t);
+built_ins.cpp:            success = get_bool_value(arg3, &val3, &num3);
+built_ins.cpp:                    unify_bool_result(arg3, (val1 > val2));
+built_ins.cpp:            success = get_bool_value(arg3, &val3, &num3);
+built_ins.cpp:                        unify_bool_result(arg3, TRUE);
+built_ins.cpp:                    unify_bool_result(arg3, (val1 == val2));
+built_ins.cpp:            success = get_bool_value(arg3, &val3, &num3);
+built_ins.cpp:                    unify_bool_result(arg3, (val1 < val2));
+built_ins.cpp:            success = get_bool_value(arg3, &val3, &num3);
+built_ins.cpp:                    unify_bool_result(arg3, (val1 >= val2));
+built_ins.cpp:            success = get_bool_value(arg3, &val3, &num3);
+built_ins.cpp:                    unify_bool_result(arg3, (val1 <= val2));
+built_ins.cpp:static long c_boolpred()
+built_ins.cpp:        if (sub_type(boolean, arg1->type)) {
+built_ins.cpp:                        Errorline("function result '%P' should be a boolean or a predicate.\n",
+built_ins.cpp:        Errorline("missing argument to '*boolpred*'.\n");
+built_ins.cpp:static long get_bool(ptr_definition typ)
+built_ins.cpp:static long unify_bool(ptr_psi_term arg)
+built_ins.cpp:    tmp->type = boolean;
+built_ins.cpp:        a1comp = matches(arg1->type, boolean, &sm1);
+built_ins.cpp:        a2comp = matches(arg2->type, boolean, &sm2);
+built_ins.cpp:        a3comp = matches(arg3->type, boolean, &sm3);
+built_ins.cpp:            a1 = get_bool(arg1->type);
+built_ins.cpp:            a2 = get_bool(arg2->type);
+built_ins.cpp:            a3 = get_bool(arg3->type);
+built_ins.cpp:                unify_bool_result(arg3, !sel);
+built_ins.cpp:                /* tmp->type=boolean; */
+built_ins.cpp:                /* tmp->type=boolean; */
+built_ins.cpp:                unify_bool_result(arg1, sel);
+built_ins.cpp:                unify_bool_result(arg2, sel);
+built_ins.cpp:                /* tmp->type=boolean; */
+built_ins.cpp:            if (!sm1) unify_bool(arg1);
+built_ins.cpp:            if (!sm2) unify_bool(arg2);
+built_ins.cpp:            if (!sm3) unify_bool(arg3);
+built_ins.cpp:            Errorline("Non-boolean argument or result in '%P'.\n", funct);
+built_ins.cpp:        a1comp = matches(arg1->type, boolean, &sm1);
+built_ins.cpp:        a2comp = matches(arg2->type, boolean, &sm2);
+built_ins.cpp:            a1 = get_bool(arg1->type);
+built_ins.cpp:            a2 = get_bool(arg2->type);
+built_ins.cpp:                unify_bool_result(arg2, !a1);
+built_ins.cpp:                unify_bool_result(arg1, !a2);
+built_ins.cpp:            if (!sm1) unify_bool(arg1);
+built_ins.cpp:            if (!sm2) unify_bool(arg2);
+built_ins.cpp:            Errorline("Non-boolean argument or result in '%P'.\n", funct);
+built_ins.cpp:        a1comp = matches(arg1->type, boolean, &sm1);
+built_ins.cpp:        a2comp = matches(arg2->type, boolean, &sm2);
+built_ins.cpp:        a3comp = matches(arg3->type, boolean, &sm3);
+built_ins.cpp:            a1 = get_bool(arg1->type);
+built_ins.cpp:            a2 = get_bool(arg2->type);
+built_ins.cpp:            a3 = get_bool(arg3->type);
+built_ins.cpp:                unify_bool_result(arg3, a1 ^ a2);
+built_ins.cpp:                unify_bool_result(arg2, a1 ^ a3);
+built_ins.cpp:                unify_bool_result(arg1, a3 ^ a2);
+built_ins.cpp:                unify_bool_result(arg3, FALSE);
+built_ins.cpp:                unify_bool_result(arg2, FALSE);
+built_ins.cpp:                unify_bool_result(arg1, FALSE);
+built_ins.cpp:            if (!sm1) unify_bool(arg1);
+built_ins.cpp:            if (!sm2) unify_bool(arg2);
+built_ins.cpp:            if (!sm3) unify_bool(arg3);
+built_ins.cpp:            Errorline("Non-boolean argument or result in '%P'.\n", funct);
+built_ins.cpp:            success = get_bool_value(arg3, &val3, &num3);
+built_ins.cpp:                        unify_bool_result(arg3, FALSE);
+built_ins.cpp:                    unify_bool_result(arg3, (val1 != val2));
+built_ins.cpp:        success = get_bool_value(arg1, &val1, &num1);
+built_ins.cpp:            Errorline("argument to cond is not boolean in %P\n", g);
+built_ins.cpp:  is a boolean function that returns true iff Psi-term
+built_ins.cpp:        success = get_bool_value(result, &val3, &num3);
+built_ins.cpp:                unify_bool_result(result, TRUE);
+built_ins.cpp:                unify_bool_result(result, FALSE);
+built_ins.cpp:        success = get_bool_value(result, &val3, &num3);
+built_ins.cpp:                unify_bool_result(result, FALSE);
+built_ins.cpp:                unify_bool_result(result, TRUE);
+built_ins.cpp:  boolean		=update_symbol(bi_module,"bool");
+built_ins.cpp:  boolpredsym		=update_symbol(bi_module,"bool_pred");
+built_ins.cpp:  new_built_in(bi_module,"bool_pred",(def_type)predicate_it,c_boolpred);
+built_ins.cpp:    boolean = update_symbol(bi_module, "bool");
+built_ins.cpp:    boolpredsym = update_symbol(bi_module, "bool_pred");
+built_ins.cpp:    new_built_in(bi_module, "bool_pred", (def_type)predicate_it, c_boolpred);
+login.cpp:                                    && sub_type(boolean, thegoal->type)
+login.cpp:                                    ptr_psi_term bool_pred;
+login.cpp:                                    /* '*bool_pred*'(F), which succeeds if F returns true */
+login.cpp:                                    bool_pred = stack_psi_term(0);
+login.cpp:                                    bool_pred->type = boolpredsym;
+login.cpp:                                    bool_pred->attr_list = (a = STACK_ALLOC(node));
+login.cpp:                                    push_goal(prove, bool_pred, (ptr_psi_term)DEFRULES, NULL); // REV401PLUS cast
+memory.cpp:    check_definition(&boolean);
+memory.cpp:    check_definition(&boolpredsym);
+modules.cpp:/******** MAKE_PUBLIC(term,bool)
+modules.cpp:long make_public(ptr_psi_term term, long wl_bool)   /*  RM: Feb 22 1993  Modified */
+modules.cpp:// long bool;
+modules.cpp:        if (key->definition->keyword->module != current_module && !wl_bool) {
+modules.cpp:        key->wl_public = wl_bool;
+modules.cpp:        def->keyword->wl_public = wl_bool;
+modules.cpp:                Errorline("argument should be boolean in '%P'\n", call);
+modules.cpp:                Errorline("argument should be boolean in '%P'\n", call);
+modules.cpp:                Errorline("argument should be boolean in '%P'\n", call);
+raw.cpp:    types[1] = boolean;
+raw.cpp:    unify_bool_result(args[1], event_flag);
+raw.cpp:    unify_bool_result(aim->b, mode_raw);
+raw.cpp:    unify_bool_result(aim->b, x_window_creation);
+raw.cpp:    unify_bool_result(aim->b, FALSE);
+sys.cpp:  regexp_execute(RE:regexp,S:string,@(N=>(SN,EN),...)) -> boolean
+sys.cpp:  and returns a boolean so that it can be used as a predicate.
+sys.cpp:            unify_bool_result(result, TRUE);
+sys.cpp:        unify_bool_result(result, TRUE);
+sys_dbm.cpp:        unify_bool_result(result, TRUE);
+types.cpp:        make_type_link(lf_true, boolean);
+types.cpp:        make_type_link(lf_false, boolean);
+types.cpp:        make_type_link(boolean, built_in);

@@ -1,0 +1,1925 @@
+bi_math.cpp: * Copyright (c) 1992 Digital Equipment Corporation
+bi_math.cpp: * software and its documentation for any purpose and without
+bi_math.cpp: * representation about the suitability of this software for
+bi_math.cpp: * any purpose. It is provided "as is" without express or
+bi_math.cpp:/* Incorrect when long conversion causes overflow: */
+bi_math.cpp:/* For machines that do not have a 'trunc(x)' function: */
+bi_math.cpp:	return ((x >= 0) ? floor(x) : ceil(x));
+bi_math.cpp:  Only it may residuate or curry.
+bi_math.cpp:						Errorline("division by zero in %P.\n", t); /* 8.9 */
+bi_math.cpp:						Errorline("division by zero in %P.\n", t); /* 8.9 */
+bi_math.cpp:							Errorline("division by zero in %P.\n", t); /* 8.9 */
+bi_math.cpp:						Errorline("division by zero in %P.\n", t); /* 8.9 */
+bi_math.cpp:						Errorline("division by zero in %P.\n", t); /* 8.9 */
+bi_math.cpp:						Errorline("division by zero in %P.\n", t); /* 8.9 */
+bi_math.cpp:						if (val3 != floor(val3)) return FALSE;
+bi_math.cpp:						if (val3 != floor(val3)) return FALSE;
+bi_math.cpp:					if (val3 != floor(val3)) return FALSE;
+bi_math.cpp:							Errorline("division by zero in %P.\n", t); /* 8.9 */
+bi_math.cpp:						Errorline("division by zero in %P.\n", t); /* 8.9 */
+bi_math.cpp:/* Main routine for floor & ceiling functions */
+bi_math.cpp:static long c_floor_ceiling(long floorflag)
+bi_math.cpp:// long floorflag;
+bi_math.cpp:					success = unify_real_result(arg3, (floorflag ? floor(val1) : ceil(val1)));
+bi_math.cpp:					success = (val3 == (floorflag ? floor(val1) : ceil(val1)));
+bi_math.cpp:  Return the largest integer inferior or equal to the argument
+bi_math.cpp:static long c_floor()
+bi_math.cpp:	return c_floor_ceiling(TRUE);
+bi_math.cpp:  Return the smallest integer larger or equal to the argument
+bi_math.cpp:	return c_floor_ceiling(FALSE);
+bi_math.cpp:						Errorline("square root of negative number in %P.\n", t);
+bi_math.cpp:					if (val1 < 0) Errorline("square root of negative number in %P.\n", t);
+bi_math.cpp:/* Main routine for sine and cosine */
+bi_math.cpp:  Return the bitwise operation: ARG1 or ARG2.
+bi_math.cpp:static long c_bit_or()
+bi_math.cpp:					if (bit_or_warning(arg1, val1)) return FALSE;
+bi_math.cpp:					if (bit_or_warning(arg2, val2)) return FALSE;
+bi_math.cpp:					if (bit_or_warning(arg1, val1) || bit_or_warning(arg2, val2))
+bi_math.cpp:					if (bit_or_warning(arg1, val1) || bit_or_warning(arg2, val2))
+bi_math.cpp:  Return the bitwise shift left or shift right.
+bi_math.cpp:  Only it may residuate or curry.
+bi_math.cpp:						Errorline("logarithm of %s in %P.\n",
+bi_math.cpp:						Errorline("logarithm of %s in %P.\n",
+bi_math.cpp:	new_built_in(syntax_module, "\\/", (def_type)function_it, c_bit_or);
+bi_math.cpp:	new_built_in(bi_module, "floor", (def_type)function_it, c_floor);
+bi_sys.cpp:/* Copyright 1992 Digital Equipment Corporation
+bi_sys.cpp:  tracing is on or off.
+bi_sys.cpp:  If it is true or false, set the trace flag to that value.  Otherwise, give
+bi_sys.cpp:  an error.
+bi_sys.cpp:  If it is true or false, set the stepflag to that value.  Otherwise, give
+bi_sys.cpp:  an error.
+bi_sys.cpp:            Errorline("bad first argument in %P.\n", t);
+bi_sys.cpp:            /* report_error(t,"bad first argument"); */
+bi_sys.cpp:            Errorline("bad second argument in %P.\n", t);
+bi_sys.cpp:            /* report_error(t,"bad second argument"); */
+bi_sys.cpp:  single stepping mode is on or off.
+bi_sys.cpp:  verbose mode is on or off.
+bi_sys.cpp:  warnings are printed or not.
+bi_sys.cpp:  (Errors cannot be turned off.)
+bi_sys.cpp:  This is useful for building real-time applications such as clocks.
+bi_sys.cpp:// REV401PLUS I had revised c_realtime as below in prior work on X
+bi_sys.cpp:// origin below
+bi_sys.cpp:  This is useful for building real-time applications such as clocks.
+bi_sys.cpp:  Print some information about Wild_Life: stack size, heap size, total memory.
+bi_sys.cpp:    printf("Total memory: %8ld bytes (%5ldK)\n", t3, t3 / 1024);
+bi_sys.cpp:  Force a call to the garbage collector.
+bi_sys.cpp:            Errorline("bad argument in %P\n", funct);
+bi_sys.cpp:        Errorline("argument missing in %P\n", funct);
+bi_sys.cpp:  Pass a string to shell for execution. Return the value as the result.
+bi_sys.cpp:                    Errorline("could not execute shell in %P.\n", funct);
+bi_sys.cpp:                    /* report_error(funct,"couldn't execute shell"); */
+bi_sys.cpp:                Errorline("bad argument in %P.\n", funct);
+bi_sys.cpp:            Errorline("bad argument in %P.\n", funct);
+bi_sys.cpp:            /* report_error(funct,"bad argument"); */
+bi_sys.cpp:  Force type encoding.
+bi_sys.cpp:  This need normally never be called by the user.
+bi_sys.cpp:        Errorline("%P requires two arguments.\n", pred);
+bi_sys.cpp:        Errorline("%P requires two arguments.\n", pred);
+bi_sys.cpp:        Errorline("%P should be a nil-terminated list in mresiduate.\n", arg1);
+bi_type.cpp: * bi_type.c - builtins for doing type heierachy stuff
+bi_type.cpp: * Copyright (c) 1992 Digital Equipment Corporation
+bi_type.cpp: * software and its documentation for any purpose and without
+bi_type.cpp: * representation about the suitability of this software for
+bi_type.cpp: * any purpose. It is provided "as is" without express or
+bi_type.cpp:        /* Hack: check there's enough memory to build the list */
+bi_type.cpp:                /* arg1 is a string, long or real: return a list with arg1 as
+bi_type.cpp:    /* we already know that either arg1->type == arg2->type or that at both
+bi_type.cpp:     * of the two are either long or real
+bi_type.cpp:                ans = (*(REAL*)arg1->value_3 == floor(*(REAL*)arg1->value_3));
+bi_type.cpp:    /*Errorline("isa %P %P -> %d\n",arg1,arg2,ans);*/
+bi_type.cpp:  Type t1 isa t2 in the hierarchy, i.e. t1 is less than or equal to t2.
+bi_type.cpp:  It works correctly on the 'value' types, i.e. on integers, reals, strings,
+bi_type.cpp:  and lists.  For lists, it looks only at the top level, i.e. whether the
+bi_type.cpp:  object is nil or a cons cell.
+bi_type.cpp:  Succeed iff argument is a function (built-in or user-defined).
+bi_type.cpp:  Succeed iff argument is a quoted persistent or on the heap.
+bi_type.cpp:  Succeed iff argument is a predicate (built-in or user-defined).
+bi_type.cpp:  Succeed iff argument is a sort (built-in or user-defined).
+bi_type.cpp:static long c_is_sort() /*  RM: Jan 29 1993  */ // REV401PLUS long
+bi_type.cpp:  a quirky way in Wild_Life.  This is true for integers, reals,
+bi_type.cpp:  if A is a subsort of B => succeed and residuate on B
+bi_type.cpp:long c_isa_subsort() // changed to long REV401PLUS
+bi_type.cpp:    if (!arg1) reportAndAbort(pred, "no first argument");
+bi_type.cpp:    if (!arg2) reportAndAbort(pred, "no second argument");
+bi_type.cpp:        /* glb is one of arg1->type or arg2->type AND at least one is a value */
+bi_type.cpp:            Errorline("glb of multiple-inheritance value sorts not yet implemented.\n");
+bi_type.cpp:    /* Sort comparisons */
+bi_type.cpp:    new_built_in(bi_module, "is_sort", (def_type)function_it, c_is_sort);
+bi_type.cpp:    /* Sort hierarchy maneuvering */
+bi_type.cpp:    new_built_in(bi_module, "least_sorts", (def_type)function_it, c_smallest);
+bi_type.cpp:    new_built_in(bi_module, "subsort", (def_type)predicate_it, c_isa_subsort);
+built_ins.cpp:/* Copyright 1991 Digital Equipment Corporation.
+built_ins.cpp:  Get the value of a Life string, or the name of a non-string psi-term.
+built_ins.cpp:            *fn = quoted_string->keyword->symbol;
+built_ins.cpp:        *fn = t->type->keyword->symbol;
+built_ins.cpp:                wl_new->type = (d == floor(d)) ? integer : real;
+built_ins.cpp:  Like get_real_value, but does not force the type of T to be real.
+built_ins.cpp:  Also force the type of T to REAL if REAL <| T.
+built_ins.cpp:  Check if psi_term T is a boolean. V <- TRUE or FALSE value of T.
+built_ins.cpp:  Unify psi_term T to the boolean value V = TRUE or FALSE.
+built_ins.cpp:        if (v == floor(v)) {
+built_ins.cpp:        Errorline("malformed disjunction '%P'\n", funct);
+built_ins.cpp:        return (c_abort());
+built_ins.cpp:  Greater than or equal.
+built_ins.cpp:  Less than or equal.
+built_ins.cpp:                        Errorline("function result '%P' should be a boolean or a predicate.\n",
+built_ins.cpp:                        return (c_abort());
+built_ins.cpp:        Errorline("missing argument to '*boolpred*'.\n");
+built_ins.cpp:        return (c_abort());
+built_ins.cpp:/* Main routine to handle the and & or functions. */
+built_ins.cpp:/* sel = TRUE (for and) or FALSE (for or) */
+built_ins.cpp:            Errorline("Non-boolean argument or result in '%P'.\n", funct);
+built_ins.cpp:  Logical and & or.
+built_ins.cpp:static long c_or()
+built_ins.cpp:            Errorline("Non-boolean argument or result in '%P'.\n", funct);
+built_ins.cpp:  Logical exclusive or.
+built_ins.cpp:static long c_xor()
+built_ins.cpp:            Errorline("Non-boolean argument or result in '%P'.\n", funct);
+built_ins.cpp:  This evaluates "apply(functor => F,Args)".  If F is
+built_ins.cpp:    n = find(FEATCMP, functor->keyword->symbol, funct->attr_list);
+built_ins.cpp:                Errorline("argument is not a function in %P.\n", funct);
+built_ins.cpp:                /* funct->attr_list, except '*functor*', into other->attr_list. */
+built_ins.cpp:                delete_attr(functor->keyword->symbol, &(other->attr_list));
+built_ins.cpp:  It is identical to C_PROJECT except that the order of the arguments is
+built_ins.cpp:                    if (v == floor(v)) {
+built_ins.cpp:                        label = heap_copy_string(thebuffer); /* A little voracious */
+built_ins.cpp:                        Errorline("non-integer numeric feature in %P\n", funct);
+built_ins.cpp:                    if (arg2->type->keyword->private_feature) /*  RM: Mar 12 1993  */
+built_ins.cpp:                        label = arg2->type->keyword->combined_name;
+built_ins.cpp:                        label = arg2->type->keyword->symbol;
+built_ins.cpp:                Errorline("attempt to add a feature to curried function %P\n",
+built_ins.cpp:                        push_psi_ptr_value(result, (GENERIC*)&(result->coref)); //REV401PLUS cast
+built_ins.cpp:                    result->coref = inc_heap_copy(result);
+built_ins.cpp:                    heap_insert(FEATCMP, label, &(arg1->attr_list), (GENERIC)result->coref);//REV401PLUS cast
+built_ins.cpp:        /* Errorline("argument missing in %P.\n",t); */
+built_ins.cpp:        /* return c_abort(); */
+built_ins.cpp:        /* Errorline("argument missing in %P.\n",t); */
+built_ins.cpp:        /* return c_abort(); */
+built_ins.cpp:  Succeed iff argument is a function (built-in or user-defined).
+built_ins.cpp:        /* Errorline("argument missing in %P.\n",t); */
+built_ins.cpp:        /* return c_abort(); */
+built_ins.cpp:  Succeed iff argument is a predicate (built-in or user-defined).
+built_ins.cpp:        /* Errorline("argument missing in %P.\n",t); */
+built_ins.cpp:        /* return c_abort(); */
+built_ins.cpp:  Succeed iff argument is a sort (built-in or user-defined).
+built_ins.cpp:static long c_is_sort()
+built_ins.cpp:        /* Errorline("argument missing in %P.\n",t); */
+built_ins.cpp:        /* return c_abort(); */
+built_ins.cpp:  Mark that the function or predicate's arguments are not evaluated when
+built_ins.cpp:  the function or predicate is called.
+built_ins.cpp:  Declare an operator.
+built_ins.cpp:    long declare_operator(ptr_psi_term);
+built_ins.cpp:    return declare_operator(t);
+built_ins.cpp:                Errorline("bad argument in %P.\n", g);
+built_ins.cpp:            Errorline("bad argument in %P.\n", g);
+built_ins.cpp:            Errorline("bad file name in %P.\n", t);
+built_ins.cpp:        Errorline("no file name in %P.\n", t);
+built_ins.cpp:  Set the choice point stack to a state no later than (i.e. the same or earlier
+built_ins.cpp:  will remove zero or more choice points, never add them.  The first argument
+built_ins.cpp:  Together, get_choice and set_choice allow one to implement an "ancestor cut"
+built_ins.cpp:  order (but not necessarily consecutive) from the bottom to the top of the
+built_ins.cpp:                Errorline("bad argument to %P.\n", t);
+built_ins.cpp:            Errorline("bad argument %P.\n", t);
+built_ins.cpp:  i.e. A is more recent than the choice point marked by arg1 and no more
+built_ins.cpp:                Errorline("bad second argument to %P.\n", funct);
+built_ins.cpp:            Errorline("bad first argument %P.\n", funct);
+built_ins.cpp:static void set_parse_queryflag(ptr_node thelist, long sort)
+built_ins.cpp:// long sort;
+built_ins.cpp:                ((sort == QUERY) ? "query" :
+built_ins.cpp:                    ((sort == FACT) ? "declaration" : "error")));
+built_ins.cpp:    long smaller, sort, old_var_occurred;
+built_ins.cpp:                t = stack_copy_psi_term(parse(&sort));
+built_ins.cpp:                /* Optional second argument returns 'query', 'declaration', or
+built_ins.cpp:                /* 'error'. */
+built_ins.cpp:                            ((sort == QUERY) ? "query" : ((sort == FACT) ? "declaration" : "error"))
+built_ins.cpp:                /* Optional third argument returns true or false if the psi-term
+built_ins.cpp:                /* contains a variable or not. */
+built_ins.cpp:                restore_parse_state(&pb);
+built_ins.cpp:                /* parse_ok flag says whether there was a syntax error. */
+built_ins.cpp:  Read a psi_term or a token from the current input stream.
+built_ins.cpp:    long sort;
+built_ins.cpp:            Errorline("attempt to read past end of file (%E).\n");
+built_ins.cpp:            return (abort_life(TRUE));
+built_ins.cpp:                t = stack_copy_psi_term(parse(&sort));
+built_ins.cpp:                /* Optional second argument returns 'query', 'declaration', or
+built_ins.cpp:                   'error'. */
+built_ins.cpp:                            ((sort == QUERY) ? "query" : ((sort == FACT) ? "declaration" : "error"))
+built_ins.cpp:        Errorline("argument missing in %P.\n", g);
+built_ins.cpp:long c_abort()   /*  RM: Feb 15 1993  */
+built_ins.cpp:    return (abort_life(TRUE));
+built_ins.cpp:long abort_life(int nlflag) /*  RM: Feb 15 1993  */
+built_ins.cpp:    if (aborthooksym->type_def != (def_type)function_it ||
+built_ins.cpp:        !aborthooksym->rule->bbbb_2 ||
+built_ins.cpp:        aborthooksym->rule->bbbb_2->type == abortsym) {
+built_ins.cpp:        /* Do a true abort if aborthook is not a function or is equal to 'abort'.*/
+built_ins.cpp:        if (NOTQUIET) fprintf(stderr, "\n*** Abort"); /*  RM: Feb 17 1993  */
+built_ins.cpp:        /* Do a 'user-defined abort': initialize the system, then */
+built_ins.cpp:        /* prove the user-defined abort routine (which is set by  */
+built_ins.cpp:        /* means of 'setq(aborthook,user_defined_abort)'.         */
+built_ins.cpp:        ptr_psi_term aborthook;
+built_ins.cpp:        if (NOTQUIET) fprintf(stderr, "\n*** Abort"); /*  RM: Feb 17 1993  */
+built_ins.cpp:        aborthook = stack_psi_term(0);
+built_ins.cpp:        aborthook->type = aborthooksym;
+built_ins.cpp:        push_goal(prove, aborthook, (ptr_psi_term)DEFRULES, NULL);
+built_ins.cpp:    // REV102back added next 2 lines to match Reference in 4.+ comment for 1.02
+built_ins.cpp:    if (NOTQUIET) fprintf(stderr, "\n*** END Abort"); /*  RM: Feb 17 1993  */
+built_ins.cpp:    Errorline("built-in %P is not implemented yet.\n", t);
+built_ins.cpp:    Errorline("%P is a declaration, not a query.\n", t);
+built_ins.cpp:  away any previous definition of F.  F must be undefined or a function, there
+built_ins.cpp:  is an error if F is a sort or a predicate.  This gives an error for a static
+built_ins.cpp:  function, but none for an undefined (i.e. uninterpreted) psi-term, which is
+built_ins.cpp:                    Errorline("%P may not have arguments in %P.\n", arg1, g);
+built_ins.cpp:                Errorline("%P should be dynamic in %P.\n", arg1, g);
+built_ins.cpp:            Errorline("%P should be a function or uninterpreted in %P.\n", arg1, g);
+built_ins.cpp:        Errorline("%P is missing one or both arguments.\n", g);
+built_ins.cpp:  for that predicate or function.
+built_ins.cpp:        Errorline("bad clause in %P.\n", g);
+built_ins.cpp:  Assert a fact, inserting as the last clause for that predicate or function.
+built_ins.cpp:        Errorline("bad clause in %P.\n", g);
+built_ins.cpp:  This routine is used both for CLAUSE and RETRACT.
+built_ins.cpp:        if (!strcmp(t->type->keyword->symbol, "->")) {
+built_ins.cpp:        else if (!strcmp(t->type->keyword->symbol, ":-")) {
+built_ins.cpp:        Errorline("bad argument in %s.\n", (r ? "retract" : "clause"));
+built_ins.cpp:  The argument must be a predicate or a function.
+built_ins.cpp:  Use PRED_CLAUSE to perform the search.
+built_ins.cpp:  Use PRED_CLAUSE to perform the search.
+built_ins.cpp:// void global_error_check(); // commented REV401PLUS
+built_ins.cpp:  If there is an error anywhere in the declaration,
+built_ins.cpp:    long error_2 = FALSE, eval_2 = FALSE; // REV401PLUS add _2 conflict with define
+built_ins.cpp:        /* Do error check of all arguments first: */
+built_ins.cpp:        global_error_check(g->attr_list, &error_2, &eval_2);
+built_ins.cpp:        if (eval_2) return !error_2;
+built_ins.cpp:        /* If no errors, then make the arguments global: */
+built_ins.cpp:        if (!error_2)
+built_ins.cpp:        Errorline("argument(s) missing in %P\n", g);
+built_ins.cpp:    return !error_2;
+built_ins.cpp:void global_error_check(ptr_node n, long* error_2, long* eval_2)
+built_ins.cpp:// long* error_2, * eval_2; // REV401PLUS added _2 and made long 
+built_ins.cpp:        global_error_check(n->left, error_2, eval_2);
+built_ins.cpp:                Errorline("%P is an incorrect global variable declaration (%E).\n", t);
+built_ins.cpp:                *error_2 = TRUE;
+built_ins.cpp:            Errorline("%T %P cannot be redeclared as a global variable (%E).\n",
+built_ins.cpp:            t->type = error_psi_term->type;
+built_ins.cpp:            *error_2 = TRUE;
+built_ins.cpp:        global_error_check(n->right, error_2, eval_2);
+built_ins.cpp:        push_psi_ptr_value(val,&(val->coref));
+built_ins.cpp:        val->coref=u;
+built_ins.cpp:    long error = FALSE;
+built_ins.cpp:        /* Do error check of all arguments first: */
+built_ins.cpp:        persistent_error_check(g->attr_list, &error);
+built_ins.cpp:        /* If no errors, then make the arguments persistent: */
+built_ins.cpp:        if (!error)
+built_ins.cpp:        Errorline("argument(s) missing in %P\n", g);
+built_ins.cpp:    return !error;
+built_ins.cpp:void persistent_error_check(ptr_node n, long* error) //REV401PLUS add void
+built_ins.cpp:// long* error;  // REV401PLUS long
+built_ins.cpp:        persistent_error_check(n->left, error);
+built_ins.cpp:            Errorline("%T %P cannot be redeclared persistent (%E).\n",
+built_ins.cpp:            t->type = error_psi_term->type;
+built_ins.cpp:            *error = TRUE;
+built_ins.cpp:        persistent_error_check(n->right, error);
+built_ins.cpp:  Create a stream for input from the specified file.
+built_ins.cpp:                        /* push_ptr_value(psi_term_ptr,(GENERIC *)&(arg2->coref)); 9.6 */ //cast REV401PLUS
+built_ins.cpp:                        push_psi_ptr_value(arg2, (GENERIC*)&(arg2->coref)); // REV401PLUS cast
+built_ins.cpp:                        arg2->coref = input_state;
+built_ins.cpp:                    Errorline("bad input stream in %P.\n", g);
+built_ins.cpp:                Errorline("no stream in %P.\n", g);
+built_ins.cpp:            Errorline("bad file name in %P.\n", g);
+built_ins.cpp:        Errorline("no file name in %P.\n", g);
+built_ins.cpp:  Create a stream for output from the specified file.
+built_ins.cpp:                        /* push_ptr_value(psi_term_ptr,(GENERIC *)&(arg2->coref)); 9.6 */ //cast REV401PLUS
+built_ins.cpp:                        push_psi_ptr_value(arg2, (GENERIC*)&(arg2->coref));
+built_ins.cpp:                        arg2->coref = arg3;
+built_ins.cpp:                    Errorline("bad stream in %P.\n", g);
+built_ins.cpp:                Errorline("no stream in %P.\n", g);
+built_ins.cpp:            Errorline("bad file name in %P.\n", g);
+built_ins.cpp:        Errorline("no file name in %P.\n", g);
+built_ins.cpp:                restore_state(input_state);
+built_ins.cpp:            Errorline("bad stream in %P.\n", g);
+built_ins.cpp:        Errorline("no stream in %P.\n", g);
+built_ins.cpp:            Errorline("bad stream in %P.\n", g);
+built_ins.cpp:        Errorline("no stream in %P.\n", g);
+built_ins.cpp:            Errorline("bad stream in %P.\n", g);
+built_ins.cpp:        Errorline("no stream in %P.\n", g);
+built_ins.cpp:        Errorline("argument missing in %P.\n", g);
+built_ins.cpp:  Write the root of a psi-term to the current output stream or to stderr.
+built_ins.cpp:static long c_put_main(long); /* Forward declaration */
+built_ins.cpp:            i = (unsigned long)floor(*(REAL*)arg1->value_3);
+built_ins.cpp:                Errorline("out-of-range character value in %P.\n", g);
+built_ins.cpp:        Errorline("argument missing in %P.\n", g);
+built_ins.cpp:  correctly, but don't use the pretty printer indentation.
+built_ins.cpp:    write_corefs = FALSE;
+built_ins.cpp:  Write a list of arguments to stderr in a form that allows them to be
+built_ins.cpp:  read in again.  Print cyclical terms correctly, but don't use the pretty
+built_ins.cpp:    write_corefs = FALSE;
+built_ins.cpp:  correctly, but don't use the pretty printer indentation.
+built_ins.cpp:    write_corefs = FALSE;
+built_ins.cpp:  Write a list of arguments in a form that allows them to be read in
+built_ins.cpp:  again.  Print cyclical terms correctly, but don't use the pretty
+built_ins.cpp:    write_corefs = FALSE;
+built_ins.cpp:  Write a list of arguments in a form that allows them to be read in
+built_ins.cpp:  again.  Print cyclical terms correctly, but don't use the pretty
+built_ins.cpp:    write_corefs = FALSE;
+built_ins.cpp:    write_corefs = FALSE;
+built_ins.cpp:    write_corefs = FALSE;
+built_ins.cpp:                Errorline("argument in %P must be positive.\n", g);
+built_ins.cpp:            Errorline("bad argument in %P.\n", g);
+built_ins.cpp:        Errorline("argument missing in %P.\n", g);
+built_ins.cpp:                Errorline("argument in %P must be positive or zero.\n", g);
+built_ins.cpp:            Errorline("bad argument in %P.\n", g);
+built_ins.cpp:  Return the principal sort of the argument == create a copy with the
+built_ins.cpp:static long c_rootsort()
+built_ins.cpp:  A nonexistent A or B is taken to mean 'fail'.
+built_ins.cpp:  both A and B being evaluated before the disjunction is.
+built_ins.cpp:    Traceline("pushing predicate disjunction choice point for %P\n", g);
+built_ins.cpp:        Errorline("neither first nor second arguments exist in %P.\n", g);
+built_ins.cpp:  If it returns false, return the Else value.  Either the Then or the Else
+built_ins.cpp:            /* Transform cond(pred,...) into cond(call_once(pred),...) */
+built_ins.cpp:            Errorline("argument to cond is not boolean in %P\n", g);
+built_ins.cpp:            label = heap_copy_string(thebuffer); /* A little voracious */
+built_ins.cpp:        else if (arg1->type->keyword->private_feature) {
+built_ins.cpp:            label = arg1->type->keyword->combined_name;
+built_ins.cpp:            label = arg1->type->keyword->symbol;
+built_ins.cpp:        (t == comment) || (t == functor));
+built_ins.cpp:   3. The operator triples of all operators.
+built_ins.cpp:   before garbage collection.
+built_ins.cpp:    for (def = first_definition;def;def = def->next) {
+built_ins.cpp:            ptr_operator_data od = def->op_data;
+built_ins.cpp:  Return a list of all operators (represented as 3-tuples op(prec,type,atom)).
+built_ins.cpp:  This works if the function is declared as non_strict.
+built_ins.cpp:  Split a double into two 32-bit words.
+built_ins.cpp:            Errorline("non-numeric arguments in %P\n", funct);
+built_ins.cpp:                    Errorline("result is not a real in %P\n", funct);
+built_ins.cpp:            Errorline("argument is not a string in %P\n", funct);
+built_ins.cpp:  Change the current working directory
+built_ins.cpp:            Errorline("bad argument in %P\n", funct);
+built_ins.cpp:        Errorline("argument missing in %P\n", funct);
+built_ins.cpp:  Prove a predicate, return true or false if it succeeds or fails.
+built_ins.cpp:  An implicit cut is performed: only only solution is given.
+built_ins.cpp:                Errorline("argument of %P should be a predicate.\n", funct);
+built_ins.cpp:  Prove a predicate, return true or false if it succeeds or fails.
+built_ins.cpp:  No implicit cut is performed.
+built_ins.cpp:                Errorline("argument of %P should be a predicate.\n", funct);
+built_ins.cpp:                Errorline("cannot use '<-' on persistent value in %P\n", g);
+built_ins.cpp:                return c_abort();
+built_ins.cpp:                push_psi_ptr_value(arg2, (GENERIC*)&(arg2->coref)); /* 14.12 */ // REV401PLUS added cast
+built_ins.cpp:                arg2->coref = arg1; /* 14.12 */
+built_ins.cpp:                push_psi_ptr_value(arg1, (GENERIC*)&(arg1->coref)); // REV401PLUS added cast
+built_ins.cpp:                arg1->coref = arg2;
+built_ins.cpp:            push_psi_ptr_value(arg1, (GENERIC*)&(arg1->coref)); // REV401PLUS added cast
+built_ins.cpp:            arg1->coref = arg2;
+built_ins.cpp:        Errorline("argument missing in %P.\n", g);
+built_ins.cpp:  It doesn't work because backtrackable unifications can have been made before
+built_ins.cpp:        Errorline("argument missing in %P.\n", g);
+built_ins.cpp:                push_psi_ptr_value(arg1, (GENERIC*)&(arg1->coref)); // REV401PLUS cast
+built_ins.cpp:                arg1->coref = wl_new;
+built_ins.cpp:                wl_new->coref = arg1;
+built_ins.cpp:        Errorline("argument missing in %P.\n", g);
+built_ins.cpp:        Errorline("argument missing in %P.\n", g);
+built_ins.cpp:  Make a fresh copy of the input's sort, keeping exactly the same
+built_ins.cpp:  arguments as before (i.e., copying the sort and feature table but not
+built_ins.cpp:  A correct implementation would be very simple:
+built_ins.cpp:        Errorline("argument missing in %P.\n", g);
+built_ins.cpp:  For example:
+built_ins.cpp:  The proof will use matching as for freeze, but there is no cut at the
+built_ins.cpp:  predicate is called as before except that matching is used instead
+built_ins.cpp:            Errorline("the argument %P of freeze must be a predicate.\n", arg1);
+built_ins.cpp:                Errorline("the argument %P of freeze must be user-defined.\n", arg1); /* 8.9 */
+built_ins.cpp:        Errorline("goal missing in %P.\n", g);
+built_ins.cpp:                str[0] = (unsigned char)floor(*(REAL*)arg1->value_3);
+built_ins.cpp:            Errorline("argument of %P must be an integer.\n", funct);
+built_ins.cpp:  Return the Ascii code of the first character of a string or of a
+built_ins.cpp:            Errorline("String argument expected in '%P'\n", funct);
+built_ins.cpp:          unify_real_result(result,(REAL)(*((unsigned char *)arg1->type->keyword->symbol)));
+built_ins.cpp:                    if (t->type == error_psi_term->type)
+built_ins.cpp:            /* report_warning(funct,"argument is not a string"); 9.9 */
+built_ins.cpp:        Errorline("error occurred in '%P'\n", funct);
+built_ins.cpp:                t->value_3 = (GENERIC)heap_copy_string(arg1->type->keyword->symbol);
+built_ins.cpp:    char val[STRLEN]; /* Big enough for a _long_ number */
+built_ins.cpp:                if (the_int != floor(the_int)) return FALSE;
+built_ins.cpp:                        Errorline("internal buffer too small for int2str(%P).\n", arg1);
+built_ins.cpp:                    next = floor(the_int / 10);
+built_ins.cpp:  This routine is different than the straight-forward implementation in Life
+built_ins.cpp:  V is evaluated and unified before G is proved.
+built_ins.cpp:/* Return a psi term with one or two args, and the addresses of the args */
+built_ins.cpp:/* This is true for a user-defined function or predicate with a definition, */
+built_ins.cpp:/* and for a type with constraints. */
+built_ins.cpp:/* Return TRUE if rules r are for a built-in */
+built_ins.cpp:  List the definition of a predicate or a function, and the own constraints
+built_ins.cpp:                    arg1->type->keyword->symbol, s1, s2);
+built_ins.cpp:                    arg1->type->keyword->symbol, s1, s2);
+built_ins.cpp:                    fprintf(output_stream, " is a value of sort '%s'.\n",
+built_ins.cpp:                        arg1->type->keyword->symbol);
+built_ins.cpp:                outputline("'%s' is a %sglobal variable worth %P.\n",
+built_ins.cpp:                    arg1->type->keyword->symbol,
+built_ins.cpp:                    arg1->type->keyword->symbol, "", "");
+built_ins.cpp:                fprintf(output_stream, "%% '%s' is undefined.\n", arg1->type->keyword->symbol);
+built_ins.cpp:                    *a1 = r->aaaa_2; /* Func, pred, or type */
+built_ins.cpp:                Errorline("argument of %P must be a predicate, function, or sort.\n", g);
+built_ins.cpp:        Errorline("argument missing in %P.\n", g);
+built_ins.cpp:  Print the codes of all the sorts.
+built_ins.cpp:    outputline("There are %d sorts.\n", type_count);
+built_ins.cpp:  Template for C built-in predicates.
+built_ins.cpp:        Errorline("argument(s) missing in %P.\n", g);
+built_ins.cpp:  Template for C built-in functions.
+built_ins.cpp:  Here are the routines which allow a new built_in type, predicate or function
+built_ins.cpp:    Add a new built-in predicate or function.
+built_ins.cpp:    T=type (function or predicate).
+built_ins.cpp:  Declare that string S is an operator of precedence P and of type T where
+built_ins.cpp:static void op_declare(long p, wl_operator t, char* s)
+built_ins.cpp:// operator t;
+built_ins.cpp:    ptr_operator_data od;
+built_ins.cpp:        Errorline("operator precedence must be in the range 0..%d.\n",
+built_ins.cpp:    od = (ptr_operator_data)heap_alloc(sizeof(operator_data));
+built_ins.cpp:    /* od= (ptr_operator_data) malloc (sizeof(operator_data)); 12.6 */
+built_ins.cpp:  Declare a new operator or change a pre-existing one.
+built_ins.cpp:  For example: '*op*'(3,xfx,+)?
+built_ins.cpp:long declare_operator(ptr_psi_term t)
+built_ins.cpp:    wl_operator kind = nop;
+built_ins.cpp:            s = atom->type->keyword->symbol;
+built_ins.cpp:                        Errorline("bad operator kind '%s'.\n", type->type->keyword->symbol);
+built_ins.cpp:                    Errorline("precedence must range from 1 to 1200 in %P.\n", t);
+built_ins.cpp:                Errorline("precedence must be a positive integer in %P.\n", t);
+built_ins.cpp:            Errorline("numbers or strings may not be operators in %P.\n", t);
+built_ins.cpp:        Errorline("argument missing in %P.\n", t);
+built_ins.cpp:    for (i = 0;i < n;i++)
+built_ins.cpp:            Errorline("couldn't open \"%s\"\n", f2);
+built_ins.cpp:        /* printf("*** Error: couldn't open \"%s\"\n",f2); PVR 14.9.93 */
+built_ins.cpp:        Errorline("couldn't open \"%s\"\n", f1);
+built_ins.cpp:    /* printf("*** Error: couldn't open \"%s\"\n",f1); PVR 14.9.93 */
+built_ins.cpp:        arg2->value_3 = (GENERIC)heap_copy_string(arg1->type->keyword->module->module_name);
+built_ins.cpp:  Return the string module#name for a term.
+built_ins.cpp:        arg2->value_3 = (GENERIC)heap_copy_string(arg1->type->keyword->combined_name);
+built_ins.cpp:  Return the substring of argument 1 from position argument 2 for a
+built_ins.cpp:                    Errorline("bad argument in %P.\n", g);
+built_ins.cpp:            Errorline("bad argument in %P.\n", g);
+built_ins.cpp:                    Errorline("bad argument in %P.\n", g);
+built_ins.cpp:            Errorline("bad argument in %P.\n", g);
+built_ins.cpp:  Uses the Unix random() function (rand_r(&seed) for Solaris).
+built_ins.cpp:  the random number generator, which is the Unix random() function.
+built_ins.cpp:  Return the length of the dereference chain for argument 1.
+built_ins.cpp:        while (arg1->coref) {
+built_ins.cpp:            arg1 = arg1->coref;
+built_ins.cpp:    for (i = arg_c - 1;i >= 0;i--) {
+built_ins.cpp:  Declare all standard operators.
+built_ins.cpp:  life_or               =update_symbol(syntax_module,";");/* RM: Apr 6 1993  */
+built_ins.cpp:  error_psi_term=heap_psi_term(4); /* 8.10 */
+built_ins.cpp:  error_psi_term->type=update_symbol(bi_module,"*** ERROR ***");
+built_ins.cpp:  error_psi_term->type->code=NOT_CODED;
+built_ins.cpp:  functor		=update_symbol(bi_module,"functor");
+built_ins.cpp:  one=t->keyword->symbol;
+built_ins.cpp:  two=t->keyword->symbol;
+built_ins.cpp:  three=t->keyword->symbol;
+built_ins.cpp:  year_attr=t->keyword->symbol;
+built_ins.cpp:  month_attr=t->keyword->symbol;
+built_ins.cpp:  day_attr=t->keyword->symbol;
+built_ins.cpp:  hour_attr=t->keyword->symbol;
+built_ins.cpp:  minute_attr=t->keyword->symbol;
+built_ins.cpp:  second_attr=t->keyword->symbol;
+built_ins.cpp:  weekday_attr=t->keyword->symbol;
+built_ins.cpp:  new_built_in(bi_module,"is_sort",(def_type)function_it,c_is_sort);
+built_ins.cpp:	       disjunction->keyword->symbol,
+built_ins.cpp:  new_built_in(syntax_module,"or",(def_type)function_it,c_or);
+built_ins.cpp:  new_built_in(syntax_module,"xor",(def_type)function_it,c_xor);
+built_ins.cpp:  new_built_in(bi_module,"root_sort",(def_type)function_it,c_rootsort);
+built_ins.cpp:  new_built_in(bi_module,"abort",(def_type)predicate_it,c_abort);
+built_ins.cpp:  abortsym=update_symbol(bi_module,"abort"); /* 26.1 */
+built_ins.cpp:  aborthooksym=update_symbol(bi_module,"aborthook"); /* 26.1 */
+built_ins.cpp:    life_or = update_symbol(syntax_module, ";");/* RM: Apr 6 1993  */
+built_ins.cpp:    error_psi_term = heap_psi_term(4); /* 8.10 */
+built_ins.cpp:    error_psi_term->type = update_symbol(bi_module, "*** ERROR ***");
+built_ins.cpp:    error_psi_term->type->code = NOT_CODED;
+built_ins.cpp:    functor = update_symbol(bi_module, "functor");
+built_ins.cpp:    one = t->keyword->symbol;
+built_ins.cpp:    two = t->keyword->symbol;
+built_ins.cpp:    three = t->keyword->symbol;
+built_ins.cpp:    year_attr = t->keyword->symbol;
+built_ins.cpp:    month_attr = t->keyword->symbol;
+built_ins.cpp:    day_attr = t->keyword->symbol;
+built_ins.cpp:    hour_attr = t->keyword->symbol;
+built_ins.cpp:    minute_attr = t->keyword->symbol;
+built_ins.cpp:    second_attr = t->keyword->symbol;
+built_ins.cpp:    weekday_attr = t->keyword->symbol;
+built_ins.cpp:    new_built_in(bi_module, "is_sort", (def_type)function_it, c_is_sort);
+built_ins.cpp:        disjunction->keyword->symbol,
+built_ins.cpp:    new_built_in(syntax_module, "or", (def_type)function_it, c_or);
+built_ins.cpp:    new_built_in(syntax_module, "xor", (def_type)function_it, c_xor);
+built_ins.cpp:    new_built_in(bi_module, "root_sort", (def_type)function_it, c_rootsort);
+built_ins.cpp:    new_built_in(bi_module, "abort", (def_type)predicate_it, c_abort);
+built_ins.cpp:    abortsym = update_symbol(bi_module, "abort"); /* 26.1 */
+built_ins.cpp:    aborthooksym = update_symbol(bi_module, "aborthook"); /* 26.1 */
+copy.cpp:/* Copyright 1991 Digital Equipment Corporation.
+copy.cpp:/* New translation routines for Wild_Life                     */
+copy.cpp:/* These routines work for any size structure.                */
+copy.cpp:/* A big hash table means it is sparse and therefore fast */
+copy.cpp:    /* for(i=0; i<HASHSTATS; i++) hashstats[i]=0; 20.8 */
+copy.cpp:    for (i = 0; i < HASHSIZE; i++) hashtable[i].timestamp = 0;
+copy.cpp:        /* *** Do error handling here *** */
+copy.cpp:  Get the translation of address A and the info field stored with it.
+copy.cpp:  this is not a problem seeing that coreferences in the nodes will ensure
+copy.cpp:// long to_heap;    // removed for MINT
+copy.cpp:/* Allocate a new record on the heap or stack if necessary: */
+copy.cpp:/* TRUE iff to_heap is TRUE & work is done, i.e. the term is on the heap. */
+copy.cpp:ptr_psi_term copy(); /* Forward declarations */
+copy.cpp:  This is the workhorse of the interpreter (alas!).
+copy.cpp:  All copy-related routines are non-interruptible by the garbage collector.
+copy.cpp:  Make a copy in the STACK or in the HEAP of psi_term t, which is located in
+copy.cpp:  This routine uses hash tables with buckets and partial inlining for speed.
+copy.cpp:  hf = heap_flag.  hf = HEAP or STACK means allocate in the HEAP or STACK.
+copy.cpp:  In eval_copy, a term's status is set to 0 if the term or any subterm needs
+copy.cpp:            /* If it was eval-copied before, then quote it now. */
+copy.cpp:                *infoptr = QUOTE_FLAG; /* I.e. don't touch this term any more */
+copy.cpp:                Errorline("psi-term too large -- get a bigger Life!\n");
+copy.cpp:                abort_life(TRUE);
+copy.cpp:  This is used by APPLY in order to build the calling psi-term which is used
+copy.cpp:  for matching.
+copy.cpp:  only located elsewhere in memory. This is used by apply to build the calling
+copy.cpp:  psi-term which is used for matching.  Note that this routine is not
+copy.cpp:  recursive, i.e. it only copies the main functor & the attribute tree.
+copy.cpp:    /* res->coref=distinct_copy(t->coref); */
+copy.cpp:/* is a cycle in the term & copy(...) has not created it yet, for  */
+copy.cpp:/* eval_copy.  Therefore the copy is accessible through the translation table. */
+copy.cpp:/* A (possibly) correct mark_eval and its companion mark_quote. */
+copy.cpp:/* The translation table is used to record whether a subgraph has already */
+copy.cpp:/* been quoted or not. */
+copy.cpp:/* Forward declarations */
+copy.cpp:/* Mark a psi-term as to be evaluated (i.e. strict), except for arguments   */
+copy.cpp:/* of a nonstrict term, which are marked quoted.  Set status correctly and  */
+copy.cpp:/* propagate zero status upwards.  Avoid doing superfluous work: non-shared */
+copy.cpp:/* A more efficient version of mark_quote */
+copy.cpp:extern void mark_quote_tree(); /* A forward declaration */
+copy.cpp:        mark_quote(t->coref);
+copy.cpp:        bk_mark_quote(t->coref);
+CPM_WL01.cpp:﻿// CPM_WL01.cpp : Defines the entry point for the application.
+CPM_WL01.cpp:/* Copyright 1991 Digital Equipment Corporation.
+CPM_WL01.cpp:int main(int argc, char* argv[])  // REV401PLUS correct main proto
+CPM_WL01.cpp:    long sort, exitflag;
+CPM_WL01.cpp:    for (i = 0;i < 256;i++)
+CPM_WL01.cpp:    for (i = 0;i < 256;i++)
+CPM_WL01.cpp:        for (i = 0; i < argc;i++)
+CPM_WL01.cpp:        Errorline("Too many command line arguments\n");
+CPM_WL01.cpp:    init_memory();
+CPM_WL01.cpp:        /* Wait until an EOF or a good character */
+CPM_WL01.cpp:            s = stack_copy_psi_term(parse(&sort));
+CPM_WL01.cpp:            if (sort == QUERY) {
+CPM_WL01.cpp:                ignore_eff = TRUE;
+CPM_WL01.cpp:                    Errorline("non-NULL undo stack.\n");
+CPM_WL01.cpp:            else if (sort == FACT) {
+CPM_WL01.cpp:    current_module = NULL;    /* The current module for the tokenizer */
+CPM_WL01.cpp:    write_corefs = TRUE;
+error.cpp:/* Copyright 1991 Digital Equipment Corporation.
+error.cpp: * History:
+error.cpp: *    added reportAndAbort() which is like report_error followed by
+error.cpp: *    an c_abort.
+error.cpp:/* 	$Id: error.c,v 1.3 1995/07/11 01:53:03 duchier Exp $	 */
+error.cpp:static char vcid[] = "$Id: error.c,v 1.3 1995/07/11 01:53:03 duchier Exp $";
+error.cpp:/* REMOVED for MINT
+error.cpp:	/* Information about size of embedded stacks */
+error.cpp:/*! \brief void outputline(char *format,...)
+error.cpp:  \param format - char *format
+error.cpp:void outputline(char* format, ...)
+error.cpp:	wl_operator kind;
+error.cpp:	va_start(VarArg, format);
+error.cpp:	//  vinfoline(format,output_stream, VarArg);
+error.cpp:	//  #define vinfoline(format, outfile, xxxx)  {	
+error.cpp:	for (p = format;p && *p; p++)
+error.cpp:				kind = va_arg(VarArg, wl_operator);
+error.cpp:				print_operator_kind(output_stream, kind);
+error.cpp:				fprintf(output_stream, "<%c follows %% : report bug >", *p);
+error.cpp:/*! \fn void traceline(char *format,...)
+error.cpp:  \param format - char *format
+error.cpp:void traceline(char* format, ...)
+error.cpp:	wl_operator kind;
+error.cpp:	va_start(VarArg, format);
+error.cpp:		if ((trace == 2) && (format[0] != 'p')) return;
+error.cpp:		//      vinfoline(format, stdout, VarArg);
+error.cpp:		// #define vinfoline(format, outfile, xxxx)  { 
+error.cpp:		for (p = format;p && *p; p++)
+error.cpp:					kind = va_arg(VarArg, wl_operator);
+error.cpp:					print_operator_kind(stdout, kind);
+error.cpp:					fprintf(stdout, "<%c follows %% : report bug >", *p);
+error.cpp:/*! \fn void infoline(char *format,...)
+error.cpp:  \param format - char *format
+error.cpp:void infoline(char* format, ...)
+error.cpp:	wl_operator kind;
+error.cpp:	va_start(VarArg, format);
+error.cpp:		//      vinfoline(format, stdout, VarArg);
+error.cpp:		//#define vinfoline(format, outfile, xxxx)  {	
+error.cpp:		for (p = format;p && *p; p++)
+error.cpp:					kind = va_arg(VarArg, wl_operator);
+error.cpp:					print_operator_kind(stdout, kind);
+error.cpp:					fprintf(stdout, "<%c follows %% : report bug >", *p);
+error.cpp:/*! \fn void warningline(char *format,...)
+error.cpp:  \param format - char *format
+error.cpp:void warningline(char* format, ...)
+error.cpp:	wl_operator kind;
+error.cpp:	va_start(VarArg, format);
+error.cpp:	if (warningflag) { // macro would not work
+error.cpp:		//    vinfoline(format, stderr, VarArg);
+error.cpp:		// #define vinfoline(format, stderr, xxxx)  {	
+error.cpp:		for (p = format;p && *p; p++)
+error.cpp:					kind = va_arg(VarArg, wl_operator);
+error.cpp:					print_operator_kind(stderr, kind);
+error.cpp:					fprintf(stderr, "<%c follows %% : report bug >", *p);
+error.cpp:/*! \fn void Errorline(char *format,...)
+error.cpp:  \brief Errorline
+error.cpp:  \param format - char *format
+error.cpp:  New error printing routine
+error.cpp:void Errorline(char* format, ...)
+error.cpp:	wl_operator kind;
+error.cpp:	va_start(VarArg, format);
+error.cpp:	//  fprintf(stderr,"format = %lx %s\n",(long)format,format);fflush(stdout);
+error.cpp:	fprintf(stderr, "*** Error: ");
+error.cpp:	//  fprintf(stderr,"format2 = %lx %s\n",(long)format,format);
+error.cpp:	// vinfoline(format, stderr, VarArg);
+error.cpp:	//#define vinfoline(format, stderr, xxxx)  { 
+error.cpp:	for (p = format;p && *p; p++)
+error.cpp:				kind = va_arg(VarArg, wl_operator);
+error.cpp:				print_operator_kind(stderr, kind);
+error.cpp:				fprintf(stderr, "<%c follows %% : report bug >", *p);
+error.cpp:/*! \fn void Syntaxerrorline(char *format,...)
+error.cpp:  \brief Syntaxerrorline
+error.cpp:  \param format - char *format
+error.cpp:void Syntaxerrorline(char* format, ...)
+error.cpp:	wl_operator kind;
+error.cpp:	va_start(VarArg, format);
+error.cpp:	//  fprintf(stderr,"format = %lx %s\n",(long)format,format);fflush(stdout);
+error.cpp:		fprintf(stderr, "*** Syntax error: ");
+error.cpp:		//    fprintf(stderr,"format2 = %lx %s\n",(long)format,format);
+error.cpp:		// vinfoline(format, stderr, VarArg);
+error.cpp:		//#define vinfoline(format, outfile, xxxx)  {	
+error.cpp:		for (p = format;p && *p; p++)
+error.cpp:					kind = va_arg(VarArg, wl_operator);
+error.cpp:					print_operator_kind(stderr, kind);
+error.cpp:					fprintf(stderr, "<%c follows %% : report bug >", *p);
+error.cpp:/* Utilities for tracing and single stepping */
+error.cpp:	for (i = indent_loc; i >= 0; i--) printf(" ");
+error.cpp:	if (trace == 2) printf(" Only for Proves");
+error.cpp:/* Old error printing routines -- these should be superceded by Errorline */
+error.cpp:/*! \fn void report_error_main(ptr_psi_term g,char *s,char *s2)
+error.cpp:  \brief report_error_main
+error.cpp:  Main routine for report_error and report_warning
+error.cpp:void report_error_main(ptr_psi_term g, char* s, char* s2)
+error.cpp:/*! \fn void report_error(ptr_psi_term g,char *s)
+error.cpp:  \brief report_error
+error.cpp:  Print an appropriate error message. G is the
+error.cpp:  psi-term which caused the error, S a message to print.
+error.cpp:  Format: '*** Error: %s in 'g'.'
+error.cpp:void report_error(ptr_psi_term g, char* s)
+error.cpp:	report_error_main(g, s, "Error");
+error.cpp:/*! \fn long reportAndAbort(ptr_psi_term g,char *s)
+error.cpp:  \brief reportAndAbort
+error.cpp:  Print an appropriate error message. G is the
+error.cpp:  psi-term which caused the error, S a message to print.
+error.cpp:  Format: '*** Error: %s in 'g'.'
+error.cpp:long reportAndAbort(ptr_psi_term g, char* s)
+error.cpp:	report_error_main(g, s, "Error");
+error.cpp:	return abort_life(TRUE); // djd added TRUE
+error.cpp:/*! \fn void report_warning(ptr_psi_term g,char *s)
+error.cpp:  \brief report_warning
+error.cpp:  Print an appropriate error message. G is the
+error.cpp:  psi-term which caused the error, S a message to print.
+error.cpp:  Format: '*** Warning: %s in 'g'.'
+error.cpp:void report_warning(ptr_psi_term g, char* s)
+error.cpp:	if (warningflag) report_error_main(g, s, "Warning");
+error.cpp:/*! \fn void report_error2_main(ptr_psi_term g,char *s,char *s2)
+error.cpp:  \brief report_error2_main
+error.cpp:  Main routine for report_error2 and report_warning2
+error.cpp:void report_error2_main(ptr_psi_term g, char* s, char* s2)
+error.cpp:/*! \fn void report_error2(ptr_psi_term g,char *s)
+error.cpp:  \brief report_error2
+error.cpp:  Like report_error, with a slightly different format.
+error.cpp:  Format: '*** Error: argument 'g' %s.'
+error.cpp:void report_error2(ptr_psi_term g, char* s)
+error.cpp:	report_error2_main(g, s, "Error");
+error.cpp:/*! \fn void report_warning2(ptr_psi_term g,char *s)
+error.cpp:  \brief report_warning2
+error.cpp:  Like report_warning, with a slightly different format.
+error.cpp:  Format: '*** Warning: argument 'g' %s.'
+error.cpp:void report_warning2(ptr_psi_term g, char* s)
+error.cpp:	if (warningflag) report_error2_main(g, s, "Warning");
+error.cpp:  Give error message if there is an argument which cannot unify with/
+error.cpp:		report_warning(t, "non-numeric argument(s)");
+error.cpp:/* Error checking routines for bit_and, bit_or, shift, and modulo */
+error.cpp:	if (val != floor(val)) {
+error.cpp:		report_warning2(arg, msg);
+error.cpp:/*! \fn long bit_or_warning(ptr_psi_term arg, REAL val)
+error.cpp:  \brief bit_or_warning
+error.cpp:long bit_or_warning(ptr_psi_term arg, REAL val)
+error.cpp:	return nonint_warning(arg, val, "of bitwise 'or' operation is not an integer");
+error.cpp:		Errorline("division by 0 in modulo operation\n");
+hash_table.cpp:  New version of the keyword table and related routines.
+hash_table.cpp:  The keyword table will not NOT be sorted, however, access will be hashed.
+hash_table.cpp:  All definition are stores in a linked list starting at first_definition.
+hash_table.cpp:  Create a hash-table for max size keywords.
+hash_table.cpp:    wl_new->data = (ptr_keyword*)malloc(size * sizeof(ptr_keyword));
+hash_table.cpp:    for (i = 0;i < size;i++)
+hash_table.cpp:    ptr_keyword* old_data;
+hash_table.cpp:    table->data = (ptr_keyword*)malloc(new_size * sizeof(ptr_keyword));
+hash_table.cpp:    for (i = 0;i < new_size;i++)
+hash_table.cpp:    for (i = 0;i < old_size;i++)
+hash_table.cpp:  Return the hash code for a symbol
+hash_table.cpp:ptr_keyword hash_lookup(ptr_hash_table table, char* symbol)
+hash_table.cpp:    /* printf("found %s at %d keyword %x\n",symbol,n,table->data[n]); */
+hash_table.cpp:/******** HASH_INSERT(table,symbol,keyword)
+hash_table.cpp:void hash_insert(ptr_hash_table table, char* symbol, ptr_keyword keyword)
+hash_table.cpp:// ptr_keyword keyword;
+hash_table.cpp:    /* printf("inserting %s at %d keyword %x\n",symbol,n,keyword); */
+hash_table.cpp:    table->data[n] = keyword;
+hash_table.cpp:  Display a symbol table (for debugging).
+hash_table.cpp:    for (i = 0;i < table->size;i++)
+info2.cpp:/* Copyright 1991 Digital Equipment Corporation.
+info2.cpp:  some blurb about the author etc... Who cares anyway??
+info2.cpp:    printf("Copyright (C) 1991-93 DEC Paris Research Laboratory\n");
+info2.cpp:    printf("Ported to Linux and Cygwin December 2022 after many efforts since 1995\n");
+info2.cpp:    pnf("Maximum string or line length:", STRLEN);
+info.cpp:/* Copyright 1991 Digital Equipment Corporation.
+info.cpp:  some blurb about the author etc... Who cares anyway??
+info.cpp:    printf("Copyright (C) 1991-93 DEC Paris Research Laboratory\n");
+info.cpp:    printf("Ported to Linux and Cygwin December 2022 after many efforts since 1995\n");
+info.cpp:    pnf("Maximum string or line length:", STRLEN);
+interrupt.cpp:/* Copyright 1991 Digital Equipment Corporation.
+interrupt.cpp:// long interrupted=FALSE;  // REV401PLUS moved down removed for MINT
+interrupt.cpp:  interrupt. The interrupt is dealt with later, when convenient, or ignored.
+interrupt.cpp:  Return TRUE if execution continues normally, otherwise abort query, toggle
+interrupt.cpp:  trace on or off, or quit Wild_Life (suicide).
+interrupt.cpp:            printf("*** [Quit (q), Continue (c), Abort (a), Step (s,RETURN), Trace (t), Help (h,?)]\n");
+interrupt.cpp:        abort_life(FALSE);
+interrupt.cpp:    restore_state(input_state);
+lefun.cpp:/* Copyright 1991 Digital Equipment Corporation.
+lefun.cpp:    result->coref = NULL;
+lefun.cpp:    result->type = (thereal == floor(thereal)) ? integer : real;
+lefun.cpp:    result->coref = NULL;
+lefun.cpp:    result->coref = NULL;
+lefun.cpp:  Also store the other variable, so that its sort can be used in the
+lefun.cpp:  'bestsort' calculation needed to implement disequality constraints.
+lefun.cpp:  The real work is done by DO_CURRY.
+lefun.cpp:  Also update the residuation's 'bestsort' field if it exists (needed to
+lefun.cpp:  is needed for this.
+lefun.cpp:        Errorline("attempt to residuate on psi-term %P in the heap.\n", var);
+lefun.cpp:            /* Keep track of best sort so far */
+lefun.cpp:            /* Glb_code(..) tries to keep 'sortflag' TRUE if possible. */
+lefun.cpp:            result = glb_code((*r)->sortflag, (*r)->bestsort,
+lefun.cpp:                    if ((*r)->bestsort != rescode2) {
+lefun.cpp:                        push_ptr_value(((*r)->sortflag ? def_ptr : code_ptr),
+lefun.cpp:                            &((*r)->bestsort));
+lefun.cpp:                        (*r)->bestsort = rescode2; /* 21.9 */
+lefun.cpp:                    if ((*r)->sortflag != resflag2) {
+lefun.cpp:                        push_ptr_value(int_ptr, (GENERIC*)&((*r)->sortflag)); //REV401PLUS cast
+lefun.cpp:                        (*r)->sortflag = resflag2; /* 21.9 */
+lefun.cpp:                if ((*r)->bestsort != rescode) {
+lefun.cpp:                    push_ptr_value(((*r)->sortflag ? def_ptr : code_ptr),
+lefun.cpp:                        &((*r)->bestsort));
+lefun.cpp:                    (*r)->bestsort = rescode; /* 21.9 */
+lefun.cpp:                if ((*r)->sortflag != resflag) {
+lefun.cpp:                    push_ptr_value(int_ptr, (GENERIC*)&((*r)->sortflag)); //REV401PLUS cast
+lefun.cpp:                    (*r)->sortflag = resflag; /* 21.9 */
+lefun.cpp:        /* We must attach this goal & the variable's sort onto this variable */
+lefun.cpp:                (*r)->sortflag = resflag;
+lefun.cpp:                (*r)->bestsort = rescode; /* 21.9 */
+lefun.cpp:            (*r)->sortflag = TRUE;
+lefun.cpp:            (*r)->bestsort = (GENERIC)var->type; /* 21.9 */
+lefun.cpp:  This routine takes time proportional to the square of the number of
+lefun.cpp:long do_residuation(); /* forward declaration */
+lefun.cpp:/* before the function call. */
+lefun.cpp:    /* This undoes perfectly valid work! */
+lefun.cpp:       during matching, so I think this was a nop for it. */
+lefun.cpp:  This performs CURRYing: all that needs to be done is to yield the calling
+lefun.cpp:  since RELEASE_RESID ensures that the same constraint is not released more
+lefun.cpp:  correctly.
+lefun.cpp:    /* For currying and residuation */
+lefun.cpp:/* Match the corresponding arguments */
+lefun.cpp:/* Evaluate the lone arguments (for lazy failure + eager success) */
+lefun.cpp:        /* are evaluated, which avoids incorrect 'Yes' answers.      */
+lefun.cpp:        deref2_rec_eval(t); /* Assumes goal_stack is already restored. */
+lefun.cpp:/* Evaluate the corresponding arguments */
+lefun.cpp:                deref2_eval(t1); /* Assumes goal_stack is already restored. */
+lefun.cpp:  descending order of feature names.
+lefun.cpp:    match_attr1(u, v, rb); /* Match corresponding arguments (third) */
+lefun.cpp:    match_attr3(u, v, rb); /* Evaluate corresponding arguments (first) */
+lefun.cpp:  Residuate the expression if the calling term is more general than the
+lefun.cpp:    restore_resid(rb, &match_date);
+lefun.cpp:                if (u->type != cut || v->type != cut) { /* Ignore value field for cut! */
+lefun.cpp:                    success = (r == floor(r));
+lefun.cpp:                    v->coref = u;
+lefun.cpp:  The following routines prepare terms for unification, proof or matching.
+lefun.cpp:  have to be examined before the general proof can continue.
+lefun.cpp:/* Forward declarations */
+lefun.cpp:  Deal with an unevaluated function: push an 'eval' goal for it, which will
+lefun.cpp:    /* Check for embedded definitions
+lefun.cpp:       Errorline("embedded functions appeared in %P.\n",resid_aim->a);
+lefun.cpp:        /* push_ptr_value(psi_term_ptr,&(t->coref)); */
+lefun.cpp:        push_psi_ptr_value(t, (GENERIC*)&(t->coref)); // REV401PLUS cast
+lefun.cpp:        t->coref = result;
+lefun.cpp:        /* Avoid evaluation for built-in functions with unevaluated arguments */
+lefun.cpp:            /* definition pending on more information */
+lefun.cpp:        /*  RM: Dec 15 1992  I don't know what this is for
+lefun.cpp:  - The same for T's arguments.
+lefun.cpp:              t->status,t); for brunobug.lf PVR 14.2.94 */
+lefun.cpp:/* New dereference routines for Wild_Life                           */
+lefun.cpp:/*       Same as above, except does not look at the top level or at */
+lefun.cpp:/* The original dereference macro is renamed to:                    */
+lefun.cpp:/*    deref_ptr(P) = while (P->coref) P=P->coref                    */
+lefun.cpp:/* Same as deref_rec_eval, but doesn't look at either the top level or */
+lefun.cpp:/* These two needed only for match_aim and match_attr: */
+lefun.cpp:/* Same as deref_eval, but assumes goal_stack already restored. */
+lefun.cpp:/* Same as deref_rec_eval, but assumes goal_stack already restored. */
+lefun.cpp:/* Saving & restoring residuation information */
+lefun.cpp:void restore_resid(ptr_resid_block rb, ptr_psi_term* match_date)
+lefun.cpp:        push_psi_ptr_value(t, (GENERIC*)&(t->coref)); // REV401PLUS cast
+lefun.cpp:        t->coref = t->type->global_value;
+lefun.cpp:      for(def=first_definition;def;def=def->next) {
+lefun.cpp:    for (def = first_definition;def;def = def->next)
+lib2.cpp:/* Copyright 1991 Digital Equipment Corporation.
+lib2.cpp:/* VERSION of Wild-LIFE for calling from C */
+lib2.cpp:*/ // REMOVED above for MINT
+lib2.cpp:    exit_if_true(!memory_check());
+lib2.cpp:    for (i = 0;i < 256;i++)
+lib2.cpp:    for (i = 0;i < 256;i++)
+lib2.cpp:        for (i = 0; i < argc; i++) {
+lib2.cpp:        Errorline("Too many command line arguments\n");
+lib2.cpp:    init_memory();
+lib2.cpp:    long sort;
+lib2.cpp:            sort = QUERY;
+lib2.cpp:            t = stack_copy_psi_term(parse(&sort));
+lib2.cpp:            if (sort == QUERY) {
+lib2.cpp:                ignore_eff = TRUE;
+lib2.cpp:            else if (sort == FACT) {
+lib2.cpp:        if (sort == QUERY) {
+lib2.cpp:                        result = WFmore;
+lib2.cpp:        result = psi->type->keyword->combined_name;
+lib.cpp:/* Copyright 1991 Digital Equipment Corporation.
+lib.cpp:/* VERSION of Wild-LIFE for calling from C */
+lib.cpp:*/ // REMOVED above for MINT
+lib.cpp:    exit_if_true(!memory_check());
+lib.cpp:    for (i = 0;i < 256;i++)
+lib.cpp:    for (i = 0;i < 256;i++)
+lib.cpp:        for (i = 0; i < argc; i++) {
+lib.cpp:        Errorline("Too many command line arguments\n");
+lib.cpp:    init_memory();
+lib.cpp:    long sort;
+lib.cpp:            sort = QUERY;
+lib.cpp:            t = stack_copy_psi_term(parse(&sort));
+lib.cpp:            if (sort == QUERY) {
+lib.cpp:                ignore_eff = TRUE;
+lib.cpp:            else if (sort == FACT) {
+lib.cpp:        if (sort == QUERY) {
+lib.cpp:                        result = WFmore;
+lib.cpp:        result = psi->type->keyword->combined_name;
+life2.cpp:/* Copyright 1991 Digital Equipment Corporation.
+life2.cpp:int main(int argc, char* argv[])  // REV401PLUS correct main proto
+life2.cpp:    long sort, exitflag;
+life2.cpp:    for (i = 0;i < 256;i++)
+life2.cpp:    for (i = 0;i < 256;i++)
+life2.cpp:        for (i = 0; i < argc;i++)
+life2.cpp:        Errorline("Too many command line arguments\n");
+life2.cpp:    init_memory();
+life2.cpp:        /* Wait until an EOF or a good character */
+life2.cpp:            s = stack_copy_psi_term(parse(&sort));
+life2.cpp:            if (sort == QUERY) {
+life2.cpp:                ignore_eff = TRUE;
+life2.cpp:                    Errorline("non-NULL undo stack.\n");
+life2.cpp:            else if (sort == FACT) {
+life2.cpp:    current_module = NULL;    /* The current module for the tokenizer */
+life2.cpp:    write_corefs = TRUE;
+life.cpp:/* Copyright 1991 Digital Equipment Corporation.
+life.cpp:int main(int argc, char* argv[])  // REV401PLUS correct main proto
+life.cpp:    long sort, exitflag;
+life.cpp:    for (i = 0;i < 256;i++)
+life.cpp:    for (i = 0;i < 256;i++)
+life.cpp:        for (i = 0; i < argc;i++)
+life.cpp:        Errorline("Too many command line arguments\n");
+life.cpp:    init_memory();
+life.cpp:        /* Wait until an EOF or a good character */
+life.cpp:            s = stack_copy_psi_term(parse(&sort));
+life.cpp:            if (sort == QUERY) {
+life.cpp:                ignore_eff = TRUE;
+life.cpp:                    Errorline("non-NULL undo stack.\n");
+life.cpp:            else if (sort == FACT) {
+life.cpp:    current_module = NULL;    /* The current module for the tokenizer */
+life.cpp:    write_corefs = TRUE;
+list.cpp: * Copyright 1991 Digital Equipment Corporation.
+list.cpp:void List_InsertBefore(RefListHeader header, Ref atom, Ref mark)
+login.cpp:/* Copyright 1991 Digital Equipment Corporation.
+login.cpp:   long clean_succ=0; */ // removed for MINT
+login.cpp:   // unsigned long global_time_stamp=INIT_TIME_STAMP; /* 9.6 */ // removed for MINT
+login.cpp:  What follows are the functions which assert facts in their correct places:
+login.cpp:  function definitions, rule definitions or type definitions.
+login.cpp:  The TYP argument is either 'predicate', 'function', or 'type'.
+login.cpp:  For predicates or functions, insert the clause 'HEAD :- BODY' or the rule
+login.cpp:  For types, insert HEAD as a term of type attributes and BODY as a type
+login.cpp:  head or the tail of the existing list.
+login.cpp:        succ.coref = NULL;
+login.cpp:                   def->keyword->module==current_module */
+login.cpp:                    Errorline("the built-in %T '%s' may not be redefined.\n",
+login.cpp:                        def->type_def, def->keyword->symbol);
+login.cpp:                Errorline("the %T '%s' may not be redefined from within module %s.\n",
+login.cpp:                    def->keyword->combined_name,
+login.cpp:            Errorline("the %T '%s' may not be redefined as a %T.\n",
+login.cpp:                def->type_def, def->keyword->symbol, typ);
+login.cpp:  It may be either a predicate or a function.
+login.cpp:  The psi_term T is of the form 'H :- B' or 'H -> B', but it may be incorrect
+login.cpp:  (report errors). TYP is the type, function or predicate.
+login.cpp:            Syntaxerrorline("body missing in definition of %T '%P'.\n", typ, head);
+login.cpp:        Syntaxerrorline("head missing in definition of %T.\n", typ);
+login.cpp:  Cope with various syntaxes for predicates.
+login.cpp:  1= insert before existing rules (asserta),
+login.cpp:        arg2->type->keyword->symbol, arg1->type->keyword->symbol);
+login.cpp:        str=arg2->type->keyword->symbol;
+login.cpp:        arg2->type->keyword->symbol=str;
+login.cpp:        Errorline("arguments missing in %P.\n",t);
+login.cpp:    /* if (!assert_ok && warning()) perr("the declaration is ignored.\n"); */
+login.cpp:  the real work, involving calls to UNIFY_AIM, PROVE_AIM and backtracking.
+login.cpp:    that case memory is reclaimed.
+login.cpp:  Same as push_ptr_value, but only for psi-terms whose definition field is
+login.cpp:  Same as push_ptr_value, but only for psi-terms whose coref field is being
+login.cpp:  that is modified.  Both the coref and the time_stamp must be trailed.
+login.cpp:        n = STACK_ALLOC(stack); /* Trail coref field (top of undo_stack) */
+login.cpp:        n = STACK_ALLOC(stack); /* Trail coref field (top of undo_stack) */
+login.cpp:/* Same as push_ptr_value, but for objects that must always be trailed. */
+login.cpp:  Push the window information (operation, display and window identifiers) on
+login.cpp:  the undo_stack (trail) so that the window can be destroyed, redrawn, or
+login.cpp:  that case memory is reclaimed.
+login.cpp:  T is the type of the goal: unify or prove.
+login.cpp:  when the goal fails, everything done after it can be undone and the memory
+login.cpp:  This routine could be modified in order to cope with goals to be proved
+login.cpp:            /* Restoring variable value on backtracking */
+login.cpp:  nor does it change the value of undo_stack.
+login.cpp:    Errorline("undo_actions should not be called.\n");
+login.cpp:    /* printf("*** Possible GC error: cut_point is dangling\n"); */
+login.cpp:  on the heap or outside of Life space.
+login.cpp:/* Unify the corresponding arguments */
+login.cpp:            /* more_v_attr=TRUE; */
+login.cpp:        /* more_u_attr=TRUE; */
+login.cpp:/* Evaluate the lone arguments (For LAZY failure + EAGER success) */
+login.cpp:/* For each lone argument in either u or v, create a new psi-term to put */
+login.cpp:/* unified psi-term are evaluated, which avoids incorrect 'Yes' answers. */
+login.cpp:            deref2_rec_eval(t); /* Assumes goal_stack is already restored. */
+login.cpp:        deref2_rec_eval(t); /* Assumes goal_stack is already restored. */
+login.cpp:/* Merge v's loners into u and evaluate the corresponding arguments */
+login.cpp:            more_v_attr = TRUE;
+login.cpp:        more_u_attr = TRUE;
+login.cpp:  For each label L in V and L->Vpsi_term:
+login.cpp:  stack.  All effects must be recorded in the trail so that they can be
+login.cpp:            more_v_attr = TRUE;
+login.cpp:            deref2_rec_eval(t); /* Assumes goal_stack is already restored. */
+login.cpp:        deref2_rec_eval(t); /* Assumes goal_stack is already restored. */
+login.cpp:        more_u_attr = TRUE;
+login.cpp:    merge1(u, v); /* Unify corresponding arguments */
+login.cpp:    merge3(u, v); /* Merge v's loners into u & evaluate corresponding arguments */
+login.cpp:/* For built-ins.c */
+login.cpp:    merge1(u, v); /* Unify corresponding arguments */
+login.cpp:    merge3(u, v); /* Merge v's loners into u & evaluate corresponding arguments */
+login.cpp:  not those defined in any types above it.  This is the correct behavior
+login.cpp:  for enumerating type disjunctions--all higher constraints have already
+login.cpp:  Only those (term,pred) pairs are executed whose original type is
+login.cpp:  unification created psi_term.  This avoids doing much superfluous work.
+login.cpp:  The above behavior is correct for a psi_term when always_check==TRUE for
+login.cpp:  that psi_term.  If always_check==FALSE for a psi_term, then if it does not
+login.cpp:  force checking to occur.
+login.cpp:  This routine performs one unification step.
+login.cpp:  It swaps the two psi-terms into chronological order.
+login.cpp:  overall performance of Wild_Life, and the code is not duplicated elsewhere.
+login.cpp:        /**** Swap the two psi-terms to get them into chronological order ****/
+login.cpp:        /**** Check for curried functions ****/
+login.cpp:            Errorline("attempt to unify with curried function %P\n", u);
+login.cpp:            Errorline("attempt to unify with curried function %P\n", v);
+login.cpp:            /**** Keep the old types for later use in incr. constraint checking ****/
+login.cpp:                    Errorline("undecipherable sort code.\n");
+login.cpp:            /**** Make COMPARE a little more precise ****/
+login.cpp:          u->type->keyword->symbol,
+login.cpp:          v->type->keyword->symbol,
+login.cpp:                success = (r == floor(r));
+login.cpp:                success = (r == floor(r));
+login.cpp:                            Warningline("'%s' may not be unified.\n", new_type->keyword->symbol);
+login.cpp:                /* push_ptr_value(psi_term_ptr,&(v->coref)); 9.6 */
+login.cpp:                push_psi_ptr_value(v, (GENERIC*)&(v->coref)); // REV401PLUS cast
+login.cpp:                v->coref = u;
+login.cpp:                    /* This does not seem to work right with cut.lf: */
+login.cpp:                more_u_attr = FALSE;
+login.cpp:                more_v_attr = FALSE;
+login.cpp:                if ((u_func && more_v_attr) || (v_func && more_u_attr)) {
+login.cpp:                /* This version implements the correct semantics. */
+login.cpp:                    Traceline("pushing type disjunction choice point for %P\n", u);
+login.cpp:                    /* (i.e. those in types t with t>=old1 or t>=old2),       */
+login.cpp:  This is the proving routine.  It performs one
+login.cpp:  unifying the HEAD with the GOAL before proving. It all works by pushing
+login.cpp:                if (thegoal->type != life_or) {
+login.cpp:                                /* Don't give an error message for undefined dynamic objects */
+login.cpp:                                /* What if the 'true' or 'false' have arguments? */
+login.cpp:                                /* Error: undefined predicate. */
+login.cpp:                                /* Warningline("call handler invoked for %P\n",thegoal); */
+login.cpp:                                /* For residuation (RESPRED) */
+login.cpp:                                /* Evaluate arguments of a predicate call before the call. */
+login.cpp:                                /* For residuation (RESPRED) */
+login.cpp:                                    /*   body->coref=head; */
+login.cpp:                                    /* push_ptr_value(psi_term_ptr,&(head->coref)); 9.6 */
+login.cpp:                                    push_psi_ptr_value(head, (GENERIC*)&(head->coref)); // REV401PLUS cast
+login.cpp:                                    head->coref = thegoal;
+login.cpp:        Traceline("pushing type disjunction choice point for %P\n", t);
+login.cpp:    /* Below makes cut.lf behave incorrectly: */
+login.cpp:    Traceline("setting type disjunction to %s.\n", t->type->keyword->symbol);
+login.cpp:  Prove a CLAUSE or RETRACT goal. That is try to
+login.cpp:                Traceline("pushing 'retract' choice point for %P\n", head);
+login.cpp:                Traceline("pushing 'clause' choice point for %P\n", head);
+login.cpp:            Traceline("fetching next clause for %s\n", head->type->keyword->symbol);
+login.cpp:            Errorline("the built-in %P cannot be retracted.\n", head);
+login.cpp:            Errorline("the definition of built-in %P is not accessible.\n", head);
+login.cpp:/* or if there are no choice points. */
+login.cpp:            /* This undo does the last undo actions before returning to top level. */
+login.cpp:            /* It is not needed for variable undoing, but for actions (like */
+login.cpp:/* Return the choice point corresponding to the first 'what_next' */
+login.cpp:/* global information. */
+login.cpp:    long sort, cut = FALSE;
+login.cpp:            /* This has to have the same behavior as if an EOLN was typed */
+login.cpp:        for (i = 1;i <= lev;i++) { *pr = '-'; pr++; *pr = '-'; pr++; }
+login.cpp:    /* The system waits for either an input command or an X event. */
+login.cpp:    c = x_read_stdin_or_event(&eventflag);
+login.cpp:            s = stack_copy_psi_term(parse(&sort));
+login.cpp:            else if (sort == QUERY) {
+login.cpp:            else if (sort == FACT) { /* A declaration */
+login.cpp:                /* Stay at same level on syntax error */
+login.cpp:  This goal contains the input file state information.  This guarantees that
+login.cpp:  all queries in the input file are executed in the order they are encountered
+login.cpp:    long sort;
+login.cpp:    restore_state(input_state);
+login.cpp:        s = stack_copy_psi_term(parse(&sort));
+login.cpp:        else if (sort == FACT) {
+login.cpp:        else if (sort == QUERY) {
+login.cpp:            /* Handle both successful and failing queries correctly. */
+login.cpp:            /* fprintf(stderr,"*** Error: in input file %c%s%c.\n",34,fn,34); */
+login.cpp:            abort_life(TRUE);
+login.cpp:            /* printf("\n*** Abort\n"); */
+login.cpp:  memory available or if there is an interrupt that causes the current query
+login.cpp:  to be aborted.
+login.cpp:        /*  RM: Oct 28 1993  For debugging a horrible mess.
+login.cpp:          printf("########### Choice stack corrupted! %x\n",c);
+login.cpp:            /* RESID */ restore_resid((ptr_resid_block)aim->cccc_1, &unused_match_date);
+login.cpp:            /* RESID */ restore_resid((ptr_resid_block)aim->cccc_1, &unused_match_date);
+login.cpp:            /* This 'cut' is actually more like a no-op! */
+login.cpp:            restore_resid((ptr_resid_block)aim->cccc_1, &unused_match_date);
+login.cpp:            Errorline("bad goal on stack %d.\n", goal_stack->type);
+login.cpp:                memory_check();
+lub.cpp: * lub.c - find least upper bound of the root sorts of two psi terms
+lub.cpp: * Copyright (c) 1992 Digital Equipment Corporation
+lub.cpp: * software and its documentation for any purpose and without
+lub.cpp: * representation about the suitability of this software for
+lub.cpp: * any purpose. It is provided "as is" without express or
+lub.cpp: * Author: 			Seth Copen Goldstein
+lub.cpp: * History:
+lub.cpp:ptr_int_list appendIntList(ptr_int_list tail, ptr_int_list more)
+lub.cpp:// ptr_int_list tail;				/* attach copies of more to tail */
+lub.cpp:// ptr_int_list more;
+lub.cpp:	while (more)
+lub.cpp:		tail->value_1 = more->value_1;
+lub.cpp:		more = more->next;
+lub.cpp:/* Set flags bit for all ancestors (i.e., higher up) of head */
+lub.cpp:void mark_ancestors(ptr_definition def, long* flags)
+lub.cpp:			mark_ancestors(p, flags);
+lub.cpp:		or_codes(ans, (ptr_int_list)top);
+lub.cpp:			/* we havn't checked this type before */
+lub.cpp:				or_codes(ans, ((ptr_definition)head->value_1)->code);
+lub.cpp:				/* must set flags of ALL ancestors of head! */
+lub.cpp:				mark_ancestors((ptr_definition)head->value_1, flags);
+lub.cpp:/* returns a decoded type list of the root sorts that make up the least upper
+lub.cpp:	extern long type_count;		/* the number of sorts in the hierarchy */
+lub.cpp:		 * might actually be same value before returning the type
+lub.cpp:	/* ta has the lub of tb&ta without the high bit set, search upwards for a
+lub.cpp:	 /* get the pattern to search for */
+lub.cpp:	or_codes(pattern, tb->code);		/* pattern to search for */
+lub.cpp:	/* now do a breadth first search for each of arg1 and arg2 */
+memory.cpp:/* Copyright 1991 Digital Equipment Corporation.
+memory.cpp:/* 	$Id: memory.c,v 1.10 1995/07/27 19:03:24 duchier Exp $	 */
+memory.cpp:static char vcid[] = "$Id: memory.c,v 1.10 1995/07/27 19:03:24 duchier Exp $";
+memory.cpp:    for (i = 1;i < arg_c;i++)
+memory.cpp:void pchoices() /*  RM: Oct 28 1993  For debugging. */
+memory.cpp:    for (c = choice_stack;c;c = c->next)
+memory.cpp:/* Keep for release versions, unless the garbage collector is very robust */
+memory.cpp:/* Remove for release versions */
+memory.cpp:/* Forward declarations */
+memory.cpp:  This routines provokes a total failure, in case of a bad error
+memory.cpp:  (out of memory, abort, etc...).
+memory.cpp:    abort_life(TRUE);
+memory.cpp:    /* printf("\n*** Abort\n"); */
+memory.cpp:  This routine compresses the memory contents and
+memory.cpp:            for (i = 0; i < len; i++) {
+memory.cpp:    /* the memory's edge, which causes a segmentation fault on*/
+memory.cpp:            /* Move a block or an isolated LONELY field. */
+memory.cpp:            for (i = 0; i < len; i++) {
+memory.cpp:  The function returns TRUE if the structure has not been yet thoroughly
+memory.cpp:  explored, otherwise FALSE.
+memory.cpp:                /* Pointer not yet explored */
+memory.cpp:                Errorline("in garbage collection, %d < %d.\n", value, len);
+memory.cpp:                Errorline("in garbage collection, %d > %d.\n", value, len);
+memory.cpp:  Claim the memory used by the string S.
+memory.cpp:            /* Make sure there's no conflict with LONELY (this occurs for an */
+memory.cpp:            /* empty string, which still needs a single byte of storage). */
+memory.cpp:  Claim the memory used by a block of bytes
+memory.cpp:  Claim the memory used by a type code (=list of integers).
+memory.cpp:  Check a list of parents or children of a given type.
+memory.cpp:  Explore a list of operator declarations.
+memory.cpp:static void check_operator_data(ptr_operator_data* op)
+memory.cpp:// ptr_operator_data* op;
+memory.cpp:    while (unchecked((GENERIC *)op, sizeof(operator_data))) {
+memory.cpp:static void check_keyword(ptr_keyword*);      /*  RM: Jan 12 1993  */
+memory.cpp:  Check a hash table of keywords. The actual table is not stored within LIFE
+memory.cpp:  memory.
+memory.cpp:    for (i = 0;i < table->size;i++)
+memory.cpp:            check_keyword(&(table->data[i]));
+memory.cpp:  Checks a keyword.
+memory.cpp:static void check_keyword(ptr_keyword* k)      /*  RM: Jan 12 1993  */
+memory.cpp:// ptr_keyword* k;
+memory.cpp:    if (unchecked((GENERIC*)k, sizeof(struct wl_keyword))) {
+memory.cpp:  for all types, and the attributed code. The code field is not checked as
+memory.cpp:        check_keyword(&((*d)->keyword)); /*  RM: Jan 12 1993  */
+memory.cpp:        printf("%lx %20s %ld\n", *d, (*d)->keyword->symbol, amount_used);
+memory.cpp:        check_operator_data(&((*d)->op_data)); /* PVR 5.6 */
+memory.cpp:        check_keyword(&((*d)->keyword)); /*  RM: Jan 12 1993  */
+memory.cpp:        check_operator_data(&((*d)->op_data)); /* PVR 5.6 */
+memory.cpp:        check_keyword((wl_keyword**) &((*n)->data));   /*  RM: Jan 12 1993  */
+memory.cpp:            Errorline("in garbage collection, bad goal on stack.\n");
+memory.cpp:  Explore a list of residuations.
+memory.cpp:        if ((*r)->sortflag) /* 22.9 */
+memory.cpp:            check_definition((struct wl_definition**)&((*r)->bestsort)); // REV401PLUS cast
+memory.cpp:            check_code((wl_int_list**) &((*r)->bestsort)); /* 21.9 */
+memory.cpp:        code = (*r)->sortflag ? ((ptr_definition)((*r)->bestsort))->code
+memory.cpp:            : (ptr_int_list)(*r)->bestsort;
+memory.cpp:  Explore a residuation block.
+memory.cpp:  Explore a psi_term.
+memory.cpp:                    Errorline("non-NULL value_3 field in garbage collector, type='%s', value=%d.\n",
+memory.cpp:                        (*t)->type->keyword->combined_name,
+memory.cpp:        /* check_psi_term(&((*t)->coref)); 9.6 */
+memory.cpp:        t = &((*t)->coref);
+memory.cpp:  (Could improve this by randomly picking left or right subtree
+memory.cpp:  for last call optimization.  This would never overflow, even on
+memory.cpp:        for (i = 0;i < type_count;i++)
+memory.cpp:    for (i = 0;i < type_count;i++)
+memory.cpp:  The type of the pointer to be restored on backtracking is known, which
+memory.cpp:  allows the structure it is referring to to be accordingly checked.
+memory.cpp:  but to something within, for example a field such as VALUE which might
+memory.cpp:  This routine checks all pointers and psi_terms to find out which memory cells
+memory.cpp:  This routine explores all known structures. It is vital that it should visit
+memory.cpp:  them all exactly once. It thus creates a map of what is used in memory, which
+memory.cpp:  COMPRESS uses to compact the memory and recalculate the addresses.
+memory.cpp:  Exploration of these structures should be done in exactly the same order
+memory.cpp:  root for GC) must be updated before it is accessed.  E.g. don't use the
+memory.cpp:  variable goal_stack before updating it.
+memory.cpp:    check_definition(&abortsym); /* 26.1 */
+memory.cpp:    check_definition(&aborthooksym); /* 26.1 */
+memory.cpp:    check_definition(&functor);
+memory.cpp:    check_definition(&life_or); /*  RM: Apr  6 1993  */
+memory.cpp:    check_psi_term(&error_psi_term);
+memory.cpp:  The garbage collector.
+memory.cpp:  This routine is called whenever memory is getting low.
+memory.cpp:  It returns TRUE if insufficient memory was freed to allow
+memory.cpp:  the interpreter to carry on working.
+memory.cpp:  This is a half-space GC, it first explores all known structures, then
+memory.cpp:  Bugs will appear if the collector is called during parsing or other
+memory.cpp:  such routines which are 'unsafe'. In order to avoid this problem, before
+memory.cpp:  there is enough memory available to work, and will call the GC if not
+memory.cpp:    for (addr = other_base; addr < other_limit; addr++)
+memory.cpp:    ignore_eff = FALSE;
+memory.cpp:  This returns a pointer to S bytes of memory in the heap.
+memory.cpp:        Errorline("the heap overflowed into the stack.\n");
+memory.cpp:  This returns a pointer to S bytes of memory in the stack.
+memory.cpp:        Errorline("the stack overflowed into the heap.\n");
+memory.cpp:  Get two big blocks of memory to work in.
+memory.cpp:  The second is only used for the half-space garbage collector.
+memory.cpp:  The start and end addresses of the blocks are re-aligned correctly.
+memory.cpp:void init_memory()
+memory.cpp:    alloc_words = GetIntOption("memory", ALLOC_WORDS);
+memory.cpp:    mem_size = alloc_words * sizeof(long);
+memory.cpp:        /* Rewrote some rather poor code... RM: Mar  1 1994  */
+memory.cpp:        mem_limit = mem_base + alloc_words - 2;
+memory.cpp:        other_limit = other_base + alloc_words - 2;
+memory.cpp:        /* Fill the memory with rubbish data */
+memory.cpp:          for(i=0;i<alloc_words;i++) {
+memory.cpp:        Errorline("Wild_life could not allocate sufficient memory to run.\n\n");
+memory.cpp:  This function tests to see whether enough memory is available to allow
+memory.cpp:  fails to release enough memory it returns FALSE.
+memory.cpp:long memory_check()
+memory.cpp:        /* Abort if didn't recover at least GC_THRESHOLD/10 of memory */
+modules.cpp:  Return the module corresponding to "module#symbol".
+modules.cpp:  otherwise return the symbol for that term.
+modules.cpp:        return term->type->keyword->symbol;
+modules.cpp:  The result must be immediately stored in a newly allocated string.
+modules.cpp:  Create a definition for a key.
+modules.cpp:ptr_definition new_definition(ptr_keyword key)    /*  RM: Feb 22 1993  */
+modules.cpp:// ptr_keyword key;
+modules.cpp:    result->keyword = key;
+modules.cpp:  Then, retrieve the keyword for 'module#symbol'. Then find the correct
+modules.cpp:    ptr_keyword key;
+modules.cpp:    ptr_keyword openkey;
+modules.cpp:    ptr_keyword tempkey;
+modules.cpp:            Errorline("qualified call to private symbol '%s'\n",
+modules.cpp:            result = error_psi_term->type;
+modules.cpp:            Errorline("qualified call to undefined symbol '%s#%s'\n",
+modules.cpp:            result = error_psi_term->type;
+modules.cpp:            key = HEAP_ALLOC(struct wl_keyword);
+modules.cpp:            /* Search the open modules of 'module' for 'symbol' */
+modules.cpp:                                Errorline("serious module name clash: \"%s\" and \"%s\"\n",
+modules.cpp:                                result = error_psi_term->type;
+modules.cpp:  This routine allows C variables to be stored as LIFE functions.
+modules.cpp:    Errorline("error in definition of '%s'\n",module_buffer);
+modules.cpp:    Returns the string to be used to display keyword K.
+modules.cpp:char* print_symbol(ptr_keyword k)
+modules.cpp:// ptr_keyword k;
+modules.cpp:    k = k->definition->keyword;
+modules.cpp:  Prints the string to be used to display keyword K.
+modules.cpp:void pretty_symbol(ptr_keyword k)
+modules.cpp:// ptr_keyword k;
+modules.cpp:    k = k->definition->keyword;
+modules.cpp:  Prints the string to be used to display keyword K, with quotes if required.
+modules.cpp:void pretty_quote_symbol(ptr_keyword k)
+modules.cpp:// ptr_keyword k;
+modules.cpp:    k = k->definition->keyword;
+modules.cpp:        Errorline("argument missing in '%P'\n", call);
+modules.cpp:  Open one or more modules, that is, alias all the public words
+modules.cpp:  An error message is printed for each module that is not successfully
+modules.cpp:        Errorline("argument missing in '%P'\n", call);
+modules.cpp:    ptr_keyword key1, key2;
+modules.cpp:        for (opens = current_module->open_modules;opens;opens = opens->next)
+modules.cpp:            /* Check for name conflicts */
+modules.cpp:            for (i = 0;i < open_module->symbol_table->size;i++)
+modules.cpp:                        Errorline("symbol clash '%s' and '%s'\n",
+modules.cpp:        Errorline("module \"%s\" not found\n", string_val(t));
+modules.cpp:    ptr_keyword key;
+modules.cpp:    key = hash_lookup(current_module->symbol_table, term->type->keyword->symbol);
+modules.cpp:        if (key->definition->keyword->module != current_module && !wl_bool) {
+modules.cpp:                key->definition->keyword->symbol,
+modules.cpp:                key->definition->keyword->combined_name);
+modules.cpp:        def = update_symbol(current_module, term->type->keyword->symbol);
+modules.cpp:        def->keyword->wl_public = wl_bool;
+modules.cpp:/* Do for all arguments, for the built-ins
+modules.cpp:        Errorline("argument missing in '%P'\n", call);
+modules.cpp:  The argument is a single symbol or a list of symbols.
+modules.cpp:        Errorline("argument missing in '%P'\n", call);
+modules.cpp:                Errorline("argument should be boolean in '%P'\n", call);
+modules.cpp:                Errorline("argument should be boolean in '%P'\n", call);
+modules.cpp:                Errorline("argument should be boolean in '%P'\n", call);
+modules.cpp:    if (old->keyword->private_feature)  /*  RM: Mar 12 1993  */
+modules.cpp:        oldlabel = old->keyword->combined_name;
+modules.cpp:        oldlabel = old->keyword->symbol;
+modules.cpp:    if (wl_new->keyword->private_feature)  /*  RM: Mar 12 1993  */
+modules.cpp:        newlabel = wl_new->keyword->combined_name;
+modules.cpp:        newlabel = wl_new->keyword->symbol;
+modules.cpp:        Errorline("argument missing in '%P'\n", call);
+modules.cpp:      ->keyword->symbol
+modules.cpp:  This routine really matches U and V, it will only succeed if V is more
+modules.cpp:       u->type->keyword->symbol,
+modules.cpp:       v->type->keyword->symbol); */
+modules.cpp:        Errorline("cannot unify persistent values\n");
+modules.cpp:        return c_abort();
+modules.cpp:        /**** Check for values ****/
+modules.cpp:            push_psi_ptr_value(u, (GENERIC*)&(u->coref)); // REV401PLUS
+modules.cpp:            u->coref = v;
+modules.cpp:  Alias one keyword to another.
+modules.cpp:    ptr_keyword key;
+modules.cpp:        key = hash_lookup(current_module->symbol_table, arg1->type->keyword->symbol);
+modules.cpp:                    arg2->type->keyword->combined_name);
+modules.cpp:            Errorline("module violation: cannot alias '%s' from module \"%s\"\n",
+modules.cpp:        Errorline("argument(s) missing in '%P'\n", g);
+modules.cpp:        s = psi->type->keyword->symbol;
+modules.cpp:        Errorline("undefined module \"%s\"\n", s);
+modules.cpp:    ptr_keyword key;
+modules.cpp:    key = hash_lookup(current_module->symbol_table, term->type->keyword->symbol);
+modules.cpp:          if(key->definition->keyword->module!=current_module) {
+modules.cpp:          key->definition->keyword->symbol,
+modules.cpp:          key->definition->keyword->combined_name);
+modules.cpp:        def = update_symbol(current_module, term->type->keyword->symbol);
+modules.cpp:        def->keyword->private_feature = TRUE;
+modules.cpp:    if (ok && def->keyword->wl_public) {
+modules.cpp:            def->keyword->combined_name);
+modules.cpp:  The argument is a single symbol or a list of symbols.
+modules.cpp:        Errorline("argument missing in '%P'\n", call);
+modules.cpp:    ptr_keyword key;
+modules.cpp:  Returns all public symbols from all modules or a specific module.
+modules.cpp:    for (d = first_definition;d;d = d->next)
+modules.cpp:        if (d->keyword->wl_public && (!module || d->keyword->module == module)) {
+parser.cpp:/* Copyright 1991 Digital Equipment Corporation.
+parser.cpp:	s = t->type->keyword->symbol;
+parser.cpp:  This prints the parser's stack, for debugging purposes
+parser.cpp:	for (i = 1;i <= parser_stack_index;i++) {
+parser.cpp:  Push psi_term and precedence and operator onto parser stack.
+parser.cpp:void push(psi_term tok, long prec, wl_operator op)
+parser.cpp:// operator op;
+parser.cpp:		perr("*** Parser error ");
+parser.cpp:		psi_term_error();
+parser.cpp:long pop(ptr_psi_term tok, wl_operator* op)
+parser.cpp:// operator *op;
+parser.cpp:		  perr("*** Parser error ");
+parser.cpp:		  psi_term_error();
+parser.cpp:		(*tok) = *error_psi_term;
+parser.cpp:  TOK if it is an operator of type TYP where TYP is FX XFX XF etc...
+parser.cpp:  The result is NOP if tok is not an operator.
+parser.cpp:long precedence(psi_term tok, wl_operator typ)
+parser.cpp:// operator typ;
+parser.cpp:	ptr_operator_data o;
+parser.cpp:		/* Give an error message if there is a duplicate feature: */
+parser.cpp:		Syntaxerrorline("duplicate feature %s (%E)\n", keystr);
+parser.cpp:	nihil.coref = NULL;
+parser.cpp:/******** PARSE_LIST(type,end,separator)
+parser.cpp:  This function provides a replacement for the function 'read_list'. It does
+parser.cpp:  not create the old (slightly more compact and a lot more complicated) list
+parser.cpp:		/* Character used for building cons pairs */
+parser.cpp:			car = stack_copy_psi_term(read_life_form(s, a));
+parser.cpp:				cdr = stack_copy_psi_term(read_life_form(e, 0));
+parser.cpp:						perr("*** Syntax error ");psi_term_error();
+parser.cpp:						perr(": bad symbol for end of list '");
+parser.cpp:					perr("*** Syntax error ");psi_term_error();
+parser.cpp:		/* The syntax <a,b,c> for conjunctions has been abandoned.
+parser.cpp:					if (wl_const_3(t2) && !bad_psi_term(&t2)) {  // REV401PLUS for value_3
+parser.cpp:							t3 = read_life_form(',', ')');
+parser.cpp:							if (t2.type->keyword->private_feature) /*  RM: Mar 11 1993  */
+parser.cpp:								feature_insert(t2.type->keyword->combined_name,
+parser.cpp:								feature_insert(t2.type->keyword->symbol,
+parser.cpp:							t3 = read_life_form(',', ')');
+parser.cpp:						t2 = read_life_form(',', ')');
+parser.cpp:								  perr("*** Syntax error ");psi_term_error();
+parser.cpp:								Syntaxerrorline("',' expected in argument list (%E)\n");
+parser.cpp:		t = *error_psi_term;
+parser.cpp:		t.coref = NULL;
+parser.cpp:		stack_insert(FEATCMP, functor->keyword->symbol,
+parser.cpp:	/*  RM: Mar 12 1993  Nasty hack for Bruno's features in modules */
+parser.cpp:psi_term make_life_form(ptr_psi_term tok, ptr_psi_term arg1, ptr_psi_term arg2)
+parser.cpp:					/* push_ptr_value(psi_term_ptr,&(a1->coref)); 9.6 */
+parser.cpp:					push_psi_ptr_value(a1, (GENERIC*)&(a1->coref));  // REV401PLUS cast
+parser.cpp:				a1->coref = stack_copy_psi_term(*arg2);
+parser.cpp:						/* push_ptr_value(psi_term_ptr,&(a2->coref)); 9.6 */
+parser.cpp:						push_psi_ptr_value(a2, (GENERIC*)&(a2->coref)); // REV401PLUS
+parser.cpp:					a2->coref = stack_copy_psi_term(*arg1);
+parser.cpp:				else { /*  RM: Feb 22 1993  Now reports an error */
+parser.cpp:					Syntaxerrorline("':' occurs where '&' required (%E)\n");
+parser.cpp:					*tok = *error_psi_term;
+parser.cpp:		/* And now for another nasty hack: reading negative numbers */
+parser.cpp:  Crunch up = work out the arguments of anything on the stack whose precedence
+parser.cpp:  is <= PREC, and replace it with the corresponding psi-term. Do not go any
+parser.cpp:	wl_operator op1, op2, op3;
+parser.cpp:				t = make_life_form(&t2, &t1, NULL);
+parser.cpp:						t = make_life_form(&t2, &t3, &t1);
+parser.cpp:						t = *error_psi_term;
+parser.cpp:				t = make_life_form(&t1, &t2, NULL);
+parser.cpp:				t = *error_psi_term;
+parser.cpp:			printf("*** Parser: yuck, weirdo operator.\n");
+parser.cpp:  This reads in one life-form from the input stream which finishes with
+parser.cpp:  the psi_term whose name is STR1 or STR2, typically if we're reading a list
+parser.cpp:  [A,4*5,b-4!] then STR1="," and STR2="|" . It would be incorrect if "," were
+parser.cpp:  taken as an operator.
+parser.cpp:  implementation guide. It deals with all the various types of operators,
+parser.cpp:psi_term read_life_form(char ch1, char ch2)
+parser.cpp:	wl_operator op;
+parser.cpp:							t2 = read_life_form(')', 0);
+parser.cpp:										  perr("*** Syntax error ");psi_term_error();
+parser.cpp:										Syntaxerrorline("')' missing (%E)\n");
+parser.cpp:								/* psi_term_error(); */
+parser.cpp:		  perr("*** Syntax error ");psi_term_error();
+parser.cpp:			Syntaxerrorline("bad expression (%E)\n");
+parser.cpp:		t = *error_psi_term;
+parser.cpp:  This returns one clause or query from the input stream.
+parser.cpp:  or a query in the IS_IT_A_CLAUSE variable. This is the top level of the
+parser.cpp:	/*s=read_life_form('.','?');*/
+parser.cpp:	s = read_life_form(0, 0);
+parser.cpp:						perr("*** Syntax error ");psi_term_error();perr(": ");
+parser.cpp:					Syntaxerrorline("'%P' (%E)\n", &t);
+parser.cpp:		prompt = "error>";
+parser.cpp:	/* Mark all the psi-terms corresponding to variables in the var_tree as    */
+parser.cpp:	/* quoted.  This is needed for correct parsing of inputs; otherwise vars   */
+print.cpp:/* Copyright 1991 Digital Equipment Corporation.
+print.cpp:/* Precedence of the comma and colon operators (or 0 if none exists) */
+print.cpp:/* integers are represented as REALS, and therefore can have higher        */
+print.cpp:    sprintf(seg_format, "%%0%ldd", PRINT_POWER);
+print.cpp:/* Time to print a term is proportional to product of var_tree size and */
+print.cpp:  Print the integer B under binary format (currently 26 is printed **-*-).
+print.cpp:    for (p = INT_SIZE;p--;p > 0)
+print.cpp:  Print the kind of an operator.
+print.cpp:void print_operator_kind(FILE* s, wl_operator kind)
+print.cpp:// operator kind;
+print.cpp:  psi-term being printed. If it is more than once then a tag will have to
+print.cpp:  If P has not already been seen, then explore the psi_term it points to.
+print.cpp:  Explore all the pointers in the attribute tree T.
+print.cpp:  Pointers that occur more than once will need a tag.
+print.cpp:  pointers need to have names given to them for printing because they are
+print.cpp:/******** INSERT_VARIABLES(vars,force)
+print.cpp:  This routine gives the name of the query variable to the corresponding
+print.cpp:void insert_variables(ptr_node vars, long force)
+print.cpp:// long force;
+print.cpp:        insert_variables(vars->right, force);
+print.cpp:            if (n->data || force)
+print.cpp:        insert_variables(vars->left, force);
+print.cpp:void forbid_variables(ptr_node n)
+print.cpp:        forbid_variables(n->right);
+print.cpp:        forbid_variables(n->left);
+print.cpp:  These routines allow the correct printing in minimal form of a set of
+print.cpp:  possibly cyclic psi-terms with coreferences from one to another.
+print.cpp:  First the term to be printed is explored to locate any cyclic terms or
+print.cpp:  coreferences. Then is printed into memory where is it formatted to fit
+print.cpp: /* Printing into memory involves the use of an array containing a TAB
+print.cpp: WORK_OUT_LENGTH tries (by trial and error) to print the psi_term into
+print.cpp: /* Does the work of prettyf and prettyf_quote */
+print.cpp: /* The q argument is a flag telling whether to quote or not. */
+print.cpp:/* s starts with '_' or a lowercase symbol and contains */
+print.cpp:        or starts with a non-lowercase character, and
+print.cpp:    (4) if S has only one character, it is a single space or underscore.
+print.cpp:/* Utility to correctly handle '\n' inside strings being printed: */
+print.cpp:  Calculate the number of blanks before each tabulation.
+print.cpp:  This is done by a trial and error mechanism.
+print.cpp:void work_out_length()
+print.cpp:    ptr_tab_brk worst, root;
+print.cpp:        worst = NULL;
+print.cpp:        for (i = pretty_things + 1;(unsigned long)i < (unsigned long)indx;i++) {
+print.cpp:                worst = root;
+print.cpp:        for (i = pretty_things + 1;(unsigned long)i < (unsigned long)indx;i++)
+print.cpp:            if (worst)
+print.cpp:                worst->broken = TRUE;
+print.cpp:  '2' and that the 2nd is either nil or also long check_legal_cons(t,t_type)
+print.cpp:            pretty_symbol(t_type->keyword);  /*  RM: Jan 13 1993  */
+print.cpp:    /* RM: Dec 11 1992  New code for printing lists */
+print.cpp:            pretty_tag_or_psi_term(car, COMMA_PREC, depth);
+print.cpp:            pretty_tag_or_psi_term(cdr, MAX_PRECEDENCE + 1, depth);
+print.cpp:                    pretty_tag_or_psi_term(cdr, MAX_PRECEDENCE + 1, depth);
+print.cpp:void pretty_tag_or_psi_term(ptr_psi_term p, long sprec, long depth)
+print.cpp:/* Routines to handle printing of operators. */
+print.cpp:/* Check arguments of a potential operator. */
+print.cpp:/* Get information about an operator. */
+print.cpp:/* If t is an operator with the correct arguments, return one of     */
+print.cpp:/* If t is not an operator, or it has wrong arguments, return NOTOP  */
+print.cpp:long opcheck(ptr_psi_term t, long* prec, wl_operator* type)
+print.cpp:// operator *type;
+print.cpp:    wl_operator op;
+print.cpp:    ptr_operator_data opdat = t->type->op_data;
+print.cpp:/* Write an expression with its operators. */
+print.cpp:/* a valid operator, and is therefore taken care of here).                */
+print.cpp:    wl_operator ttype, a1type, a2type;
+print.cpp:        else /* equal priority */
+print.cpp:        else /* equal priority */
+print.cpp:        pretty_tag_or_psi_term(arg1, MAX_PRECEDENCE + 1, depth);
+print.cpp:        if (!p1 && strcmp(t->type->keyword->symbol, ",")) {
+print.cpp:        pretty_quote_symbol(t->type->keyword); /*  RM: Jan 13 1993  */
+print.cpp:            (!strcmp(t->type->keyword->symbol, ",") ||
+print.cpp:                !strcmp(t->type->keyword->symbol, ":-"))) {
+print.cpp:            if (!p2 && strcmp(t->type->keyword->symbol, ".")) prettyf(" ");
+print.cpp:        pretty_tag_or_psi_term(arg2, MAX_PRECEDENCE + 1, depth);
+print.cpp:        pretty_quote_symbol(t->type->keyword);  /*  RM: Jan 13 1993  */
+print.cpp:        pretty_tag_or_psi_term(arg1, MAX_PRECEDENCE + 1, depth);
+print.cpp:        pretty_tag_or_psi_term(arg1, MAX_PRECEDENCE + 1, depth);
+print.cpp:        pretty_quote_symbol(t->type->keyword); /*  RM: Jan 13 1993  */
+print.cpp:  Pretty print a psi_term T with sugar for lists.
+print.cpp:    char buf[STRLEN]; /* Big enough for a long number */
+print.cpp:        /* if (trace) printf("<%d>",t->status); For brunobug.lf PVR 14.2.94 */
+print.cpp:                                    sprintf(segbuf[seg], seg_format, (unsigned long)tmp);
+print.cpp:                                    val = floor(val / (double)PRINT_SPLIT);
+print.cpp:                                for (i = seg; i >= 0; i--) prettyf(segbuf[i]);
+print.cpp:                                    pretty_symbol(t->type->keyword); /*  RM: Jan 13 1993  */
+print.cpp:                                    pretty_symbol(t->type->keyword); /*  RM: Jan 13 1993  */
+print.cpp:                                    pretty_quote_symbol(t->type->keyword); /*  RM: Jan 13 1993  */
+print.cpp:                                pretty_quote_symbol(t->type->keyword);
+print.cpp:                                pretty_quote_symbol(eof->keyword); /*  RM: Jan 13 1993  */
+print.cpp:                                pretty_quote_symbol(cut->keyword); /*  RM: Jan 13 1993  */
+print.cpp:                                pretty_symbol(t->type->keyword); /*  RM: Jan 13 1993  */
+print.cpp:                        if (!argswritten) pretty_quote_symbol(t->type->keyword);
+print.cpp:        /* pretty_tag_or_psi_term(t->data,(two?COMMA_PREC:MAX_PRECEDENCE+1)); */
+print.cpp:        pretty_tag_or_psi_term((ptr_psi_term)t->data, COMMA_PREC, depth); // REV401PLUS cast
+print.cpp:long two_or_more(ptr_node t)
+print.cpp:  work.
+print.cpp:    do_pretty_attr(t, wl_new, &cnt, two_or_more(t), depth);
+print.cpp:    for (i = pretty_things + 1;(unsigned long)i < (unsigned long)indx;i++) {
+print.cpp:            for (j = 0;j < i->tab->column;j++)
+print.cpp:    forbid_variables(var_tree);
+print.cpp:            work_out_length();
+print.cpp:        pretty_tag_or_psi_term((ptr_psi_term)n->data, MAX_PRECEDENCE + 1, 0); // REV401PLUS cast
+print.cpp:/* For the listing built-in */
+print.cpp:    write_corefs = TRUE;
+print.cpp:/* For all write builtins */
+print.cpp:        if (!write_corefs) main_pred_write(n->left);
+print.cpp:        if (write_corefs)
+print.cpp:        if (write_corefs) {
+print.cpp:            pretty_tag_or_psi_term((ptr_psi_term)n->data, MAX_PRECEDENCE + 1, 0); // REV401PLUS cast
+print.cpp:            work_out_length();
+print.cpp:        if (!write_corefs) main_pred_write(n->right);
+print.cpp:void main_display_psi_term(); /* Forward declaration */
+print.cpp:/* Main loop for previous two entry points */
+print.cpp:        pretty_tag_or_psi_term(t, MAX_PRECEDENCE + 1, 0);
+print.cpp:            work_out_length();
+print.cpp:  Print a couple of psi-terms (u,v) with the correct co-referencing. Print
+print.cpp:    pretty_tag_or_psi_term(u, MAX_PRECEDENCE + 1, 0);
+print.cpp:    pretty_tag_or_psi_term(v, MAX_PRECEDENCE + 1, 0);
+print.cpp:        work_out_length();
+print.cpp:    pretty_tag_or_psi_term(t, MAX_PRECEDENCE + 1, 0);
+print.cpp:        pretty_tag_or_psi_term(r2->var, MAX_PRECEDENCE + 1, 0);
+raw.cpp:/* Copyright 1991 Digital Equipment Corporation.
+raw.cpp:#include "error.h"
+raw.cpp:        Errorline("in begin_raw: already in mode raw\n");
+raw.cpp:        Errorline("in begin_raw: cannot get the input parameters\n");
+raw.cpp:        Errorline("in begin_raw: cannot set the input parameters\n");
+raw.cpp:        Errorline("in begin_raw: cannot get the terminal\n");
+raw.cpp:    /* do not strip the characters (the 8th bit is used for the key Compose) */
+raw.cpp:        Errorline("in begin_raw: cannot set the terminal\n");
+raw.cpp:  return the next key pressed in Char or if a X event has occured
+raw.cpp:                    Errorline("it is not possible to read characters or X events\n");
+raw.cpp:                        Errorline("in select: unknown descriptor\n");
+raw.cpp:  reset the keyboard in the previous state before xcInitModeRaw.
+raw.cpp:        Errorline("in c_end_raw: not in mode raw\n");
+raw.cpp:        Errorline("in end_raw: cannot reset mode raw\n");
+raw.cpp:/* set up the built-ins for the mode raw */
+sys.cpp:#include "memory.h"
+sys.cpp:#include "error.h" 
+sys.cpp:// ptr_definition sys_bitvector;
+sys.cpp:    ptr_psi_term funct, arg, result, argo[ARGNN]; /* no more than 10 arguments */
+sys.cpp:    for (i = 0;i < num;i++) {
+sys.cpp:           just follow the chain of corefs and don't do
+sys.cpp:            Errorline("Illegal argument in %P.\n", funct);
+sys.cpp:            return (c_abort());
+sys.cpp:                /* paranoid check: really correct type */
+sys.cpp:                            goto correct;
+sys.cpp:                    if (sub_type(arg->type, (ptr_definition)type)) goto correct; // REV401PLUS add cast
+sys.cpp:                /* type incorrect */
+sys.cpp:                Errorline("Illegal argument in %P.\n", funct);
+sys.cpp:                return (c_abort());
+sys.cpp:                /* correct */
+sys.cpp:            correct:;
+sys.cpp:                Errorline("Missing argument '%s' in %P.\n", argi[i].feature, funct);
+sys.cpp:                return (c_abort());
+sys.cpp:            for (i = 0;i < num;i++) {
+sys.cpp:  construct a psi term of the given sort whose value points
+sys.cpp:static ptr_psi_term make_bytedata(ptr_definition sort, unsigned long bytes)
+sys.cpp:// ptr_definition sort;
+sys.cpp:    temp_result->type = sort;
+sys.cpp:   make a bitvector that can hold at least the given number of bits
+sys.cpp:static long make_bitvector_internal(ptr_psi_term args[], 
+sys.cpp:        Errorline("negative argument in %P.\n", funct);
+sys.cpp:        temp_result = make_bytedata(sys_bitvector, bytes);
+sys.cpp:static long c_make_bitvector()
+sys.cpp:    return call_primitive((long int(*)(ptr_psi_term*, ptr_psi_term,ptr_psi_term, GENERIC )) make_bitvector_internal, NARGS(args), args, 0);
+sys.cpp:static long bitvector_binop_code(unsigned long* bv1, 
+sys.cpp:    ptr_psi_term temp_result = make_bytedata(sys_bitvector, size3);
+sys.cpp:        for (i = 0;i < size3;i++) s3[i] = s1[i] & s2[i];
+sys.cpp:        if (size1 < size2) for (;i < size2;i++) s3[i] = 0;
+sys.cpp:        else             for (;i < size1;i++) s3[i] = 0;
+sys.cpp:        for (i = 0;i < size3;i++) s3[i] = s1[i] | s2[i];
+sys.cpp:        if (size1 < size2) for (;i < size2;i++) s3[i] = s2[i];
+sys.cpp:        else             for (;i < size1;i++) s3[i] = s1[i];
+sys.cpp:        for (i = 0;i < size3;i++) s3[i] = s1[i] ^ s2[i];
+sys.cpp:        if (size1 < size2) for (;i < size2;i++) s3[i] = (unsigned char)0 ^ s2[i];
+sys.cpp:        else             for (;i < size1;i++) s3[i] = s1[i] ^ (unsigned char)0;
+sys.cpp:    default: return (c_abort());
+sys.cpp:static long bitvector_binop_internal(ptr_psi_term args[], 
+sys.cpp:    return bitvector_binop_code((unsigned long*)args[0]->value_3,
+sys.cpp:static long bitvector_binop(long op)
+sys.cpp:    SETARG(args, 0, "1", sys_bitvector, REQUIRED);
+sys.cpp:    SETARG(args, 1, "2", sys_bitvector, REQUIRED);
+sys.cpp:    return call_primitive((long int(*)(ptr_psi_term*, ptr_psi_term,ptr_psi_term, GENERIC ))bitvector_binop_internal, NARGS(args), args, (GENERIC)op); // REV401PLUS (void *) -> (GENERIC)
+sys.cpp:static long c_bitvector_and()
+sys.cpp:    return bitvector_binop(BV_AND);
+sys.cpp:static long c_bitvector_or()
+sys.cpp:    return bitvector_binop(BV_OR);
+sys.cpp:static long c_bitvector_xor()
+sys.cpp:    return bitvector_binop(BV_XOR);
+sys.cpp:static long bitvector_unop_code(unsigned long* bv1, 
+sys.cpp:        temp_result = make_bytedata(sys_bitvector, size1);
+sys.cpp:        for (i = 0;i < size1;i++) s3[i] = ~(s1[i]);
+sys.cpp:        for (i = 0;i < size1;i++) {
+sys.cpp:    default: return (c_abort());
+sys.cpp:static long bitvector_unop_internal(ptr_psi_term args[], 
+sys.cpp:    return bitvector_unop_code((unsigned long*)args[0]->value_3,
+sys.cpp:static long bitvector_unop(long op)
+sys.cpp:    SETARG(args, 0, "1", sys_bitvector, REQUIRED);
+sys.cpp:    return call_primitive((long int(*)(ptr_psi_term*, ptr_psi_term,ptr_psi_term, GENERIC ))bitvector_unop_internal, NARGS(args), args, (GENERIC)op); // REV401PLUS
+sys.cpp:static long c_bitvector_not()
+sys.cpp:    return bitvector_unop(BV_NOT);
+sys.cpp:static long c_bitvector_count()
+sys.cpp:    return bitvector_unop(BV_COUNT);
+sys.cpp:static long bitvector_bit_code(unsigned long *bv1, 
+sys.cpp:        Errorline("Index out of bound in %P.\n", funct);
+sys.cpp:        temp_result = make_bytedata(sys_bitvector, size1);
+sys.cpp:        temp_result = make_bytedata(sys_bitvector, size1);
+sys.cpp:static long bitvector_bit_internal(ptr_psi_term args[], 
+sys.cpp:  return bitvector_bit_code((GENERIC)args[0]->value_3,
+sys.cpp:static long bitvector_bit(long op)
+sys.cpp:    SETARG(args, 0, "1", sys_bitvector, REQUIRED);
+sys.cpp:    return call_primitive((long int(*)(ptr_psi_term*, ptr_psi_term,ptr_psi_term, GENERIC ))bitvector_bit_internal, NARGS(args), args, (GENERIC)op);
+sys.cpp:static long c_bitvector_get()
+sys.cpp:    return bitvector_bit(BV_GET);
+sys.cpp:static long c_bitvector_set()
+sys.cpp:    return bitvector_bit(BV_SET);
+sys.cpp:static long c_bitvector_clear()
+sys.cpp:    return bitvector_bit(BV_CLEAR);
+sys.cpp:void regerror(char* s)
+sys.cpp:    fprintf(stderr, "Regexp Error: %s\n", s);
+sys.cpp:        Errorline("compilation of regular expression failed in %P.\n", funct);
+sys.cpp:        return (c_abort());
+sys.cpp:       offset and each time we need to pass it to regexec or regsub we must
+sys.cpp:  2nd form only instantiates the bounds requested in the mask (3rd arg)
+sys.cpp:            Errorline("Illegal offset in %P.\n", funct);
+sys.cpp:            return (c_abort());
+sys.cpp:    /* perform operation */
+sys.cpp:            for (i = 0;i < NSUBEXP;i++, sp++, ep++) {
+sys.cpp:                       are 1-based rather than 0-based.  Who is the moron who made
+sys.cpp:            for (i = 0;i < NSUBEXP;i++, sp++, ep++) {
+sys.cpp: /* when a fp is opened for updating an input operation
+sys.cpp:    flush or file positioning operation; and the other way around
+sys.cpp:/* find the first match for character c starting from index idx in
+sys.cpp:            fprintf(stderr, "Fatal error: malloc failed in text_buffer_push\n");
+sys.cpp:static long get_record_internal(ptr_psi_term args[], 
+sys.cpp:        /* no separator: just grab as much as you can */
+sys.cpp:    /* general case: multicharacter separator */
+sys.cpp:WaitForStart:
+sys.cpp:    else goto WaitForStart;
+sys.cpp:        goto WaitForStart;
+sys.cpp:    for (lastbuf = &rootbuf, size = 0;lastbuf != NULL;lastbuf = lastbuf->next)
+sys.cpp:    for (lastbuf = &rootbuf, sep = (char*)t->value_3;
+sys.cpp:static long c_get_record()
+sys.cpp:    return call_primitive((long int(*)(ptr_psi_term*, ptr_psi_term,ptr_psi_term, GENERIC ))get_record_internal, NARGS(args), args, 0);
+sys.cpp:            Errorline("Unknown address family in %P.\n", funct);
+sys.cpp:            Errorline("SOCK_RAW not supported in %P.\n", funct);
+sys.cpp:            Errorline("Unknown socket type in %P.\n", funct);
+sys.cpp:            Errorline("fdopen failed on socket in %P.\n", funct);
+sys.cpp:static long bind_or_connect_internal(ptr_psi_term args[], 
+sys.cpp:        /* bind or connect in the internet domain */
+sys.cpp:        int port;
+sys.cpp:            Errorline("Missing port number in %P.\n", funct);
+sys.cpp:        name.sin_port = htons((unsigned short)*(REAL*)args[2]->value_3);
+sys.cpp:                Errorline("%s failed for %P.\n",
+sys.cpp:            Errorline("%s failed in %P.\n", do_bind ? "bind" : "connect", funct);
+sys.cpp:            Errorline("%s failed in %P.\n", do_bind ? "bind" : "connect", funct);
+sys.cpp:        Errorline("Too few arguments in %P.\n", funct);
+sys.cpp:    SETARG(args, 2, "port", integer, OPTIONAL);
+sys.cpp:    return call_primitive((long int(*)(ptr_psi_term*, ptr_psi_term,ptr_psi_term, GENERIC ))bind_or_connect_internal, NARGS(args), args, NULL);
+sys.cpp:    SETARG(args, 2, "port", integer, OPTIONAL);
+sys.cpp:    return call_primitive((long int(*)(ptr_psi_term*, ptr_psi_term,ptr_psi_term, GENERIC ))bind_or_connect_internal, NARGS(args), args, (void*)1);
+sys.cpp:            Errorline("fdopen failed on socket in %P.\n", funct);
+sys.cpp:    push_goal(unify, stack_string((char*)strerror(n)), result, NULL); // REV401PLUS added cast
+sys.cpp:   import a public symbol from another module into the current one,
+sys.cpp:static long import_symbol_internal(ptr_psi_term args[], 
+sys.cpp:    ptr_keyword key;
+sys.cpp:        key = args[1]->type->keyword;
+sys.cpp:            args[0]->type->keyword->symbol);
+sys.cpp:            Errorline("symbol %s already defined in %P.", key->combined_name, funct);
+sys.cpp:        key = HEAP_ALLOC(struct wl_keyword);
+sys.cpp:        key->symbol = args[0]->type->keyword->symbol;
+sys.cpp:static long c_import_symbol()
+sys.cpp:    return call_primitive((long int(*)(ptr_psi_term*, ptr_psi_term,ptr_psi_term, GENERIC ))import_symbol_internal, NARGS(args), args, 0);
+sys.cpp:static long fork_internal(ptr_psi_term args[], 
+sys.cpp:    pid_t id = fork();
+sys.cpp:static long c_fork()
+sys.cpp:    return call_primitive((long int(*)(ptr_psi_term*, ptr_psi_term,ptr_psi_term, GENERIC ))fork_internal, 0, NULL, 0);
+sys.cpp:    for (i = 0;i < n;i++)
+sys.cpp:        Errorline("Unexpected wait status: %d", status);
+sys.cpp:        strcpy(buffer, args[1]->type->keyword->symbol);
+sys.cpp:        strcpy(buffer, args[1]->type->keyword->symbol);
+sys.cpp:        strcpy(buffer, args[1]->type->keyword->symbol);
+sys.cpp:        Errorline("1st arg not a function in %P.\n", funct);
+sys.cpp:            feat = heap_copy_string(args[1]->type->keyword->symbol);
+sys.cpp:    make_type_link(sys_bitvector, sys_bytedata);
+sys.cpp:    check_definition(&sys_bitvector);
+sys.cpp:    sys_bitvector = update_symbol(sys_module, "bitvector");
+sys.cpp:    /* purely for illustration
+sys.cpp:    new_built_in(sys_module, "make_bitvector", (def_type)function_it, c_make_bitvector);
+sys.cpp:    new_built_in(sys_module, "bitvector_and", (def_type)function_it, c_bitvector_and);
+sys.cpp:    new_built_in(sys_module, "bitvector_or", (def_type)function_it, c_bitvector_or);
+sys.cpp:    new_built_in(sys_module, "bitvector_xor", (def_type)function_it, c_bitvector_xor);
+sys.cpp:    new_built_in(sys_module, "bitvector_not", (def_type)function_it, c_bitvector_not);
+sys.cpp:    new_built_in(sys_module, "bitvector_count", (def_type)function_it, c_bitvector_count);
+sys.cpp:    new_built_in(sys_module, "bitvector_get", (def_type)function_it, c_bitvector_get);
+sys.cpp:    new_built_in(sys_module, "bitvector_set", (def_type)function_it, c_bitvector_set);
+sys.cpp:    new_built_in(sys_module, "bitvector_clear", (def_type)function_it, c_bitvector_clear);
+sys.cpp:    new_built_in(sys_module, "get_record", (def_type)function_it, c_get_record);
+sys.cpp:    new_built_in(sys_module, "import_symbol", (def_type)predicate_it, c_import_symbol);
+sys.cpp:    new_built_in(sys_module, "fork", (def_type)function_it, c_fork);
+sys_dbm.cpp:dbmstore_internal(args, result, funct)
+sys_dbm.cpp:    if (store(key, content) < 0) return FALSE;
+sys_dbm.cpp:c_dbmstore()
+sys_dbm.cpp:    return call_primitive(dbmstore_internal, NARGS(args), args, 0);
+sys_dbm.cpp:    new_built_in(sys_module, "dbm_store", predicate, c_dbmstore);
+templates.cpp:/* Copyright 1991 Digital Equipment Corporation.
+token.cpp:/* Copyright 1991 Digital Equipment Corporation.
+token.cpp:/* or the stack. */
+token.cpp:    if (p->type == error_psi_term->type) {
+token.cpp:        Syntaxerrorline("Module violation (%E).\n");
+token.cpp:/* Clear EOF if necessary for stdin */
+token.cpp:/* Main routines for saving & restoring state */
+token.cpp:/* Restore global state from an existing file state psi-term t */
+token.cpp:void restore_state(ptr_psi_term t)
+token.cpp:    /* for (i=0;i++;i<=strlen(str)) input_file_name[i]=str[i]; */
+token.cpp:      printf("Creating new state for file '%s', module '%s'\n",
+token.cpp:void restore_parse_state(ptr_parse_block pb)
+token.cpp:        restore_state(old_state);
+token.cpp:  For the time being all this does is replace '~' by the HOME directory
+token.cpp:  if no user is given, or tries to find the user.
+token.cpp:                /* if (warning()) printf("no HOME directory.\n") */;
+token.cpp:  restore the stdin state.  Otherwise, open the file and create a new global
+token.cpp:  state for it.
+token.cpp:  If the file can't be opened, print an error and open "stdin" instead.
+token.cpp:        Errorline("file '%s' does not exist.\n", file);
+token.cpp:        restore_state(input_state);
+token.cpp:  Same thing as OPEN_INPUT_FILE, only for output. If FILE="stdout" then
+token.cpp:        Errorline("file '%s' could not be opened for output.\n", file);
+token.cpp:  Put back one character, if there already are 2 saved characters then report
+token.cpp:  an error (= bug).
+token.cpp:        Errorline("in tokenizer, put_back_char three times (last=%d).\n", c);
+token.cpp:  Put back a psi_term, if there already are two saved then report an
+token.cpp:  error (= bug).
+token.cpp:        Errorline("in parser, put_back_token three times (last=%P).\n", t);
+token.cpp:void psi_term_error()
+token.cpp:    /* prompt="error>"; 20.8 */
+token.cpp:void read_string_error(int n)
+token.cpp:            Syntaxerrorline("end of file reached before end of string (%E).\n");
+token.cpp:            Syntaxerrorline("Hexadecimal digit expected (%E).\n");
+token.cpp:  Read a string ending with character E, where E=" or '. Transform a double
+token.cpp:    long store = TRUE;
+token.cpp:            store = FALSE;
+token.cpp:            read_string_error(0);
+token.cpp:                store = FALSE;
+token.cpp:                read_string_error(0);
+token.cpp:                        store = flag = FALSE;
+token.cpp:                        read_string_error(0);
+token.cpp:                        store = flag = FALSE;
+token.cpp:                        read_string_error(1);
+token.cpp:                        for (i = n = 0;i < 3 && isoctal(c);i++, c = read_char())
+token.cpp:                    store = FALSE;
+token.cpp:        if (store)
+token.cpp:                Warningline("string too long, extra ignored (%E).\n");
+token.cpp:                store = FALSE;
+token.cpp:  Tests if character is legal in a name or a variable (see macros).
+token.cpp:    long store = TRUE;
+token.cpp:    tok->coref = NULL;
+token.cpp:                if (store)
+token.cpp:                        Warningline("name too long, extra ignored (%E).\n");
+token.cpp:                        store = FALSE;
+token.cpp:        /* PVR 4.2.94 for correct level incrementing */
+token.cpp:            /* Remove this for Bruno who didn't like it, and doesn't like
+token.cpp:            n = find(STRCMP, tok->type->keyword->symbol, var_tree);
+token.cpp:                    tok->type->keyword->symbol,
+token.cpp:    if (f == floor(f))
+token.cpp:void read_token_main(); /* Forward declaration */
+token.cpp:void read_token_main(ptr_psi_term tok, long for_parser)
+token.cpp:// long for_parser;
+token.cpp:    if (for_parser && (saved_psi_term != NULL)) {
+token.cpp:        if (for_parser) psi_term_line_number = line_count;
+token.cpp:                                    Errorline("illegal character %d in input (%E).\n", c);
+token.cpp:                        tok->coref = t;
+token.cpp:                        tok->coref = (ptr_psi_term)n->data;
+token.cpp:        tok->coref = NULL;
+token.cpp:            if (for_parser) put_back_char(c);
+token.cpp:    if (for_parser) prompt = "|    ";
+trees.cpp:/* Copyright 1991 Digital Equipment Corporation.
+trees.cpp:  Compares two integers, for use in FIND or INSERT.
+trees.cpp:    char* stmp; /* Scratchpad for string ptr */
+trees.cpp:  Compares two strings which represent features, for use
+trees.cpp:  in FIND or INSERT.  This differs from strcmp for those strings
+trees.cpp:  comp     = comparison routine for insertion.
+trees.cpp:  info     = the information to insert.
+trees.cpp:  heapflag = HEAP or STACK for heap or stack allocation of insertion node.
+trees.cpp:  Here KEYSTR can be either a pointer to a string, an integer, or a feature.
+trees.cpp:  possible values: COMP==strcmp(), COMP==intcmp(), or COMP==featcmp().
+trees.cpp:                        Errorline("attempt to overwrite an existing feature; ignored.\n");
+trees.cpp:  binary tree TREE stored in the heap.
+trees.cpp:  storage place of KEY. This is used by C_APPLY_LABEL
+trees.cpp:  storage place of KEY. This is used by C_APPLY_LABEL
+trees.cpp:  Return the NODE address corresponding to key KEYSTR in TREE using function
+trees.cpp:  Return NULL if no key corresponds to data P.
+trees.cpp:  otherwise create a definition for it, and return that.
+trees.cpp:    result->keyword->symbol=s;
+types.cpp:/* Copyright 1991 Digital Equipment Corporation.
+types.cpp:  binary encoding algorithm.
+types.cpp:   This prints type T to stderr, where T=predicate, function or type.
+types.cpp:        perr("sort");
+types.cpp:/* Confirm an important change */
+types.cpp:long yes_or_no()
+types.cpp:    restore_state(old_state);
+types.cpp:/* Remove references to d in d's children or parents */
+types.cpp:  This decides whether a definition (a sort, function, or predicate)
+types.cpp:  may be extended or not.
+types.cpp:            /* Except for top, sorts are always unprotected, with a warning. */
+types.cpp:                Errorline("the top sort '@' may not be extended.\n");
+types.cpp:              Warningline("extending definition of sort '%s'.\n",d->keyword->symbol);
+types.cpp:                /* The term was entered in a previous file, and therefore */
+types.cpp:                Errorline("the %T '%s' may not be changed.\n", /*  RM: Jan 27 1993  */
+types.cpp:                    d->type_def, d->keyword->combined_name);
+types.cpp:                    /* d is a built-in, and therefore cannot be altered. */
+types.cpp:                    Errorline("the built-in %T '%s' may not be extended.\n",
+types.cpp:                        d->type_def, d->keyword->symbol);
+types.cpp:                    /* d is not a built-in, and therefore can be altered. */
+types.cpp:                    Warningline("extending the %T '%s'.\n", d->type_def, d->keyword->symbol);
+types.cpp:                    if (warningflag) if (!yes_or_no()) success = FALSE;
+types.cpp:  Return false if some sort of error occurred.
+types.cpp:        Errorline("the top sort '@' may not be a subsort.\n");
+types.cpp:        Errorline("the declaration '%P <| %P' is illegal.\n", t1, t2);
+types.cpp:        Errorline("cyclic sort declarations are not allowed.\n");
+types.cpp:        Errorline("the %T '%s' may not be redefined as a sort.\n",
+types.cpp:            d1->type_def, d1->keyword->symbol);
+types.cpp:        Errorline("the %T '%s' may not be redefined as a sort.\n",
+types.cpp:            d2->type_def, d2->keyword->symbol);
+types.cpp:                Warningline("'%s' is a sort. It can be extended without a declaration.\n",
+types.cpp:                    t->type->keyword->symbol);
+types.cpp:                        t->type->keyword->symbol);
+types.cpp:  if they are functions or predicates.
+types.cpp:                Warningline("'%s' is a sort--only functions and predicates\
+types.cpp: can have unevaluated arguments.\n", t->type->keyword->symbol);
+types.cpp:        d = ((ptr_keyword)n->data)->definition;
+types.cpp:        Errorline("bad sort declaration '%P' (%E).\n", t);
+types.cpp:  This deals with all the type declarations of the form:
+types.cpp:        if (!strcmp(arg2->type->keyword->symbol, "|")) {
+types.cpp:                    Warningline("attributes ignored left of ':=' declaration (%E).\n");
+types.cpp:                                Warningline("attributes ignored in sort declaration (%E).\n");
+types.cpp:                    Warningline("attributes ignored left of ':=' declaration (%E).\n");
+types.cpp:                    Warningline("attributes ignored right of '<|' declaration (%E).\n");
+types.cpp:            Errorline("argument missing in sort declaration (%E).\n");
+types.cpp:        Errorline("argument missing in sort declaration (%E).\n");
+types.cpp:  T is of the form ':: type(attributes) | pred', the attributes must be
+types.cpp:        if (!strcmp(arg1->type->keyword->symbol, "|")) {
+types.cpp:        if (arg1 && wl_const_3(*arg1)) {  // REV401PLUS need correct macro for value_3
+types.cpp:                Errorline("the %T '%s' may not be redefined as a sort.\n",
+types.cpp:                    d->type_def, d->keyword->symbol);
+types.cpp:            Errorline("bad argument in sort declaration '%P' (%E).\n", t);
+types.cpp:        Errorline("argument missing in sort declaration (%E).\n");
+types.cpp:    for (d = first_definition;d;d = d->next)
+types.cpp:  A type's attributes and constraints are stored in the 'rule' field of the
+types.cpp:  The following routines implement sort encoding.
+types.cpp:  Count the number of sorts in the symbol table T.
+types.cpp:long count_sorts(long c0)  /*  RM: Feb  3 1993  */
+types.cpp:    for (d = first_definition;d;d = d->next)
+types.cpp:  Clear the bit-vector coding of the sorts.
+types.cpp:    for (d = first_definition;d;d = d->next)
+types.cpp:  Build the list of terminals (i.e. sorts with no children) in
+types.cpp:void least_sorts()  /*  RM: Feb  3 1993  */
+types.cpp:    for (d = first_definition;d;d = d->next)
+types.cpp:  Build a list of all sorts (except nothing) in nothing->parents.
+types.cpp:void all_sorts()   /*  RM: Feb  3 1993  */
+types.cpp:    for (d = first_definition;d;d = d->next)
+types.cpp:  Return the code worth 2^p.
+types.cpp:    or_codes(code, u);
+types.cpp:  Performs CODE1 := CODE1 or CODE2,
+types.cpp:  'or' being the binary logical operator on bits.
+types.cpp:void or_codes(ptr_int_list u, ptr_int_list v)
+types.cpp:  Make sure all codes are w words long, by increasing the length of the
+types.cpp:  shorter ones.
+types.cpp:  This simplifies greatly the bitvector manipulation routines.
+types.cpp:  For correct operation, w>=maximum number of words used for a code.
+types.cpp:    for (d = first_definition;d;d = d->next)
+types.cpp:            /* Count how many words have to be added */
+types.cpp:            /* Add the words */
+types.cpp:            for (i = 0; i < w; i++) {
+types.cpp:  so that nothing really horrible happens if the user modifies built-in types
+types.cpp:  such as INT or LIST.
+types.cpp:void perr_sort(ptr_definition d)
+types.cpp:    perr_s("%s", d->keyword->symbol);
+types.cpp:void perr_sort_list(ptr_int_list anc)
+types.cpp:        perr_sort_list(anc->next);
+types.cpp:        perr_sort((ptr_definition)anc->value_1);
+types.cpp:void perr_sort_cycle(ptr_int_list anc)
+types.cpp:    perr_sort((ptr_definition)anc->value_1);
+types.cpp:    perr_sort_list(anc);
+types.cpp:  If cyclic, return a TRUE error condition and print an error message
+types.cpp:        /* If marked, check if it's in the ancestor list */
+types.cpp:                Errorline("there is a cycle in the sort hierarchy\n");
+types.cpp:                perr_sort_cycle(anc);
+types.cpp:  Recursively set the always_check flag to 'FALSE' for all d's
+types.cpp:  Return a TRUE flag if a change was made somewhere (for the
+types.cpp:  flags of all sorts to their children.  Return a TRUE flag
+types.cpp:  if a change was made somewhere (for the closure calculation).
+types.cpp:    for (d = first_definition;d;d = d->next)
+types.cpp:  The 'always_check' flag, if false, should be propagated to a sort's
+types.cpp:  for all declared sorts.
+types.cpp:  This routine performs type-coding using transitive closure.
+types.cpp:  Then a new encryption is performed.
+types.cpp:  definition (an error should be reported but it isn't implemented (but it's
+types.cpp:        type_count = count_sorts(-1); /* bottom does not count */
+types.cpp:        nothing->parents = NULL; /* Must be cleared before all_sorts */
+types.cpp:        all_sorts();
+types.cpp:        nothing->parents = NULL; /* Must be cleared before least_sorts */
+types.cpp:        least_sorts();
+types.cpp:        Traceline("*** Codes:\n%C= %s\n", NULL, nothing->keyword->symbol);
+types.cpp:                        or_codes(code, kdef->code);
+types.cpp:                    Traceline("%C = %s\n", code, xdef->keyword->symbol);
+types.cpp:        for (i = 0;i < p;i++)
+types.cpp:            or_codes(top->code, two_to_the(i));
+types.cpp:        for (i = type_count;i < type_count;i++)
+types.cpp:        Traceline("*** Encoding done, %d sorts\n", type_count);
+types.cpp:            Errorline("the sorts 'real' and 'string' are not disjoint.\n");
+types.cpp:        /*  RM: Dec 15 1992  I don't think this really matters any more
+types.cpp:        Errorline("the sorts 'real' and 'list' are not disjoint.\n");
+types.cpp:        /*  RM: Dec 15 1992  I don't think this really matters any more
+types.cpp:        Errorline("the sorts 'list' and 'string' are not disjoint.\n");
+types.cpp:            perr("*** Wild_Life may behave abnormally because some basic types\n");
+types.cpp:            perr("*** have been defined incorrectly.\n\n");
+types.cpp:    for (i = 0; i < type_count; i++) {
+types.cpp:            gamma_table[i]->keyword->combined_name);
+types.cpp:  This is used in conjunction with glb_code to correctly implement
+types.cpp:  completeness for disequality for psi-terms with non-NULL value fields.
+types.cpp:  f,c      sort intersection (sortflag & code) of preceding glb_code call.
+types.cpp:    /* Get a pointer to the sort code */
+types.cpp:    /* non-NULL value field needed for disentailment are looked at.     */
+types.cpp:        /* All other sorts with 'value' fields always return TRUE, that is, */
+types.cpp:  Sorts are stored as a 'Variant Record':
+types.cpp:    f1==FALSE: c1 is a ptr_int_list (a sort code).
+types.cpp:  The result (f3,c3) is also in this format.
+types.cpp:  This is needed to correctly handle psi-terms that don't have a sort code
+types.cpp:  (for example, functions, predicates, and singleton sorts).
+types.cpp:    ptr_int_list cd1, cd2, * cd3; /* sort codes */
+types.cpp:        /* If both inputs are either top or the same ptr_definition */
+types.cpp:    *f3 = FALSE; /* cd3 is ptr_int_list (a sort code) */
+types.cpp:  These results are used for knowing when to inherit properties or release
+types.cpp:/*  RM: May  7 1993  Fixed bug in when multiple word code */
+types.cpp:           t1->keyword->combined_name,
+types.cpp:           t2->keyword->combined_name); */
+types.cpp:    printf("overlap_type(%s,%s) => %ld\n",t1->def->keyword->symbol,t2->def->keyword->symbol,result);

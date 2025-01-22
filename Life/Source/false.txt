@@ -1,0 +1,46 @@
+bi_sys.cpp:  If it is true or false, set the trace flag to that value.  Otherwise, give
+bi_sys.cpp:  If it is true or false, set the stepflag to that value.  Otherwise, give
+bi_sys.cpp:        else if (arg1->type == lf_false)
+bi_sys.cpp:        else if (arg2->type == lf_false)
+bi_sys.cpp:    ans->type = NOTQUIET ? lf_false : lf_true;
+built_ins.cpp:                if (matches(t->type, lf_false, &smaller) && smaller) {
+built_ins.cpp:    u->type = v ? lf_true : lf_false;
+built_ins.cpp:        t->type=lf_false;
+built_ins.cpp:                succ = matches(arg1->type, lf_false, &lesseq);
+built_ins.cpp:                        /* Function returns false: failure. */
+built_ins.cpp:                    /* Both true and false are disentailed. */
+built_ins.cpp:    else if (sub_type(typ, lf_false)) return FALSE;
+built_ins.cpp:  Return true/false iff argument is/is not '@' (top with no attributes).
+built_ins.cpp:        other->type = ((arg1->type == top) && (arg1->attr_list == NULL)) ? lf_true : lf_false;
+built_ins.cpp:  Return true/false iff argument is not/is '@' (top with no attributes).
+built_ins.cpp:        other->type = ((arg1->type == top) && (arg1->attr_list == NULL)) ? lf_false : lf_true;
+built_ins.cpp:        other->type = (arg1->type->type_def == (def_type)function_it) ? lf_true : lf_false; // REV401PLUS _def & (def_type) & _it
+built_ins.cpp:        other->type = (arg1->type->type_def == (def_type)predicate_it) ? lf_true : lf_false; // REV401PLUS _def & (def_type) & _it
+built_ins.cpp:        other->type = (arg1->type->type_def == (def_type)type_it) ? lf_true : lf_false; // REV401PLUS _def & (def_type) & _it
+built_ins.cpp:                ans_term->type = ans ? lf_true : lf_false;
+built_ins.cpp:                /* Optional third argument returns true or false if the psi-term
+built_ins.cpp:                    varflag->type = var_occurred ? lf_true : lf_false;
+built_ins.cpp:  If it returns false, return the Else value.  Either the Then or the Else
+built_ins.cpp:        ans->type = (n != NULL) ? lf_true : lf_false;
+built_ins.cpp:  Prove a predicate, return true or false if it succeeds or fails.
+built_ins.cpp:                other->type = wl_false;
+built_ins.cpp:  Prove a predicate, return true or false if it succeeds or fails.
+built_ins.cpp:                other->type = lf_false;
+built_ins.cpp:    lf_false = update_symbol(bi_module, "false");
+login.cpp:                                    /* and fails if it returns false.  It can residuate too. */
+login.cpp:                            else if (thegoal->type == lf_true || thegoal->type == lf_false) {
+login.cpp:                                /* What if the 'true' or 'false' have arguments? */
+lub.cpp:			 * returns TRUE if they are same value, else false
+memory.cpp:    check_definition(&lf_false);
+modules.cpp:            if (arg1->type == lf_false)
+modules.cpp:            if (arg1->type == lf_false)
+modules.cpp:            if (arg1->type == lf_false)
+sys.cpp:    call_once(G) -> T | G,!,T=true;T=false.
+sys.cpp:    value->type = lf_false;
+token.cpp:    t1->type = (eof_flag ? lf_true : lf_false);
+token.cpp:    t1->type = (start_of_line ? lf_true : lf_false);
+token.cpp:    t1->type = (eof_flag ? lf_true : lf_false);
+token.cpp:    t1->type = (start_of_line ? lf_true : lf_false);
+types.cpp:  Return false if some sort of error occurred.
+types.cpp:  The 'always_check' flag, if false, should be propagated to a sort's
+types.cpp:        make_type_link(lf_false, boolean);

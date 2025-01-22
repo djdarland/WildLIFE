@@ -996,14 +996,14 @@ long c_module_access()
     long success = FALSE;
     ptr_psi_term result, module, symbol, call, other;
 
-
     call = aim->aaaa_1;
     deref_ptr(call);
 
+    
     /*
       result=aim->bbbb_1;
       deref_ptr(result);
-      get_two_args(call,&module,&symbol);
+      get_two_args((ptr_node) call,&module,&symbol);
 
       if(module && symbol) {
       other=stack_psi_term(4);
@@ -1012,7 +1012,7 @@ long c_module_access()
       push_goal(unify,result,other,NULL);
 
       }
-      */
+    */      
 
     Warningline("%P not implemented yet...\n", call);
 
