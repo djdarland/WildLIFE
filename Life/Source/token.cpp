@@ -114,7 +114,7 @@ void stack_mod_int_attr(ptr_psi_term t, char* attrname, long value)
 
 /* Add an attribute whose value is a string to a psi-term */
 /* that does not yet contains this attribute. */
-void heap_add_str_attr(ptr_psi_term t, char* attrname, chr* str)
+void heap_add_str_attr(ptr_psi_term t, char* attrname, char* str)
 // ptr_psi_term t;
 // char* attrname;
 // char* str;
@@ -358,7 +358,7 @@ void save_parse_state(ptr_parse_block pb)
 }
 
 
-void restore_parse_state(ptr_parse_black pb)
+void restore_parse_state(ptr_parse_block pb)
 // ptr_parse_block pb;
 {
     if (pb) {
@@ -446,9 +446,7 @@ char* expand_file_name(char* s)
 // char* s;
 {
     char* r;
-    char* home, * getenv();
-    struct passwd* pw;
-    /* char *user="eight character name"; 18.5 */
+    char* home; // , * getenv(char *);
     char userbuf[STRLEN];
     char* user = userbuf;
     char* t1, * t2;
@@ -464,9 +462,11 @@ char* expand_file_name(char* s)
         }
         *t2 = 0;
         if ((int)strlen(user) > 0) {
-            pw = getpwnam(user);
+//          pw = getpwnam(user); // DJD_LATER
+    char* pw = "DJD"; // DJD_LATER
             if (pw) {
-                user = pw->pw_dir;
+//              user = pw->pw_dir;// DJD_LATER
+    user = "DJD";
                 r = (char*)malloc(strlen(user) + strlen(t1) + 1);
                 sprintf(r, "%s%s", user, t1);
             }
@@ -474,7 +474,7 @@ char* expand_file_name(char* s)
                 /* if (warning()) printf("couldn't find user '%s'.\n",user) */;
         }
         else {
-            home = getenv("HOME");
+	  home = std::getenv("HOME");
             if (home) {
                 r = (char*)malloc(strlen(home) + strlen(s) + 1);
                 sprintf(r, "%s%s", home, s + 1);
@@ -869,7 +869,7 @@ long legal_in_name(long c)
   Read in the name starting with character C followed by character of whose
   type function is F. The result is a psi_term of symbol type TYP.
 */
-void read_name(ptr_psi_term tok, long ch, long (*f)(), ptr_definition typ)
+void read_name(ptr_psi_term tok, long ch, long (*f)(long), ptr_definition typ)
 // ptr_psi_term tok;
 // long ch;
 // long (*f)();
@@ -1060,7 +1060,7 @@ void read_token(ptr_psi_term tok)
 
 /* Used as a built-in */
 /* Prompt is unchanged */
-void read_token_b(ptyr_psi_term tok)
+void read_token_b(ptr_psi_term tok)
 // ptr_psi_term tok;
 { read_token_main(tok, FALSE); }
 

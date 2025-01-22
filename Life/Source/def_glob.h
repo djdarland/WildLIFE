@@ -73,21 +73,21 @@ EXTERN GENERIC stack_pointer;
 
 */
 
-EXTERN float garbage_time;
+EXTERN clock_t garbage_time;
 
 /*! \var life_start
   \brief time life started - seconds
 
 */
 
-EXTERN long life_start;
+EXTERN clock_t life_start;
 
 /*! \var life_start
   \brief time life ended - seconds
 
 */
 
-EXTERN long life_end;
+EXTERN clock_t life_end;
 
 /*! \var other_base
   \brief mem_size memory allocated in init_memory by malloc
@@ -936,7 +936,7 @@ EXTERN long clean_succ;
 
 /* ptr_choice_point prompt_choice_stack; 12.7 */
 
-EXTERN long start_time, end_time;
+EXTERN clock_t start_time, end_time;
 
 EXTERN long xeventdelay;
 EXTERN long xcount;

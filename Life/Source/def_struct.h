@@ -274,8 +274,8 @@ typedef struct wl_resid_block {
 typedef void* Ref;
 typedef struct wl_ListLinks* RefListLinks;
 typedef struct wl_ListHeader* RefListHeader;
-typedef RefListLinks(*RefListGetLinksProc)	();
-typedef long			(*RefListEnumProc)	(); // REV401PLUS
+typedef RefListLinks(*RefListGetLinksProc)	(Ref);
+typedef long			(*RefListEnumProc)	(Ref, Ref); // REV401PLUS
 
 /*
   "First", "Last" are pointers to the first and last element of the list

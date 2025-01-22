@@ -15,8 +15,8 @@ typedef struct regexp {
 	char program[1];	/* Unwarranted chumminess with compiler. */
 } regexp;
 
-extern regexp* regcomp();
-extern int regexec();
+extern regexp* regcomp(char *);
+extern int regexec(regexp* prog, char* string);
 extern void regsub();
-extern void regerror();
+extern void regerror(char *);
 extern long last_regsize(); /* Denys Duchier, Dec 13, 1994 */

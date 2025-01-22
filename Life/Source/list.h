@@ -25,8 +25,8 @@
 typedef void* Ref;
 typedef struct wl_ListLinks* RefListLinks;
 typedef struct wl_ListHeader* RefListHeader;
-typedef RefListLinks(*RefListGetLinksProc)	();
-typedef int			(*RefListEnumProc)	();
+typedef RefListLinks(*RefListGetLinksProc)	(Ref);
+typedef int			(*RefListEnumProc)	(Ref,Ref);
 
 
 

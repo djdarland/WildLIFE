@@ -169,7 +169,7 @@ char* stack_copy_string(char* s)
   COMP(a,b) should return n where: n=0 if a=b; n>0 if a>b; n<0 if a<b.
 */
 ptr_node general_insert(long comp, char* keystr, ptr_node* tree, 
-    GNERIC info, long heapflag, long copystr, long bkflag)
+    GENERIC info, long heapflag, long copystr, long bkflag)
 // long comp;
 // char* keystr;
 // ptr_node* tree;
@@ -269,7 +269,7 @@ ptr_node heap_insert(long comp, char* keystr, ptr_node* tree, GENERIC info)
 /******** STACK_INSERT(comp,keystr,tree,info)
   Exactly the same as heap_insert, only the new node is in the stack.
 */
-ptr_node stack_insert(long comp, char* keystr, ptr_node* tree, GRNERIC info)
+ptr_node stack_insert(long comp, char* keystr, ptr_node* tree, GENERIC info)
 // long comp;
 // char* keystr;
 // ptr_node* tree;
@@ -286,7 +286,7 @@ ptr_node stack_insert(long comp, char* keystr, ptr_node* tree, GRNERIC info)
   storage place of KEY. This is used by C_APPLY_LABEL
   Trail the change with a trail check.
 */
-ptr_node bk_stack_insert(long comp, char* keystr, ptr_node* tree, GERNERIC info)
+ptr_node bk_stack_insert(long comp, char* keystr, ptr_node* tree, GENERIC info)
 // long comp;
 // char* keystr;
 // ptr_node* tree;
@@ -443,7 +443,7 @@ void delete_attr(char* s, ptr_node* n)
 // ptr_node* n;
 {
     long cmp;
-    ptr_node new, r;
+    ptr_node wl_new, r;
 
     if (*n) {
         cmp = featcmp(s, (*n)->key);
@@ -454,9 +454,9 @@ void delete_attr(char* s, ptr_node* n)
         else if ((*n)->left) {
             if ((*n)->right) {
                 r = (*n)->right;
-                new = heap_insert(FEATCMP, r->key, &((*n)->left), r->data);
-                new->left = r->left;
-                new->right = r->right;
+                wl_new = heap_insert(FEATCMP, r->key, &((*n)->left), r->data);
+                wl_new->left = r->left;
+                wl_new->right = r->right;
                 *n = (*n)->left;
             }
             else

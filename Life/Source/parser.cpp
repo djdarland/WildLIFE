@@ -119,7 +119,7 @@ void push(psi_term tok, long prec, wl_operator op)
   This function pops PSI_TERM and OP off the parser stack and returns
   its precedence.
 */
-long pop(ptr_psi_term tok, wl_operastor* op)
+long pop(ptr_psi_term tok, wl_operator* op)
 // ptr_psi_term tok;
 // operator *op;
 {
@@ -643,7 +643,7 @@ void crunch(long prec, long limit)
 // long limit;
 {
 	psi_term t, t1, t2, t3;
-	operator op1, op2, op3;
+	wl_operator op1, op2, op3;
 
 	if (parse_ok && prec >= look() && parser_stack_index > limit) {
 
@@ -711,7 +711,7 @@ psi_term read_life_form(char ch1, char ch2)
 	long state = 0;
 	long prec = 0;
 
-	operator op;
+	wl_operator op;
 
 	limit = parser_stack_index + 1;
 

@@ -1,4 +1,3 @@
-#ifdef NOT_SAMPLE
 
 /* Copyright 1991 Digital Equipment Corporation.
 ** All Rights Reserved.
@@ -68,7 +67,7 @@ int main(int argc, char* argv[])  // REV401PLUS correct main proto
 
     /* Timekeeping initialization */
     tzset();
-    times(&life_start);
+    life_start = clock();
     assert(stack_pointer == mem_base); /* 8.10 */
 
     init_modules(); /*  RM: Jan  8 1993  */
@@ -238,4 +237,3 @@ void init_globals()
 #endif
 
 }
-#endif

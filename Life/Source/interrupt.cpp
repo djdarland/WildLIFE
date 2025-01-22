@@ -10,7 +10,7 @@ static char vcid[] = "$Id: interrupt.c,v 1.2 1994/12/08 23:25:19 duchier Exp $";
 
 #include "defs.h"
 
-#ifdef DJD_LATER
+// #ifdef DJD_LATER
 // long interrupted=FALSE;  // REV401PLUS moved down removed for MINT
 
 /******** INTERRUPT()
@@ -139,4 +139,4 @@ StartAgain:
     restore_state(input_state);
 }
 
-#endif
+// #endif

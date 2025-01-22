@@ -152,7 +152,7 @@ static ptr_int_list makeUnitList(ptr_definition x)
  */
  /*****************************************************************************/
 
-ptr_int_list lub(psi_term a, psi_term b, psi_term* pp)
+ptr_int_list lub(ptr_psi_term a, ptr_psi_term b, ptr_psi_term* pp)
 // ptr_psi_term a;
 // ptr_psi_term b;
 // ptr_psi_term* pp;

@@ -63,23 +63,23 @@ ptr_module create_module(char* module)
 
 // char* module;
 {
-    ptr_module new;
+    ptr_module wl_new;
 
 
-    new = find_module(module);
-    if (!new) {
-        new = HEAP_ALLOC(struct wl_module);
-        new->module_name = heap_copy_string(module);
-        new->source_file = heap_copy_string(input_file_name);
-        new->open_modules = NULL;
-        new->inherited_modules = NULL;
-        new->symbol_table = hash_create(16); /*  RM: Feb  3 1993  */
+    wl_new = find_module(module);
+    if (!wl_new) {
+        wl_new = HEAP_ALLOC(struct wl_module);
+        wl_new->module_name = heap_copy_string(module);
+        wl_new->source_file = heap_copy_string(input_file_name);
+        wl_new->open_modules = NULL;
+        wl_new->inherited_modules = NULL;
+        wl_new->symbol_table = hash_create(16); /*  RM: Feb  3 1993  */
 
-        heap_insert(STRCMP, new->module_name, &module_table, (GENERIC)new); // REV401PLUS cast
+        heap_insert(STRCMP, wl_new->module_name, &module_table, (GENERIC) wl_new); // REV401PLUS cast
 
         /* printf("*** New module: '%s' from file %s\n",input_file_name); */
     }
-    return new;
+    return wl_new;
 }
 
 
@@ -183,12 +183,12 @@ char* make_module_token(ptr_module module, char* str)
 // ptr_module module;
 // char* str;
 {
-    ptr_module explicit;
+    ptr_module wl_explicit;
 
 
     /* Check if the string already contains a module */
-    explicit = extract_module_from_name(str);
-    if (explicit)
+    wl_explicit = extract_module_from_name(str);
+    if (wl_explicit)
         strcpy(module_buffer, str);
     else
         if (module != no_module) {
@@ -230,7 +230,7 @@ ptr_definition new_definition(ptr_keyword key)    /*  RM: Feb 22 1993  */
     result->date = 0;
     result->type_def = (def_type)undef_it;
     result->always_check = TRUE;
-    result->protected = TRUE;
+    result->wl_protected = TRUE;
     result->evaluate_args = TRUE;
     result->already_loaded = FALSE;
     result->children = NULL;
@@ -283,7 +283,7 @@ ptr_definition update_symbol(ptr_module module, char* symbol)   /*  RM: Jan  8 1
     key = hash_lookup(module->symbol_table, symbol);
 
     if (key)
-        if (key->public || module == current_module)
+        if (key->wl_public || module == current_module)
             result = key->definition;
         else {
             Errorline("qualified call to private symbol '%s'\n",
@@ -304,7 +304,7 @@ ptr_definition update_symbol(ptr_module module, char* symbol)   /*  RM: Jan  8 1
             key->module = module;
             key->symbol = heap_copy_string(symbol);
             key->combined_name = heap_copy_string(make_module_token(module, symbol));
-            key->public = FALSE;
+            key->wl_public = FALSE;
             key->private_feature = FALSE; /*  RM: Mar 11 1993  */
             key->definition = NULL;
 
@@ -321,7 +321,7 @@ ptr_definition update_symbol(ptr_module module, char* symbol)   /*  RM: Jan  8 1
                     tempkey = hash_lookup(opened->symbol_table, symbol);
 
                     if (tempkey)
-                        if (openkey && openkey->public && tempkey->public) {
+                        if (openkey && openkey->wl_public && tempkey->wl_public) {
                             if (openkey->definition == tempkey->definition) {
                                 Warningline("benign module name clash: %s and %s\n",
                                     openkey->combined_name,
@@ -336,7 +336,7 @@ ptr_definition update_symbol(ptr_module module, char* symbol)   /*  RM: Jan  8 1
                             }
                         }
                         else
-                            if (!openkey || !openkey->public)
+                            if (!openkey || !openkey->wl_public)
                                 openkey = tempkey;
                 }
 
@@ -345,10 +345,10 @@ ptr_definition update_symbol(ptr_module module, char* symbol)   /*  RM: Jan  8 1
 
             if (!result) { /*  RM: Feb  1 1993  */
 
-                if (openkey && openkey->public) {
+                if (openkey && openkey->wl_public) {
                     /* Found the symbol in an open module */
 
-                    if (!openkey->public)
+                    if (!openkey->wl_public)
                         Warningline("implicit reference to non-public symbol: %s\n",
                             openkey->combined_name);
 
@@ -525,7 +525,7 @@ long c_open_module()
     return !onefailed;
 }
 
-
+void open_module_one(ptr_psi_term t, int* onefailed);  // REV401PLUS void
 
 void open_module_tree(ptr_node n, int* onefailed)  // REV401PLUS void
 // ptr_node n;
@@ -544,7 +544,7 @@ void open_module_tree(ptr_node n, int* onefailed)  // REV401PLUS void
 
 
 
-void open_module_one(ptr_psi_tem t, int* onefailed)  // REV401PLUS void
+void open_module_one(ptr_psi_term t, int* onefailed)  // REV401PLUS void
 // ptr_psi_term t;
 // int* onefailed;
 {
@@ -573,7 +573,7 @@ void open_module_one(ptr_psi_tem t, int* onefailed)  // REV401PLUS void
             /* Check for name conflicts */
             /*  RM: Feb 23 1993  */
             for (i = 0;i < open_module->symbol_table->size;i++)
-                if ((key1 = open_module->symbol_table->data[i]) && key1->public) {
+                if ((key1 = open_module->symbol_table->data[i]) && key1->wl_public) {
                     key2 = hash_lookup(current_module->symbol_table, key1->symbol);
                     if (key2 && key1->definition != key2->definition)
                         Errorline("symbol clash '%s' and '%s'\n",
@@ -608,7 +608,7 @@ long make_public(ptr_psi_term term, long wl_bool)   /*  RM: Feb 22 1993  Modifie
     key = hash_lookup(current_module->symbol_table, term->type->keyword->symbol);
     if (key) {
 
-        if (key->definition->keyword->module != current_module && !bool) {
+        if (key->definition->keyword->module != current_module && !wl_bool) {
             Warningline("local definition of '%s' overrides '%s'\n",
                 key->definition->keyword->symbol,
                 key->definition->keyword->combined_name);
@@ -616,11 +616,11 @@ long make_public(ptr_psi_term term, long wl_bool)   /*  RM: Feb 22 1993  Modifie
             new_definition(key);
         }
 
-        key->public = bool;
+        key->wl_public = wl_bool;
     }
     else {
         def = update_symbol(current_module, term->type->keyword->symbol);
-        def->keyword->public = bool;
+        def->keyword->wl_public = wl_bool;
     }
 
     return ok;
@@ -830,11 +830,11 @@ long c_trace_input()
 void rec_replace();
 void replace_attr();
 
-void replace(old, wl_new, term)  // REV401PLUS changed to void from int
+void replace(ptr_definition old, ptr_definition wl_new, ptr_psi_term term)  // REV401PLUS changed to void from int
 
-ptr_definition old;
-ptr_definition wl_new;
-ptr_psi_term term;
+// ptr_definition old;
+// ptr_definition wl_new;
+// ptr_psi_term term;
 {
     clear_copy();
     rec_replace(old, wl_new, term);
@@ -859,13 +859,13 @@ void rec_replace(ptr_definition old, ptr_definition wl_new, ptr_psi_term term)
 
         if (term->type == old && !term->value_3) {
             push_ptr_value(def_ptr, (GENERIC*)&(term->type)); // REV401PLUS cast
-            term->type = new;
+            term->type = wl_new;
         }
         old_attr = term->attr_list;
         if (old_attr) {
             push_ptr_value(int_ptr, (GENERIC*)&(term->attr_list));  // REV401PLUS cast
             term->attr_list = NULL;
-            replace_attr(old_attr, term, old, new);
+            replace_attr(old_attr, term, old, wl_new);
         }
     }
 }
@@ -887,14 +887,14 @@ void replace_attr(ptr_node old_attr, ptr_psi_term term, ptr_definition old,
         replace_attr(old_attr->left, term, old, wl_new);
 
     value = (ptr_psi_term)old_attr->data;
-    rec_replace(old, new, value);
+    rec_replace(old, wl_new, value);
 
     if (old->keyword->private_feature)  /*  RM: Mar 12 1993  */
         oldlabel = old->keyword->combined_name;
     else
         oldlabel = old->keyword->symbol;
 
-    if (new->keyword->private_feature)  /*  RM: Mar 12 1993  */
+    if (wl_new->keyword->private_feature)  /*  RM: Mar 12 1993  */
         newlabel = wl_new->keyword->combined_name;
     else
         newlabel = wl_new->keyword->symbol;
@@ -905,7 +905,7 @@ void replace_attr(ptr_node old_attr, ptr_psi_term term, ptr_definition old,
         stack_insert(FEATCMP, old_attr->key, &(term->attr_list), (GENERIC)value);
 
     if (old_attr->right)
-        replace_attr(old_attr->right, term, old, new);
+        replace_attr(old_attr->right, term, old, wl_new);
 }
 
 
@@ -1267,7 +1267,7 @@ int make_feature_private(ptr_psi_term term)  /*  RM: Mar 11 1993  */
     }
 
 
-    if (ok && def->keyword->public) {
+    if (ok && def->keyword->wl_public) {
         Warningline("feature '%s' is now private, but was also declared public\n",
             def->keyword->combined_name);
     }
@@ -1318,16 +1318,16 @@ ptr_definition update_feature(ptr_module module, char* feature)
 // char* feature;
 {
     ptr_keyword key;
-    ptr_module explicit;
+    ptr_module wl_explicit;
 
     /* Check if the feature already contains a module name */
 
     if (!module)
         module = current_module;
 
-    explicit = extract_module_from_name(feature);
-    if (explicit)
-        if (explicit != module)
+    wl_explicit = extract_module_from_name(feature);
+    if (wl_explicit)
+        if (wl_explicit != module)
             return NULL; /* Feature isn't visible */
         else
             return update_symbol(NULL, feature);
@@ -1369,7 +1369,7 @@ long all_public_symbols()   // REV401PLUS change to long
     list = stack_nil();
 
     for (d = first_definition;d;d = d->next)
-        if (d->keyword->public && (!module || d->keyword->module == module)) {
+        if (d->keyword->wl_public && (!module || d->keyword->module == module)) {
             car = stack_psi_term(4);
             car->type = d;
             list = stack_cons(car, list);

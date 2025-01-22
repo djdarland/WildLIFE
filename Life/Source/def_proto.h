@@ -35,7 +35,14 @@ ptr_psi_term quotedStackCopy(ptr_psi_term p); // Reverted - ptr back in arg REV4
 ptr_psi_term residListGoalQuote(ptr_residuation p);
 GENERIC residListNext(ptr_residuation p);
 ptr_psi_term makePsiTerm(ptr_definition x);
-ptr_psi_term makePsiList(GENERIC head, ptr_psi_term(*valueFunc)(), GENERIC(*nextFunc)());
+ptr_psi_term makePsiList(GENERIC head, 
+  ptr_psi_term(*valueFunc)(GENERIC), GENERIC(*nextFunc)(GENERIC));
+
+/* ptr_psi_term makePsiList(GENERIC head,
+			 ptr_psi_term(*valueFunc)(GENERIC head), 
+             GENERIC(*nextFunc)(GENERIC head)) */
+
+
 ptr_goal makeGoal(ptr_psi_term p);
 void insert_system_builtins();
 // from bi_type.c

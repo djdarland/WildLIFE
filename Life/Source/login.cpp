@@ -37,7 +37,7 @@ static char vcid[] = "$Id: login.c,v 1.4 1995/01/14 00:25:33 duchier Exp $";
     binary tree ATTR_LIST, place them in ARG1 and ARG2. This routine nearly
     always makes a direct hit.
     */
-void get_two_args(ptr_node t, ptr_psi_term a, ptr_psi_term b)
+void get_two_args(ptr_node t, ptr_psi_term* a, ptr_psi_term* b)
 // ptr_node t;
 // ptr_psi_term* a;
 // ptr_psi_term* b;
@@ -332,7 +332,7 @@ void assert_clause(ptr_psi_term t)
 
 void start_chrono()
 {
-    times(&start_time);
+    start_time = clock();
 }
 
 
@@ -361,8 +361,8 @@ void start_chrono()
     that case memory is reclaimed.
     */
 void push_ptr_value(type_ptr t, GENERIC* p)
-type_ptr t;
-GENERIC* p;
+// type_ptr t;
+// GENERIC* p;
 {
     ptr_stack n;
 
@@ -444,8 +444,8 @@ void push_def_ptr_value(ptr_psi_term q, GENERIC* p)
   that is modified.  Both the coref and the time_stamp must be trailed.
   */
 void push_psi_ptr_value(ptr_psi_term q, GENERIC* p)
-ptr_psi_term q;
-GENERIC* p;
+// ptr_psi_term q;
+// GENERIC* p;
 {
     ptr_stack m, n;
 
@@ -531,7 +531,7 @@ void push_window(long type, long disp, long wind)
   It needn't be done if P is greater than the latest choice point because in
   that case memory is reclaimed.
   */
-void push2_ptr_value(type_ptr t, GERNERIC* p, GENERIC v)
+void push2_ptr_value(type_ptr t, GENERIC* p, GENERIC v)
 // type_ptr t;
 // GENERIC* p;
 // GENERIC v;
@@ -833,7 +833,7 @@ void clean_undo_window(long disp, long wind)
 
 
 /* Unify the corresponding arguments */
-void merge1(ptr_node* u, ptr_node* v)
+void merge1(ptr_node* u, ptr_node v)
 // ptr_node* u, v;
 {
     long cmp;
@@ -884,7 +884,7 @@ void merge1(ptr_node* u, ptr_node* v)
 /* For each lone argument in either u or v, create a new psi-term to put */
 /* the (useless) result: This is needed so that *all* arguments of a uni-*/
 /* unified psi-term are evaluated, which avoids incorrect 'Yes' answers. */
-void merge2(ptr_node* u, ptr_node* v)
+void merge2(ptr_node* u, ptr_node v)
 // ptr_node* u, v;
 {
     long cmp;
@@ -934,7 +934,7 @@ void merge2(ptr_node* u, ptr_node* v)
 
 
 /* Merge v's loners into u and evaluate the corresponding arguments */
-void merge3(ptr_node* u, ptr_node* v)
+void merge3(ptr_node* u, ptr_node v)
 // ptr_node* u, v;
 {
     long cmp;
@@ -1061,7 +1061,7 @@ ptr_node* u, v;
 }
 #endif
 
-void merge(ptr_node* u, ptr_node* v)
+void merge(ptr_node* u, ptr_node v)
 // ptr_node* u, v;
 {
     merge1(u, v); /* Unify corresponding arguments */
@@ -1070,7 +1070,7 @@ void merge(ptr_node* u, ptr_node* v)
 }
 
 /* For built-ins.c */
-void merge_unify(ptr_node* u, ptr_node* v)
+void merge_unify(ptr_node* u, ptr_node v)
 // ptr_node* u, v;
 {
     merge1(u, v); /* Unify corresponding arguments */
@@ -1092,8 +1092,8 @@ void show_count()
     if (verbose) {
         printf("  [");
 
-        times(&end_time);
-        t = (end_time.tms_utime - start_time.tms_utime) / 60.0;
+        end_time = clock();
+        t = (end_time - start_time) / CLOCKS_PER_SEC;
 
         printf("%1.3fs cpu, %ld goal%s", t, goal_count, (goal_count != 1 ? "s" : ""));
 
@@ -1561,7 +1561,7 @@ long prove_aim()
 
         deref_ptr(thegoal); /* Evaluation is explicitly handled later. */
 
-        if (thegoal->type != and) {
+        if (thegoal->type != wl_and) {
             if (thegoal->type != cut)
                 if (thegoal->type != life_or) {
                     /* User-defined predicates with unevaluated arguments */
@@ -1603,7 +1603,7 @@ long prove_aim()
                                     return success; /* We're done! */
                                 }
                             }
-                            else if (!thegoal->type->protected && thegoal->type->type_def == (def_type)undef_it) {
+                            else if (!thegoal->type->wl_protected && thegoal->type->type_def == (def_type)undef_it) {
                                 /* Don't give an error message for undefined dynamic objects */
                                 /* that do not yet have a definition */
                                 success = FALSE;

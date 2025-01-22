@@ -1,0 +1,12 @@
+bi_sys.cpp:      life_end = clock() / CLOCKS_PER_SEC;
+bi_sys.cpp:  This is useful for building real-time applications such as clocks.
+bi_sys.cpp:	thetime = clock() * 1000 / CLOCKS_PER_SEC;
+bi_sys.cpp:	thetime = clock() / clocks_per_sec;
+bi_sys.cpp:  This is useful for building real-time applications such as clocks.
+built_ins.cpp:    life_end = clock() / CLOCKS_PER_SEC;
+lib2.cpp:    life_start = clock() / CLOCKS_PER_SEC;
+lib.cpp:    life_start)= clock() / CLOCKS_PER_SEC;
+login.cpp:    start_time = clock() / CLOCKS_PER_SEC;
+login.cpp:        end_time = clock();
+memory.cpp:static clock_t last_garbage_time;
+memory.cpp:static clock_t gc_time, life_time;

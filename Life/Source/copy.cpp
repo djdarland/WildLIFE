@@ -227,14 +227,14 @@ ptr_psi_term exact_copy(ptr_psi_term t, long heap_flag)
 // long heap_flag;
 { to_heap = FALSE; return (copy(t, EXACT_FLAG, heap_flag)); }
 
-ptr_psi_term quote_copy(t, heap_flag)
-ptr_psi_term t;
-long heap_flag;
+ptr_psi_term quote_copy(ptr_psi_term t, long heap_flag)
+// ptr_psi_term t;
+// long heap_flag;
 { to_heap = FALSE; return (copy(t, QUOTE_FLAG, heap_flag)); }
 
-ptr_psi_term eval_copy(t, heap_flag)
-ptr_psi_term t;
-long heap_flag;
+ptr_psi_term eval_copy(ptr_psi_term t, long heap_flag)
+// ptr_psi_term t;
+// long heap_flag;
 { to_heap = FALSE; return (copy(t, EVAL_FLAG, heap_flag)); }
 
 /* There is a bug in inc_heap_copy */

@@ -111,7 +111,7 @@ long redefine(ptr_psi_term t)
               Warningline("extending definition of sort '%s'.\n",d->keyword->symbol);
           */
         }
-        else if (d->protected && d->type_def != (def_type)undef_it) {
+        else if (d->wl_protected && d->type_def != (def_type)undef_it) {
             if (d->date > 0) {
                 /* The term was entered in a previous file, and therefore */
                 /* cannot be altered. */
@@ -256,7 +256,7 @@ void assert_protected(ptr_node n, long prot)
                         t->type->keyword->symbol);
             }
             else {
-                t->type->protected = prot;
+                t->type->wl_protected = prot;
                 if (prot) t->type->date &= (~1); else t->type->date |= 1;
             }
         }

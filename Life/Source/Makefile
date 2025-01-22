@@ -2,7 +2,7 @@
 # There is much obsolete - It should be cleaned up. Don't have time yet. 
 SHELL		= /bin/sh
 CC		= g++
-CFLAGS		= -g -O -Wno-write-strings 
+CFLAGS		= -g -O -Wno-write-strings -fpermissive 
 # CPPFLAGS	= 
 # LDFLAGS		= 
 LIBS		=  -lm
@@ -139,12 +139,10 @@ MANPAGE = $(PROGRAM).1
 # VERSION     = 1.02
 # Saved above to use above for test suite
 DATE = `date`
-VERSION     = 4.20
+VERSION     = 5.00
 
-# $(LIBOBJECT) regexp/regexp.o regexp/regsub.o
-
-all: wild_life wild_life_X
-	@echo
+# all: wild_life wild_life_X
+all: wild_life
 	@echo "Life generation done"
 	@echo
 
@@ -228,6 +226,12 @@ trees.o : trees.cpp  $(LIBINCLUDE)
 
 types.o : types.cpp  $(LIBINCLUDE)
 	$(CC) types.cpp -o types.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
+
+regexp/regexp.o : regexp/regexp.cpp  $(LIBINCLUDE)
+	$(CC) regexp/regexp.cpp -o regexp/regexp.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
+
+regexp/regsub.o : regexp/regsub.cpp  $(LIBINCLUDE)
+	$(CC) regexp/regsub.cpp -o regexp/regsub.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT) -c
 
 # End regular Life
 
@@ -317,14 +321,6 @@ xpred.o : xpred.cpp  $(LIBINCLUDE) $(XINC)
 
 xdisplaylist.o : xdisplaylist.cpp  $(LIBINCLUDE) $(XINC)
 	$(CC) xdisplaylist.cpp -o xdisplaylist.o $(CFLAGS) $(CPPFLAGS) $(DEFS_EXT_MINT_X) -c
-
-
-
-
-regexp/regexp.o regexp/regsub.o: RegExp
-	@echo "Regular Expression Package: $@ done"
-RegExp:
-	cd regexp; $(MAKE) r CC="$(CC)" CFLAGS="$(CFLAGS)"
 
 wild_life: life2.o $(LIBOBJECT) regexp/regexp.o regexp/regsub.o
 	$(CC) -o wild_life life2.o $(LIBOBJECT) $(LIBS) regexp/regexp.o regexp/regsub.o

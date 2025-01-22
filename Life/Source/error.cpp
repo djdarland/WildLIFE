@@ -115,7 +115,7 @@ void outputline(char* format, ...)
 	char* cptr;
 	ptr_int_list pil;
 	ptr_psi_term psi;
-	operator kind;
+	wl_operator kind;
 	def_type t;
 	va_start(VarArg, format);
 	//  vinfoline(format,output_stream, VarArg);
@@ -153,7 +153,7 @@ void outputline(char* format, ...)
 				display_psi(output_stream, psi);
 				break;
 			case 'O':
-				kind = va_arg(VarArg, operator);
+				kind = va_arg(VarArg, wl_operator);
 				print_operator_kind(output_stream, kind);
 				break;
 			case 'T':
@@ -200,7 +200,7 @@ void traceline(char* format, ...)
 	char* cptr;
 	ptr_int_list pil;
 	ptr_psi_term psi;
-	operator kind;
+	wl_operator kind;
 	def_type t;
 
 	va_start(VarArg, format);
@@ -247,7 +247,7 @@ void traceline(char* format, ...)
 					display_psi(stdout, psi);
 					break;
 				case 'O':
-					kind = va_arg(VarArg, operator);
+					kind = va_arg(VarArg, wl_operator);
 					print_operator_kind(stdout, kind);
 					break;
 				case 'T':
@@ -295,7 +295,7 @@ void infoline(char* format, ...)
 	char* cptr;
 	ptr_int_list pil;
 	ptr_psi_term psi;
-	operator kind;
+	wl_operator kind;
 	def_type t;
 
 	va_start(VarArg, format);
@@ -337,7 +337,7 @@ void infoline(char* format, ...)
 					display_psi(stdout, psi);
 					break;
 				case 'O':
-					kind = va_arg(VarArg, operator);
+					kind = va_arg(VarArg, wl_operator);
 					print_operator_kind(stdout, kind);
 					break;
 				case 'T':
@@ -385,7 +385,7 @@ void warningline(char* format, ...)
 	char* cptr;
 	ptr_int_list pil;
 	ptr_psi_term psi;
-	operator kind;
+	wl_operator kind;
 	def_type t;
 
 	va_start(VarArg, format);
@@ -430,7 +430,7 @@ void warningline(char* format, ...)
 					display_psi(stderr, psi);
 					break;
 				case 'O':
-					kind = va_arg(VarArg, operator);
+					kind = va_arg(VarArg, wl_operator);
 					print_operator_kind(stderr, kind);
 					break;
 				case 'T':
@@ -479,7 +479,7 @@ void Errorline(char* format, ...)
 	char* cptr;
 	ptr_int_list pil;
 	ptr_psi_term psi;
-	operator kind;
+	wl_operator kind;
 	def_type t;
 
 	va_start(VarArg, format);
@@ -521,7 +521,7 @@ void Errorline(char* format, ...)
 				display_psi(stderr, psi);
 				break;
 			case 'O':
-				kind = va_arg(VarArg, operator);
+				kind = va_arg(VarArg, wl_operator);
 				print_operator_kind(stderr, kind);
 				break;
 			case 'T':
@@ -571,7 +571,7 @@ void Syntaxerrorline(char* format, ...)
 	char* cptr;
 	ptr_int_list pil;
 	ptr_psi_term psi;
-	operator kind;
+	wl_operator kind;
 	def_type t;
 	va_start(VarArg, format);
 	//  fprintf(stderr,"format = %lx %s\n",(long)format,format);fflush(stdout);
@@ -614,7 +614,7 @@ void Syntaxerrorline(char* format, ...)
 					display_psi(stderr, psi);
 					break;
 				case 'O':
-					kind = va_arg(VarArg, operator);
+					kind = va_arg(VarArg, wl_operator);
 					print_operator_kind(stderr, kind);
 					break;
 				case 'T':

@@ -2,9 +2,11 @@
   \brief includes
 
 */
+// #include <stdlib>
+// #include <iostream>
 #include "def_config.h"
 
-// #include <unistd.h>
+#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -51,6 +53,7 @@
 #include "life_icon"
 #endif
 
+typedef  unsigned long* GENERIC;
 
 #include "def_const.h"
 #include "def_macro.h"

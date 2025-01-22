@@ -127,8 +127,8 @@ void print_bin(long b)
   Print a binary code C to a stream s (as used in type encoding).
 */
 void print_code(FILE* s, ptr_int_list c)
-FILE* s;
-ptr_int_list c;
+// FILE* s;
+// ptr_int_list c;
 {
     outfile = s;
 
@@ -383,7 +383,7 @@ long all_symbol(char* s)
 }
 
 /* Return TRUE if s represents an integer. */
-long is_integer(har* s)
+long is_integer(char* s)
 // char* s;
 {
     if (!*s) return FALSE;
@@ -500,13 +500,17 @@ void mark_tab(ptr_tab_brk t)
 /******** NEW_TAB(t)
   Create a new tabulation mark T.
 */
-void new_tab(ptr_tab_brk t)
+void new_tab(ptr_tab_brk* t)
 // ptr_tab_brk* t;
 {
-    (*t) = HEAP_ALLOC(tab_brk);
-    (*t)->broken = FALSE;
-    (*t)->printed = FALSE;
-    (*t)->column = 0;
+  (*t)=HEAP_ALLOC(tab_brk);
+  (*t)->broken=FALSE;
+  (*t)->printed=FALSE;
+  (*t)->column=0;
+  //    t = (ptr_tab_brk) HEAP_ALLOC(tab_brk);
+  //  t->broken = FALSE;
+  //  t->printed = FALSE;
+  //  t->column = 0;
 }
 
 
@@ -641,7 +645,7 @@ void pretty_list(ptr_psi_term t, long depth)
 // ptr_psi_term t;
 // long depth;
 {
-    ptr_tab_brk new;
+    ptr_tab_brk wl_new;
     ptr_list l;
     ptr_definition t_type;
     ptr_psi_term car, cdr;
@@ -683,10 +687,10 @@ void pretty_list(ptr_psi_term t, long depth)
 
     /* RM: Dec 11 1992  New code for printing lists */
 
-    new_tab(&new);
+    new_tab(&wl_new);
     list_depth = 0; /* 20.8 */
     while (!done) {
-        mark_tab(new);
+        mark_tab(wl_new);
         if (list_depth == print_depth)
             prettyf("...");
 
@@ -853,9 +857,9 @@ long pretty_psi_with_ops(ptr_psi_term t, long sprec, long depth)
 // long sprec;
 // long depth;
 {
-    ptr_tab_brk new;
+    ptr_tab_brk wl_new;
     ptr_psi_term arg1, arg2;
-    operator ttype, a1type, a2type;
+    wl_operator ttype, a1type, a2type;
     long tprec, a1prec, a2prec;
     long tkind, a1kind, a2kind;
     long p1, p2, argswritten;
@@ -962,7 +966,6 @@ void pretty_psi_term(ptr_psi_term t, long sprec, long depth)
     char buf[STRLEN]; /* Big enough for a long number */
     ptr_residuation r;
     long argswritten;
-    double fmod();
 
     if (t) {
         deref_ptr(t); /* PVR */
@@ -1164,13 +1167,13 @@ void pretty_attr(ptr_node t, long depth)
 // ptr_node t;
 // long depth;
 {
-    ptr_tab_brk new;
+    ptr_tab_brk wl_new;
     long cnt = 1;
 
     prettyf("(");
-    new_tab(&new);
+    new_tab(&wl_new);
 
-    do_pretty_attr(t, new, &cnt, two_or_more(t), depth);
+    do_pretty_attr(t, wl_new, &cnt, two_or_more(t), depth);
 
     prettyf(")");
 }
@@ -1254,7 +1257,7 @@ long print_variables(long printflag)
 
 // long printflag;
 {
-    ptr_tab_brk new;
+    ptr_tab_brk wl_new;
     GENERIC old_heap_pointer;
 
     if (!printflag) return FALSE; /* 21.1 */
@@ -1278,10 +1281,10 @@ long print_variables(long printflag)
     indx = pretty_things;
 
     if (var_tree) {
-        new_tab(&new);
-        pretty_variables(var_tree, new);
+        new_tab(&wl_new);
+        pretty_variables(var_tree, wl_new);
         prettyf(".");
-        mark_tab(new);
+        mark_tab(wl_new);
         prettyf("\n");
         end_tab();
 
@@ -1359,7 +1362,7 @@ void main_pred_write(ptr_node n)
 {
     if (n) {
         GENERIC old_heap_pointer;
-        ptr_tab_brk new;
+        ptr_tab_brk wl_new;
 
         if (!write_corefs) main_pred_write(n->left);
 
@@ -1376,13 +1379,13 @@ void main_pred_write(ptr_node n)
         *buffer = 0;
 
         indx = pretty_things;
-        new_tab(&new);
+        new_tab(&wl_new);
 
         if (write_corefs) {
-            write_attributes(n, new);
+            write_attributes(n, wl_new);
         }
         else {
-            mark_tab(new);
+            mark_tab(wl_new);
             pretty_tag_or_psi_term((ptr_psi_term)n->data, MAX_PRECEDENCE + 1, 0); // REV401PLUS cast
         }
 
@@ -1453,7 +1456,7 @@ void main_display_psi_term(ptr_psi_term t)
 // ptr_psi_term t;
 {
     GENERIC old_heap_pointer;
-    ptr_tab_brk new;
+    ptr_tab_brk wl_new;
 
     listing_flag = FALSE;
     if (t) {
@@ -1474,8 +1477,8 @@ void main_display_psi_term(ptr_psi_term t)
         *buffer = 0;
         indx = pretty_things;
 
-        new_tab(&new);
-        mark_tab(new);
+        new_tab(&wl_new);
+        mark_tab(wl_new);
         pretty_tag_or_psi_term(t, MAX_PRECEDENCE + 1, 0);
         end_tab();
         if (indent) {
@@ -1501,7 +1504,7 @@ void display_couple(ptr_psi_term u, char* s, ptr_psi_term v)
 // ptr_psi_term v;
 {
     GENERIC old_heap_pointer;
-    ptr_tab_brk new;
+    ptr_tab_brk wl_new;
 
     output_stream = stdout;
     listing_flag = FALSE;
@@ -1520,8 +1523,8 @@ void display_couple(ptr_psi_term u, char* s, ptr_psi_term v)
     write_canon = FALSE;
     *buffer = 0;
     indx = pretty_things;
-    new_tab(&new);
-    mark_tab(new);
+    new_tab(&wl_new);
+    mark_tab(wl_new);
     pretty_tag_or_psi_term(u, MAX_PRECEDENCE + 1, 0);
     prettyf(s);
     pretty_tag_or_psi_term(v, MAX_PRECEDENCE + 1, 0);
@@ -1546,7 +1549,7 @@ void print_resid_message(ptr_psi_term t, ptr_resid_list r)
 // ptr_resid_list r; /* 21.9 */
 {
     GENERIC old_heap_pointer;
-    ptr_tab_brk new;
+    ptr_tab_brk wl_new;
     ptr_resid_list r2; /* 21.9 */
 
     outfile = stdout;
@@ -1573,8 +1576,8 @@ void print_resid_message(ptr_psi_term t, ptr_resid_list r)
     write_canon = FALSE;
     *buffer = 0;
     indx = pretty_things;
-    new_tab(&new);
-    mark_tab(new);
+    new_tab(&wl_new);
+    mark_tab(wl_new);
 
     prettyf("residuating ");
     pretty_tag_or_psi_term(t, MAX_PRECEDENCE + 1, 0);

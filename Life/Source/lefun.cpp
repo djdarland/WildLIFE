@@ -417,8 +417,8 @@ void release_resid(ptr_psi_term t)
     release_resid_main(t, TRUE);
 }
 
-void release_resid_notrail(t)
-ptr_psi_term t;
+void release_resid_notrail(ptr_psi_term t)
+// ptr_psi_term t;
 {
     release_resid_main(t, FALSE);
 }
@@ -1207,7 +1207,7 @@ long in_set(char* str, long set)
     return FALSE;
 }
 
-void deref_rec_args_exc(ptr_node* n, long set)
+void deref_rec_args_exc(ptr_node n, long set)
 // ptr_node n;
 // long set;
 {

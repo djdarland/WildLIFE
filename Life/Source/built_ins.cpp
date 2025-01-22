@@ -71,7 +71,7 @@ ptr_psi_term stack_pair(ptr_psi_term left, ptr_psi_term right)
     ptr_psi_term pair;
 
     pair = stack_psi_term(4);
-    pair->type = and;
+    pair->type = wl_and;
     if (left)
         stack_insert(FEATCMP, one, &(pair->attr_list), (GENERIC)left);  // cast REV401PLUS
     if (right)
@@ -161,7 +161,7 @@ ptr_psi_term make_feature_list(ptr_node tree, ptr_psi_term tail, ptr_module modu
 // int val;
 
 {
-    ptr_psi_term new;
+    ptr_psi_term wl_new;
     ptr_definition def;
     double d, strtod();
 
@@ -179,9 +179,9 @@ ptr_psi_term make_feature_list(ptr_node tree, ptr_psi_term tail, ptr_module modu
                 if (val) /* RM: Mar  3 1994 Distinguish between features & values */
                     tail = stack_cons((ptr_psi_term)tree->data, tail); // REV401PLUS cast
                 else {
-                    new = stack_psi_term(4);
-                    new->type = def;
-                    tail = stack_cons(new, tail);
+                    wl_new = stack_psi_term(4);
+                    wl_new->type = def;
+                    tail = stack_cons(wl_new, tail);
                 }
             }
         }
@@ -189,11 +189,11 @@ ptr_psi_term make_feature_list(ptr_node tree, ptr_psi_term tail, ptr_module modu
             if (val) /* RM: Mar  3 1994 Distinguish between features & values */
                 tail = stack_cons((ptr_psi_term)tree->data, tail); // REV401PLUS cast
             else {
-                new = stack_psi_term(4);
-                new->type = (d == floor(d)) ? integer : real;
-                new->value_3 = heap_alloc(sizeof(REAL));
-                *(REAL*)new->value_3 = (REAL)d;
-                tail = stack_cons(new, tail);
+                wl_new = stack_psi_term(4);
+                wl_new->type = (d == floor(d)) ? integer : real;
+                wl_new->value_3 = heap_alloc(sizeof(REAL));
+                *(REAL*)wl_new->value_3 = (REAL)d;
+                tail = stack_cons(wl_new, tail);
             }
         }
 
@@ -1632,7 +1632,7 @@ static long c_non_strict()
 */
 static long c_op()
 {
-    long declare_operator();
+    long declare_operator(ptr_psi_term);
     ptr_psi_term t = aim->aaaa_1;
 
     return declare_operator(t);
@@ -2014,7 +2014,7 @@ static long c_parse()
   of global variables.
 */
 
-static long c_read();
+static long c_read(long);
 
 static long c_read_psi() { return (c_read(TRUE)); }
 
@@ -2114,14 +2114,15 @@ void exit_life(long nl_flag)
 // long nl_flag;
 {
     open_input_file("stdin");
-    times(&life_end);
+    life_end = clock();
+//    thetime = life_end - life_start;
     if (NOTQUIET) { /* 21.1 */
         if (nl_flag) printf("\n");
         printf("*** Exiting Wild_Life  ");
         printf("[%1.3lfs cpu, %1.3lfs gc (%2.1lf%%)]\n",
-            ((REAL)(life_end.tms_utime - life_start.tms_utime) / (REAL)sysconf(_SC_CLK_TCK)),
+            ((REAL) (life_end - life_start),
             garbage_time,
-            (REAL)garbage_time * 100.0) / (REAL)(life_end.tms_utime - life_start.tms_utime) / (REAL)sysconf(_SC_CLK_TCK);
+            (REAL)garbage_time * 100.0) / ((REAL)((life_end - life_start))));
     }
 
 #ifdef ARITY  /*  RM: Mar 29 1993  */
@@ -2235,10 +2236,10 @@ static long c_setq()
         deref_ptr(arg1);
         d = arg1->type;
         if (d->type_def == (def_type)function_it || d->type_def == (def_type)undef_it) {
-            if (d->type_def == (def_type)undef_it || !d->protected) {
+            if (d->type_def == (def_type)undef_it || !d->wl_protected) {
                 if (!arg1->attr_list) {
                     d->type_def = (def_type)function_it;
-                    d->protected = FALSE;
+                    d->wl_protected = FALSE;
                     p = HEAP_ALLOC(pair_list);
                     p->aaaa_2 = heap_psi_term(4);
                     p->aaaa_2->type = d;
@@ -2883,7 +2884,7 @@ static long c_get()
   in the range 0..255), and any other psi-term (in which case its name is
   written).
 */
-static long c_put_main(); /* Forward declaration */
+static long c_put_main(long); /* Forward declaration */
 
 static long c_put()
 {
@@ -3485,7 +3486,7 @@ ptr_psi_term collect_symbols(long sel) /*  RM: Feb  3 1993  */
 // long sel;
 
 {
-    ptr_psi_term new;
+    ptr_psi_term wl_new;
     ptr_definition def;
     long botflag;
     ptr_psi_term result;
@@ -3505,9 +3506,9 @@ ptr_psi_term collect_symbols(long sel) /*  RM: Feb  3 1993  */
                 def->type_def == (def_type)undef_it)
                 && !hidden_type(def)) {
                 /* Create the node that will be inserted */
-                new = stack_psi_term(4);
-                new->type = def;
-                result = stack_cons(new, result);
+                wl_new = stack_psi_term(4);
+                wl_new->type = def;
+                result = stack_cons(wl_new, result);
             }
         }
         else if (sel == op_sel) {
@@ -3516,11 +3517,11 @@ ptr_psi_term collect_symbols(long sel) /*  RM: Feb  3 1993  */
             while (od) {
                 ptr_psi_term name, type;
 
-                new = stack_psi_term(4);
-                new->type = opsym;
-                result = stack_cons(new, result);
+                wl_new = stack_psi_term(4);
+                wl_new->type = opsym;
+                result = stack_cons(wl_new, result);
 
-                stack_add_int_attr(new, one, od->precedence);
+                stack_add_int_attr(wl_new, one, od->precedence);
 
                 type = stack_psi_term(4);
                 switch (od->type) {
@@ -3546,11 +3547,11 @@ ptr_psi_term collect_symbols(long sel) /*  RM: Feb  3 1993  */
                     type->type = yfx_sym;
                     break;
                 }
-                stack_add_psi_attr(new, two, type);
+                stack_add_psi_attr(wl_new, two, type);
 
                 name = stack_psi_term(4);
                 name->type = def;
-                stack_add_psi_attr(new, three, name);
+                stack_add_psi_attr(wl_new, three, name);
 
                 od = od->next;
             }
@@ -4151,7 +4152,7 @@ static long c_global_assign()
 {
     long success = FALSE;
     ptr_psi_term arg1, arg2, g, perm, smallest;
-    ptr_psi_term new;
+    ptr_psi_term wl_new;
 
     g = aim->aaaa_1;
     deref_ptr(g);
@@ -4164,15 +4165,15 @@ static long c_global_assign()
         if (arg1 != arg2) {
 
             clear_copy();
-            new = inc_heap_copy(arg2);
+            wl_new = inc_heap_copy(arg2);
 
             if ((GENERIC)arg1 < heap_pointer) {
                 push_psi_ptr_value(arg1, (GENERIC*)&(arg1->coref)); // REV401PLUS cast
-                arg1->coref = new;
+                arg1->coref = wl_new;
             }
             else {
-                *arg1 = *new; /* Overwrite in-place */
-                new->coref = arg1;
+                *arg1 = *wl_new; /* Overwrite in-place */
+                wl_new->coref = arg1;
             }
         }
     }
@@ -4799,10 +4800,11 @@ ptr_node one_attr()
 
 
 /* Return a psi term with one or two args, and the addresses of the args */
-ptr_psi_term new_psi_term(numargs, typ, a1, a2)
-long numargs;
-ptr_definition typ;
-ptr_psi_term** a1, ** a2;
+ptr_psi_term new_psi_term(long numargs, ptr_definition typ, 
+ptr_psi_term** a1, ptr_psi_term** a2)
+// long numargs;
+// ptr_definition typ;
+// ptr_psi_term** a1, ** a2;
 {
     ptr_psi_term t;
     ptr_node n1, n2;
@@ -4872,9 +4874,9 @@ void list_special(ptr_psi_term t) // REV401PLUS add void
         }
     }
     else {
-        if (!d->protected) {
+        if (!d->wl_protected) {
             if (is_built_in(r)) fprintf(output_stream, "%% ");
-            fprintf(output_stream, "%s(", (d->protected ? "static" : "dynamic"));
+            fprintf(output_stream, "%s(", (d->wl_protected ? "static" : "dynamic"));
             display_psi_stream(t);
             fprintf(output_stream, ")?\n");
             prflag = TRUE;
@@ -5158,7 +5160,7 @@ long declare_operator(ptr_psi_term t)
     ptr_node n;
     char* s;
     long p;
-    operator kind = nop;
+    wl_operator kind = nop;
     long success = FALSE;
 
     deref_ptr(t);
@@ -5854,7 +5856,7 @@ void init_built_in_types()
     /*  RM: Jan 13 1993  */
     /* Initialize the minimum syntactic symbols */
     set_current_module(syntax_module); /*  RM: Feb  3 1993  */
-    and= update_symbol(syntax_module, ",");
+    wl_and = update_symbol(syntax_module, ",");
     update_symbol(syntax_module, "[");
     update_symbol(syntax_module, "]");
     update_symbol(syntax_module, "(");
@@ -6146,8 +6148,8 @@ void init_built_in_types()
 
     /* Hack so '.set_up' doesn't issue a Warning message */
     /*  RM: Feb  3 1993  */
-    hash_lookup(bi_module->symbol_table, "set_module")->public = TRUE;
-    hash_lookup(bi_module->symbol_table, "built_in")->public = TRUE;
+    hash_lookup(bi_module->symbol_table, "set_module")->wl_public = TRUE;
+    hash_lookup(bi_module->symbol_table, "built_in")->wl_public = TRUE;
 
     /*  RM: Jan 29 1993  */
     abortsym = update_symbol(bi_module, "abort"); /* 26.1 */

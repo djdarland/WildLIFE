@@ -190,10 +190,10 @@ static long c_cputime()
     deref_ptr(result);
     success = get_real_value(result, &val, &num);
     if (success) {
-      life_end = clock() / CLOCKS_PER_SEC;
+      life_end = clock();
       //  times(&life_end);
       //        thetime = ((REAL)life_end.tms_utime - life_start.tms_utime) / (REAL)sysconf(_SC_CLK_TCK);
-      thetime = life_end - life_start;
+      thetime = (life_end - life_start) / CLOCKS_PER_SEC;
         if (num)
             success = (val == thetime);
         else
@@ -231,7 +231,7 @@ static long c_realtime()
         //    if (num)
         //  success=(val==thetime);
         // else
-	thetime = clock() * 1000 / CLOCKS_PER_SEC;
+	thetime = (clock() - start_time) / CLOCKS_PER_SEC;
         success = unify_real_result(result, thetime);
     }
     return success;
@@ -257,7 +257,7 @@ static long c_realtime()
         gettimeofday(&tp, &tzp);
         // thetime = (REAL)tp.tv_sec + ((REAL)tp.tv_usec / 1000000.0);
         /* thetime=times(&life_end)/60.0; */
-	thetime = clock() / clocks_per_sec;
+	thetime = (clock() - life_start) / CLOCKS_PER_SEC);
         if (num)
             success = (val == thetime);
         else
@@ -529,7 +529,8 @@ ptr_psi_term makePsiTerm(ptr_definition x)
 
 
 ptr_psi_term makePsiList(GENERIC head,
-			 ptr_psi_term(*valueFunc)(GENERIC head), GENERIC(*nextFunc)(GENERIC head))
+			 ptr_psi_term(*valueFunc)(GENERIC head), 
+             GENERIC(*nextFunc)(GENERIC head))
 
 // GENERIC head;
 // ptr_psi_term(*valueFunc)();
@@ -573,7 +574,11 @@ static long c_residList()
     deref_ptr(arg1);
     deref_args(func, set_1);
 
-    other = makePsiList((void*)arg1->resid,
+/* ptr_psi_term makePsiList(GENERIC head,
+			 ptr_psi_term(*valueFunc)(GENERIC head), 
+             GENERIC(*nextFunc)(GENERIC head)) */
+
+    other = makePsiList((GENERIC)arg1->resid,
         residListGoalQuote,
         residListNext);
     resid_aim = NULL;
@@ -685,7 +690,7 @@ void insert_system_builtins()
     new_built_in(bi_module, "cpu_time", (def_type)function_it, c_cputime);
     new_built_in(bi_module, "quiet", (def_type)function_it, c_quiet); /* 21.1 */
     new_built_in(bi_module, "real_time", (def_type)function_it, c_realtime);
-    new_built_in(bi_module, "local_time", (def_type)function_it, c_localtime);
+//    new_built_in(bi_module, "local_time", (def_type)function_it, c_localtime);
     new_built_in(bi_module, "statistics", (def_type)predicate_it, c_statistics);
     new_built_in(bi_module, "gc", (def_type)predicate_it, c_garbage);
     new_built_in(bi_module, "system", (def_type)function_it, c_system);
