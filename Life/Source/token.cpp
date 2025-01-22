@@ -446,7 +446,7 @@ char* expand_file_name(char* s)
 // char* s;
 {
     char* r;
-    char* home; // , * getenv(char *);
+    char* home, * getenv(char *);  // DJD_LATER
     char userbuf[STRLEN];
     char* user = userbuf;
     char* t1, * t2;
@@ -462,11 +462,11 @@ char* expand_file_name(char* s)
         }
         *t2 = 0;
         if ((int)strlen(user) > 0) {
-//          pw = getpwnam(user); // DJD_LATER
-    char* pw = "DJD"; // DJD_LATER
+          passwd* pw = getpwnam(user); // DJD_LATER
+	  //    char* pw = "DJD"; // DJD_LATER
             if (pw) {
-//              user = pw->pw_dir;// DJD_LATER
-    user = "DJD";
+              user = pw->pw_dir;// DJD_LATER
+	      //    user = "DJD";
                 r = (char*)malloc(strlen(user) + strlen(t1) + 1);
                 sprintf(r, "%s%s", user, t1);
             }

@@ -5,7 +5,13 @@
 // #include <stdlib>
 // #include <iostream>
 #include "def_config.h"
-
+#include <pwd.h>
+// for wait
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
+#include <iostream>
+// 
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>

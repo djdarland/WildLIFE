@@ -1,0 +1,46 @@
+bi_sys.cpp:#ifdef DJD_LATER
+interrupt.cpp:// #ifdef DJD_LATER
+sys.cpp:#define DJD_LATER 1
+sys.cpp:// #ifdef DJD_LATER
+sys.cpp:#ifdef DJD_LATER
+sys.cpp:#ifdef DJD_LATER
+sys.cpp:#ifdef DJD_LATER
+sys.cpp:#ifdef DJD_LATER
+sys.cpp:#ifdef DJD_LATER
+sys.cpp:#ifdef DJD_LATER
+sys.cpp:#ifdef DJD_LATER
+sys.cpp:#ifdef DJD_LATER
+sys.cpp:#ifdef DJD_LATER
+sys.cpp:#ifdef DJD_LATER
+sys.cpp:#ifdef DJD_LATER
+sys.cpp:#ifdef DJD_LATER
+sys.cpp:   #ifdef DJD_LATER
+sys.cpp:#ifdef DJD_LATER
+sys.cpp:#ifdef DJD_LATER
+sys.cpp:#ifdef DJD_LATER
+sys.cpp:#ifdef DJD_LATER
+sys.cpp:#ifdef DJD_LATER
+sys.cpp:#ifdef DJD_LATER
+sys.cpp:#ifdef DJD_LATER
+sys.cpp:#ifdef DJD_LATER
+sys.cpp:#ifdef DJD_LATER
+sys.cpp:#ifdef DJD_LATER
+sys.cpp:#ifdef DJD_LATER
+sys.cpp:#ifdef DJD_LATER
+sys.cpp:#ifdef DJD_LATER
+sys.cpp:#ifdef DJD_LATER
+sys.cpp:#ifdef DJD_LATER
+sys.cpp:#ifdef DJD_LATER
+sys.cpp:#ifdef DJD_LATER
+sys.cpp:#ifdef DJD_LATER
+sys.cpp:#ifdef DJD_LATER
+sys.cpp:#ifdef DJD_LATER
+sys.cpp:#ifdef DJD_LATER
+sys.cpp:#ifdef DJD_LATER
+sys.cpp:#ifdef DJD_LATER
+sys.cpp:#ifdef DJD_LATER
+sys.cpp:#ifdef DJD_LATER
+sys.cpp:#ifdef DJD_LATER
+token.cpp://          pw = getpwnam(user); // DJD_LATER
+token.cpp:    char* pw = "DJD"; // DJD_LATER
+token.cpp://              user = pw->pw_dir;// DJD_LATER

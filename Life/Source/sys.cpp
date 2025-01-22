@@ -31,7 +31,7 @@ static char vcid[] = "$Id: sys.c,v 1.9 1996/01/17 00:33:09 duchier Exp $";
 
 #include "defs.h"
 
-
+#define DJD_LATER 1
 
 // ptr_definition sys_bytedata; /* DENYS: BYTEDATA */
 // ptr_definition sys_bitvector;
@@ -186,14 +186,14 @@ static long make_bitvector_internal(ptr_psi_term args[],
     }
 }
 
-#ifdef DJD_LATER
+// #ifdef DJD_LATER
 static long c_make_bitvector()
 {
     psi_arg args[1];
     SETARG(args, 0, "1", integer, REQUIRED);
-    return call_primitive(make_bitvector_internal, NARGS(args), args, 0);
+    return call_primitive((long int(*)(ptr_psi_term*, ptr_psi_term,ptr_psi_term, GENERIC )) make_bitvector_internal, NARGS(args), args, 0);
 }
-#endif
+// #endif
 
 #define BV_AND 0
 #define BV_OR  1
@@ -255,7 +255,7 @@ static long bitvector_binop(long op)
     psi_arg args[2];
     SETARG(args, 0, "1", sys_bitvector, REQUIRED);
     SETARG(args, 1, "2", sys_bitvector, REQUIRED);
-    return call_primitive(bitvector_binop_internal, NARGS(args), args, (GENERIC)op); // REV401PLUS (void *) -> (GENERIC)
+    return call_primitive((long int(*)(ptr_psi_term*, ptr_psi_term,ptr_psi_term, GENERIC ))bitvector_binop_internal, NARGS(args), args, (GENERIC)op); // REV401PLUS (void *) -> (GENERIC)
 }
 #endif
 
@@ -337,7 +337,7 @@ static long bitvector_unop(long op)
 {
     psi_arg args[1];
     SETARG(args, 0, "1", sys_bitvector, REQUIRED);
-    return call_primitive(bitvector_unop_internal, NARGS(args), args, (GENERIC)op); // REV401PLUS
+    return call_primitive((long int(*)(ptr_psi_term*, ptr_psi_term,ptr_psi_term, GENERIC ))bitvector_unop_internal, NARGS(args), args, (GENERIC)op); // REV401PLUS
 }
 
 static long c_bitvector_not()
@@ -397,7 +397,7 @@ static long bitvector_bit_internal(ptr_psi_term args[],
 // ptr_psi_term args[], result, funct;
 // long* op; // REV401PLUS
 {
-    return bitvector_bit_code((unsigned long*)args[0]->value_3,
+  return bitvector_bit_code((GENERIC)args[0]->value_3,
         (long)*((REAL*)args[1]->value_3),
         result, (GENERIC)op, funct); // REV401PLUS
 }
@@ -408,7 +408,7 @@ static long bitvector_bit(long op)
     psi_arg args[2];
     SETARG(args, 0, "1", sys_bitvector, REQUIRED);
     SETARG(args, 1, "2", integer, REQUIRED);
-    return call_primitive(bitvector_bit_internal, NARGS(args), args, (GENERIC)op);
+    return call_primitive((long int(*)(ptr_psi_term*, ptr_psi_term,ptr_psi_term, GENERIC ))bitvector_bit_internal, NARGS(args), args, (GENERIC)op);
 }
 
 static long c_bitvector_get()
@@ -487,7 +487,7 @@ static long c_regexp_compile()
 {
     psi_arg args[1];
     SETARG(args, 0, "1", quoted_string, REQUIRED);
-    return call_primitive(regexp_compile_internal, NARGS(args), args, 0);
+    return call_primitive((long int(*)(ptr_psi_term*, ptr_psi_term,ptr_psi_term, GENERIC ))regexp_compile_internal, NARGS(args), args, 0);
 }
 #endif
 /******** C_REGEXP_EXECUTE
@@ -579,7 +579,7 @@ static long c_regexp_execute()
     SETARG(args, 1, "2", quoted_string, REQUIRED);
     SETARG(args, 2, "3", top, OPTIONAL | NOVALUE);
     SETARG(args, 3, "offset", integer, OPTIONAL);
-    return call_primitive(regexp_execute_internal, NARGS(args), args, 0);
+    return call_primitive((long int(*)(ptr_psi_term*, ptr_psi_term,ptr_psi_term, GENERIC ))regexp_execute_internal, NARGS(args), args, 0);
 }
 #endif
 
@@ -638,7 +638,7 @@ static long c_int2stream()
     psi_arg args[2];
     SETARG(args, 0, "1", integer, REQUIRED);
     SETARG(args, 1, "2", quoted_string, REQUIRED);
-    return call_primitive(int2stream_internal, NARGS(args), args, 0);
+    return call_primitive((long int(*)(ptr_psi_term*, ptr_psi_term,ptr_psi_term, GENERIC ))int2stream_internal, NARGS(args), args, 0);
 }
 
 #endif
@@ -663,7 +663,7 @@ static long c_fopen()
     psi_arg args[2];
     SETARG(args, 0, "1", quoted_string, REQUIRED);
     SETARG(args, 1, "2", quoted_string, REQUIRED);
-    return call_primitive(fopen_internal, NARGS(args), args, 0);
+    return call_primitive((long int(*)(ptr_psi_term*, ptr_psi_term,ptr_psi_term, GENERIC ))fopen_internal, NARGS(args), args, 0);
 }
 #endif
 static long fclose_internal(ptr_psi_term args[], 
@@ -680,7 +680,7 @@ static long c_fclose()
 {
     psi_arg args[1];
     SETARG(args, 0, "1", sys_stream, REQUIRED);
-    return call_primitive(fclose_internal, NARGS(args), args, 0);
+    return call_primitive((long int(*)(ptr_psi_term*, ptr_psi_term,ptr_psi_term, GENERIC ))fclose_internal, NARGS(args), args, 0);
 }
 #endif
 static long fwrite_internal(ptr_psi_term args[], 
@@ -702,7 +702,7 @@ static long c_fwrite()
     psi_arg args[2];
     SETARG(args, 0, "1", sys_stream, MANDATORY);
     SETARG(args, 1, "2", quoted_string, MANDATORY);
-    return call_primitive(fwrite_internal, NARGS(args), args, 0);
+    return call_primitive((long int(*)(ptr_psi_term*, ptr_psi_term,ptr_psi_term, GENERIC ))fwrite_internal, NARGS(args), args, 0);
 }
 #endif
 static long fflush_internal(ptr_psi_term args[], 
@@ -720,7 +720,7 @@ static long c_fflush()
 {
     psi_arg args[1];
     SETARG(args, 0, "1", sys_stream, MANDATORY);
-    return call_primitive(fflush_internal, NARGS(args), args, 0);
+    return call_primitive((long int(*)(ptr_psi_term*, ptr_psi_term,ptr_psi_term, GENERIC ))fflush_internal, NARGS(args), args, 0);
 }
 #endif
 static long get_buffer_internal(ptr_psi_term args[], 
@@ -746,7 +746,7 @@ static long c_get_buffer()
     psi_arg args[2];
     SETARG(args, 0, "1", sys_stream, REQUIRED);
     SETARG(args, 1, "2", integer, REQUIRED);
-    return call_primitive(get_buffer_internal, NARGS(args), args, 0);
+    return call_primitive((long int(*)(ptr_psi_term*, ptr_psi_term,ptr_psi_term, GENERIC ))get_buffer_internal, NARGS(args), args, 0);
 }
 #endif
 #ifndef REV401PLUS
@@ -765,7 +765,7 @@ struct text_buffer {
    */
    #ifdef DJD_LATER
 int text_buffer_next(struct text_buffer* buf,
-    int idx, char c, struct text_buffer **rbuf, int ridx)
+    int idx, char c, struct text_buffer **rbuf, int *ridx)
 // struct text_buffer* buf, ** rbuf;
 // char c;
 // int idx, * ridx;
@@ -835,7 +835,7 @@ void text_buffer_push(struct text_buffer** buf, char c)
 }
 #ifdef DJD_LATER
 /* free a linked list of buffers */
-void text_buffer_free(struct_text_buffer* buf)
+void text_buffer_free(struct text_buffer* buf)
 // struct text_buffer* buf;
 {
     struct text_buffer* next;
@@ -917,7 +917,7 @@ PackUpAndLeave:
         lastbuf != NULL;sep += lastbuf->top, lastbuf = lastbuf->next)
         bcopy(lastbuf->data, sep, lastbuf->top);
     ((char*)t->value_3)[size] = '\0';
-    text_buffer_free(rootbuf.next);
+    text_buffer_free((struct text_buffer*)rootbuf.next);
     push_goal(unify, t, result, NULL);
     return TRUE;
 }
@@ -927,7 +927,7 @@ static long c_get_record()
     psi_arg args[2];
     SETARG(args, 0, "1", sys_stream, REQUIRED);
     SETARG(args, 1, "2", quoted_string, REQUIRED);
-    return call_primitive(get_record_internal, NARGS(args), args, 0);
+    return call_primitive((long int(*)(ptr_psi_term*, ptr_psi_term,ptr_psi_term, GENERIC ))get_record_internal, NARGS(args), args, 0);
 }
 #endif
 static long get_code_internal(ptr_psi_term args[], 
@@ -945,7 +945,7 @@ static long c_get_code()
 {
     psi_arg args[1];
     SETARG(args, 0, "1", sys_stream, REQUIRED);
-    return call_primitive(get_code_internal, NARGS(args), args, 0);
+    return call_primitive((long int(*)(ptr_psi_term*, ptr_psi_term,ptr_psi_term, GENERIC ))get_code_internal, NARGS(args), args, 0);
 }
 #endif
 static long ftell_internal(ptr_psi_term args[], 
@@ -965,7 +965,7 @@ static long c_ftell()
 {
     psi_arg args[1];
     SETARG(args, 0, "1", sys_file_stream, REQUIRED);
-    return call_primitive(ftell_internal, NARGS(args), args, 0);
+    return call_primitive((long int(*)(ptr_psi_term*, ptr_psi_term,ptr_psi_term, GENERIC ))ftell_internal, NARGS(args), args, 0);
 }
 #endif
 #ifndef SEEK_SET
@@ -997,7 +997,7 @@ static long c_fseek()
     SETARG(args, 0, "1", sys_file_stream, MANDATORY);
     SETARG(args, 1, "2", integer, MANDATORY);
     SETARG(args, 2, "3", integer, OPTIONAL);
-    return call_primitive(fseek_internal, NARGS(args), args, 0);
+    return call_primitive((long int(*)(ptr_psi_term*, ptr_psi_term,ptr_psi_term, GENERIC ))fseek_internal, NARGS(args), args, 0);
 }
 #endif
 static long stream2sys_stream_internal(ptr_psi_term args[], 
@@ -1013,7 +1013,7 @@ static long c_stream2sys_stream()
 {
     psi_arg args[1];
     SETARG(args, 0, "1", stream, REQUIRED);
-    return call_primitive(stream2sys_stream_internal, NARGS(args), args, 0);
+    return call_primitive((long int(*)(ptr_psi_term*, ptr_psi_term,ptr_psi_term, GENERIC ))stream2sys_stream_internal, NARGS(args), args, 0);
 }
 #endif
 static long sys_stream2stream_internal(ptr_psi_term args[], 
@@ -1032,7 +1032,7 @@ static long c_sys_stream2stream()
 {
     psi_arg args[1];
     SETARG(args, 0, "1", sys_stream, REQUIRED);
-    return call_primitive(sys_stream2stream_internal, NARGS(args), args, 0);
+    return call_primitive((long int(*)(ptr_psi_term*, ptr_psi_term,ptr_psi_term, GENERIC ))sys_stream2stream_internal, NARGS(args), args, 0);
 }
 #endif
 /* SOCKETS AND NETWORKING *
@@ -1101,7 +1101,7 @@ static long c_socket()
     psi_arg args[2];
     SETARG(args, 0, "1", quoted_string, OPTIONAL);
     SETARG(args, 1, "2", quoted_string, OPTIONAL);
-    return call_primitive(socket_internal, NARGS(args), args, 0);
+    return call_primitive((long int(*)(ptr_psi_term*, ptr_psi_term,ptr_psi_term, GENERIC ))socket_internal, NARGS(args), args, 0);
 }
 #endif
 #ifdef DJD_LATER
@@ -1190,7 +1190,7 @@ static long c_bind()
     SETARG(args, 1, "host", quoted_string, OPTIONAL);
     SETARG(args, 2, "port", integer, OPTIONAL);
     SETARG(args, 3, "path", quoted_string, OPTIONAL);
-    return call_primitive(bind_or_connect_internal, NARGS(args), args, NULL);
+    return call_primitive((long int(*)(ptr_psi_term*, ptr_psi_term,ptr_psi_term, GENERIC ))bind_or_connect_internal, NARGS(args), args, NULL);
 }
 
 static long c_connect()
@@ -1200,7 +1200,7 @@ static long c_connect()
     SETARG(args, 1, "host", quoted_string, OPTIONAL);
     SETARG(args, 2, "port", integer, OPTIONAL);
     SETARG(args, 3, "path", quoted_string, OPTIONAL);
-    return call_primitive(bind_or_connect_internal, NARGS(args), args, (void*)1);
+    return call_primitive((long int(*)(ptr_psi_term*, ptr_psi_term,ptr_psi_term, GENERIC ))bind_or_connect_internal, NARGS(args), args, (void*)1);
 }
 #endif
 static long listen_internal(ptr_psi_term args[], 
@@ -1219,7 +1219,7 @@ static long c_listen()
     psi_arg args[2];
     SETARG(args, 0, "1", sys_socket_stream, MANDATORY);
     SETARG(args, 1, "2", integer, MANDATORY);
-    return call_primitive(listen_internal, NARGS(args), args, 0);
+    return call_primitive((long int(*)(ptr_psi_term*, ptr_psi_term,ptr_psi_term, GENERIC ))listen_internal, NARGS(args), args, 0);
 }
 #endif
 static long accept_internal(ptr_psi_term args[], 
@@ -1250,7 +1250,7 @@ static long c_accept()
 {
     psi_arg args[1];
     SETARG(args, 0, "1", sys_socket_stream, REQUIRED);
-    return call_primitive(accept_internal, NARGS(args), args, 0);
+    return call_primitive((long int(*)(ptr_psi_term*, ptr_psi_term,ptr_psi_term, GENERIC ))accept_internal, NARGS(args), args, 0);
 }
 #endif
 /* SYSTEM ERRORS *
@@ -1266,7 +1266,7 @@ static long errno_internal(ptr_psi_term args[],
 #ifdef DJD_LATER
 static long c_errno()
 {
-    return call_primitive(errno_internal, 0, NULL, 0);
+    return call_primitive((long int(*)(ptr_psi_term*, ptr_psi_term,ptr_psi_term, GENERIC ))errno_internal, 0, NULL, 0);
 }
 #endif
 /* some systems are missing these declarations */
@@ -1289,7 +1289,7 @@ static long c_errmsg()
 {
     psi_arg args[1];
     SETARG(args, 0, "1", integer, OPTIONAL);
-    return call_primitive(errmsg_internal, NARGS(args), args, 0);
+    return call_primitive((long int(*)(ptr_psi_term*, ptr_psi_term,ptr_psi_term, GENERIC ))errmsg_internal, NARGS(args), args, 0);
 }
 #endif
 /* MODULES *
@@ -1341,7 +1341,7 @@ static long c_import_symbol()
     psi_arg args[2];
     SETARG(args, 0, "1", top, MANDATORY | UNEVALED);
     SETARG(args, 1, "as", top, OPTIONAL | NOVALUE | UNEVALED);
-    return call_primitive(import_symbol_internal, NARGS(args), args, 0);
+    return call_primitive((long int(*)(ptr_psi_term*, ptr_psi_term,ptr_psi_term, GENERIC ))import_symbol_internal, NARGS(args), args, 0);
 }
 #endif
 /* PROCESSES *
@@ -1355,10 +1355,10 @@ static long fork_internal(ptr_psi_term args[],
     if (id < 0) return FALSE;
     else  return unify_real_result(result, (REAL)id);
 }
-#ifdef DJD_)LATER
+#ifdef DJD_LATER
 static long c_fork()
 {
-    return call_primitive(fork_internal, 0, NULL, 0);
+    return call_primitive((long int(*)(ptr_psi_term*, ptr_psi_term,ptr_psi_term, GENERIC ))fork_internal, 0, NULL, 0);
 }
 #endif
 typedef struct {
@@ -1466,7 +1466,7 @@ static long wait_internal(ptr_psi_term args[],
 
 static long c_wait()
 {
-    return call_primitive(wait_internal, 0, NULL, 0);
+    return call_primitive((long int(*)(ptr_psi_term*, ptr_psi_term,ptr_psi_term, GENERIC ))wait_internal, 0, NULL, 0);
 }
 
 static long waitpid_internal(ptr_psi_term args[], 
@@ -1484,7 +1484,7 @@ static long c_waitpid()
     psi_arg args[2];
     SETARG(args, 0, "1", integer, REQUIRED);
     SETARG(args, 1, "2", integer, OPTIONAL);
-    return call_primitive(waitpid_internal, NARGS(args), args, 0);
+    return call_primitive((long int(*)(ptr_psi_term*, ptr_psi_term,ptr_psi_term, GENERIC ))waitpid_internal, NARGS(args), args, 0);
 }
 #endif
 static long kill_internal(ptr_psi_term args[], 
@@ -1500,7 +1500,7 @@ static long c_kill()
     psi_arg args[2];
     SETARG(args, 0, "1", integer, MANDATORY);
     SETARG(args, 1, "2", integer, MANDATORY);
-    return call_primitive(kill_internal, NARGS(args), args, 0);
+    return call_primitive((long int(*)(ptr_psi_term*, ptr_psi_term,ptr_psi_term, GENERIC ))kill_internal, NARGS(args), args, 0);
 }
 #endif
 /* MISCELLANEOUS *
@@ -1520,7 +1520,7 @@ static long cuserid_internal(ptr_psi_term args[],
 #ifdef DJD_LATER
 static long c_cuserid()
 {
-    return call_primitive(cuserid_internal, 0, NULL, 0);
+    return call_primitive((long int(*)(ptr_psi_term*, ptr_psi_term,ptr_psi_term, GENERIC ))cuserid_internal, 0, NULL, 0);
 }
 #endif
 #ifndef MAXHOSTNAMELEN
@@ -1541,7 +1541,7 @@ static long gethostname_internal(ptr_psi_term args[],
 #ifdef DJD_LATER
 static long c_gethostname()
 {
-    return call_primitive(gethostname_internal, 0, NULL, 0);
+    return call_primitive((long int(*)(ptr_psi_term*, ptr_psi_term,ptr_psi_term, GENERIC ))gethostname_internal, 0, NULL, 0);
 }
 #endif
 /* LAZY PROJECT
@@ -1579,7 +1579,7 @@ static long c_lazy_project()
     psi_arg args[2];
     SETARG(args, 0, "1", top, REQUIRED | NOVALUE);
     SETARG(args, 1, "2", top, REQUIRED | NOVALUE);
-    return call_primitive(lazy_project_internal, NARGS(args), args, 0);
+    return call_primitive((long int(*)(ptr_psi_term*, ptr_psi_term,ptr_psi_term, GENERIC ))lazy_project_internal, NARGS(args), args, 0);
 }
 #endif
 /* WAIT_ON_FEATURE
@@ -1617,7 +1617,7 @@ static long c_wait_on_feature()
     SETARG(args, 0, "1", top, MANDATORY | NOVALUE);
     SETARG(args, 1, "2", top, MANDATORY | NOVALUE);
     SETARG(args, 2, "3", top, MANDATORY | NOVALUE | UNEVALED);
-    return call_primitive(wait_on_feature_internal, NARGS(args), args, 0);
+    return call_primitive((long int(*)(ptr_psi_term*, ptr_psi_term,ptr_psi_term, GENERIC ))wait_on_feature_internal, NARGS(args), args, 0);
 }
 #endif
 static long my_wait_on_feature_internal(ptr_psi_term args[], 
@@ -1654,7 +1654,7 @@ static long c_my_wait_on_feature()
     SETARG(args, 0, "1", top, MANDATORY | NOVALUE);
     SETARG(args, 1, "2", top, MANDATORY | NOVALUE);
     SETARG(args, 2, "3", top, MANDATORY | NOVALUE | UNEVALED);
-    return call_primitive(my_wait_on_feature_internal, NARGS(args), args, 0);
+    return call_primitive((long int(*)(ptr_psi_term*, ptr_psi_term,ptr_psi_term, GENERIC ))my_wait_on_feature_internal, NARGS(args), args, 0);
 }
 #endif
 /* CALL_ONCE
@@ -1685,7 +1685,7 @@ static long c_call_once()
 {
     psi_arg args[1];
     SETARG(args, 0, "1", top, MANDATORY | NOVALUE | UNEVALED);
-    return call_primitive(call_once_internal, NARGS(args), args, 0);
+    return call_primitive((long int(*)(ptr_psi_term*, ptr_psi_term,ptr_psi_term, GENERIC ))call_once_internal, NARGS(args), args, 0);
 }
 #endif
 static long apply1_internal(ptr_psi_term args[], 
@@ -1722,7 +1722,7 @@ static long c_apply1()
     SETARG(args, 0, "1", top, REQUIRED | NOVALUE);
     SETARG(args, 1, "2", top, REQUIRED | NOVALUE);
     SETARG(args, 2, "3", top, REQUIRED | NOVALUE);
-    return call_primitive(apply1_internal, NARGS(args), args, 0);
+    return call_primitive((long int(*)(ptr_psi_term*, ptr_psi_term,ptr_psi_term, GENERIC ))apply1_internal, NARGS(args), args, 0);
 }
 #endif
 static long getpid_internal(ptr_psi_term args[], 
@@ -1734,7 +1734,7 @@ static long getpid_internal(ptr_psi_term args[],
 #ifdef DJD_LATER
 static long c_getpid()
 {
-    return call_primitive(getpid_internal, 0, 0, 0);
+    return call_primitive((long int(*)(ptr_psi_term*, ptr_psi_term,ptr_psi_term, GENERIC ))getpid_internal, 0, 0, 0);
 }
 #endif
 /********************************************************************
@@ -1812,48 +1812,48 @@ insert_sys_builtins()
     new_built_in(sys_module,"string_to_bytedata",function,c_string_to_bytedata);
     new_built_in(sys_module,"bytedata_to_string",function,c_bytedata_to_string);
     */
-    // new_built_in(sys_module, "make_bitvector", (def_type)function_it, c_make_bitvector);
-    // new_built_in(sys_module, "bitvector_and", (def_type)function_it, c_bitvector_and);
-    // new_built_in(sys_module, "bitvector_or", (def_type)function_it, c_bitvector_or);
-    // new_built_in(sys_module, "bitvector_xor", (def_type)function_it, c_bitvector_xor);
-    // new_built_in(sys_module, "bitvector_not", (def_type)function_it, c_bitvector_not);
-    // ew_built_in(sys_module, "bitvector_count", (def_type)function_it, c_bitvector_count);
-    // new_built_in(sys_module, "bitvector_get", (def_type)function_it, c_bitvector_get);
-    // new_built_in(sys_module, "bitvector_set", (def_type)function_it, c_bitvector_set);
-    // new_built_in(sys_module, "bitvector_clear", (def_type)function_it, c_bitvector_clear);
-    // new_built_in(sys_module, "regexp_compile", (def_type)function_it, c_regexp_compile);
-    // new_built_in(sys_module, "regexp_execute", (def_type)function_it, c_regexp_execute);
-    // new_built_in(sys_module, "int2stream", (def_type)function_it, c_int2stream);
-    // new_built_in(sys_module, "fopen", (def_type)function_it, c_fopen);
-    // new_built_in(sys_module, "fclose", (def_type)function_it, c_fclose);
-    // new_built_in(sys_module, "get_buffer", (def_type)function_it, c_get_buffer);
-    // new_built_in(sys_module, "get_record", (def_type)function_it, c_get_record);
-    // new_built_in(sys_module, "get_code", (def_type)function_it, c_get_code);
-    // new_built_in(sys_module, "ftell", (def_type)function_it, c_ftell);
-    // new_built_in(sys_module, "fseek", (def_type)predicate_it, c_fseek);
-    // new_built_in(sys_module, "socket", (def_type)function_it, c_socket);
-    // new_built_in(sys_module, "bind", (def_type)predicate_it, c_bind);
-    // new_built_in(sys_module, "connect", (def_type)predicate_it, c_connect);
-    // new_built_in(sys_module, "fwrite", (def_type)predicate_it, c_fwrite);
-    // new_built_in(sys_module, "fflush", (def_type)predicate_it, c_fflush);
-    // new_built_in(sys_module, "listen", (def_type)predicate_it, c_listen);
-    // new_built_in(sys_module, "accept", (def_type)function_it, c_accept);
-    // new_built_in(sys_module, "errno", (def_type)function_it, c_errno);
-    // new_built_in(sys_module, "errmsg", (def_type)function_it, c_errmsg);
-    // new_built_in(sys_module, "import_symbol", (def_type)predicate_it, c_import_symbol);
-    // new_built_in(sys_module, "fork", (def_type)function_it, c_fork);
-    // new_built_in(sys_module, "wait", (def_type)function_it, c_wait);
-    // new_built_in(sys_module, "waitpid", (def_type)function_it, c_waitpid);
-    // new_built_in(sys_module, "kill", (def_type)predicate_it, c_kill);
-    // new_built_in(sys_module, "cuserid", (def_type)function_it, c_cuserid);
-    // new_built_in(sys_module, "gethostname", (def_type)function_it, c_gethostname);
-    // new_built_in(sys_module, "lazy_project", (def_type)function_it, c_lazy_project);
-    // new_built_in(sys_module, "wait_on_feature", (def_type)predicate_it, c_wait_on_feature);
-    // new_built_in(sys_module, "my_wait_on_feature", (def_type)function_it, c_my_wait_on_feature);
-    // new_built_in(sys_module, "apply1", (def_type)function_it, c_apply1);
-    // new_built_in(sys_module, "getpid", (def_type)function_it, c_getpid);
-    // new_built_in(sys_module, "stream2sys_stream", (def_type)function_it, c_stream2sys_stream);
-    // new_built_in(sys_module, "sys_stream2stream", (def_type)function_it, c_sys_stream2stream);
+    new_built_in(sys_module, "make_bitvector", (def_type)function_it, c_make_bitvector);
+    new_built_in(sys_module, "bitvector_and", (def_type)function_it, c_bitvector_and);
+    new_built_in(sys_module, "bitvector_or", (def_type)function_it, c_bitvector_or);
+    new_built_in(sys_module, "bitvector_xor", (def_type)function_it, c_bitvector_xor);
+    new_built_in(sys_module, "bitvector_not", (def_type)function_it, c_bitvector_not);
+    new_built_in(sys_module, "bitvector_count", (def_type)function_it, c_bitvector_count);
+    new_built_in(sys_module, "bitvector_get", (def_type)function_it, c_bitvector_get);
+    new_built_in(sys_module, "bitvector_set", (def_type)function_it, c_bitvector_set);
+    new_built_in(sys_module, "bitvector_clear", (def_type)function_it, c_bitvector_clear);
+    new_built_in(sys_module, "regexp_compile", (def_type)function_it, c_regexp_compile);
+    new_built_in(sys_module, "regexp_execute", (def_type)function_it, c_regexp_execute);
+    new_built_in(sys_module, "int2stream", (def_type)function_it, c_int2stream);
+    new_built_in(sys_module, "fopen", (def_type)function_it, c_fopen);
+    new_built_in(sys_module, "fclose", (def_type)function_it, c_fclose);
+    new_built_in(sys_module, "get_buffer", (def_type)function_it, c_get_buffer);
+    new_built_in(sys_module, "get_record", (def_type)function_it, c_get_record);
+    new_built_in(sys_module, "get_code", (def_type)function_it, c_get_code);
+    new_built_in(sys_module, "ftell", (def_type)function_it, c_ftell);
+    new_built_in(sys_module, "fseek", (def_type)predicate_it, c_fseek);
+    new_built_in(sys_module, "socket", (def_type)function_it, c_socket);
+    new_built_in(sys_module, "bind", (def_type)predicate_it, c_bind);
+    new_built_in(sys_module, "connect", (def_type)predicate_it, c_connect);
+    new_built_in(sys_module, "fwrite", (def_type)predicate_it, c_fwrite);
+    new_built_in(sys_module, "fflush", (def_type)predicate_it, c_fflush);
+    new_built_in(sys_module, "listen", (def_type)predicate_it, c_listen);
+    new_built_in(sys_module, "accept", (def_type)function_it, c_accept);
+    new_built_in(sys_module, "errno", (def_type)function_it, c_errno);
+    new_built_in(sys_module, "errmsg", (def_type)function_it, c_errmsg);
+    new_built_in(sys_module, "import_symbol", (def_type)predicate_it, c_import_symbol);
+    new_built_in(sys_module, "fork", (def_type)function_it, c_fork);
+    new_built_in(sys_module, "wait", (def_type)function_it, c_wait);
+    new_built_in(sys_module, "waitpid", (def_type)function_it, c_waitpid);
+    new_built_in(sys_module, "kill", (def_type)predicate_it, c_kill);
+    new_built_in(sys_module, "cuserid", (def_type)function_it, c_cuserid);
+    new_built_in(sys_module, "gethostname", (def_type)function_it, c_gethostname);
+    new_built_in(sys_module, "lazy_project", (def_type)function_it, c_lazy_project);
+    new_built_in(sys_module, "wait_on_feature", (def_type)predicate_it, c_wait_on_feature);
+    new_built_in(sys_module, "my_wait_on_feature", (def_type)function_it, c_my_wait_on_feature);
+    new_built_in(sys_module, "apply1", (def_type)function_it, c_apply1);
+    new_built_in(sys_module, "getpid", (def_type)function_it, c_getpid);
+    new_built_in(sys_module, "stream2sys_stream", (def_type)function_it, c_stream2sys_stream);
+    new_built_in(sys_module, "sys_stream2stream", (def_type)function_it, c_sys_stream2stream);
 #ifdef LIFE_DBM
     insert_dbm_builtins();
 #endif
@@ -1861,6 +1861,6 @@ insert_sys_builtins()
     insert_ndbm_builtins();
 #endif
     set_current_module(bi_module);
-    // new_built_in(bi_module, "call_once", (def_type)function_it, c_call_once);
+    new_built_in(bi_module, "call_once", (def_type)function_it, c_call_once);
     set_current_module(curmod);
 }
