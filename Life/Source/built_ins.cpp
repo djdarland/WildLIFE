@@ -878,6 +878,8 @@ static long get_bool(ptr_definition typ)
 static long unify_bool(ptr_psi_term arg)
 // ptr_psi_term arg;
 {
+  long success;
+  
     ptr_psi_term tmp;
 
     tmp = stack_psi_term(4);
@@ -2120,10 +2122,10 @@ void exit_life(long nl_flag)
     if (NOTQUIET) { /* 21.1 */
         if (nl_flag) printf("\n");
         printf("*** Exiting Wild_Life  ");
-        printf("[%1.3lfs cpu, %1.3lfs gc (%2.1lf%%)]\n",
-            ((REAL) (life_end - life_start),
-            garbage_time,
-            (REAL)garbage_time * 100.0) / ((REAL)((life_end - life_start))));
+        printf("[%8.3lfs cpu, %8.3lfs gc (%2.1lf%%)]\n",
+	       ((life_end - life_start)/ CLOCKS_PER_SEC * 1.0),
+	       (garbage_time * 1.0) / (CLOCKS_PER_SEC * 1.0),
+	       (garbage_time * 100.0) / (life_end - life_start + 1.0));
     }
 
 #ifdef ARITY  /*  RM: Mar 29 1993  */

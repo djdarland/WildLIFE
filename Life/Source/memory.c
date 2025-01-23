@@ -1453,12 +1453,12 @@ long timeflag;
 void garbage()
 {
   GENERIC addr;
-  struct tms garbage_start_time,garbage_end_time;
+  //  struct tms garbage_start_time,garbage_end_time;
   long start_number_cells, end_number_cells;
 
   start_number_cells = (stack_pointer-mem_base) + (mem_limit-heap_pointer);
 
-  times(&garbage_start_time);
+  time(&garbage_start_time);
 
   /* Time elapsed since last garbage collection */
   life_time=(garbage_start_time.tms_utime - last_garbage_time.tms_utime)/60.0;

@@ -231,7 +231,7 @@ static long c_realtime()
         //    if (num)
         //  success=(val==thetime);
         // else
-	thetime = (clock() - start_time) / CLOCKS_PER_SEC;
+	thetime = clock() / CLOCKS_PER_SEC;
         success = unify_real_result(result, thetime);
     }
     return success;
@@ -273,38 +273,49 @@ static long c_realtime()
   hour, minute, second, and weekday.
   This is useful for building real-time applications such as clocks.
 */
-#ifdef DJD_LATER
 static long c_localtime()
 {
-    ptr_psi_term result, t, psitime;
-    long success = TRUE;
-    //    struct timeval tp;
-    // struct timezone tzp;
-    // struct tm* thetime;
-
-    t = aim->aaaa_1;
-    deref_args(t, set_empty);
-    result = aim->bbbb_1;
-    deref_ptr(result);
-
-    gettimeofday(&tp, &tzp);
-    thetime = localtime((time_t*)&(tp.tv_sec));
+  ptr_psi_term result, t, psitime;
+  long success = TRUE;
+  //  struct timeval tp;
+  // struct timezone tzp;
+  // struct tm* thetime;
+  //  std::chrono::current_zone()->local();
+  #ifdef DJD_LATER
+  std::tm bt {};
+  std::localtime_r(&timer, &bt);
+  const auto time_point <std::chrono::days>(local_time);
+  const auto year_month_day = std::chrono::year_month_day{ time_point };
+  
+  t = aim->aaaa_1;
+  deref_args(t, set_empty);
+  result = aim->bbbb_1;
+  deref_ptr(result);
+  
+  int year = static_cast<int>(year_month_day.year());
+  int month = static_cast<unsigned>(year_month_day.month());
+  int day = static_cast<unsigned>(year_month_day.day());
+  int hour = 0;
+  int minute = 0;
+  int second = 0;   
+//    gettimeofday(&tp, &tzp);
+//    thetime = localtime((time_t*)&(tp.tv_sec));
 
     psitime = stack_psi_term(4);
     psitime->type = timesym;
-    stack_add_int_attr(psitime, year_attr, thetime->tm_year + 1900);
-    stack_add_int_attr(psitime, month_attr, thetime->tm_mon + 1);
-    stack_add_int_attr(psitime, day_attr, thetime->tm_mday);
-    stack_add_int_attr(psitime, hour_attr, thetime->tm_hour);
-    stack_add_int_attr(psitime, minute_attr, thetime->tm_min);
-    stack_add_int_attr(psitime, second_attr, thetime->tm_sec);
-    stack_add_int_attr(psitime, weekday_attr, thetime->tm_wday);
-
+    stack_add_int_attr(psitime, year_attr, year + 1900);
+    stack_add_int_attr(psitime, month_attr, month + 1);
+    stack_add_int_attr(psitime, day_attr, day);
+    stack_add_int_attr(psitime, hour_attr, hour);
+    stack_add_int_attr(psitime, minute_attr, minute);
+    stack_add_int_attr(psitime, second_attr, second);
+    stack_add_int_attr(psitime, weekday_attr, wday);
+#endif
     push_goal(unify, result, psitime, NULL);
 
     return success;
 }
-#endif
+
 
 /******** C_STATISTICS
   Print some information about Wild_Life: stack size, heap size, total memory.

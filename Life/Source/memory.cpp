@@ -23,8 +23,11 @@ static long pass;
 
 #define LONELY 1
 
-static clock_t last_garbage_time;
-static clock_t gc_time, life_time;
+static clock_t gc_time = 0;
+static clock_t life_time = 0;
+static clock_t garbage_start_time = 0;
+static clock_t last_garbage_time = 0;
+static clock_t garbage_end_time = 0;
 
 #define ALIGNUP(X) { (X) = (GENERIC)( ((long) (X) + (ALIGN-1)) & ~(ALIGN-1) ); }
 
@@ -1427,8 +1430,8 @@ void print_gc_info(long timeflag)
         (100 * ((unsigned long)stack_pointer - (unsigned long)mem_base) + mem_size / 2) / mem_size);
     if (timeflag) {
         fprintf(stderr, ", %1.3fs cpu (%ld%%)",
-            gc_time,
-            (unsigned long)(0.5 + 100 * gc_time / (life_time + gc_time)));
+		(float)(gc_time / CLOCKS_PER_SEC),
+		(long)((100 * gc_time / (life_time + gc_time))));
     }
     fprintf(stderr, "]\n");
 }
@@ -1463,7 +1466,7 @@ void garbage()
     garbage_start_time = clock();
 
     /* Time elapsed since last garbage collection */
-    life_time = (garbage_start_time - last_garbage_time) / CLOCKS_PER_SEC;
+    life_time = (garbage_start_time - last_garbage_time);
 
 
     if (verbose) {
@@ -1505,8 +1508,8 @@ void garbage()
     pointer_names = NULL;
 
 //    times(&garbage_end_time);
-    garbage_end_time =clock();
-    gc_time = (garbage_end_time - garbage_start_time) / CLOCKS_PER_SEC;
+    garbage_end_time = clock();
+    gc_time = (garbage_end_time - garbage_start_time);
     garbage_time += gc_time;
 
     if (verbose) {

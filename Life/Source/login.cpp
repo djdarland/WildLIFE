@@ -1087,7 +1087,7 @@ void merge_unify(ptr_node* u, ptr_node v)
   */
 void show_count()
 {
-    float t;
+    time_t t;
 
     if (verbose) {
         printf("  [");

@@ -597,8 +597,8 @@ extern GENERIC stack_pointer;
 extern GENERIC stack_alloc();
 extern GENERIC heap_alloc();
 
-extern float garbage_time;
-extern struct tms life_start, life_end;
+extern clock_t garbage_time;
+extern clock_t life_start, life_end;
 
 extern GENERIC other_base;
 extern GENERIC other_limit;
