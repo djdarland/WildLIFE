@@ -276,41 +276,45 @@ static long c_realtime()
 static long c_localtime()
 {
   ptr_psi_term result, t, psitime;
-  long success = TRUE;
-  //  struct timeval tp;
-  // struct timezone tzp;
-  // struct tm* thetime;
-  //  std::chrono::current_zone()->local();
+  long success=TRUE;
+  //#include <iostream>
+  // #include <chrono>
+    //    std::cout#include <iostream>
+    //#include <chrono>
+
   #ifdef DJD_LATER
-  std::tm bt {};
-  std::localtime_r(&timer, &bt);
-  const auto time_point <std::chrono::days>(local_time);
-  const auto year_month_day = std::chrono::year_month_day{ time_point };
-  
+    auto now = std::chrono::system_clock::now();
+    auto time_zone = std::chrono::current_zone();
+    auto local_time = time_zone->to_local(now);
+    auto time_point =
+      std::chrono::time_point_cast<std::chrono::days(local_time);
+    auto year_month_day = std::chrono::year_month_day{time_point};
+    
+    int year = static_cast<int>(year_month_day.year());
+    int month = static_cast<int>(year_month_day.month());
+    int day = static_cast<int>(year_month_day.day());
+    
+    std::chrono::time_of_day tod = std::chrono::time_of_day(now.time_since_epoch());
+
+    int hours =  tod.hours();
+    int minutes =  tod.minutes();
+    int seconds = tod.seconds();
+#endif
+    
   t = aim->aaaa_1;
   deref_args(t, set_empty);
   result = aim->bbbb_1;
   deref_ptr(result);
   
-  int year = static_cast<int>(year_month_day.year());
-  int month = static_cast<unsigned>(year_month_day.month());
-  int day = static_cast<unsigned>(year_month_day.day());
-  int hour = 0;
-  int minute = 0;
-  int second = 0;   
-//    gettimeofday(&tp, &tzp);
-//    thetime = localtime((time_t*)&(tp.tv_sec));
-
     psitime = stack_psi_term(4);
     psitime->type = timesym;
-    stack_add_int_attr(psitime, year_attr, year + 1900);
-    stack_add_int_attr(psitime, month_attr, month + 1);
-    stack_add_int_attr(psitime, day_attr, day);
-    stack_add_int_attr(psitime, hour_attr, hour);
-    stack_add_int_attr(psitime, minute_attr, minute);
-    stack_add_int_attr(psitime, second_attr, second);
-    stack_add_int_attr(psitime, weekday_attr, wday);
-#endif
+    stack_add_int_attr(psitime, year_attr, 2025);
+    stack_add_int_attr(psitime, month_attr, 4 + 1);
+    stack_add_int_attr(psitime, day_attr, 18);
+    stack_add_int_attr(psitime, hour_attr, 12);
+    stack_add_int_attr(psitime, minute_attr, 0);
+    stack_add_int_attr(psitime, second_attr, 0);
+    stack_add_int_attr(psitime, weekday_attr, 1);
     push_goal(unify, result, psitime, NULL);
 
     return success;
@@ -701,7 +705,7 @@ void insert_system_builtins()
     new_built_in(bi_module, "cpu_time", (def_type)function_it, c_cputime);
     new_built_in(bi_module, "quiet", (def_type)function_it, c_quiet); /* 21.1 */
     new_built_in(bi_module, "real_time", (def_type)function_it, c_realtime);
-//    new_built_in(bi_module, "local_time", (def_type)function_it, c_localtime);
+    new_built_in(bi_module, "local_time", (def_type)function_it, c_localtime);
     new_built_in(bi_module, "statistics", (def_type)predicate_it, c_statistics);
     new_built_in(bi_module, "gc", (def_type)predicate_it, c_garbage);
     new_built_in(bi_module, "system", (def_type)function_it, c_system);
